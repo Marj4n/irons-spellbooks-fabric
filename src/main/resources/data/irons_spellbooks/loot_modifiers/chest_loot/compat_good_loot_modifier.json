@@ -1,0 +1,51 @@
+{
+  "type": "irons_spellbooks:append_loot",
+  "conditions": [
+    {
+      "condition": "minecraft:any_of",
+      "terms": [
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "betterdeserttemples:chests/tomb"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "betterdeserttemples:chests/storage"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "betterdeserttemples:chests/library"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "betterdungeons:zombie_dungeon/chests/tombstone"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "betterwitchhuts:chests/hut_0"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "structory:library/high"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "structory:library/low"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "structory:ruin/taiga/illager_treasure"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "idas:chests/wizardtower/wizardtower_top"
+        },
+        {
+          "condition": "porting_lib:loot_table_id",
+          "loot_table_id": "idas:chests/tinkers_workshop/tinkers_workshop_vault"
+        }
+      ]
+    }
+  ],
+  "key": "irons_spellbooks:chests/additional_good_loot"
+}

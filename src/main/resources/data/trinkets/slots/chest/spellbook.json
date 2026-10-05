@@ -1,0 +1,7 @@
+{
+  "amount": 1,
+  "icon": "curios:slot/spellbook_slot",
+  "validator_predicates": [
+    "trinkets:tag"
+  ]
+}

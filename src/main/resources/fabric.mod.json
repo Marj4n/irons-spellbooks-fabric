@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "irons_spellbooks",
+  "version": "${version}",
+  "name": "Iron's Spells 'n Spellbooks (Fabric)",
+  "description": "Iron's Spells 'n Spellbooks 3.16.3 ported to Fabric 1.20.1 by Marj4n.",
+  "authors": [
+    "Marj4n"
+  ],
+  "contributors": [
+    "Iron431",
+    "Lab3"
+  ],
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.marj4n.irons_spellbooks.IronsSpellbooksFabric"
+    ],
+    "client": [
+      "org.marj4n.irons_spellbooks.client.IronsSpellbooksFabricClient"
+    ],
+    "fabric-datagen": [
+      "io.redspace.ironsspellbooks.datagen.DataGenerators"
+    ],
+    "jei_mod_plugin": [
+      "io.redspace.ironsspellbooks.jei.JeiPlugin"
+    ]
+  },
+  "accessWidener": "irons_spellbooks.accesswidener",
+  "mixins": [
+    "mixins.irons_spellbooks.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "fabric-api": "*",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "forgeconfigapiport": ">=8.0.3",
+    "geckolib": ">=4.8.2",
+    "player-animator": ">=1.0.2-rc1+1.20",
+    "porting_lib_base": ">=2.3.15",
+    "trinkets": ">=3.7.2"
+  },
+  "custom": {
+    "irons_spellbooks:port_status": "local-testing",
+    "irons_spellbooks:upstream_commit": "cae63a6999e24ed3deaa012ecb8c262e0e377816"
+  },
+  "icon": "spellbooks title small background low res.png"
+}

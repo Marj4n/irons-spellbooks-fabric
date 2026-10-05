@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "cookingtime": 20,
+  "experience": 0.0,
+  "ingredient": {
+    "item": "irons_spellbooks:arcane_salvage"
+  },
+  "result": {
+    "item": "irons_spellbooks:mithril_scrap"
+  }
+}

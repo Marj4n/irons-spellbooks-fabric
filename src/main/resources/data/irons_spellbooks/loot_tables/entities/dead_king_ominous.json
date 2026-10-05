@@ -1,0 +1,98 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "irons_spellbooks:wicked_bone_ring"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "condition": "minecraft:random_chance_with_looting",
+          "chance": 0.50,
+          "looting_multiplier": 0.05
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "irons_spellbooks:scroll",
+          "functions": [
+            {
+              "function": "irons_spellbooks:randomize_spell",
+              "quality": {
+                "min": 0.0,
+                "max": 0.5
+              },
+              "spell_filter": {
+                "spells": [
+                  "irons_spellbooks:fang_swirl"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "condition": "minecraft:random_chance_with_looting",
+          "chance": 0.70,
+          "looting_multiplier": 0.05
+        }
+      ]
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 45.0,
+                "min": 28.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:looting_enchant",
+              "enchantment": "minecraft:looting"
+            }
+          ],
+          "name": "irons_spellbooks:arcane_essence"
+        }
+      ],
+      "rolls": 2
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "irons_spellbooks:blank_rune"
+        }
+      ],
+      "rolls": {
+        "min": 1,
+        "max": 2
+      }
+    }
+  ]
+}
