@@ -1,0 +1,25 @@
+{
+  "type": "create:emptying",
+  "ingredients": [
+    {
+      "item": "irons_spellbooks:legendary_ink"
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:glass_bottle"
+    },
+    {
+      "fluid": "irons_spellbooks:legendary_ink",
+      "amount": 20250
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:all_mods_loaded",
+      "values": [
+        "create"
+      ]
+    }
+  ]
+}

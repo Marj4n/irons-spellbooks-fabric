@@ -1,0 +1,30 @@
+{
+  "target": "Fabric 1.20.1",
+  "upstream": "3.16.3",
+  "version": "3.16.3-fabric.1",
+  "port_author": "Marj4n",
+  "upstream_authors": [
+    "Iron431",
+    "Lab3"
+  ],
+  "upstream_commit": "cae63a6999e24ed3deaa012ecb8c262e0e377816",
+  "status": "READY_FOR_LOCAL_GAMEPLAY_TESTING",
+  "java_source_files": 1114,
+  "whole_source_compile_errors": 0,
+  "gradle_build": "PASS",
+  "native_network_checks": "PASS",
+  "native_fluid_checks": "PASS",
+  "mixin_target_checks": {
+    "checks": 163,
+    "failures": 0
+  },
+  "mixin_application_checks": {
+    "target_classes": 45,
+    "result": "PASS"
+  },
+  "server_initialization": "PASS_THROUGH_MOD_INITIALIZERS_STOPPED_AT_EULA",
+  "client_gameplay_tested": false,
+  "server_world_tested": false,
+  "jar_ready": true,
+  "jar_sha256": "49928fd568744fb213c05cef9f735bc7a06ed179818c9fa825e1c959713ba1f6"
+}

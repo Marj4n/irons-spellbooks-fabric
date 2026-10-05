@@ -1,0 +1,25 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "minecraft:glass_bottle"
+    },
+    {
+      "fluid": "irons_spellbooks:greater_evasion_elixir",
+      "amount": 20250
+    }
+  ],
+  "results": [
+    {
+      "item": "irons_spellbooks:greater_evasion_elixir"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:all_mods_loaded",
+      "values": [
+        "create"
+      ]
+    }
+  ]
+}
