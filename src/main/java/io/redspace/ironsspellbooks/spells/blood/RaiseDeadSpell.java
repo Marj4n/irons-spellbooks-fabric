@@ -38,17 +38,21 @@ import java.util.List;
 import java.util.Optional;
 
 public class RaiseDeadSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "raise_dead");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
-            .setMaxLevel(6)
-            .setCooldownSeconds(150)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "raise_dead");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
+                    .setMaxLevel(6)
+                    .setCooldownSeconds(150)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.summon_count", getSummonCount(spellLevel, caster)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.summon_count", getSummonCount(spellLevel, caster)));
     }
 
     public RaiseDeadSpell() {
@@ -57,7 +61,6 @@ public class RaiseDeadSpell extends AbstractSpell {
         this.spellPowerPerLevel = 3;
         this.castTime = 30;
         this.baseManaCost = 50;
-
     }
 
     @Override
@@ -95,9 +98,15 @@ public class RaiseDeadSpell extends AbstractSpell {
     }
 
     @Override
-    public void onRecastFinished(ServerPlayer serverPlayer, RecastInstance recastInstance, RecastResult recastResult, ICastDataSerializable castDataSerializable) {
-        if (SummonManager.recastFinishedHelper(serverPlayer, recastInstance, recastResult, castDataSerializable)) {
-            super.onRecastFinished(serverPlayer, recastInstance, recastResult, castDataSerializable);
+    public void onRecastFinished(
+            ServerPlayer serverPlayer,
+            RecastInstance recastInstance,
+            RecastResult recastResult,
+            ICastDataSerializable castDataSerializable) {
+        if (SummonManager.recastFinishedHelper(
+                serverPlayer, recastInstance, recastResult, castDataSerializable)) {
+            super.onRecastFinished(
+                    serverPlayer, recastInstance, recastResult, castDataSerializable);
         }
     }
 
@@ -107,7 +116,12 @@ public class RaiseDeadSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         var recasts = playerMagicData.getPlayerRecasts();
         if (!recasts.hasRecastForSpell(this)) {
             SummonedEntitiesCastData summonedEntitiesCastData = new SummonedEntitiesCastData();
@@ -118,28 +132,78 @@ public class RaiseDeadSpell extends AbstractSpell {
                 boolean isSkeleton = Utils.random.nextDouble() < .3;
                 var equipment = getEquipment(getSpellPower(spellLevel, entity), Utils.random);
 
-                Monster undead = isSkeleton ? new SummonedSkeleton(world, entity, true) : new SummonedZombie(world, entity, true);
-                undead.finalizeSpawn((ServerLevel) world, world.getCurrentDifficultyAt(undead.getOnPos()), MobSpawnType.MOB_SUMMONED, null, null);
+                Monster undead =
+                        isSkeleton
+                                ? new SummonedSkeleton(world, entity, true)
+                                : new SummonedZombie(world, entity, true);
+                undead.finalizeSpawn(
+                        (ServerLevel) world,
+                        world.getCurrentDifficultyAt(undead.getOnPos()),
+                        MobSpawnType.MOB_SUMMONED,
+                        null,
+                        null);
                 equip(undead, equipment);
                 var yrot = 6.281f / count * i + entity.getYRot() * Mth.DEG_TO_RAD;
-                Vec3 spawn = Utils.moveToRelativeGroundLevel(world, entity.getEyePosition().add(new Vec3(radius * Mth.cos(yrot), 0, radius * Mth.sin(yrot))), 10);
-                spawn = world.clip(new ClipContext(entity.getEyePosition(), spawn, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity)).getLocation();
+                Vec3 spawn =
+                        Utils.moveToRelativeGroundLevel(
+                                world,
+                                entity.getEyePosition()
+                                        .add(
+                                                new Vec3(
+                                                        radius * Mth.cos(yrot),
+                                                        0,
+                                                        radius * Mth.sin(yrot))),
+                                10);
+                spawn =
+                        world.clip(
+                                        new ClipContext(
+                                                entity.getEyePosition(),
+                                                spawn,
+                                                ClipContext.Block.COLLIDER,
+                                                ClipContext.Fluid.NONE,
+                                                entity))
+                                .getLocation();
                 if (!world.noCollision(undead.getBoundingBox().move(spawn))) {
-                    spawn = Utils.moveToRelativeGroundLevel(world, spawn.add(entity.getEyePosition().subtract(spawn).normalize().scale(entity.getBbWidth() * 1.1)), 3);
+                    spawn =
+                            Utils.moveToRelativeGroundLevel(
+                                    world,
+                                    spawn.add(
+                                            entity.getEyePosition()
+                                                    .subtract(spawn)
+                                                    .normalize()
+                                                    .scale(entity.getBbWidth() * 1.1)),
+                                    3);
                 }
                 undead.setPos(spawn.x, spawn.y, spawn.z);
                 undead.setYRot(entity.getYRot());
                 undead.setOldPosAndRot();
-//                var creature = org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellSummonEvent<>(entity, undead, this.spellId, spellLevel)).getCreature();
+                //                var creature =
+                // org.marj4n.irons_spellbooks.events.SpellEvents.post(new
+                // SpellSummonEvent<>(entity, undead, this.spellId, spellLevel)).getCreature();
                 world.addFreshEntity(undead);
                 SummonManager.initSummon(entity, undead, summonTime, summonedEntitiesCastData);
             }
 
-            RecastInstance recastInstance = new RecastInstance(this.getSpellId(), spellLevel, getRecastCount(spellLevel, entity), summonTime, castSource, summonedEntitiesCastData);
+            RecastInstance recastInstance =
+                    new RecastInstance(
+                            this.getSpellId(),
+                            spellLevel,
+                            getRecastCount(spellLevel, entity),
+                            summonTime,
+                            castSource,
+                            summonedEntitiesCastData);
             recasts.addRecast(recastInstance, playerMagicData);
-            world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundRegistry.RAISE_DEAD_FINISH.get(), entity.getSoundSource(), 2.0f, .9f + Utils.random.nextFloat() * .2f);
+            world.playSound(
+                    null,
+                    entity.getX(),
+                    entity.getY(),
+                    entity.getZ(),
+                    SoundRegistry.RAISE_DEAD_FINISH.get(),
+                    entity.getSoundSource(),
+                    2.0f,
+                    .9f + Utils.random.nextFloat() * .2f);
         } else {
-//todo: sound?
+            // todo: sound?
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
@@ -158,16 +222,33 @@ public class RaiseDeadSpell extends AbstractSpell {
     }
 
     private ItemStack[] getEquipment(float power, RandomSource random) {
-        Item[] leather = {Items.LEATHER_BOOTS, Items.LEATHER_LEGGINGS, Items.LEATHER_CHESTPLATE, Items.LEATHER_HELMET};
-        Item[] chain = {Items.CHAINMAIL_BOOTS, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_HELMET};
-        Item[] iron = {Items.IRON_BOOTS, Items.IRON_LEGGINGS, Items.IRON_CHESTPLATE, Items.IRON_HELMET};
+        Item[] leather = {
+            Items.LEATHER_BOOTS,
+            Items.LEATHER_LEGGINGS,
+            Items.LEATHER_CHESTPLATE,
+            Items.LEATHER_HELMET
+        };
+        Item[] chain = {
+            Items.CHAINMAIL_BOOTS,
+            Items.CHAINMAIL_LEGGINGS,
+            Items.CHAINMAIL_CHESTPLATE,
+            Items.CHAINMAIL_HELMET
+        };
+        Item[] iron = {
+            Items.IRON_BOOTS, Items.IRON_LEGGINGS, Items.IRON_CHESTPLATE, Items.IRON_HELMET
+        };
 
         int minQuality = 12;
         int maxQuality = getMaxLevel() * spellPowerPerLevel + 15;
 
         ItemStack[] result = new ItemStack[4];
         for (int i = 0; i < 4; i++) {
-            float quality = Mth.clamp((power + (random.nextIntBetweenInclusive(-3, 8)) - minQuality) / (maxQuality - minQuality), 0, .95f);
+            float quality =
+                    Mth.clamp(
+                            (power + (random.nextIntBetweenInclusive(-3, 8)) - minQuality)
+                                    / (maxQuality - minQuality),
+                            0,
+                            .95f);
             if (random.nextDouble() < quality * quality) {
                 if (quality > .85) {
                     result[i] = new ItemStack(iron[i]);

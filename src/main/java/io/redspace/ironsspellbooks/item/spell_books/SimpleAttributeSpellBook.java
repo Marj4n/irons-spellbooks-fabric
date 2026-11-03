@@ -14,25 +14,54 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
  */
 @Deprecated(forRemoval = true)
 public class SimpleAttributeSpellBook extends SpellBook {
-    public SimpleAttributeSpellBook(int spellSlots, SpellRarity rarity, Attribute attribute, double value) {
+    public SimpleAttributeSpellBook(
+            int spellSlots, SpellRarity rarity, Attribute attribute, double value) {
         super(spellSlots);
         withAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute), value);
     }
 
-    public SimpleAttributeSpellBook(int spellSlots, SpellRarity rarity, Attribute attribute, double value, double mana) {
+    public SimpleAttributeSpellBook(
+            int spellSlots, SpellRarity rarity, Attribute attribute, double value, double mana) {
         super(spellSlots);
-        withSpellbookAttributes(new AttributeContainer(() -> attribute, value, AttributeModifier.Operation.MULTIPLY_BASE), new AttributeContainer(AttributeRegistry.MAX_MANA, mana, AttributeModifier.Operation.ADDITION));
+        withSpellbookAttributes(
+                new AttributeContainer(
+                        () -> attribute, value, AttributeModifier.Operation.MULTIPLY_BASE),
+                new AttributeContainer(
+                        AttributeRegistry.MAX_MANA, mana, AttributeModifier.Operation.ADDITION));
     }
 
-    public SimpleAttributeSpellBook(int spellSlots, SpellRarity rarity, Multimap<Attribute, AttributeModifier> defaultModifiers) {
+    public SimpleAttributeSpellBook(
+            int spellSlots,
+            SpellRarity rarity,
+            Multimap<Attribute, AttributeModifier> defaultModifiers) {
         super(spellSlots);
-        AttributeContainer[] ary = defaultModifiers.entries().stream().map(entry -> new AttributeContainer(entry::getKey, entry.getValue().getAmount(), entry.getValue().getOperation())).toArray(AttributeContainer[]::new);
+        AttributeContainer[] ary =
+                defaultModifiers.entries().stream()
+                        .map(
+                                entry ->
+                                        new AttributeContainer(
+                                                entry::getKey,
+                                                entry.getValue().getAmount(),
+                                                entry.getValue().getOperation()))
+                        .toArray(AttributeContainer[]::new);
         withSpellbookAttributes(ary);
     }
 
-    public SimpleAttributeSpellBook(int spellSlots, SpellRarity rarity, Multimap<Attribute, AttributeModifier> defaultModifiers, Properties properties) {
+    public SimpleAttributeSpellBook(
+            int spellSlots,
+            SpellRarity rarity,
+            Multimap<Attribute, AttributeModifier> defaultModifiers,
+            Properties properties) {
         super(spellSlots, properties);
-        AttributeContainer[] ary = defaultModifiers.entries().stream().map(entry -> new AttributeContainer(entry::getKey, entry.getValue().getAmount(), entry.getValue().getOperation())).toArray(AttributeContainer[]::new);
+        AttributeContainer[] ary =
+                defaultModifiers.entries().stream()
+                        .map(
+                                entry ->
+                                        new AttributeContainer(
+                                                entry::getKey,
+                                                entry.getValue().getAmount(),
+                                                entry.getValue().getOperation()))
+                        .toArray(AttributeContainer[]::new);
         withSpellbookAttributes(ary);
     }
 }

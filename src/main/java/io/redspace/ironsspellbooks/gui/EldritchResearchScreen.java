@@ -44,8 +44,12 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class EldritchResearchScreen extends Screen {
-    private static final ResourceLocation WINDOW_LOCATION = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/eldritch_research_screen/window.png");
-    private static final ResourceLocation FRAME_LOCATION = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/eldritch_research_screen/spell_frame.png");
+    private static final ResourceLocation WINDOW_LOCATION =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID, "textures/gui/eldritch_research_screen/window.png");
+    private static final ResourceLocation FRAME_LOCATION =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID, "textures/gui/eldritch_research_screen/spell_frame.png");
     public static final int WINDOW_WIDTH = 252;
     public static final int WINDOW_HEIGHT = 256;
     private static final int WINDOW_INSIDE_X = 9;
@@ -80,7 +84,12 @@ public class EldritchResearchScreen extends Screen {
     static final int TIME_TO_HOLD = 15;
 
     protected void init() {
-        learnableSpells = SpellRegistry.getEnabledSpells().stream().filter(spell -> spell.getSchoolType().equals(SchoolRegistry.ELDRITCH.get())).toList();
+        learnableSpells =
+                SpellRegistry.getEnabledSpells().stream()
+                        .filter(
+                                spell ->
+                                        spell.getSchoolType().equals(SchoolRegistry.ELDRITCH.get()))
+                        .toList();
         if (this.minecraft != null) {
             playerData = ClientMagicData.getSyncedSpellData(minecraft.player);
         }
@@ -122,7 +131,7 @@ public class EldritchResearchScreen extends Screen {
                 }
             }
         }
-        //TODO: wait this makes no sense
+        // TODO: wait this makes no sense
         maxViewportOffset = new Vec2((int) maxDistX, (int) maxDistY);
     }
 
@@ -139,16 +148,33 @@ public class EldritchResearchScreen extends Screen {
 
         if (player.tickCount != lastPlayerTick) {
             lastPlayerTick = player.tickCount;
-            if (isMouseHoldingSpell && heldSpellIndex >= 0 && heldSpellIndex < nodes.size() && !nodes.get(heldSpellIndex).spell.isLearned(player)) {
+            if (isMouseHoldingSpell
+                    && heldSpellIndex >= 0
+                    && heldSpellIndex < nodes.size()
+                    && !nodes.get(heldSpellIndex).spell.isLearned(player)) {
                 if (heldSpellTime > TIME_TO_HOLD) {
                     heldSpellTime = -1;
-                    PacketDistributor.sendToServer(new LearnSpellPacket(this.activeHand, nodes.get(heldSpellIndex).spell.getSpellId()));
-                    player.playNotifySound(SoundRegistry.LEARN_ELDRITCH_SPELL.get(), SoundSource.MASTER, 1f, Utils.random.nextIntBetweenInclusive(9, 11) * .1f);
+                    PacketDistributor.sendToServer(
+                            new LearnSpellPacket(
+                                    this.activeHand, nodes.get(heldSpellIndex).spell.getSpellId()));
+                    player.playNotifySound(
+                            SoundRegistry.LEARN_ELDRITCH_SPELL.get(),
+                            SoundSource.MASTER,
+                            1f,
+                            Utils.random.nextIntBetweenInclusive(9, 11) * .1f);
                 }
                 heldSpellTime++;
                 if (lastPlayerTick % 2 == 0) {
-                    player.playNotifySound(SoundEvents.SOUL_ESCAPE, SoundSource.MASTER, 1f, Mth.lerp(heldSpellTime / (float) TIME_TO_HOLD, .5f, 1.5f));
-                    player.playNotifySound(SoundRegistry.UI_TICK.get(), SoundSource.MASTER, 1f, Mth.lerp(heldSpellTime / (float) TIME_TO_HOLD, .5f, 1.5f));
+                    player.playNotifySound(
+                            SoundEvents.SOUL_ESCAPE,
+                            SoundSource.MASTER,
+                            1f,
+                            Mth.lerp(heldSpellTime / (float) TIME_TO_HOLD, .5f, 1.5f));
+                    player.playNotifySound(
+                            SoundRegistry.UI_TICK.get(),
+                            SoundSource.MASTER,
+                            1f,
+                            Mth.lerp(heldSpellTime / (float) TIME_TO_HOLD, .5f, 1.5f));
                 }
             } else if (heldSpellTime >= 0) {
                 heldSpellTime = Math.max(heldSpellTime - 3, -1);
@@ -169,52 +195,90 @@ public class EldritchResearchScreen extends Screen {
         if (tooltip != null) {
             guiGraphics.renderTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
         }
-//        String mousePos = String.format("(%s\t%s)", mouseX, mouseY);
-//        String boundX = String.format("%s + %s - %s = %s", mouseX, (int) viewportOffset.x, leftPos, mouseX + (int) viewportOffset.x - leftPos);
-//        String boundY = String.format("%s + %s - %s = %s", mouseY, (int) viewportOffset.y, topPos, mouseY + (int) viewportOffset.y - topPos);
-//        String pX = String.format("%s", (mouseX + (int) viewportOffset.x - leftPos) / (float)WINDOW_WIDTH);
-//        String pY = String.format("%s", (mouseY + (int) viewportOffset.y - topPos) / (float)WINDOW_HEIGHT);
-//        String sx = String.format("x:%s", ( Mth.clamp(Mth.clamp(mouseX + viewportOffset.x - leftPos, 0, WINDOW_WIDTH)/20f,0,1)) / (float)WINDOW_WIDTH);
-//        guiGraphics.drawString(font, mousePos, 0, 0, 0xFFFFFF);
-//        guiGraphics.drawString(font, boundX, 0, 10, 0xFFFFFF);
-//        guiGraphics.drawString(font, boundY, 0, 20, 0xFFFFFF);
-//        guiGraphics.drawString(font, pX, 0, 30, 0xFFFFFF);
-//        guiGraphics.drawString(font, pY, 0, 40, 0xFFFFFF);
-//        guiGraphics.drawString(font, sx, 0, 50, 0xFFFFFF);
+        //        String mousePos = String.format("(%s\t%s)", mouseX, mouseY);
+        //        String boundX = String.format("%s + %s - %s = %s", mouseX, (int) viewportOffset.x,
+        // leftPos, mouseX + (int) viewportOffset.x - leftPos);
+        //        String boundY = String.format("%s + %s - %s = %s", mouseY, (int) viewportOffset.y,
+        // topPos, mouseY + (int) viewportOffset.y - topPos);
+        //        String pX = String.format("%s", (mouseX + (int) viewportOffset.x - leftPos) /
+        // (float)WINDOW_WIDTH);
+        //        String pY = String.format("%s", (mouseY + (int) viewportOffset.y - topPos) /
+        // (float)WINDOW_HEIGHT);
+        //        String sx = String.format("x:%s", ( Mth.clamp(Mth.clamp(mouseX + viewportOffset.x
+        // - leftPos, 0, WINDOW_WIDTH)/20f,0,1)) / (float)WINDOW_WIDTH);
+        //        guiGraphics.drawString(font, mousePos, 0, 0, 0xFFFFFF);
+        //        guiGraphics.drawString(font, boundX, 0, 10, 0xFFFFFF);
+        //        guiGraphics.drawString(font, boundY, 0, 20, 0xFFFFFF);
+        //        guiGraphics.drawString(font, pX, 0, 30, 0xFFFFFF);
+        //        guiGraphics.drawString(font, pY, 0, 40, 0xFFFFFF);
+        //        guiGraphics.drawString(font, sx, 0, 50, 0xFFFFFF);
 
     }
 
     private void renderProgressOverlay(GuiGraphics gui, int x, int y, float progress) {
         x += (int) viewportOffset.x;
         y += (int) viewportOffset.y;
-        gui.fill(x, y, x + Mth.ceil(16.0F * progress), y + 16, FastColor.ARGB32.color(127, 244, 65, 255));
+        gui.fill(
+                x,
+                y,
+                x + Mth.ceil(16.0F * progress),
+                y + 16,
+                FastColor.ARGB32.color(127, 244, 65, 255));
     }
 
-    private void drawNode(GuiGraphics guiGraphics, SpellNode node, LocalPlayer player, boolean drawProgress) {
-        drawWithClipping(node.spell.getSpellIconResource(),
+    private void drawNode(
+            GuiGraphics guiGraphics, SpellNode node, LocalPlayer player, boolean drawProgress) {
+        drawWithClipping(
+                node.spell.getSpellIconResource(),
                 guiGraphics,
                 node.x,
                 node.y,
-                0, 0,
-                16, 16,
-                16, 16,
-                leftPos + WINDOW_INSIDE_X, topPos + WINDOW_INSIDE_Y,
-                WINDOW_INSIDE_WIDTH, WINDOW_INSIDE_HEIGHT);
+                0,
+                0,
+                16,
+                16,
+                16,
+                16,
+                leftPos + WINDOW_INSIDE_X,
+                topPos + WINDOW_INSIDE_Y,
+                WINDOW_INSIDE_WIDTH,
+                WINDOW_INSIDE_HEIGHT);
         if (drawProgress) {
-            renderProgressOverlay(guiGraphics, node.x, node.y, heldSpellTime / (float) TIME_TO_HOLD);
+            renderProgressOverlay(
+                    guiGraphics, node.x, node.y, heldSpellTime / (float) TIME_TO_HOLD);
         }
-        drawWithClipping(FRAME_LOCATION,
+        drawWithClipping(
+                FRAME_LOCATION,
                 guiGraphics,
                 node.x - 8,
                 node.y - 8,
-                node.spell.isLearned(player) ? 32 : 0, 0,
-                32, 32,
-                64, 32,
-                leftPos + WINDOW_INSIDE_X, topPos + WINDOW_INSIDE_Y,
-                WINDOW_INSIDE_WIDTH, WINDOW_INSIDE_HEIGHT);
+                node.spell.isLearned(player) ? 32 : 0,
+                0,
+                32,
+                32,
+                64,
+                32,
+                leftPos + WINDOW_INSIDE_X,
+                topPos + WINDOW_INSIDE_Y,
+                WINDOW_INSIDE_WIDTH,
+                WINDOW_INSIDE_HEIGHT);
     }
 
-    private void drawWithClipping(ResourceLocation texture, GuiGraphics guiGraphics, int x, int y, int uvx, int uvy, int width, int height, int imageWidth, int imageHeight, int bbx, int bby, int bbw, int bbh) {
+    private void drawWithClipping(
+            ResourceLocation texture,
+            GuiGraphics guiGraphics,
+            int x,
+            int y,
+            int uvx,
+            int uvy,
+            int width,
+            int height,
+            int imageWidth,
+            int imageHeight,
+            int bbx,
+            int bby,
+            int bbw,
+            int bbh) {
         x += (int) viewportOffset.x;
         if (x < bbx) {
             int xDiff = bbx - x;
@@ -236,19 +300,32 @@ public class EldritchResearchScreen extends Screen {
             height -= yDiff;
         }
         if (width > 0 && height > 0) {
-            guiGraphics.blit(texture, x, y, width, height, uvx, uvy, width, height, imageWidth, imageHeight);
+            guiGraphics.blit(
+                    texture, x, y, width, height, uvx, uvy, width, height, imageWidth, imageHeight);
         }
     }
 
-    private static final Component ALREADY_LEARNED = Component.translatable("ui.irons_spellbooks.research_already_learned").withStyle(ChatFormatting.DARK_AQUA);
-    private static final Component UNLEARNED = Component.translatable("ui.irons_spellbooks.research_warning").withStyle(ChatFormatting.RED);
+    private static final Component ALREADY_LEARNED =
+            Component.translatable("ui.irons_spellbooks.research_already_learned")
+                    .withStyle(ChatFormatting.DARK_AQUA);
+    private static final Component UNLEARNED =
+            Component.translatable("ui.irons_spellbooks.research_warning")
+                    .withStyle(ChatFormatting.RED);
 
     public static List<FormattedCharSequence> buildTooltip(AbstractSpell spell, Font font) {
         boolean learned = spell.isLearned(Minecraft.getInstance().player);
-        var name = spell.getDisplayName(null).withStyle(learned ? ChatFormatting.DARK_AQUA : ChatFormatting.RED);
-        var description = font.split(Component.translatable(String.format("%s.guide", spell.getComponentId())).withStyle(ChatFormatting.GRAY), 180);
+        var name =
+                spell.getDisplayName(null)
+                        .withStyle(learned ? ChatFormatting.DARK_AQUA : ChatFormatting.RED);
+        var description =
+                font.split(
+                        Component.translatable(String.format("%s.guide", spell.getComponentId()))
+                                .withStyle(ChatFormatting.GRAY),
+                        180);
         var hoverText = new ArrayList<FormattedCharSequence>();
-        hoverText.add(FormattedCharSequence.forward(name.getString(), name.getStyle().withUnderlined(true)));
+        hoverText.add(
+                FormattedCharSequence.forward(
+                        name.getString(), name.getStyle().withUnderlined(true)));
         hoverText.addAll(description);
         hoverText.add(FormattedCharSequence.EMPTY);
         hoverText.add((learned ? ALREADY_LEARNED : UNLEARNED).getVisualOrderText());
@@ -282,20 +359,41 @@ public class EldritchResearchScreen extends Screen {
             final float y1m2 = a.y - orth.y + 8 + (int) viewportOffset.y;
             final float y2m2 = b.y - orth.y + 8 + (int) viewportOffset.y;
 
-            var color1 = lerpColor(color, glowcolor, glowIntensity * (nodes.get(i).spell.isLearned(Minecraft.getInstance().player) ? 1 : 0));
-            var color2 = lerpColor(color, glowcolor, glowIntensity * (nodes.get(i + 1).spell.isLearned(Minecraft.getInstance().player) ? 1 : 0));
+            var color1 =
+                    lerpColor(
+                            color,
+                            glowcolor,
+                            glowIntensity
+                                    * (nodes.get(i).spell.isLearned(Minecraft.getInstance().player)
+                                            ? 1
+                                            : 0));
+            var color2 =
+                    lerpColor(
+                            color,
+                            glowcolor,
+                            glowIntensity
+                                    * (nodes.get(i + 1)
+                                                    .spell
+                                                    .isLearned(Minecraft.getInstance().player)
+                                            ? 1
+                                            : 0));
 
             RenderHelper.quadBuilder()
-                    .vertex(x1m1, y1m1).color(fadeOutTowardEdges(guiGraphics, x1m1, y1m1, color1))
-                    .vertex(x2m1, y2m1).color(fadeOutTowardEdges(guiGraphics, x2m1, y2m1, color2))
-                    .vertex(x2m2, y2m2).color(fadeOutTowardEdges(guiGraphics, x2m2, y2m2, color2))
-                    .vertex(x1m2, y1m2).color(fadeOutTowardEdges(guiGraphics, x1m2, y1m2, color1))
+                    .vertex(x1m1, y1m1)
+                    .color(fadeOutTowardEdges(guiGraphics, x1m1, y1m1, color1))
+                    .vertex(x2m1, y2m1)
+                    .color(fadeOutTowardEdges(guiGraphics, x2m1, y2m1, color2))
+                    .vertex(x2m2, y2m2)
+                    .color(fadeOutTowardEdges(guiGraphics, x2m2, y2m2, color2))
+                    .vertex(x1m2, y1m2)
+                    .color(fadeOutTowardEdges(guiGraphics, x1m2, y1m2, color1))
                     .build(buffer);
         }
         tesselator.end();
     }
 
-    private Vector4f fadeOutTowardEdges(GuiGraphics guiGraphics, double x, double y, Vector4f color) {
+    private Vector4f fadeOutTowardEdges(
+            GuiGraphics guiGraphics, double x, double y, Vector4f color) {
         float margin = 40;
         int maxWidth = WINDOW_WIDTH;
         int maxHeight = WINDOW_HEIGHT;
@@ -307,7 +405,6 @@ public class EldritchResearchScreen extends Screen {
         float py = Mth.clamp(Math.min(boundYMin, boundYMax) / margin, 0, 1);
         float alpha = Mth.sqrt(px * py);
         return new Vector4f(color.x, color.y, color.z, color.w * alpha);
-
     }
 
     private int colorFromRGBA(Vector4f rgba) {
@@ -320,14 +417,20 @@ public class EldritchResearchScreen extends Screen {
     }
 
     private void drawBackdrop(GuiGraphics guiGraphics, int left, int top) {
-        float f = Minecraft.getInstance().player != null ? Minecraft.getInstance().player.tickCount * .02f : 0f;
+        float f =
+                Minecraft.getInstance().player != null
+                        ? Minecraft.getInstance().player.tickCount * .02f
+                        : 0f;
         float color = (Mth.sin(f) + 1) * .25f + .15f;
-        var definitelynothowabuilderworks = RenderHelper.quadBuilder()
-                .vertex(left, top + EldritchResearchScreen.WINDOW_INSIDE_HEIGHT)
-                .vertex(left + EldritchResearchScreen.WINDOW_INSIDE_WIDTH, top + EldritchResearchScreen.WINDOW_INSIDE_HEIGHT)
-                .vertex(left + EldritchResearchScreen.WINDOW_INSIDE_WIDTH, top)
-                .vertex(left, top)
-                .color(0, 0, 0, color);
+        var definitelynothowabuilderworks =
+                RenderHelper.quadBuilder()
+                        .vertex(left, top + EldritchResearchScreen.WINDOW_INSIDE_HEIGHT)
+                        .vertex(
+                                left + EldritchResearchScreen.WINDOW_INSIDE_WIDTH,
+                                top + EldritchResearchScreen.WINDOW_INSIDE_HEIGHT)
+                        .vertex(left + EldritchResearchScreen.WINDOW_INSIDE_WIDTH, top)
+                        .vertex(left, top)
+                        .color(0, 0, 0, color);
         definitelynothowabuilderworks.build(guiGraphics, RenderType.endPortal());
         definitelynothowabuilderworks.build(guiGraphics, RenderType.guiOverlay());
     }
@@ -345,8 +448,12 @@ public class EldritchResearchScreen extends Screen {
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         int mouseX = (int) pMouseX;
         int mouseY = (int) pMouseY;
-        //Only allow initiating the learn process if they are holding a manuscript
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getItemInHand(activeHand).is(ItemRegistry.ELDRITCH_PAGE.get())) {
+        // Only allow initiating the learn process if they are holding a manuscript
+        if (Minecraft.getInstance().player != null
+                && Minecraft.getInstance()
+                        .player
+                        .getItemInHand(activeHand)
+                        .is(ItemRegistry.ELDRITCH_PAGE.get())) {
             for (int i = 0; i < nodes.size(); i++) {
                 if (isHoveringNode(nodes.get(i), mouseX, mouseY)) {
                     heldSpellIndex = i;
@@ -356,7 +463,13 @@ public class EldritchResearchScreen extends Screen {
             }
         }
         if (!isMouseHoldingSpell) {
-            if (isHovering(leftPos + WINDOW_INSIDE_X, topPos + WINDOW_INSIDE_Y, WINDOW_INSIDE_WIDTH, WINDOW_INSIDE_HEIGHT, mouseX, mouseY)) {
+            if (isHovering(
+                    leftPos + WINDOW_INSIDE_X,
+                    topPos + WINDOW_INSIDE_Y,
+                    WINDOW_INSIDE_WIDTH,
+                    WINDOW_INSIDE_HEIGHT,
+                    mouseX,
+                    mouseY)) {
                 isMouseDragging = true;
             }
         }
@@ -365,8 +478,14 @@ public class EldritchResearchScreen extends Screen {
     }
 
     public boolean isHoveringNode(SpellNode node, int mouseX, int mouseY) {
-        //TODO: make outside screen unclickable
-        return isHovering(node.x - 2 + (int) viewportOffset.x, node.y - 2 + (int) viewportOffset.y, 16 + 4, 16 + 4, mouseX, mouseY);
+        // TODO: make outside screen unclickable
+        return isHovering(
+                node.x - 2 + (int) viewportOffset.x,
+                node.y - 2 + (int) viewportOffset.y,
+                16 + 4,
+                16 + 4,
+                mouseX,
+                mouseY);
     }
 
     @Override
@@ -377,19 +496,24 @@ public class EldritchResearchScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
+    public boolean mouseDragged(
+            double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
         if (this.isMouseDragging && false) {
-            viewportOffset = new Vec2((float) (viewportOffset.x + pDragX), (float) (viewportOffset.y + pDragY));
+            viewportOffset =
+                    new Vec2(
+                            (float) (viewportOffset.x + pDragX),
+                            (float) (viewportOffset.y + pDragY));
             return true;
         } else {
             return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
         }
     }
 
-
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
         InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-        if (net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.getBoundKeyOf(this.minecraft.options.keyInventory).equals(mouseKey)) {
+        if (net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.getBoundKeyOf(
+                        this.minecraft.options.keyInventory)
+                .equals(mouseKey)) {
             this.onClose();
             return true;
         }
@@ -405,23 +529,21 @@ public class EldritchResearchScreen extends Screen {
         return mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
     }
 
-    record SpellNode(AbstractSpell spell, int x, int y) {
-    }
+    record SpellNode(AbstractSpell spell, int x, int y) {}
 
-    record NodeConnection(SpellNode node1, SpellNode node2) {
-    }
+    record NodeConnection(SpellNode node1, SpellNode node2) {}
 
-//    private static void setTexture(ResourceLocation texture) {
-//        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//        RenderSystem.setShaderTexture(0, texture);
-//    }
-//
-//    private static void setTranslucentTexture(ResourceLocation texture) {
-//        RenderSystem.enableBlend();
-//        RenderSystem.defaultBlendFunc();
-//        RenderSystem.setShader(GameRenderer::getRendertypeTranslucentShader);
-//        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-//        RenderSystem.setShaderTexture(0, texture);
-//    }
+    //    private static void setTexture(ResourceLocation texture) {
+    //        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    //        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    //        RenderSystem.setShaderTexture(0, texture);
+    //    }
+    //
+    //    private static void setTranslucentTexture(ResourceLocation texture) {
+    //        RenderSystem.enableBlend();
+    //        RenderSystem.defaultBlendFunc();
+    //        RenderSystem.setShader(GameRenderer::getRendertypeTranslucentShader);
+    //        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    //        RenderSystem.setShaderTexture(0, texture);
+    //    }
 }

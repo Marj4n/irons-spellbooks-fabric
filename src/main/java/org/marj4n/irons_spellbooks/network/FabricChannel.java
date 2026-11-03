@@ -20,7 +20,10 @@ import java.util.function.Supplier;
 
 /** Native Fabric transport for the existing spell packet codecs. */
 public final class FabricChannel {
-    public enum Direction { PLAY_TO_CLIENT, PLAY_TO_SERVER }
+    public enum Direction {
+        PLAY_TO_CLIENT,
+        PLAY_TO_SERVER
+    }
 
     public interface ClientTransport {
         void send(ResourceLocation channel, FriendlyByteBuf payload);
@@ -49,22 +52,32 @@ public final class FabricChannel {
     public void registerServerReceiver() {
         if (registered) throw new IllegalStateException("Channel registered twice: " + channel);
         registered = true;
-        ServerPlayNetworking.registerGlobalReceiver(channel, (server, player, listener, buffer, response) -> {
-            try {
-                handle(buffer, Direction.PLAY_TO_SERVER, new FabricPacketContext(server, player));
-            } catch (RuntimeException malformed) {
-                // Reject invalid IDs/directions/codecs before invoking gameplay handlers.
-                server.execute(() -> listener.disconnect(Component.literal("Invalid Iron's spell packet")));
-            }
-        });
+        ServerPlayNetworking.registerGlobalReceiver(
+                channel,
+                (server, player, listener, buffer, response) -> {
+                    try {
+                        handle(
+                                buffer,
+                                Direction.PLAY_TO_SERVER,
+                                new FabricPacketContext(server, player));
+                    } catch (RuntimeException malformed) {
+                        // Reject invalid IDs/directions/codecs before invoking gameplay handlers.
+                        server.execute(
+                                () ->
+                                        listener.disconnect(
+                                                Component.literal("Invalid Iron's spell packet")));
+                    }
+                });
     }
 
     public void installClientTransport(ClientTransport transport) {
-        if (clientTransport != null) throw new IllegalStateException("Client transport already installed");
+        if (clientTransport != null)
+            throw new IllegalStateException("Client transport already installed");
         clientTransport = Objects.requireNonNull(transport);
     }
 
-    public void handle(FriendlyByteBuf buffer, Direction receivedDirection, FabricPacketContext context) {
+    public void handle(
+            FriendlyByteBuf buffer, Direction receivedDirection, FabricPacketContext context) {
         int id = buffer.readVarInt();
         Binding<?> binding = byId.get(id);
         if (binding == null || binding.direction != receivedDirection) {
@@ -76,7 +89,8 @@ public final class FabricChannel {
     private FriendlyByteBuf encode(Object message, Direction direction) {
         Binding<?> binding = byClass.get(message.getClass());
         if (binding == null || binding.direction != direction) {
-            throw new IllegalArgumentException("Unregistered spell packet/direction: " + message.getClass());
+            throw new IllegalArgumentException(
+                    "Unregistered spell packet/direction: " + message.getClass());
         }
         FriendlyByteBuf buffer = PacketByteBufs.create();
         try {
@@ -90,7 +104,8 @@ public final class FabricChannel {
     }
 
     public void sendToServer(Object message) {
-        if (clientTransport == null) throw new IllegalStateException("Client transport is unavailable");
+        if (clientTransport == null)
+            throw new IllegalStateException("Client transport is unavailable");
         clientTransport.send(channel, encode(message, Direction.PLAY_TO_SERVER));
     }
 
@@ -131,7 +146,8 @@ public final class FabricChannel {
             return this;
         }
 
-        public Binding<T> consumerMainThread(BiFunction<T, Supplier<FabricPacketContext>, Boolean> consumer) {
+        public Binding<T> consumerMainThread(
+                BiFunction<T, Supplier<FabricPacketContext>, Boolean> consumer) {
             this.consumer = Objects.requireNonNull(consumer);
             return this;
         }

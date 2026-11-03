@@ -28,19 +28,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class FireBreathSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "fire_breath");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "fire_breath");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(12)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(12)
+                    .build();
 
     public FireBreathSpell() {
         this.manaCostPerLevel = 1;
@@ -71,8 +76,14 @@ public class FireBreathSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        if (playerMagicData.isCasting() && playerMagicData.getCastingSpellId().equals(this.getSpellId())
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        if (playerMagicData.isCasting()
+                && playerMagicData.getCastingSpellId().equals(this.getSpellId())
                 && playerMagicData.getAdditionalCastData() instanceof EntityCastData entityCastData
                 && entityCastData.getCastingEntity() instanceof AbstractConeProjectile cone) {
             cone.setDealDamageActive();

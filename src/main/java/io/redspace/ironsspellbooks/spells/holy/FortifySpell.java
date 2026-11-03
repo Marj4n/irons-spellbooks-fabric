@@ -35,19 +35,22 @@ public class FortifySpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.absorption", Utils.stringTruncation(getSpellPower(spellLevel, caster), 0)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.absorption",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 0)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1)));
     }
 
     public static final float radius = 8;
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(180)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(180)
+                    .build();
 
     public FortifySpell() {
         this.manaCostPerLevel = 10;
@@ -78,23 +81,47 @@ public class FortifySpell extends AbstractSpell {
     }
 
     @Override
-    public void onServerPreCast(Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
+    public void onServerPreCast(
+            Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
         super.onServerPreCast(level, spellLevel, entity, playerMagicData);
-        if (playerMagicData == null)
-            return;
-        TargetedAreaEntity targetedAreaEntity = TargetedAreaEntity.createTargetAreaEntity(level, entity.position(), radius, 16239960, entity);
-        playerMagicData.setAdditionalCastData(new TargetAreaCastData(entity.position(), targetedAreaEntity));
+        if (playerMagicData == null) return;
+        TargetedAreaEntity targetedAreaEntity =
+                TargetedAreaEntity.createTargetAreaEntity(
+                        level, entity.position(), radius, 16239960, entity);
+        playerMagicData.setAdditionalCastData(
+                new TargetAreaCastData(entity.position(), targetedAreaEntity));
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        level.getEntitiesOfClass(LivingEntity.class, new AABB(entity.position().subtract(radius, radius, radius), entity.position().add(radius, radius, radius))).forEach((target) -> {
-            if (Utils.shouldHealEntity(entity, target) && entity.distanceTo(target) <= radius) {
-                target.addEffect(new MobEffectInstance(MobEffectRegistry.FORTIFY.get(), 20 * 120, (int) getSpellPower(spellLevel, entity) - 1, false, false, true));
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new AbsorptionParticlesPacket(target.position()));
-            }
-        });
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new FortifyAreaParticlesPacket(entity.position()));
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        level.getEntitiesOfClass(
+                        LivingEntity.class,
+                        new AABB(
+                                entity.position().subtract(radius, radius, radius),
+                                entity.position().add(radius, radius, radius)))
+                .forEach(
+                        (target) -> {
+                            if (Utils.shouldHealEntity(entity, target)
+                                    && entity.distanceTo(target) <= radius) {
+                                target.addEffect(
+                                        new MobEffectInstance(
+                                                MobEffectRegistry.FORTIFY.get(),
+                                                20 * 120,
+                                                (int) getSpellPower(spellLevel, entity) - 1,
+                                                false,
+                                                false,
+                                                true));
+                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                                        entity, new AbsorptionParticlesPacket(target.position()));
+                            }
+                        });
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                entity, new FortifyAreaParticlesPacket(entity.position()));
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 }

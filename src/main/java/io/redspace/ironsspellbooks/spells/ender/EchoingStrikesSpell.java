@@ -35,22 +35,30 @@ import java.util.Optional;
 
 public class EchoingStrikesSpell extends AbstractSpell {
     public static final float radius = 2;
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "echoing_strikes");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "echoing_strikes");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.percent_damage", Utils.stringTruncation(EchoingStrikesEffect.getDamageModifier(getAmplifierForLevel(spellLevel, caster), caster) * 100, 0)),
-                Component.translatable("ui.irons_spellbooks.echoing_hits", getHitCount(spellLevel, caster))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.percent_damage",
+                        Utils.stringTruncation(
+                                EchoingStrikesEffect.getDamageModifier(
+                                                getAmplifierForLevel(spellLevel, caster), caster)
+                                        * 100,
+                                0)),
+                Component.translatable(
+                        "ui.irons_spellbooks.echoing_hits", getHitCount(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(60)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(60)
+                    .build();
 
     public EchoingStrikesSpell() {
         this.manaCostPerLevel = 10;
@@ -81,15 +89,61 @@ public class EchoingStrikesSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.ECHOING_STRIKES.get(), 2 * 20 * 60, getAmplifierForLevel(spellLevel, entity), false, false, true));
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.ECHOING_STRIKES.get(),
+                        2 * 20 * 60,
+                        getAmplifierForLevel(spellLevel, entity),
+                        false,
+                        false,
+                        true));
         EchoingStrikesData.get(entity).setHitCount(getHitCount(spellLevel, entity));
 
         Vec3 vec3 = entity.position().add(0, 0.5, 0);
-//        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(1f, .333f, 1f, 2.5f), vec3.x, vec3.y, vec3.z, 1, 0, 0, 0, 0, false);
-        MagicManager.spawnParticles(level, new ShockwaveParticleOptions(new Vector3f(1f, .333f, 1f), 10 * -1.5f * .05f, true), vec3.x, vec3.y, vec3.z, 1, 0, 0, 0, 0, true);
-        MagicManager.spawnParticles(level, new ShockwaveParticleOptions(new Vector3f(1f, .333f, 1f), 20 * -1.5f * .05f, true), vec3.x, vec3.y, vec3.z, 1, 0, 0, 0, 0, true);
-        MagicManager.spawnParticles(level, new ShockwaveParticleOptions(new Vector3f(1f, .333f, 1f), 30 * -1.5f * .05f, true), vec3.x, vec3.y, vec3.z, 1, 0, 0, 0, 0, true);
+        //        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(1f, .333f, 1f,
+        // 2.5f), vec3.x, vec3.y, vec3.z, 1, 0, 0, 0, 0, false);
+        MagicManager.spawnParticles(
+                level,
+                new ShockwaveParticleOptions(new Vector3f(1f, .333f, 1f), 10 * -1.5f * .05f, true),
+                vec3.x,
+                vec3.y,
+                vec3.z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        MagicManager.spawnParticles(
+                level,
+                new ShockwaveParticleOptions(new Vector3f(1f, .333f, 1f), 20 * -1.5f * .05f, true),
+                vec3.x,
+                vec3.y,
+                vec3.z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        MagicManager.spawnParticles(
+                level,
+                new ShockwaveParticleOptions(new Vector3f(1f, .333f, 1f), 30 * -1.5f * .05f, true),
+                vec3.x,
+                vec3.y,
+                vec3.z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
@@ -104,7 +158,11 @@ public class EchoingStrikesSpell extends AbstractSpell {
     }
 
     private int getAmplifierForLevel(int spellLevel, LivingEntity caster) {
-        return (int) (.75 / EchoingStrikesEffect.PERCENT_PER_AMPLIFIER); // 75% base (power scaling is handled by effect)
+        return (int)
+                (.75
+                        / EchoingStrikesEffect
+                                .PERCENT_PER_AMPLIFIER); // 75% base (power scaling is handled by
+                                                         // effect)
     }
 
     @Override

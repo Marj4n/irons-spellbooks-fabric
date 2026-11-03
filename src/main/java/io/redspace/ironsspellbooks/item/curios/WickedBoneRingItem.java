@@ -11,13 +11,24 @@ public class WickedBoneRingItem extends SimpleDescriptiveCurio {
         super(properties, Curios.RING_SLOT);
     }
 
-    public static void handleAbility(net.minecraft.world.entity.Entity entity, net.minecraft.world.level.Level level, boolean loadedFromDisk) {
+    public static void handleAbility(
+            net.minecraft.world.entity.Entity entity,
+            net.minecraft.world.level.Level level,
+            boolean loadedFromDisk) {
         if (!loadedFromDisk && entity instanceof AbstractMagicProjectile magicProjectile) {
             var owner = magicProjectile.getOwner();
             if (owner instanceof LivingEntity livingEntity) {
-                int ringCount = EquipmentApi.getCuriosInventory(livingEntity).map(inventory -> inventory.findCurios(ItemRegistry.WICKED_BONE_RING.get()).size()).orElse(0);
+                int ringCount =
+                        EquipmentApi.getCuriosInventory(livingEntity)
+                                .map(
+                                        inventory ->
+                                                inventory
+                                                        .findCurios(
+                                                                ItemRegistry.WICKED_BONE_RING.get())
+                                                        .size())
+                                .orElse(0);
                 int r = magicProjectile.getRicochetLevel();
-                //fixme: manual circumvention of infinite terminator as -1 is unsustainable
+                // fixme: manual circumvention of infinite terminator as -1 is unsustainable
                 if (ringCount > 0 && r >= 0) {
                     magicProjectile.setRicochetLevel(r + ringCount);
                 }

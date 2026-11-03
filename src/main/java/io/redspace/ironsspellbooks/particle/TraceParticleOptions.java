@@ -24,41 +24,57 @@ public class TraceParticleOptions implements ParticleOptions {
         this(new Vector3f(x, y, z), new Vector3f(r, g, b));
     }
 
-//    public static StreamCodec<? super ByteBuf, TraceParticleOptions> STREAM_CODEC = StreamCodec.of(
-//            (buf, option) -> {
-//                buf.writeFloat(option.destination.x);
-//                buf.writeFloat(option.destination.y);
-//                buf.writeFloat(option.destination.z);
-//                buf.writeFloat(option.color.x);
-//                buf.writeFloat(option.color.y);
-//                buf.writeFloat(option.color.z);
-//            },
-//            (buf) -> {
-//                return new TraceParticleOptions(buf.readFloat(), buf.readFloat(), buf.readFloat(),buf.readFloat(), buf.readFloat(), buf.readFloat());
-//            }
-//    );
+    //    public static StreamCodec<? super ByteBuf, TraceParticleOptions> STREAM_CODEC =
+    // StreamCodec.of(
+    //            (buf, option) -> {
+    //                buf.writeFloat(option.destination.x);
+    //                buf.writeFloat(option.destination.y);
+    //                buf.writeFloat(option.destination.z);
+    //                buf.writeFloat(option.color.x);
+    //                buf.writeFloat(option.color.y);
+    //                buf.writeFloat(option.color.z);
+    //            },
+    //            (buf) -> {
+    //                return new TraceParticleOptions(buf.readFloat(), buf.readFloat(),
+    // buf.readFloat(),buf.readFloat(), buf.readFloat(), buf.readFloat());
+    //            }
+    //    );
 
-    public static MapCodec<TraceParticleOptions> MAP_CODEC = RecordCodecBuilder.mapCodec(object ->
-            object.group(
-                    Codec.FLOAT.fieldOf("x").forGetter(p -> p.destination.x),
-                    Codec.FLOAT.fieldOf("y").forGetter(p -> p.destination.y),
-                    Codec.FLOAT.fieldOf("z").forGetter(p -> p.destination.z),
-                    Codec.FLOAT.fieldOf("r").forGetter(p -> p.color.x),
-                    Codec.FLOAT.fieldOf("g").forGetter(p -> p.color.y),
-                    Codec.FLOAT.fieldOf("b").forGetter(p -> p.color.z)
-            ).apply(object, TraceParticleOptions::new
-            ));
+    public static MapCodec<TraceParticleOptions> MAP_CODEC =
+            RecordCodecBuilder.mapCodec(
+                    object ->
+                            object.group(
+                                            Codec.FLOAT
+                                                    .fieldOf("x")
+                                                    .forGetter(p -> p.destination.x),
+                                            Codec.FLOAT
+                                                    .fieldOf("y")
+                                                    .forGetter(p -> p.destination.y),
+                                            Codec.FLOAT
+                                                    .fieldOf("z")
+                                                    .forGetter(p -> p.destination.z),
+                                            Codec.FLOAT.fieldOf("r").forGetter(p -> p.color.x),
+                                            Codec.FLOAT.fieldOf("g").forGetter(p -> p.color.y),
+                                            Codec.FLOAT.fieldOf("b").forGetter(p -> p.color.z))
+                                    .apply(object, TraceParticleOptions::new));
 
-    public static Codec<TraceParticleOptions> CODEC = RecordCodecBuilder.create(object ->
-            object.group(
-                    Codec.FLOAT.fieldOf("x").forGetter(p -> p.destination.x),
-                    Codec.FLOAT.fieldOf("y").forGetter(p -> p.destination.y),
-                    Codec.FLOAT.fieldOf("z").forGetter(p -> p.destination.z),
-                    Codec.FLOAT.fieldOf("r").forGetter(p -> p.color.x),
-                    Codec.FLOAT.fieldOf("g").forGetter(p -> p.color.y),
-                    Codec.FLOAT.fieldOf("b").forGetter(p -> p.color.z)
-            ).apply(object, TraceParticleOptions::new
-            ));
+    public static Codec<TraceParticleOptions> CODEC =
+            RecordCodecBuilder.create(
+                    object ->
+                            object.group(
+                                            Codec.FLOAT
+                                                    .fieldOf("x")
+                                                    .forGetter(p -> p.destination.x),
+                                            Codec.FLOAT
+                                                    .fieldOf("y")
+                                                    .forGetter(p -> p.destination.y),
+                                            Codec.FLOAT
+                                                    .fieldOf("z")
+                                                    .forGetter(p -> p.destination.z),
+                                            Codec.FLOAT.fieldOf("r").forGetter(p -> p.color.x),
+                                            Codec.FLOAT.fieldOf("g").forGetter(p -> p.color.y),
+                                            Codec.FLOAT.fieldOf("b").forGetter(p -> p.color.z))
+                                    .apply(object, TraceParticleOptions::new));
 
     @Override
     public ParticleType<?> getType() {
@@ -80,13 +96,31 @@ public class TraceParticleOptions implements ParticleOptions {
         return "";
     }
 
-    public static final ParticleOptions.Deserializer<TraceParticleOptions> DESERIALIZER = new ParticleOptions.Deserializer<TraceParticleOptions>() {
-        public @NotNull TraceParticleOptions fromCommand(@NotNull ParticleType<TraceParticleOptions> p_123689_, @NotNull StringReader reader) throws CommandSyntaxException {
-            return new TraceParticleOptions(reader.readFloat(), reader.readFloat(), reader.readFloat(), reader.readFloat(), reader.readFloat(), reader.readFloat());
-        }
+    public static final ParticleOptions.Deserializer<TraceParticleOptions> DESERIALIZER =
+            new ParticleOptions.Deserializer<TraceParticleOptions>() {
+                public @NotNull TraceParticleOptions fromCommand(
+                        @NotNull ParticleType<TraceParticleOptions> p_123689_,
+                        @NotNull StringReader reader)
+                        throws CommandSyntaxException {
+                    return new TraceParticleOptions(
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat());
+                }
 
-        public @NotNull TraceParticleOptions fromNetwork(@NotNull ParticleType<TraceParticleOptions> p_123692_, @NotNull FriendlyByteBuf buf) {
-            return new TraceParticleOptions(buf.readFloat(), buf.readFloat(), buf.readFloat(),buf.readFloat(), buf.readFloat(), buf.readFloat());
-        }
-    };
+                public @NotNull TraceParticleOptions fromNetwork(
+                        @NotNull ParticleType<TraceParticleOptions> p_123692_,
+                        @NotNull FriendlyByteBuf buf) {
+                    return new TraceParticleOptions(
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat());
+                }
+            };
 }

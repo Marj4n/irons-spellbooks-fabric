@@ -9,7 +9,6 @@ public class GoldCrownModel extends GeoModel<GoldCrownArmorItem> {
 
     public GoldCrownModel() {
         super();
-
     }
 
     @Override
@@ -24,6 +23,7 @@ public class GoldCrownModel extends GeoModel<GoldCrownArmorItem> {
 
     @Override
     public ResourceLocation getAnimationResource(GoldCrownArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

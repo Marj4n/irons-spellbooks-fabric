@@ -53,13 +53,21 @@ public class MagicArrowProjectile extends AbstractMagicProjectile {
         for (int i = 0; i < count; i++) {
             Vec3 random = Utils.getRandomVec3(0.025);
             Vec3 p = vec.scale(f * i);
-            level().addParticle(ParticleHelper.UNSTABLE_ENDER, this.getX() + random.x + p.x, this.getY() + random.y + p.y, this.getZ() + random.z + p.z, random.x, random.y, random.z);
+            level().addParticle(
+                            ParticleHelper.UNSTABLE_ENDER,
+                            this.getX() + random.x + p.x,
+                            this.getY() + random.y + p.y,
+                            this.getZ() + random.z + p.z,
+                            random.x,
+                            random.y,
+                            random.z);
         }
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.UNSTABLE_ENDER, x, y, z, 10, .1, .1, .1, .4, false);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.UNSTABLE_ENDER, x, y, z, 10, .1, .1, .1, .4, false);
     }
 
     @Override
@@ -81,19 +89,20 @@ public class MagicArrowProjectile extends AbstractMagicProjectile {
                 discard();
             }
         }
-
     }
 
     @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
         if (!victims.contains(entity.getUUID())) {
-            DamageSources.applyDamage(entity, damage, SpellRegistry.MAGIC_ARROW_SPELL.get().getDamageSource(this, getOwner()));
+            DamageSources.applyDamage(
+                    entity,
+                    damage,
+                    SpellRegistry.MAGIC_ARROW_SPELL.get().getDamageSource(this, getOwner()));
             victims.add(entity.getUUID());
         }
         consumeEntityImpact(entityHitResult, true);
     }
-
 
     @Override
     protected boolean shouldPierceShields() {

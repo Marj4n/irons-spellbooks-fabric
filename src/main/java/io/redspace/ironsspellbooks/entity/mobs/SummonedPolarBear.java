@@ -25,10 +25,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-
 import javax.annotation.Nullable;
 
-public class SummonedPolarBear extends PolarBear implements IMagicSummon, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
+public class SummonedPolarBear extends PolarBear
+        implements IMagicSummon, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
     public SummonedPolarBear(EntityType<? extends PolarBear> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         xpReward = 0;
@@ -53,7 +53,8 @@ public class SummonedPolarBear extends PolarBear implements IMagicSummon, org.ma
 
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PolarBearMeleeAttackGoal());
-        this.goalSelector.addGoal(7, new GenericFollowOwnerGoal(this, this::getSummoner, 0.9f, 15, 5, false, 25));
+        this.goalSelector.addGoal(
+                7, new GenericFollowOwnerGoal(this, this::getSummoner, 0.9f, 15, 5, false, 25));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
@@ -61,9 +62,11 @@ public class SummonedPolarBear extends PolarBear implements IMagicSummon, org.ma
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(3, new GenericCopyOwnerTargetGoal(this, this::getSummoner));
-        this.targetSelector.addGoal(4, (new GenericHurtByTargetGoal(this, (entity) -> entity == getSummoner())).setAlertOthers());
+        this.targetSelector.addGoal(
+                4,
+                (new GenericHurtByTargetGoal(this, (entity) -> entity == getSummoner()))
+                        .setAlertOthers());
         this.targetSelector.addGoal(5, new GenericProtectOwnerTargetGoal(this, this::getSummoner));
-
     }
 
     @Override
@@ -84,7 +87,6 @@ public class SummonedPolarBear extends PolarBear implements IMagicSummon, org.ma
             pPlayer.setXRot(this.getXRot());
             pPlayer.startRiding(this);
         }
-
     }
 
     @Override
@@ -128,7 +130,10 @@ public class SummonedPolarBear extends PolarBear implements IMagicSummon, org.ma
 
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        return Utils.doMeleeAttack(this, pEntity, SpellRegistry.SUMMON_POLAR_BEAR_SPELL.get().getDamageSource(this, getSummoner()));
+        return Utils.doMeleeAttack(
+                this,
+                pEntity,
+                SpellRegistry.SUMMON_POLAR_BEAR_SPELL.get().getDamageSource(this, getSummoner()));
     }
 
     @Override
@@ -139,25 +144,38 @@ public class SummonedPolarBear extends PolarBear implements IMagicSummon, org.ma
     @Override
     public void onUnSummon() {
         if (!level().isClientSide) {
-            MagicManager.spawnParticles(level(), ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleTypes.POOF,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    25,
+                    .4,
+                    .8,
+                    .4,
+                    .03,
+                    false);
             setRemoved(RemovalReason.DISCARDED);
         }
     }
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (shouldIgnoreDamage(pSource))
-            return false;
+        if (shouldIgnoreDamage(pSource)) return false;
         return super.hurt(pSource, pAmount);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                //Health and Damage overridden by summoning via spell
+                // Health and Damage overridden by summoning via spell
                 .add(Attributes.MAX_HEALTH, 30.0D)
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.STEP_HEIGHT_ADDITION, 1)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .STEP_HEIGHT_ADDITION,
+                        1)
                 .add(Attributes.ATTACK_DAMAGE, 6.0D);
     }
 
@@ -178,7 +196,8 @@ public class SummonedPolarBear extends PolarBear implements IMagicSummon, org.ma
 
     @Override
     protected void tickRidden(Player player, Vec3 p_275242_) {
-        //IronsSpellbooks.LOGGER.debug("PolarBear.tickRidden: {} | {}",this.getControllingPassenger(), this.isControlledByLocalInstance());
+        // IronsSpellbooks.LOGGER.debug("PolarBear.tickRidden: {} |
+        // {}",this.getControllingPassenger(), this.isControlledByLocalInstance());
         super.tickRidden(player, p_275242_);
         this.yRotO = this.getYRot();
         this.setYRot(player.getYRot());

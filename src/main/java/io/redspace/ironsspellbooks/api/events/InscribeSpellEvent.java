@@ -1,10 +1,8 @@
 package io.redspace.ironsspellbooks.api.events;
 
-
 import io.redspace.ironsspellbooks.api.spells.SpellData;
 import net.minecraft.world.entity.player.Player;
 import org.marj4n.irons_spellbooks.events.SpellPlayerEvent;
-
 
 public class InscribeSpellEvent extends SpellPlayerEvent {
     private final SpellData spellData;

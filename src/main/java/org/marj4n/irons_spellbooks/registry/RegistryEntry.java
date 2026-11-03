@@ -15,16 +15,26 @@ public final class RegistryEntry<T> implements Supplier<T> {
     private T value;
     private boolean constructing;
 
-    RegistryEntry(ResourceLocation id, ResourceKey<? extends Registry<T>> registry,
-                  Supplier<? extends T> factory) {
+    RegistryEntry(
+            ResourceLocation id,
+            ResourceKey<? extends Registry<T>> registry,
+            Supplier<? extends T> factory) {
         this.id = Objects.requireNonNull(id);
         this.key = ResourceKey.create(registry, id);
         this.factory = Objects.requireNonNull(factory);
     }
 
-    public ResourceLocation getId() { return id; }
-    public ResourceKey<T> getKey() { return key; }
-    public boolean isPresent() { return value != null; }
+    public ResourceLocation getId() {
+        return id;
+    }
+
+    public ResourceKey<T> getKey() {
+        return key;
+    }
+
+    public boolean isPresent() {
+        return value != null;
+    }
 
     @Override
     public synchronized T get() {

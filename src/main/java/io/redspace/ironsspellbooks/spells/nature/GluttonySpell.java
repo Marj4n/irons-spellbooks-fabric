@@ -19,22 +19,27 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class GluttonySpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "gluttony");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "gluttony");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.mana_recovery", Utils.stringTruncation(getManaRatio(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.mana_recovery",
+                        Utils.stringTruncation(getManaRatio(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(90)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(90)
+                    .build();
 
     public GluttonySpell() {
         this.baseManaCost = 35;
@@ -60,8 +65,20 @@ public class GluttonySpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.GLUTTONY.get(), (int) (getSpellPower(spellLevel, entity) * 20), spellLevel - 1, false, false, true));
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.GLUTTONY.get(),
+                        (int) (getSpellPower(spellLevel, entity) * 20),
+                        spellLevel - 1,
+                        false,
+                        false,
+                        true));
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 

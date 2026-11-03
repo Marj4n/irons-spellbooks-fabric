@@ -28,21 +28,23 @@ import java.util.List;
 import java.util.Optional;
 
 public class SummonVexSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "summon_vex");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "summon_vex");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.summon_count", getSummonCount(spellLevel, caster))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.summon_count", getSummonCount(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(150)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(150)
+                    .build();
 
     public SummonVexSpell() {
         this.manaCostPerLevel = 10;
@@ -83,9 +85,15 @@ public class SummonVexSpell extends AbstractSpell {
     }
 
     @Override
-    public void onRecastFinished(ServerPlayer serverPlayer, RecastInstance recastInstance, RecastResult recastResult, ICastDataSerializable castDataSerializable) {
-        if (SummonManager.recastFinishedHelper(serverPlayer, recastInstance, recastResult, castDataSerializable)) {
-            super.onRecastFinished(serverPlayer, recastInstance, recastResult, castDataSerializable);
+    public void onRecastFinished(
+            ServerPlayer serverPlayer,
+            RecastInstance recastInstance,
+            RecastResult recastResult,
+            ICastDataSerializable castDataSerializable) {
+        if (SummonManager.recastFinishedHelper(
+                serverPlayer, recastInstance, recastResult, castDataSerializable)) {
+            super.onRecastFinished(
+                    serverPlayer, recastInstance, recastResult, castDataSerializable);
         }
     }
 
@@ -99,7 +107,12 @@ public class SummonVexSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         var recasts = playerMagicData.getPlayerRecasts();
         if (!recasts.hasRecastForSpell(this)) {
             SummonedEntitiesCastData summonedEntitiesCastData = new SummonedEntitiesCastData();
@@ -107,13 +120,33 @@ public class SummonVexSpell extends AbstractSpell {
             int count = getSummonCount(spellLevel, entity);
             for (int i = 0; i < count; i++) {
                 SummonedVex vex = new SummonedVex(world, entity);
-                vex.moveTo(entity.getEyePosition().add(new Vec3(Utils.getRandomScaled(2), 1, Utils.getRandomScaled(2))));
-                vex.finalizeSpawn((ServerLevel) world, world.getCurrentDifficultyAt(vex.getOnPos()), MobSpawnType.MOB_SUMMONED, null,null);
-//                var creature = org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellSummonEvent<>(entity, vex, this.spellId, spellLevel)).getCreature();
+                vex.moveTo(
+                        entity.getEyePosition()
+                                .add(
+                                        new Vec3(
+                                                Utils.getRandomScaled(2),
+                                                1,
+                                                Utils.getRandomScaled(2))));
+                vex.finalizeSpawn(
+                        (ServerLevel) world,
+                        world.getCurrentDifficultyAt(vex.getOnPos()),
+                        MobSpawnType.MOB_SUMMONED,
+                        null,
+                        null);
+                //                var creature =
+                // org.marj4n.irons_spellbooks.events.SpellEvents.post(new
+                // SpellSummonEvent<>(entity, vex, this.spellId, spellLevel)).getCreature();
                 world.addFreshEntity(vex);
                 SummonManager.initSummon(entity, vex, summonTime, summonedEntitiesCastData);
             }
-            RecastInstance recastInstance = new RecastInstance(this.getSpellId(), spellLevel, getRecastCount(spellLevel, entity), summonTime, castSource, summonedEntitiesCastData);
+            RecastInstance recastInstance =
+                    new RecastInstance(
+                            this.getSpellId(),
+                            spellLevel,
+                            getRecastCount(spellLevel, entity),
+                            summonTime,
+                            castSource,
+                            summonedEntitiesCastData);
             recasts.addRecast(recastInstance, playerMagicData);
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);

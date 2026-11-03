@@ -15,13 +15,17 @@ public abstract class EntityMixin {
     /**
      * Necessary to integrate summons into ally checks
      */
-    @Inject(method = "isAlliedTo(Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(
+            method = "isAlliedTo(Lnet/minecraft/world/entity/Entity;)Z",
+            at = @At(value = "HEAD"),
+            cancellable = true)
     public void isAlliedTo(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         Entity self = ((Entity) (Object) this);
-        //IronsSpellbooks.LOGGER.debug("EntityMixin.isAlliedTo Check: {} allied to {}: {}", ((Entity) (Object) this).getName().getString(), entity.getName().getString(), flag);
+        // IronsSpellbooks.LOGGER.debug("EntityMixin.isAlliedTo Check: {} allied to {}: {}",
+        // ((Entity) (Object) this).getName().getString(), entity.getName().getString(), flag);
         if (entity instanceof IMagicSummon summon && summon.getSummoner() != null)
-            cir.setReturnValue(self.isAlliedTo(summon.getSummoner()) || self.equals(summon.getSummoner()));
-
+            cir.setReturnValue(
+                    self.isAlliedTo(summon.getSummoner()) || self.equals(summon.getSummoner()));
     }
 
     /**
@@ -33,9 +37,13 @@ public abstract class EntityMixin {
             cir.setReturnValue(false);
         }
     }
-    @org.spongepowered.asm.mixin.injection.ModifyConstant(method="thunderHit",
-            constant=@org.spongepowered.asm.mixin.injection.Constant(floatValue=5.0F))
-    private float irons_spellbooks$lightningDamage(float original, net.minecraft.server.level.ServerLevel level,
+
+    @org.spongepowered.asm.mixin.injection.ModifyConstant(
+            method = "thunderHit",
+            constant = @org.spongepowered.asm.mixin.injection.Constant(floatValue = 5.0F))
+    private float irons_spellbooks$lightningDamage(
+            float original,
+            net.minecraft.server.level.ServerLevel level,
             net.minecraft.world.entity.LightningBolt lightning) {
         return lightning.getTags().contains("irons_spellbooks:no_lightning_damage") ? 0 : original;
     }

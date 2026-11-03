@@ -26,15 +26,19 @@ public class IcicleSpell extends AbstractSpell {
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(1)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(1)
+                    .build();
 
     public IcicleSpell() {
         this.manaCostPerLevel = 2;
@@ -60,9 +64,19 @@ public class IcicleSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         IcicleProjectile icicle = new IcicleProjectile(world, entity);
-        icicle.setPos(entity.position().add(0, entity.getEyeHeight() - icicle.getBoundingBox().getYsize() * .5f, 0));
+        icicle.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight() - icicle.getBoundingBox().getYsize() * .5f,
+                                0));
         icicle.shoot(entity.getLookAngle());
         icicle.setDamage(getDamage(spellLevel, entity));
         icicle.setNoGravity(true);

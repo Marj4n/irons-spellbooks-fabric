@@ -8,7 +8,6 @@ public enum OakskinData {
     INSTANCE;
     public static final Codec<OakskinData> CODEC = Codec.unit(INSTANCE);
 
-
     public static OakskinData setFromElixir(LivingEntity entity) {
         ((MagicData.IExtendedEntity) entity).irons_spellbooks$setOakskinData();
         return OakskinData.INSTANCE;

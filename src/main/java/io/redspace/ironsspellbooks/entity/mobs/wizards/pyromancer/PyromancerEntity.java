@@ -48,7 +48,8 @@ import java.util.*;
 
 public class PyromancerEntity extends NeutralWizard implements IMerchantWizard {
 
-    public PyromancerEntity(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
+    public PyromancerEntity(
+            EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         xpReward = 25;
     }
@@ -57,39 +58,53 @@ public class PyromancerEntity extends NeutralWizard implements IMerchantWizard {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FocusOnTradingPlayerGoal<>(this));
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new WizardAttackGoal(this, 1.25f, 25, 50)
-                .setSpells(
-                        List.of(SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIRE_BREATH_SPELL.get(), SpellRegistry.BLAZE_STORM_SPELL.get()),
-                        List.of(),
-                        List.of(SpellRegistry.BURNING_DASH_SPELL.get()),
-                        List.of()
-                )
-                .setDrinksPotions()
-                .setSingleUseSpell(SpellRegistry.MAGMA_BOMB_SPELL.get(), 80, 200, 4, 6)
-        );
+        this.goalSelector.addGoal(
+                2,
+                new WizardAttackGoal(this, 1.25f, 25, 50)
+                        .setSpells(
+                                List.of(
+                                        SpellRegistry.FIREBOLT_SPELL.get(),
+                                        SpellRegistry.FIREBOLT_SPELL.get(),
+                                        SpellRegistry.FIREBOLT_SPELL.get(),
+                                        SpellRegistry.FIRE_BREATH_SPELL.get(),
+                                        SpellRegistry.BLAZE_STORM_SPELL.get()),
+                                List.of(),
+                                List.of(SpellRegistry.BURNING_DASH_SPELL.get()),
+                                List.of())
+                        .setDrinksPotions()
+                        .setSingleUseSpell(SpellRegistry.MAGMA_BOMB_SPELL.get(), 80, 200, 4, 6));
         this.goalSelector.addGoal(3, new PatrolNearLocationGoal(this, 30, .75f));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new WizardRecoverGoal(this));
 
-        //this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        //this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        // this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        // this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isHostileTowards));
+        this.targetSelector.addGoal(
+                3,
+                new NearestAttackableTargetGoal<>(
+                        this, Player.class, 10, true, false, this::isHostileTowards));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
-
     }
 
     @Override
-        public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         RandomSource randomsource = Utils.random;
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(
+            RandomSource pRandom, DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemRegistry.PYROMANCER_HELMET.get()));
-        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemRegistry.PYROMANCER_CHESTPLATE.get()));
+        this.setItemSlot(
+                EquipmentSlot.CHEST, new ItemStack(ItemRegistry.PYROMANCER_CHESTPLATE.get()));
         this.setDropChance(EquipmentSlot.HEAD, 0.0F);
         this.setDropChance(EquipmentSlot.CHEST, 0.0F);
     }
@@ -116,21 +131,20 @@ public class PyromancerEntity extends NeutralWizard implements IMerchantWizard {
     /**
      * Merchant implementations
      */
+    @Nullable private Player tradingPlayer;
 
-    @Nullable
-    private Player tradingPlayer;
-    @Nullable
-    protected MerchantOffers offers;
+    @Nullable protected MerchantOffers offers;
 
-    //Serialized
+    // Serialized
     private long lastRestockGameTime;
     private int numberOfRestocksToday;
-    //Not Serialized
+    // Not Serialized
     private long lastRestockCheckDayTime;
 
     @Override
     protected InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
-        boolean preventTrade = isAggressive() || (!this.level().isClientSide && this.getOffers().isEmpty());
+        boolean preventTrade =
+                isAggressive() || (!this.level().isClientSide && this.getOffers().isEmpty());
         if (!preventTrade) {
             if (!this.level().isClientSide && !this.getOffers().isEmpty()) {
                 if (shouldRestock()) {
@@ -201,57 +215,89 @@ public class PyromancerEntity extends NeutralWizard implements IMerchantWizard {
             this.offers.addAll(createRandomOffers(2, 3));
 
             if (this.random.nextFloat() < 0.25f) {
-                this.offers.add(new AdditionalWanderingTrades.InkBuyTrade((InkItem) ItemRegistry.INK_COMMON.get()).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.InkBuyTrade(
+                                        (InkItem) ItemRegistry.INK_COMMON.get())
+                                .getOffer(this, this.random));
             }
             if (this.random.nextFloat() < 0.25f) {
-                this.offers.add(new AdditionalWanderingTrades.InkBuyTrade((InkItem) ItemRegistry.INK_UNCOMMON.get()).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.InkBuyTrade(
+                                        (InkItem) ItemRegistry.INK_UNCOMMON.get())
+                                .getOffer(this, this.random));
             }
             if (this.random.nextFloat() < 0.25f) {
-                this.offers.add(new AdditionalWanderingTrades.InkBuyTrade((InkItem) ItemRegistry.INK_RARE.get()).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.InkBuyTrade(
+                                        (InkItem) ItemRegistry.INK_RARE.get())
+                                .getOffer(this, this.random));
             }
 
-            this.offers.add(new AdditionalWanderingTrades.RandomScrollTrade(new SpellFilter(SchoolRegistry.FIRE.get()), 0f, .25f).getOffer(this, this.random));
+            this.offers.add(
+                    new AdditionalWanderingTrades.RandomScrollTrade(
+                                    new SpellFilter(SchoolRegistry.FIRE.get()), 0f, .25f)
+                            .getOffer(this, this.random));
             if (this.random.nextFloat() < .8f) {
-                this.offers.add(new AdditionalWanderingTrades.RandomScrollTrade(new SpellFilter(SchoolRegistry.FIRE.get()), .3f, .7f).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.RandomScrollTrade(
+                                        new SpellFilter(SchoolRegistry.FIRE.get()), .3f, .7f)
+                                .getOffer(this, this.random));
             }
             if (this.random.nextFloat() < .8f) {
-                this.offers.add(new AdditionalWanderingTrades.RandomScrollTrade(new SpellFilter(SchoolRegistry.FIRE.get()), .8f, 1f).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.RandomScrollTrade(
+                                        new SpellFilter(SchoolRegistry.FIRE.get()), .8f, 1f)
+                                .getOffer(this, this.random));
             }
-            this.offers.add(new AdditionalWanderingTrades.SimpleSell(3, new ItemStack(ItemRegistry.FIRE_ALE.get()), 12, 16).getOffer(this, this.random));
-            this.offers.add(new MerchantOffer(
-                    new ItemStack(Items.EMERALD, 24),
-                    ItemStack.EMPTY,
-                    FurledMapItem.of(IronsSpellbooks.id("mangrove_hut"), FurledMapItem.OVERWORLD, Component.translatable("item.irons_spellbooks.alchemical_trade_route")),
-                    0,
-                    1,
-                    5,
-                    10f
-            ));
-            this.offers.add(new MerchantOffer(
-                    new ItemStack(ItemRegistry.CHAINED_BOOK.get(), 4),
-                    ItemStack.EMPTY,
-                    ItemRegistry.FIRE_RUNE.get().getDefaultInstance(),
-                    0,
-                    1,
-                    5,
-                    0.1f
-            ));
+            this.offers.add(
+                    new AdditionalWanderingTrades.SimpleSell(
+                                    3, new ItemStack(ItemRegistry.FIRE_ALE.get()), 12, 16)
+                            .getOffer(this, this.random));
+            this.offers.add(
+                    new MerchantOffer(
+                            new ItemStack(Items.EMERALD, 24),
+                            ItemStack.EMPTY,
+                            FurledMapItem.of(
+                                    IronsSpellbooks.id("mangrove_hut"),
+                                    FurledMapItem.OVERWORLD,
+                                    Component.translatable(
+                                            "item.irons_spellbooks.alchemical_trade_route")),
+                            0,
+                            1,
+                            5,
+                            10f));
+            this.offers.add(
+                    new MerchantOffer(
+                            new ItemStack(ItemRegistry.CHAINED_BOOK.get(), 4),
+                            ItemStack.EMPTY,
+                            ItemRegistry.FIRE_RUNE.get().getDefaultInstance(),
+                            0,
+                            1,
+                            5,
+                            0.1f));
             this.offers.removeIf(Objects::isNull);
-            //We count the creation of our stock as a restock so that we do not immediately refresh trades the same day.
+            // We count the creation of our stock as a restock so that we do not immediately refresh
+            // trades the same day.
             setLastRestockGameTime(level().getGameTime());
         }
         return this.offers;
     }
 
-    private static final List<VillagerTrades.ItemListing> fillerOffers = List.of(
-            new AdditionalWanderingTrades.SimpleBuy(16, new ItemStack(Items.CANDLE, 4), 1, 1),
-            new AdditionalWanderingTrades.SimpleSell(8, new ItemStack(Items.CANDLE, 4), 10, 14),
-            new AdditionalWanderingTrades.SimpleSell(8, new ItemStack(Items.FIRE_CHARGE, 3), 9, 13),
-            new AdditionalWanderingTrades.SimpleSell(12, new ItemStack(Items.LANTERN, 3), 6, 10),
-            new AdditionalWanderingTrades.SimpleBuy(16, new ItemStack(Items.HONEY_BOTTLE, 2), 3, 5),
-            new AdditionalWanderingTrades.SimpleBuy(16, new ItemStack(Items.BLAZE_ROD, 3), 4, 6),
-            new AdditionalWanderingTrades.SimpleSell(5, createFireworkStack(), 3, 4)
-    );
+    private static final List<VillagerTrades.ItemListing> fillerOffers =
+            List.of(
+                    new AdditionalWanderingTrades.SimpleBuy(
+                            16, new ItemStack(Items.CANDLE, 4), 1, 1),
+                    new AdditionalWanderingTrades.SimpleSell(
+                            8, new ItemStack(Items.CANDLE, 4), 10, 14),
+                    new AdditionalWanderingTrades.SimpleSell(
+                            8, new ItemStack(Items.FIRE_CHARGE, 3), 9, 13),
+                    new AdditionalWanderingTrades.SimpleSell(
+                            12, new ItemStack(Items.LANTERN, 3), 6, 10),
+                    new AdditionalWanderingTrades.SimpleBuy(
+                            16, new ItemStack(Items.HONEY_BOTTLE, 2), 3, 5),
+                    new AdditionalWanderingTrades.SimpleBuy(
+                            16, new ItemStack(Items.BLAZE_ROD, 3), 4, 6),
+                    new AdditionalWanderingTrades.SimpleSell(5, createFireworkStack(), 3, 4));
 
     private Collection<MerchantOffer> createRandomOffers(int min, int max) {
         Set<Integer> set = Sets.newHashSet();
@@ -267,22 +313,24 @@ public class PyromancerEntity extends NeutralWizard implements IMerchantWizard {
     }
 
     @Override
-    public void overrideOffers(MerchantOffers pOffers) {
-
-    }
+    public void overrideOffers(MerchantOffers pOffers) {}
 
     @Override
     public void notifyTrade(MerchantOffer pOffer) {
         pOffer.increaseUses();
         this.ambientSoundTime = -this.getAmbientSoundInterval();
-        //this.rewardTradeXp(pOffer);
+        // this.rewardTradeXp(pOffer);
     }
 
     @Override
     public void notifyTradeUpdated(ItemStack pStack) {
-        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
+        if (!this.level().isClientSide
+                && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
             this.ambientSoundTime = -this.getAmbientSoundInterval();
-            this.playSound(this.getTradeUpdatedSound(!pStack.isEmpty()), this.getSoundVolume(), this.getVoicePitch());
+            this.playSound(
+                    this.getTradeUpdatedSound(!pStack.isEmpty()),
+                    this.getSoundVolume(),
+                    this.getVoicePitch());
         }
     }
 
@@ -305,7 +353,7 @@ public class PyromancerEntity extends NeutralWizard implements IMerchantWizard {
         explosion.putByte("Trail", (byte) 1);
         explosion.putByte("Flicker", (byte) 1);
 
-        explosion.putIntArray("Colors", new int[]{11743535, 15435844, 14602026});
+        explosion.putIntArray("Colors", new int[] {11743535, 15435844, 14602026});
 
         explosions.add(explosion);
 
@@ -315,10 +363,12 @@ public class PyromancerEntity extends NeutralWizard implements IMerchantWizard {
 
         return rocket;
     }
+
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        serializeMerchant(pCompound, this.offers, this.lastRestockGameTime, this.numberOfRestocksToday);
+        serializeMerchant(
+                pCompound, this.offers, this.lastRestockGameTime, this.numberOfRestocksToday);
     }
 
     @Override

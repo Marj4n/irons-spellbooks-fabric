@@ -20,19 +20,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class MagicArrowSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "magic_arrow");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "magic_arrow");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(8)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(8)
+                    .build();
 
     public MagicArrowSpell() {
         this.manaCostPerLevel = 5;
@@ -68,9 +73,21 @@ public class MagicArrowSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         MagicArrowProjectile magicArrow = new MagicArrowProjectile(level, entity);
-        magicArrow.setPos(entity.position().add(0, entity.getEyeHeight() - magicArrow.getBoundingBox().getYsize() * .5f, 0).add(entity.getForward()));
+        magicArrow.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight()
+                                        - magicArrow.getBoundingBox().getYsize() * .5f,
+                                0)
+                        .add(entity.getForward()));
         magicArrow.shoot(entity.getLookAngle());
         magicArrow.setDamage(getSpellPower(spellLevel, entity));
         level.addFreshEntity(magicArrow);

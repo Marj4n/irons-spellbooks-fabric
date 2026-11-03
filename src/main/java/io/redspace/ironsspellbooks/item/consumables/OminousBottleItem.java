@@ -13,8 +13,21 @@ public class OminousBottleItem extends DrinkableItem {
     }
 
     private static void applyEffect(ItemStack itemStack, LivingEntity livingEntity) {
-        livingEntity.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, 20 * 60 * 30, 0), livingEntity);
-        livingEntity.level().playSound(null, livingEntity.blockPosition(), SoundRegistry.APPLY_EFFECT_BAD_OMEN.get(), livingEntity.getSoundSource());
-        livingEntity.level().playSound(null, livingEntity.blockPosition(), SoundEvents.GLASS_BREAK, livingEntity.getSoundSource());
+        livingEntity.addEffect(
+                new MobEffectInstance(MobEffects.BAD_OMEN, 20 * 60 * 30, 0), livingEntity);
+        livingEntity
+                .level()
+                .playSound(
+                        null,
+                        livingEntity.blockPosition(),
+                        SoundRegistry.APPLY_EFFECT_BAD_OMEN.get(),
+                        livingEntity.getSoundSource());
+        livingEntity
+                .level()
+                .playSound(
+                        null,
+                        livingEntity.blockPosition(),
+                        SoundEvents.GLASS_BREAK,
+                        livingEntity.getSoundSource());
     }
 }

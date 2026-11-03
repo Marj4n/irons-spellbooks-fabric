@@ -21,27 +21,46 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 @Environment(EnvType.CLIENT)
 public class FireBossFireballChargeLayer extends GeoRenderLayer<AbstractSpellCastingMob> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/fire_boss/tyros_flame.png");
+    private static final ResourceLocation TEXTURE =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID, "textures/entity/fire_boss/tyros_flame.png");
     protected final ModelPart fireball;
 
-    public FireBossFireballChargeLayer(GeoEntityRenderer entityRendererIn, EntityRendererProvider.Context context) {
+    public FireBossFireballChargeLayer(
+            GeoEntityRenderer entityRendererIn, EntityRendererProvider.Context context) {
         super(entityRendererIn);
         ModelPart modelpart = context.bakeLayer(FireballRenderer.MODEL_LAYER_LOCATION);
         this.fireball = modelpart.getChild("body");
     }
 
     @Override
-    public void render(PoseStack poseStack, AbstractSpellCastingMob animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+    public void render(
+            PoseStack poseStack,
+            AbstractSpellCastingMob animatable,
+            BakedGeoModel bakedModel,
+            @Nullable RenderType renderType,
+            MultiBufferSource bufferSource,
+            @Nullable VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay) {
         if (animatable instanceof FireBossEntity fireBoss) {
             if (fireBoss.isHalfHealthAttacking()) {
                 var tick = FireBossEntity.HALF_HEALTH_ANIM_DURATION - fireBoss.halfHealthTimer;
-                if (tick > FireBossEntity.HALF_HEALTH_JUMP_TIMESTAMP && tick < FireBossEntity.HALF_HEALTH_CAST_TIMESTAMP) {
+                if (tick > FireBossEntity.HALF_HEALTH_JUMP_TIMESTAMP
+                        && tick < FireBossEntity.HALF_HEALTH_CAST_TIMESTAMP) {
                     poseStack.pushPose();
                     poseStack.mulPose(Axis.YP.rotationDegrees(fireBoss.yHeadRot));
                     poseStack.translate(0, fireBoss.getBoundingBox().getYsize() * 1.25, 0);
-                    float scale = Mth.lerp(tick / (float) FireBossEntity.HALF_HEALTH_ANIM_DURATION, 1f, 1.5f);
+                    float scale =
+                            Mth.lerp(
+                                    tick / (float) FireBossEntity.HALF_HEALTH_ANIM_DURATION,
+                                    1f,
+                                    1.5f);
                     poseStack.scale(scale, scale, scale);
-                    VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(FireballRenderer.BASE_TEXTURE));
+                    VertexConsumer consumer =
+                            bufferSource.getBuffer(
+                                    RenderType.entityCutoutNoCull(FireballRenderer.BASE_TEXTURE));
 
                     float f = animatable.tickCount + partialTick;
                     float swirlX = Mth.cos(.08f * f) * 180;
@@ -51,11 +70,11 @@ public class FireBossFireballChargeLayer extends GeoRenderLayer<AbstractSpellCas
                     poseStack.mulPose(Axis.YP.rotationDegrees(swirlY));
                     poseStack.mulPose(Axis.ZP.rotationDegrees(swirlZ));
 
-                    fireball.render(poseStack, consumer, packedLight, packedOverlay, 1f,1f,1f,1f);
+                    fireball.render(
+                            poseStack, consumer, packedLight, packedOverlay, 1f, 1f, 1f, 1f);
                     poseStack.popPose();
                 }
             }
         }
-
     }
 }

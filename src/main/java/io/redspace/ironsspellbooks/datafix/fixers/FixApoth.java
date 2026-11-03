@@ -1,14 +1,14 @@
-//package io.redspace.ironsspellbooks.datafix.fixers;
+// package io.redspace.ironsspellbooks.datafix.fixers;
 //
-//import io.redspace.ironsspellbooks.datafix.DataFixerElement;
-//import net.minecraft.nbt.CompoundTag;
-//import net.minecraft.nbt.ListTag;
-//import net.minecraft.nbt.Tag;
-//import net.fabricmc.loader.api.FabricLoader;
+// import io.redspace.ironsspellbooks.datafix.DataFixerElement;
+// import net.minecraft.nbt.CompoundTag;
+// import net.minecraft.nbt.ListTag;
+// import net.minecraft.nbt.Tag;
+// import net.fabricmc.loader.api.FabricLoader;
 //
-//import java.util.List;
+// import java.util.List;
 //
-//public class FixApoth extends DataFixerElement {
+// public class FixApoth extends DataFixerElement {
 //    private final String key = "affix_data";
 //
 //    @Override
@@ -35,4 +35,4 @@
 //        }
 //        return false;
 //    }
-//}
+// }

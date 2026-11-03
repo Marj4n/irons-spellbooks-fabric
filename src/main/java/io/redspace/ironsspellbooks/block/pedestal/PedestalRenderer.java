@@ -15,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.phys.Vec3;
 
-
 public class PedestalRenderer implements BlockEntityRenderer<PedestalTile> {
     ItemRenderer itemRenderer;
 
@@ -26,21 +25,44 @@ public class PedestalRenderer implements BlockEntityRenderer<PedestalTile> {
     private static final Vec3 ITEM_POS = new Vec3(.5, 1.5, .5);
 
     @Override
-    public void render(PedestalTile pedestalTile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(
+            PedestalTile pedestalTile,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         ItemStack heldItem = pedestalTile.getHeldItem();
 
         if (!heldItem.isEmpty()) {
             Player player = Minecraft.getInstance().player;
-            float bob = 0;//(float) (Math.sin((player.tickCount + partialTick) * .1f) * .0875f);
+            float bob = 0; // (float) (Math.sin((player.tickCount + partialTick) * .1f) * .0875f);
             float rotation = player.tickCount * 2 + partialTick;
-            renderItem(heldItem, ITEM_POS.add(0, bob, 0), rotation, pedestalTile, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
+            renderItem(
+                    heldItem,
+                    ITEM_POS.add(0, bob, 0),
+                    rotation,
+                    pedestalTile,
+                    partialTick,
+                    poseStack,
+                    bufferSource,
+                    packedLight,
+                    packedOverlay);
         }
-
     }
 
-    private void renderItem(ItemStack itemStack, Vec3 offset, float yRot, PedestalTile pedestalTile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    private void renderItem(
+            ItemStack itemStack,
+            Vec3 offset,
+            float yRot,
+            PedestalTile pedestalTile,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         poseStack.pushPose();
-        //renderId seems to be some kind of uuid/salt
+        // renderId seems to be some kind of uuid/salt
         int renderId = (int) pedestalTile.getBlockPos().asLong();
 
         poseStack.translate(offset.x, offset.y, offset.z);
@@ -51,8 +73,15 @@ public class PedestalRenderer implements BlockEntityRenderer<PedestalTile> {
 
         poseStack.scale(0.65f, 0.65f, 0.65f);
 
-        itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, LevelRenderer.getLightColor(pedestalTile.getLevel(), pedestalTile.getBlockPos()), packedOverlay, poseStack, bufferSource, pedestalTile.getLevel(), renderId);
+        itemRenderer.renderStatic(
+                itemStack,
+                ItemDisplayContext.FIXED,
+                LevelRenderer.getLightColor(pedestalTile.getLevel(), pedestalTile.getBlockPos()),
+                packedOverlay,
+                poseStack,
+                bufferSource,
+                pedestalTile.getLevel(),
+                renderId);
         poseStack.popPose();
     }
-
 }

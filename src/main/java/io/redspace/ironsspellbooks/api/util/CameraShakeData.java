@@ -24,18 +24,24 @@ public class CameraShakeData {
     @Deprecated(forRemoval = true)
     public CameraShakeData(int duration, Vec3 origin, float radius) {
         this(null, duration, origin, radius);
-        IronsSpellbooks.LOGGER.warn("Addon creating camera shake without specifying dimension! Adding to overworld.");
+        IronsSpellbooks.LOGGER.warn(
+                "Addon creating camera shake without specifying dimension! Adding to overworld.");
     }
 
     public CameraShakeData(@NotNull Level level, int duration, Vec3 origin, float radius) {
-        this(level == null ? ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld")) : level.dimension(),
+        this(
+                level == null
+                        ? ResourceKey.create(
+                                Registries.DIMENSION, new ResourceLocation("overworld"))
+                        : level.dimension(),
                 CameraShakeManager.getNextId(),
                 duration,
                 origin,
                 radius);
     }
 
-    private CameraShakeData(ResourceKey<Level> level, int id, int duration, Vec3 origin, float radius) {
+    private CameraShakeData(
+            ResourceKey<Level> level, int id, int duration, Vec3 origin, float radius) {
         this.dimension = level;
         this.id = id;
         this.duration = duration;

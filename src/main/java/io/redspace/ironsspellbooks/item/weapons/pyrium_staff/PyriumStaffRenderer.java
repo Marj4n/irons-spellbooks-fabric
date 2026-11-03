@@ -29,29 +29,73 @@ public class PyriumStaffRenderer extends BlockEntityWithoutLevelRenderer {
     public PyriumStaffRenderer(ItemRenderer renderDispatcher, EntityModelSet modelSet) {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), modelSet);
         this.renderer = renderDispatcher;
-        this.haftModel = renderer.getItemModelShaper().getModelManager().getModel((new ResourceLocation(IronsSpellbooks.MODID, "item/pyrium_staff_haft")));
-        this.headModel = new PyriumStaffHeadModel(modelSet.bakeLayer(PyriumStaffHeadModel.LAYER_LOCATION));
-        this.orbModel = new PyriumStaffOrbModel(modelSet.bakeLayer(PyriumStaffOrbModel.LAYER_LOCATION));
+        this.haftModel =
+                renderer.getItemModelShaper()
+                        .getModelManager()
+                        .getModel(
+                                (new ResourceLocation(
+                                        IronsSpellbooks.MODID, "item/pyrium_staff_haft")));
+        this.headModel =
+                new PyriumStaffHeadModel(modelSet.bakeLayer(PyriumStaffHeadModel.LAYER_LOCATION));
+        this.orbModel =
+                new PyriumStaffOrbModel(modelSet.bakeLayer(PyriumStaffOrbModel.LAYER_LOCATION));
     }
 
     @Override
-    public void renderByItem(ItemStack itemStack, ItemDisplayContext transformType, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLightIn, int combinedOverlayIn) {
+    public void renderByItem(
+            ItemStack itemStack,
+            ItemDisplayContext transformType,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int combinedLightIn,
+            int combinedOverlayIn) {
         poseStack.pushPose();
         poseStack.translate(0.5f, 0.5f, 0.5f);
         if (transformType == ItemDisplayContext.GUI) {
             Lighting.setupFor3DItems();
-            render(poseStack, bufferSource, itemStack, transformType, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, false);
+            render(
+                    poseStack,
+                    bufferSource,
+                    itemStack,
+                    transformType,
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    false);
             Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         } else {
-            boolean leftHand = transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || transformType == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
-            render(poseStack, bufferSource, itemStack, transformType, combinedLightIn, combinedOverlayIn, leftHand);
+            boolean leftHand =
+                    transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                            || transformType == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+            render(
+                    poseStack,
+                    bufferSource,
+                    itemStack,
+                    transformType,
+                    combinedLightIn,
+                    combinedOverlayIn,
+                    leftHand);
         }
         poseStack.popPose();
     }
 
-    private void render(PoseStack poseStack, MultiBufferSource bufferSource, ItemStack itemStack, ItemDisplayContext transformType, int combinedLightIn, int combinedOverlayIn, boolean leftHanded) {
+    private void render(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            ItemStack itemStack,
+            ItemDisplayContext transformType,
+            int combinedLightIn,
+            int combinedOverlayIn,
+            boolean leftHanded) {
         // render item part
-        renderer.render(itemStack, transformType, leftHanded, poseStack, bufferSource, combinedLightIn, combinedOverlayIn, haftModel);
+        renderer.render(
+                itemStack,
+                transformType,
+                leftHanded,
+                poseStack,
+                bufferSource,
+                combinedLightIn,
+                combinedOverlayIn,
+                haftModel);
         // render modelled part
         poseStack.pushPose();
 
@@ -60,18 +104,39 @@ public class PyriumStaffRenderer extends BlockEntityWithoutLevelRenderer {
         poseStack.mulPose(Axis.ZP.rotationDegrees(135));
         poseStack.mulPose(Axis.YP.rotationDegrees(-90));
 
-        poseStack.translate(0, -6.375/16f, 0);
+        poseStack.translate(0, -6.375 / 16f, 0);
         poseStack.scale(0.5f, 0.5f, 0.5f);
-        headModel.renderToBuffer(poseStack, ItemRenderer.getFoilBufferDirect(
-                bufferSource, headModel.renderType(), false, itemStack.hasFoil()
-        ), combinedLightIn, combinedOverlayIn,1f,1f,1f,1f);
+        headModel.renderToBuffer(
+                poseStack,
+                ItemRenderer.getFoilBufferDirect(
+                        bufferSource, headModel.renderType(), false, itemStack.hasFoil()),
+                combinedLightIn,
+                combinedOverlayIn,
+                1f,
+                1f,
+                1f,
+                1f);
 
         poseStack.translate(0, -9.5 / 32f, 0);
-        float f = MinecraftInstanceHelper.getPlayer() == null ? 0 : (MinecraftInstanceHelper.getPlayer().tickCount + Minecraft.getInstance().getDeltaFrameTime()/*.getGameTimeDeltaPartialTick(true)*/) *.75f;
+        float f =
+                MinecraftInstanceHelper.getPlayer() == null
+                        ? 0
+                        : (MinecraftInstanceHelper.getPlayer().tickCount
+                                        + Minecraft.getInstance()
+                                                .getDeltaFrameTime() /*.getGameTimeDeltaPartialTick(true)*/)
+                                * .75f;
         float scale = (Mth.sin(f * .5f) + Mth.sin(3 * f)) / 2f * .04f + 1;
         poseStack.translate(0, Mth.sin(f * .3f) / 32f, 0);
         poseStack.scale(scale, scale, scale);
-        orbModel.renderToBuffer(poseStack, bufferSource.getBuffer(orbModel.renderType()), LightTexture.FULL_BRIGHT, combinedOverlayIn,1f,1f,1f,1f);
+        orbModel.renderToBuffer(
+                poseStack,
+                bufferSource.getBuffer(orbModel.renderType()),
+                LightTexture.FULL_BRIGHT,
+                combinedOverlayIn,
+                1f,
+                1f,
+                1f,
+                1f);
 
         poseStack.popPose();
     }
@@ -87,10 +152,18 @@ public class PyriumStaffRenderer extends BlockEntityWithoutLevelRenderer {
             }
 
             int i = pLeftHand ? -1 : 1;
-            pPoseStack.translate((float) i * transform.translation.x(), transform.translation.y(), transform.translation.z());
-            pPoseStack.mulPose(new Quaternionf().rotationXYZ(f * (float) (Math.PI / 180.0), f1 * (float) (Math.PI / 180.0), f2 * (float) (Math.PI / 180.0)));
+            pPoseStack.translate(
+                    (float) i * transform.translation.x(),
+                    transform.translation.y(),
+                    transform.translation.z());
+            pPoseStack.mulPose(
+                    new Quaternionf()
+                            .rotationXYZ(
+                                    f * (float) (Math.PI / 180.0),
+                                    f1 * (float) (Math.PI / 180.0),
+                                    f2 * (float) (Math.PI / 180.0)));
             pPoseStack.scale(transform.scale.x(), transform.scale.y(), transform.scale.x());
-            //pPoseStack.mulPose(net.minecraftforge.common.util.TransformationHelper.quatFromXYZ(rightRotation.x(), rightRotation.y() * (pLeftHand ? -1 : 1), rightRotation.z() * (pLeftHand ? -1 : 1), true));
+            // pPoseStack.mulPose(net.minecraftforge.common.util.TransformationHelper.quatFromXYZ(rightRotation.x(), rightRotation.y() * (pLeftHand ? -1 : 1), rightRotation.z() * (pLeftHand ? -1 : 1), true));
         }
     }
 }

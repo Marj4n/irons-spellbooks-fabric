@@ -1,18 +1,20 @@
-//package io.redspace.ironsspellbooks.capabilities.magic;
+// package io.redspace.ironsspellbooks.capabilities.magic;
 //
-//import io.redspace.ironsspellbooks.api.magic.MagicData;
-//import net.minecraft.core.HolderLookup;
-//import net.minecraft.nbt.CompoundTag;
-//import net.minecraft.server.level.ServerPlayer;
-//import net.minecraftforge.attachment.IAttachmentHolder;
-//import net.minecraftforge.attachment.IAttachmentSerializer;
-//import org.jetbrains.annotations.Nullable;
+// import io.redspace.ironsspellbooks.api.magic.MagicData;
+// import net.minecraft.core.HolderLookup;
+// import net.minecraft.nbt.CompoundTag;
+// import net.minecraft.server.level.ServerPlayer;
+// import net.minecraftforge.attachment.IAttachmentHolder;
+// import net.minecraftforge.attachment.IAttachmentSerializer;
+// import org.jetbrains.annotations.Nullable;
 //
-//public class PlayerMagicProvider implements IAttachmentSerializer<CompoundTag, MagicData> {
+// public class PlayerMagicProvider implements IAttachmentSerializer<CompoundTag, MagicData> {
 //    @Override
-//    public MagicData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
+//    public MagicData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider
+// provider) {
 //        //Entities implement IIAttachmentHolder
-//        var magicData = holder instanceof ServerPlayer serverPlayer ? new MagicData(serverPlayer) : new MagicData(true);
+//        var magicData = holder instanceof ServerPlayer serverPlayer ? new MagicData(serverPlayer)
+// : new MagicData(true);
 //        magicData.loadNBTData(tag, provider);
 //        return magicData;
 //    }
@@ -23,10 +25,12 @@
 //        attachment.saveNBTData(tag, provider);
 //        return tag;
 //    }
-//}
-////public class PlayerMagicProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
+// }
+//// public class PlayerMagicProvider implements ICapabilityProvider, INBTSerializable<CompoundTag>
+// {
 ////
-////    public static Capability<MagicData> PLAYER_MAGIC = CapabilityManager.get(new CapabilityToken<>() {
+////    public static Capability<MagicData> PLAYER_MAGIC = CapabilityManager.get(new
+// CapabilityToken<>() {
 ////    });
 ////
 ////    private MagicData playerMagicData = null;
@@ -56,7 +60,8 @@
 ////
 ////    @Nonnull
 ////    @Override
-////    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+////    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction
+// side) {
 ////        return getCapability(cap);
 ////    }
 ////
@@ -71,4 +76,4 @@
 ////    public void deserializeNBT(CompoundTag nbt) {
 ////        createPlayerMagicData().loadNBTData(nbt);
 ////    }
-////}
+//// }

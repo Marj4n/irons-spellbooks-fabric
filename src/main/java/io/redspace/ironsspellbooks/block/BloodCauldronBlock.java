@@ -32,22 +32,32 @@ import java.util.Map;
 public class BloodCauldronBlock extends LayeredCauldronBlock {
 
     public BloodCauldronBlock() {
-        super(Properties.copy(Blocks.CAULDRON), p->false, getInteractionMap());
+        super(Properties.copy(Blocks.CAULDRON), p -> false, getInteractionMap());
     }
 
     @Override
     public void entityInside(BlockState blockState, Level level, BlockPos pos, Entity entity) {
         if (entity.tickCount % 20 == 0) {
-            attemptCookEntity(blockState, level, pos, entity, () -> {
-                level.setBlockAndUpdate(pos, blockState.cycle(LayeredCauldronBlock.LEVEL));
-                level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
-            });
+            attemptCookEntity(
+                    blockState,
+                    level,
+                    pos,
+                    entity,
+                    () -> {
+                        level.setBlockAndUpdate(pos, blockState.cycle(LayeredCauldronBlock.LEVEL));
+                        level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
+                    });
         }
 
         super.entityInside(blockState, level, pos, entity);
     }
 
-    public static void attemptCookEntity(BlockState blockState, Level level, BlockPos pos, Entity entity, CookExecution execution) {
+    public static void attemptCookEntity(
+            BlockState blockState,
+            Level level,
+            BlockPos pos,
+            Entity entity,
+            CookExecution execution) {
         if (level.isClientSide) {
             return;
         }
@@ -57,11 +67,28 @@ public class BloodCauldronBlock extends LayeredCauldronBlock {
         if (!(level.getBlockState(pos).getBlock() instanceof AbstractCauldronBlock cauldron)) {
             return;
         }
-        if (entity instanceof LivingEntity livingEntity &&
-                livingEntity.getBoundingBox().intersects(cauldron.defaultBlockState().getInteractionShape(level, pos).bounds().move(pos)) &&
-                livingEntity.hurt(DamageSources.get(level, ISSDamageTypes.CAULDRON), 2) &&
-                !livingEntity.getType().is(ModTags.CANT_PRODUCE_BLOOD)) {
-            MagicManager.spawnParticles(level, ParticleHelper.BLOOD, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(), 20, .05, .05, .05, .1, false);
+        if (entity instanceof LivingEntity livingEntity
+                && livingEntity
+                        .getBoundingBox()
+                        .intersects(
+                                cauldron.defaultBlockState()
+                                        .getInteractionShape(level, pos)
+                                        .bounds()
+                                        .move(pos))
+                && livingEntity.hurt(DamageSources.get(level, ISSDamageTypes.CAULDRON), 2)
+                && !livingEntity.getType().is(ModTags.CANT_PRODUCE_BLOOD)) {
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleHelper.BLOOD,
+                    entity.getX(),
+                    entity.getY() + entity.getBbHeight() / 2,
+                    entity.getZ(),
+                    20,
+                    .05,
+                    .05,
+                    .05,
+                    .1,
+                    false);
             if (Utils.random.nextDouble() <= .5 && !isCauldronFull(blockState)) {
                 execution.execute();
             }
@@ -69,8 +96,7 @@ public class BloodCauldronBlock extends LayeredCauldronBlock {
     }
 
     private static boolean isCauldronFull(BlockState blockState) {
-        if (!blockState.hasProperty(LEVEL))
-            return false;
+        if (!blockState.hasProperty(LEVEL)) return false;
         else return blockState.getValue(LayeredCauldronBlock.LEVEL) == 3;
     }
 
@@ -78,19 +104,32 @@ public class BloodCauldronBlock extends LayeredCauldronBlock {
         var map = CauldronInteraction.newInteractionMap();
 
         // Take Blood
-        map.put(Items.GLASS_BOTTLE, (blockState, level, blockPos, player, hand, itemStack) -> {
-            if (!level.isClientSide) {
-                Item item = itemStack.getItem();
-                player.setItemInHand(hand, ItemUtils.createFilledResult(itemStack, player, new ItemStack(ItemRegistry.BLOOD_VIAL.get())));
-                player.awardStat(Stats.USE_CAULDRON);
-                player.awardStat(Stats.ITEM_USED.get(item));
-                LayeredCauldronBlock.lowerFillLevel(blockState, level, blockPos);
-                level.playSound(null, blockPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-                level.gameEvent(null, GameEvent.FLUID_PICKUP, blockPos);
-            }
+        map.put(
+                Items.GLASS_BOTTLE,
+                (blockState, level, blockPos, player, hand, itemStack) -> {
+                    if (!level.isClientSide) {
+                        Item item = itemStack.getItem();
+                        player.setItemInHand(
+                                hand,
+                                ItemUtils.createFilledResult(
+                                        itemStack,
+                                        player,
+                                        new ItemStack(ItemRegistry.BLOOD_VIAL.get())));
+                        player.awardStat(Stats.USE_CAULDRON);
+                        player.awardStat(Stats.ITEM_USED.get(item));
+                        LayeredCauldronBlock.lowerFillLevel(blockState, level, blockPos);
+                        level.playSound(
+                                null,
+                                blockPos,
+                                SoundEvents.BOTTLE_FILL,
+                                SoundSource.BLOCKS,
+                                1.0F,
+                                1.0F);
+                        level.gameEvent(null, GameEvent.FLUID_PICKUP, blockPos);
+                    }
 
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        });
+                    return InteractionResult.sidedSuccess(level.isClientSide);
+                });
 
         return map;
     }

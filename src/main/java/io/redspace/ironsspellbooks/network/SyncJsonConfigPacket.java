@@ -21,8 +21,12 @@ import java.util.function.Supplier;
  * - Packet max size is orders of magnitude larger
  */
 public class SyncJsonConfigPacket implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<SyncJsonConfigPacket> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(IronsSpellbooks.MODID, "sync_config"));
-//    public static final StreamCodec<RegistryFriendlyByteBuf, SyncJsonConfigPacket> STREAM_CODEC = CustomPacketPayload.codec(SyncJsonConfigPacket::toBytes, SyncJsonConfigPacket::new);
+    public static final CustomPacketPayload.Type<SyncJsonConfigPacket> TYPE =
+            new CustomPacketPayload.Type<>(
+                    new ResourceLocation(IronsSpellbooks.MODID, "sync_config"));
+    //    public static final StreamCodec<RegistryFriendlyByteBuf, SyncJsonConfigPacket>
+    // STREAM_CODEC = CustomPacketPayload.codec(SyncJsonConfigPacket::toBytes,
+    // SyncJsonConfigPacket::new);
 
     public final Map<ResourceLocation, byte[]> data;
 
@@ -50,27 +54,29 @@ public class SyncJsonConfigPacket implements CustomPacketPayload {
         }
     }
 
-//    public static void handle(SyncJsonConfigPacket packet, IPayloadContext context) {
-//        context.enqueueWork(() -> {
-//            for (AbstractSpell spell : SpellRegistry.REGISTRY) {
-//                spell.resetRarityWeights();
-//            }
-//            SpellConfigManager.INSTANCE.handleClientSync(packet);
-//        });
-//    }
+    //    public static void handle(SyncJsonConfigPacket packet, IPayloadContext context) {
+    //        context.enqueueWork(() -> {
+    //            for (AbstractSpell spell : SpellRegistry.REGISTRY) {
+    //                spell.resetRarityWeights();
+    //            }
+    //            SpellConfigManager.INSTANCE.handleClientSync(packet);
+    //        });
+    //    }
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
-        supplier.get().enqueueWork(() -> {
-            for (AbstractSpell spell : SpellRegistry.REGISTRY.get()) {
-                spell.resetRarityWeights();
-            }
-            SpellConfigManager.INSTANCE.handleClientSync(this);
-        });
+        supplier.get()
+                .enqueueWork(
+                        () -> {
+                            for (AbstractSpell spell : SpellRegistry.REGISTRY.get()) {
+                                spell.resetRarityWeights();
+                            }
+                            SpellConfigManager.INSTANCE.handleClientSync(this);
+                        });
         return true;
     }
 
-//    @Override
-//    public Type<? extends CustomPacketPayload> type() {
-//        return TYPE;
-//    }
+    //    @Override
+    //    public Type<? extends CustomPacketPayload> type() {
+    //        return TYPE;
+    //    }
 }

@@ -19,12 +19,14 @@ import net.minecraft.world.entity.player.Player;
 @Deprecated(forRemoval = true)
 public abstract class AbstractEldritchSpell extends AbstractSpell {
 
-    public static final Style ELDRITCH_OBFUSCATED_STYLE = Style.EMPTY.withObfuscated(true).withFont(new ResourceLocation("alt"));
+    public static final Style ELDRITCH_OBFUSCATED_STYLE =
+            Style.EMPTY.withObfuscated(true).withFont(new ResourceLocation("alt"));
 
     @Override
     public MutableComponent getDisplayName(Player player) {
         boolean obfuscateName = player != null && this.obfuscateStats(player);
-        return super.getDisplayName(player).withStyle(obfuscateName ? ELDRITCH_OBFUSCATED_STYLE : Style.EMPTY);
+        return super.getDisplayName(player)
+                .withStyle(obfuscateName ? ELDRITCH_OBFUSCATED_STYLE : Style.EMPTY);
     }
 
     @Override
@@ -43,9 +45,13 @@ public abstract class AbstractEldritchSpell extends AbstractSpell {
     }
 
     @Override
-    public CastResult canBeCastedBy(int spellLevel, CastSource castSource, MagicData playerMagicData, Player player) {
+    public CastResult canBeCastedBy(
+            int spellLevel, CastSource castSource, MagicData playerMagicData, Player player) {
         if (!isLearned(player)) {
-            return new CastResult(CastResult.Type.FAILURE, Component.translatable("ui.irons_spellbooks.cast_error_unlearned").withStyle(ChatFormatting.RED));
+            return new CastResult(
+                    CastResult.Type.FAILURE,
+                    Component.translatable("ui.irons_spellbooks.cast_error_unlearned")
+                            .withStyle(ChatFormatting.RED));
         }
         return super.canBeCastedBy(spellLevel, castSource, playerMagicData, player);
     }

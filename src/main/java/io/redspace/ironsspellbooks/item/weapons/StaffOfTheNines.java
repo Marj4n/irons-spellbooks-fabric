@@ -32,27 +32,96 @@ public class StaffOfTheNines extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand pUsedHand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level level, Player player, InteractionHand pUsedHand) {
         if (!level.isClientSide) {
-            var pos = getPosition(player.getEyePosition(), 0.425f, .275f, 0.1775f, player.getRotationVector());
-            MagicManager.spawnParticles(level, ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.x, pos.y, pos.z, 5, .1, .1, .1, 0.01, false);
-            level.playSound(null, player.blockPosition(), SoundEvents.FIREWORK_ROCKET_BLAST, SoundSource.PLAYERS, 4, 1.5f);
-            level.playSound(null, player.blockPosition(), SoundEvents.FIREWORK_ROCKET_BLAST_FAR, SoundSource.PLAYERS, 6, 1.5f);
-            var hit = RaycastBuilder.begin(level, player)
-                    .range(64f)
-                    .checkForBlocks(true)
-                    .bbInflation(0.1f)
-                    .build();
+            var pos =
+                    getPosition(
+                            player.getEyePosition(),
+                            0.425f,
+                            .275f,
+                            0.1775f,
+                            player.getRotationVector());
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    pos.x,
+                    pos.y,
+                    pos.z,
+                    5,
+                    .1,
+                    .1,
+                    .1,
+                    0.01,
+                    false);
+            level.playSound(
+                    null,
+                    player.blockPosition(),
+                    SoundEvents.FIREWORK_ROCKET_BLAST,
+                    SoundSource.PLAYERS,
+                    4,
+                    1.5f);
+            level.playSound(
+                    null,
+                    player.blockPosition(),
+                    SoundEvents.FIREWORK_ROCKET_BLAST_FAR,
+                    SoundSource.PLAYERS,
+                    6,
+                    1.5f);
+            var hit =
+                    RaycastBuilder.begin(level, player)
+                            .range(64f)
+                            .checkForBlocks(true)
+                            .bbInflation(0.1f)
+                            .build();
             if (hit instanceof BlockHitResult blockHitResult) {
                 var loc = blockHitResult.getLocation();
-                MagicManager.spawnParticles(level, new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(blockHitResult.getBlockPos())), loc.x, loc.y, loc.z, 25, .1, .1, .1, 0.25, true);
+                MagicManager.spawnParticles(
+                        level,
+                        new BlockParticleOption(
+                                ParticleTypes.BLOCK,
+                                level.getBlockState(blockHitResult.getBlockPos())),
+                        loc.x,
+                        loc.y,
+                        loc.z,
+                        25,
+                        .1,
+                        .1,
+                        .1,
+                        0.25,
+                        true);
             } else if (hit instanceof EntityHitResult entityHitResult) {
-                entityHitResult.getEntity().hurt(level.damageSources().magic(), (float) (10f * player.getAttributeValue(AttributeRegistry.SPELL_POWER.get())));
+                entityHitResult
+                        .getEntity()
+                        .hurt(
+                                level.damageSources().magic(),
+                                (float)
+                                        (10f
+                                                * player.getAttributeValue(
+                                                        AttributeRegistry.SPELL_POWER.get())));
                 var loc = entityHitResult.getLocation();
-                MagicManager.spawnParticles(level, ParticleHelper.BLOOD, loc.x, loc.y, loc.z, 25, .1, .1, .1, 0.25, true);
+                MagicManager.spawnParticles(
+                        level,
+                        ParticleHelper.BLOOD,
+                        loc.x,
+                        loc.y,
+                        loc.z,
+                        25,
+                        .1,
+                        .1,
+                        .1,
+                        0.25,
+                        true);
             }
             CameraShakeManager.addCameraShake(new CameraShakeData(level, 10, player.position(), 5));
-            ((ServerPlayer) player).teleportTo((ServerLevel) level, player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot() - Utils.random.nextIntBetweenInclusive(6, 9));
+            ((ServerPlayer) player)
+                    .teleportTo(
+                            (ServerLevel) level,
+                            player.getX(),
+                            player.getY(),
+                            player.getZ(),
+                            player.getYRot(),
+                            player.getXRot() - Utils.random.nextIntBetweenInclusive(6, 9));
         }
         return super.use(level, player, pUsedHand);
     }

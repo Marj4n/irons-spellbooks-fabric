@@ -19,9 +19,17 @@ public class EnderSlashParticle extends TextureSheetParticle {
     private final Vec3 forward, up;
     private final Vector3f[] localVertices;
 
-    EnderSlashParticle(ClientLevel pLevel, double pX, double pY, double pZ, SpriteSet spriteSet, double xd, double yd, double zd, EnderSlashParticleOptions options) {
+    EnderSlashParticle(
+            ClientLevel pLevel,
+            double pX,
+            double pY,
+            double pZ,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd,
+            EnderSlashParticleOptions options) {
         super(pLevel, pX, pY, pZ, 0, 0, 0);
-
 
         this.lifetime = 5;
         this.gravity = 0;
@@ -65,20 +73,34 @@ public class EnderSlashParticle extends TextureSheetParticle {
         for (int i = 1; i < particleCount - 1; i++) {
             float t = i / (float) particleCount;
             float u = 1 - t;
-            //bezier curve interpolation
+            // bezier curve interpolation
 
             Vec3 localPos =
-                    vec3Copy(localVertices[1]).scale(0.4).scale(u * u * u).add(
-                            vec3Copy(localVertices[2]).scale(3 * u * u * t).add(
-                                    vec3Copy(localVertices[3]).scale(3 * u * t * t).add(
-                                            vec3Copy(localVertices[0]).scale(0.85).scale(t * t * t)
-                                    )
-                            )
-                    ).scale(this.quadSize * .85);
+                    vec3Copy(localVertices[1])
+                            .scale(0.4)
+                            .scale(u * u * u)
+                            .add(
+                                    vec3Copy(localVertices[2])
+                                            .scale(3 * u * u * t)
+                                            .add(
+                                                    vec3Copy(localVertices[3])
+                                                            .scale(3 * u * t * t)
+                                                            .add(
+                                                                    vec3Copy(localVertices[0])
+                                                                            .scale(0.85)
+                                                                            .scale(t * t * t))))
+                            .scale(this.quadSize * .85);
             Vec3 pos = localPos.add(Utils.getRandomVec3(0.2 + i * .01f));
             Vec3 motion = new Vec3(xd, yd, zd).scale(random.nextDouble() * 6);
             if (random.nextFloat() < .5f) {
-                level.addParticle(ParticleHelper.UNSTABLE_ENDER, x + pos.x, y + pos.y, z + pos.z, motion.x * 1.5, motion.y * 1.5, motion.z * 1.5);
+                level.addParticle(
+                        ParticleHelper.UNSTABLE_ENDER,
+                        x + pos.x,
+                        y + pos.y,
+                        z + pos.z,
+                        motion.x * 1.5,
+                        motion.y * 1.5,
+                        motion.z * 1.5);
             }
         }
     }
@@ -88,7 +110,13 @@ public class EnderSlashParticle extends TextureSheetParticle {
         Vec3 up = this.up;
         Vec3 right = forward.cross(up);
 
-        Vector3f[] vertices = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
+        Vector3f[] vertices =
+                new Vector3f[] {
+                    new Vector3f(-1.0F, -1.0F, 0.0F),
+                    new Vector3f(-1.0F, 1.0F, 0.0F),
+                    new Vector3f(1.0F, 1.0F, 0.0F),
+                    new Vector3f(1.0F, -1.0F, 0.0F)
+                };
         for (int i = 0; i < 4; i++) {
             float x = (float) (forward.x * vertices[i].x + right.x * vertices[i].y);
             float y = (float) (forward.y * vertices[i].x + right.y * vertices[i].y);
@@ -116,16 +144,24 @@ public class EnderSlashParticle extends TextureSheetParticle {
         this.makeCornerVertex(buffer, vertices[1], this.getU1(), this.getV0(), j);
         this.makeCornerVertex(buffer, vertices[2], this.getU0(), this.getV0(), j);
         this.makeCornerVertex(buffer, vertices[3], this.getU0(), this.getV1(), j);
-        //backface
+        // backface
         this.makeCornerVertex(buffer, vertices[3], this.getU0(), this.getV1(), j);
         this.makeCornerVertex(buffer, vertices[2], this.getU0(), this.getV0(), j);
         this.makeCornerVertex(buffer, vertices[1], this.getU1(), this.getV0(), j);
         this.makeCornerVertex(buffer, vertices[0], this.getU1(), this.getV1(), j);
-
     }
 
-    private void makeCornerVertex(VertexConsumer pConsumer, Vector3f pVec3f, float p_233996_, float p_233997_, int p_233998_) {
-        pConsumer.vertex(pVec3f.x(), pVec3f.y(), pVec3f.z()).uv(p_233996_, p_233997_).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(p_233998_);
+    private void makeCornerVertex(
+            VertexConsumer pConsumer,
+            Vector3f pVec3f,
+            float p_233996_,
+            float p_233997_,
+            int p_233998_) {
+        pConsumer
+                .vertex(pVec3f.x(), pVec3f.y(), pVec3f.z())
+                .uv(p_233996_, p_233997_)
+                .color(this.rCol, this.gCol, this.bCol, this.alpha)
+                .uv2(p_233998_);
     }
 
     @NotNull
@@ -147,12 +183,21 @@ public class EnderSlashParticle extends TextureSheetParticle {
             this.sprite = pSprite;
         }
 
-        public Particle createParticle(@NotNull EnderSlashParticleOptions options, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            EnderSlashParticle shriekparticle = new EnderSlashParticle(pLevel, pX, pY, pZ, sprite, pXSpeed, pYSpeed, pZSpeed, options);
+        public Particle createParticle(
+                @NotNull EnderSlashParticleOptions options,
+                @NotNull ClientLevel pLevel,
+                double pX,
+                double pY,
+                double pZ,
+                double pXSpeed,
+                double pYSpeed,
+                double pZSpeed) {
+            EnderSlashParticle shriekparticle =
+                    new EnderSlashParticle(
+                            pLevel, pX, pY, pZ, sprite, pXSpeed, pYSpeed, pZSpeed, options);
             shriekparticle.setSpriteFromAge(this.sprite);
             shriekparticle.setAlpha(1.0F);
             return shriekparticle;
         }
     }
-
 }

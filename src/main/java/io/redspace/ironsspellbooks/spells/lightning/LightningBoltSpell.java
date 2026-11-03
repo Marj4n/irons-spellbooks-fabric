@@ -32,19 +32,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class LightningBoltSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "lightning_bolt");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "lightning_bolt");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.EPIC)
-            .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(25)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.EPIC)
+                    .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(25)
+                    .build();
 
     public LightningBoltSpell() {
         this.manaCostPerLevel = 15;
@@ -75,12 +80,18 @@ public class LightningBoltSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        var result = RaycastBuilder.begin(level, entity)
-                .range(64)
-                .checkForBlocks(true)
-                .bbInflation(1f)
-                .build();
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        var result =
+                RaycastBuilder.begin(level, entity)
+                        .range(64)
+                        .checkForBlocks(true)
+                        .bbInflation(1f)
+                        .build();
         Vec3 pos = result.getLocation();
         if (result.getType() == HitResult.Type.ENTITY) {
             pos = ((EntityHitResult) result).getEntity().position();
@@ -96,16 +107,30 @@ public class LightningBoltSpell extends AbstractSpell {
         float radius = 4;
         float damage = getSpellPower(spellLevel, entity);
         var finalpos = pos;
-        level.getEntities(entity, AABB.ofSize(finalpos, radius * 2, radius * 2, radius * 2), (target) -> this.canHit(entity, target)).forEach(target -> {
-            double distance = target.distanceToSqr(finalpos);
-            if (distance < radius * radius && Utils.hasLineOfSight(level, finalpos.add(0, 2, 0), target.getBoundingBox().getCenter(), true)) {
-                float finalDamage = (float) (damage * (1 - distance / (radius * radius)));
-                DamageSources.applyDamage(target, finalDamage, getDamageSource(lightningBolt, entity));
-                if (target instanceof Creeper creeper) {
-                    creeper.thunderHit((ServerLevel) level, lightningBolt);
-                }
-            }
-        });
+        level.getEntities(
+                        entity,
+                        AABB.ofSize(finalpos, radius * 2, radius * 2, radius * 2),
+                        (target) -> this.canHit(entity, target))
+                .forEach(
+                        target -> {
+                            double distance = target.distanceToSqr(finalpos);
+                            if (distance < radius * radius
+                                    && Utils.hasLineOfSight(
+                                            level,
+                                            finalpos.add(0, 2, 0),
+                                            target.getBoundingBox().getCenter(),
+                                            true)) {
+                                float finalDamage =
+                                        (float) (damage * (1 - distance / (radius * radius)));
+                                DamageSources.applyDamage(
+                                        target,
+                                        finalDamage,
+                                        getDamageSource(lightningBolt, entity));
+                                if (target instanceof Creeper creeper) {
+                                    creeper.thunderHit((ServerLevel) level, lightningBolt);
+                                }
+                            }
+                        });
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 

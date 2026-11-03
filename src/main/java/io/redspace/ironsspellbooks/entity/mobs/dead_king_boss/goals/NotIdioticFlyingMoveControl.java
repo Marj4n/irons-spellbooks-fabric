@@ -43,7 +43,10 @@ public class NotIdioticFlyingMoveControl extends MoveControl {
 
             float f = (float) (Mth.atan2(d2, d0) * 180.0F / (float) Math.PI) - 90.0F;
             this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f, 90.0F));
-            float effectiveFlyspeed = (float) (this.speedModifier * this.mob.getAttributeValue(Attributes.FLYING_SPEED));
+            float effectiveFlyspeed =
+                    (float)
+                            (this.speedModifier
+                                    * this.mob.getAttributeValue(Attributes.FLYING_SPEED));
 
             this.mob.setSpeed(effectiveFlyspeed);
             this.mob.setXxa(0.0F);
@@ -53,7 +56,17 @@ public class NotIdioticFlyingMoveControl extends MoveControl {
                 this.mob.setXRot(this.rotlerp(this.mob.getXRot(), f2, (float) this.maxTurn));
                 if (d1 > 0 || Math.abs(d1) > mob.getBoundingBox().getYsize()) {
                     this.mob.setYya((d1 > 0.0 ? effectiveFlyspeed : -effectiveFlyspeed) * .5f);
-                } else if (mob.tickCount % 20 == 0 && mob.level().clip(new ClipContext(mob.position(), mob.position().add(0, -hoverHeight, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, mob)).getType() == HitResult.Type.BLOCK) {
+                } else if (mob.tickCount % 20 == 0
+                        && mob.level()
+                                        .clip(
+                                                new ClipContext(
+                                                        mob.position(),
+                                                        mob.position().add(0, -hoverHeight, 0),
+                                                        ClipContext.Block.COLLIDER,
+                                                        ClipContext.Fluid.ANY,
+                                                        mob))
+                                        .getType()
+                                == HitResult.Type.BLOCK) {
                     this.mob.setYya(effectiveFlyspeed * .5f);
                 }
             }

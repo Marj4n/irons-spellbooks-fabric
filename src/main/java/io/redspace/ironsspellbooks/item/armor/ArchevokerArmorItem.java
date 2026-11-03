@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.item.armor;
 
-
 import io.redspace.ironsspellbooks.entity.armor.ArchevokerArmorModel;
 import io.redspace.ironsspellbooks.entity.armor.GenericCustomArmorRenderer;
 import net.fabricmc.api.EnvType;
@@ -9,7 +8,10 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 public class ArchevokerArmorItem extends ImbuableChestplateArmorItem {
     public ArchevokerArmorItem(Type type, Properties settings) {
-        super(ExtendedArmorMaterials.ARCHEVOKER, type, settings/*, schoolAttributes(AttributeRegistry.EVOCATION_SPELL_POWER)*/);
+        super(
+                ExtendedArmorMaterials.ARCHEVOKER,
+                type,
+                settings /*, schoolAttributes(AttributeRegistry.EVOCATION_SPELL_POWER)*/);
     }
 
     @Override

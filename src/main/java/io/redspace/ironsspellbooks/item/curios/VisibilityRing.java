@@ -16,5 +16,4 @@ public class VisibilityRing extends SimpleDescriptiveCurio {
         slotContext.entity().removeEffect(MobEffects.BLINDNESS);
         slotContext.entity().removeEffect(MobEffects.DARKNESS);
     }
-
 }

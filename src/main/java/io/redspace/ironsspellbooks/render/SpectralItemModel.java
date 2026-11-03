@@ -31,7 +31,8 @@ public class SpectralItemModel implements BakedModel {
 
     @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) {
+    public List<BakedQuad> getQuads(
+            @Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) {
         return original.getQuads(state, side, rand);
     }
 
@@ -66,7 +67,8 @@ public class SpectralItemModel implements BakedModel {
         return original.getTransforms();
     }
 
-    public @NotNull List<RenderType> getRenderTypes(@NotNull ItemStack itemStack, boolean fabulous) {
+    public @NotNull List<RenderType> getRenderTypes(
+            @NotNull ItemStack itemStack, boolean fabulous) {
         return List.of(RenderHelper.CustomerRenderType.magic(InventoryMenu.BLOCK_ATLAS));
     }
 }

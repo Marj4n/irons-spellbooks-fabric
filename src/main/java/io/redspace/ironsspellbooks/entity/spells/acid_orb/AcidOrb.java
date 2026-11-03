@@ -35,7 +35,6 @@ public class AcidOrb extends AbstractMagicProjectile {
     int rendLevel;
     int rendDuration;
 
-
     public int getRendLevel() {
         return rendLevel;
     }
@@ -60,8 +59,10 @@ public class AcidOrb extends AbstractMagicProjectile {
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.ACID, x, y, z, 55, .08, .08, .08, 0.3, true);
-        MagicManager.spawnParticles(level(), ParticleHelper.ACID_BUBBLE, x, y, z, 25, .08, .08, .08, 0.3, false);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.ACID, x, y, z, 55, .08, .08, .08, 0.3, true);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.ACID_BUBBLE, x, y, z, 25, .08, .08, .08, 0.3, false);
     }
 
     @Override
@@ -74,12 +75,19 @@ public class AcidOrb extends AbstractMagicProjectile {
         super.onHit(hitresult);
         if (!this.level().isClientSide) {
             float explosionRadius = 3.5f;
-            var entities = level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            var entities =
+                    level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
             for (Entity entity : entities) {
                 double distance = entity.position().distanceTo(hitresult.getLocation());
-                if (distance < explosionRadius && Utils.hasLineOfSight(level(), hitresult.getLocation(), entity.getEyePosition(), true)) {
+                if (distance < explosionRadius
+                        && Utils.hasLineOfSight(
+                                level(), hitresult.getLocation(), entity.getEyePosition(), true)) {
                     if (entity instanceof LivingEntity livingEntity && livingEntity != getOwner())
-                        livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.REND.get(), getRendDuration(), getRendLevel()));
+                        livingEntity.addEffect(
+                                new MobEffectInstance(
+                                        MobEffectRegistry.REND.get(),
+                                        getRendDuration(),
+                                        getRendLevel()));
                 }
             }
             this.discardHelper(hitresult);

@@ -6,7 +6,11 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import net.minecraft.world.entity.LivingEntity;
 
 public class IceSpiderAttackGoal extends GenericAnimatedWarlockAttackGoal<IceSpiderEntity> {
-    public IceSpiderAttackGoal(IceSpiderEntity abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval) {
+    public IceSpiderAttackGoal(
+            IceSpiderEntity abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval) {
         super(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
     }
 
@@ -19,7 +23,7 @@ public class IceSpiderAttackGoal extends GenericAnimatedWarlockAttackGoal<IceSpi
     @Override
     public void handleAttackLogic(double distanceSquared) {
         if (mob.getGrappleTargetUUID() != null) {
-            //pause attacking while we are biting our enemy
+            // pause attacking while we are biting our enemy
             return;
         }
         super.handleAttackLogic(distanceSquared);
@@ -32,19 +36,22 @@ public class IceSpiderAttackGoal extends GenericAnimatedWarlockAttackGoal<IceSpi
                 mob.playSound(SoundRegistry.ICE_SPIDER_BITE.get());
             }
         }
-        mob.playSound(SoundRegistry.ICE_SPIDER_SWING.get(), 1, Utils.random.nextIntBetweenInclusive(9, 11) * .1f);
+        mob.playSound(
+                SoundRegistry.ICE_SPIDER_SWING.get(),
+                1,
+                Utils.random.nextIntBetweenInclusive(9, 11) * .1f);
     }
 
     @Override
     public void playImpactSound() {
-        //todo: custom sound
-//        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        // todo: custom sound
+        //        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1,
+        // Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
 
     public void setTarget(LivingEntity target) {
         this.target = target;
     }
-
 
     @Override
     // change access modifier

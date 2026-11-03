@@ -36,17 +36,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class BloodStepSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "blood_step");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(12)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "blood_step");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(12)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getDistance(spellLevel, caster), 1)));
     }
 
     public BloodStepSpell() {
@@ -83,17 +88,34 @@ public class BloodStepSpell extends AbstractSpell {
     }
 
     @Override
-    public void onClientPreCast(Level level, int spellLevel, LivingEntity entity, InteractionHand hand, @Nullable MagicData playerMagicData) {
+    public void onClientPreCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            InteractionHand hand,
+            @Nullable MagicData playerMagicData) {
         super.onClientPreCast(level, spellLevel, entity, hand, playerMagicData);
         Vec3 forward = entity.getForward().normalize();
         for (int i = 0; i < 35; i++) {
             Vec3 motion = forward.scale(Utils.random.nextDouble() * .25f);
-            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, entity.getRandomX(.4f), entity.getRandomY(), entity.getRandomZ(.4f), motion.x, motion.y, motion.z);
+            level.addParticle(
+                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    entity.getRandomX(.4f),
+                    entity.getRandomY(),
+                    entity.getRandomZ(.4f),
+                    motion.x,
+                    motion.y,
+                    motion.z);
         }
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 dest = null;
         var teleportData = (TeleportSpell.TeleportData) playerMagicData.getAdditionalCastData();
         if (teleportData != null) {
@@ -103,47 +125,66 @@ public class BloodStepSpell extends AbstractSpell {
                 Utils.handleSpellTeleport(this, entity, dest);
             }
         } else {
-            HitResult hitResult = RaycastBuilder.begin(level, entity)
-                    .range(getDistance(spellLevel, entity))
-                    .checkForBlocks(true)
-                    .build();
+            HitResult hitResult =
+                    RaycastBuilder.begin(level, entity)
+                            .range(getDistance(spellLevel, entity))
+                            .checkForBlocks(true)
+                            .build();
             if (entity.isPassenger()) {
                 entity.stopRiding();
             }
-            if (hitResult.getType() == HitResult.Type.ENTITY && ((EntityHitResult) hitResult).getEntity() instanceof LivingEntity target) {
-                //dest = target.position().subtract(new Vec3(0, 0, 1.5).yRot(target.getYRot()));
+            if (hitResult.getType() == HitResult.Type.ENTITY
+                    && ((EntityHitResult) hitResult).getEntity() instanceof LivingEntity target) {
+                // dest = target.position().subtract(new Vec3(0, 0, 1.5).yRot(target.getYRot()));
                 for (int i = 0; i < 8; i++) {
-                    dest = target.position().subtract(new Vec3(0, 0, 1.5).yRot(-(target.getYRot() + i * 45) * Mth.DEG_TO_RAD));
-                    if (level.getBlockState(BlockPos.containing(dest).above()).isAir())
-                        break;
-
+                    dest =
+                            target.position()
+                                    .subtract(
+                                            new Vec3(0, 0, 1.5)
+                                                    .yRot(
+                                                            -(target.getYRot() + i * 45)
+                                                                    * Mth.DEG_TO_RAD));
+                    if (level.getBlockState(BlockPos.containing(dest).above()).isAir()) break;
                 }
                 Utils.handleSpellTeleport(this, entity, dest.add(0, 1, 0));
-                entity.lookAt(EntityAnchorArgument.Anchor.EYES, target.getEyePosition().subtract(0, .15, 0));
+                entity.lookAt(
+                        EntityAnchorArgument.Anchor.EYES,
+                        target.getEyePosition().subtract(0, .15, 0));
             } else {
-                dest = TeleportSpell.findTeleportLocation(level, entity, getDistance(spellLevel, entity));
+                dest =
+                        TeleportSpell.findTeleportLocation(
+                                level, entity, getDistance(spellLevel, entity));
                 Utils.handleSpellTeleport(this, entity, dest);
-
             }
         }
         entity.resetFallDistance();
-        level.playSound(null, dest.x, dest.y, dest.z, getCastFinishSound().get(), SoundSource.NEUTRAL, 1f, 1f);
+        level.playSound(
+                null,
+                dest.x,
+                dest.y,
+                dest.z,
+                getCastFinishSound().get(),
+                SoundSource.NEUTRAL,
+                1f,
+                1f);
 
-        //Invis take 1 tick to set in
+        // Invis take 1 tick to set in
         entity.setInvisible(true);
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.TRUE_INVISIBILITY.get(), 100, 0, false, false, true));
-
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.TRUE_INVISIBILITY.get(), 100, 0, false, false, true));
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
     private float getDistance(int spellLevel, LivingEntity sourceEntity) {
-        return (float) (Utils.softCapFormula(getEntityPowerMultiplier(sourceEntity)) * getSpellPower(spellLevel, null));
+        return (float)
+                (Utils.softCapFormula(getEntityPowerMultiplier(sourceEntity))
+                        * getSpellPower(spellLevel, null));
     }
 
     @Override
     public AnimationHolder getCastStartAnimation() {
         return AnimationHolder.none();
     }
-
 }

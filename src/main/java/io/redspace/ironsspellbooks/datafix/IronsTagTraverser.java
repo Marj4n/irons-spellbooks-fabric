@@ -1,16 +1,16 @@
-//package io.redspace.ironsspellbooks.datafix;
+// package io.redspace.ironsspellbooks.datafix;
 //
-//import com.google.common.collect.Lists;
-//import net.minecraft.nbt.*;
+// import com.google.common.collect.Lists;
+// import net.minecraft.nbt.*;
 //
-//import javax.annotation.Nullable;
-//import javax.annotation.ParametersAreNonnullByDefault;
-//import java.util.Collections;
-//import java.util.List;
-//import java.util.concurrent.atomic.AtomicInteger;
+// import javax.annotation.Nullable;
+// import javax.annotation.ParametersAreNonnullByDefault;
+// import java.util.Collections;
+// import java.util.List;
+// import java.util.concurrent.atomic.AtomicInteger;
 //
-//@ParametersAreNonnullByDefault
-//public class IronsTagTraverser implements TagVisitor {
+// @ParametersAreNonnullByDefault
+// public class IronsTagTraverser implements TagVisitor {
 //    private final AtomicInteger changeCount;
 //
 //    public IronsTagTraverser() {
@@ -86,4 +86,4 @@
 //
 //    public void visitEnd(EndTag pTag) {
 //    }
-//}
+// }

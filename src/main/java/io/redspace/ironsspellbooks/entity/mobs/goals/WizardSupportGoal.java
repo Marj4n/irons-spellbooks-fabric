@@ -37,11 +37,16 @@ public class WizardSupportGoal<T extends PathfinderMob & SupportMob & IMagicEnti
     protected float minSpellQuality = .1f;
     protected float maxSpellQuality = .3f;
 
-    public WizardSupportGoal(T abstractSpellCastingMob, double pSpeedModifier, int pAttackInterval) {
+    public WizardSupportGoal(
+            T abstractSpellCastingMob, double pSpeedModifier, int pAttackInterval) {
         this(abstractSpellCastingMob, pSpeedModifier, pAttackInterval, pAttackInterval);
     }
 
-    public WizardSupportGoal(T abstractSpellCastingMob, double pSpeedModifier, int pAttackIntervalMin, int pAttackIntervalMax) {
+    public WizardSupportGoal(
+            T abstractSpellCastingMob,
+            double pSpeedModifier,
+            int pAttackIntervalMin,
+            int pAttackIntervalMax) {
         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK, Flag.TARGET));
         this.mob = abstractSpellCastingMob;
         this.speedModifier = pSpeedModifier;
@@ -51,7 +56,8 @@ public class WizardSupportGoal<T extends PathfinderMob & SupportMob & IMagicEnti
         this.attackRadiusSqr = attackRadius * attackRadius;
     }
 
-    public WizardSupportGoal<T> setSpells(List<AbstractSpell> healingSpells, List<AbstractSpell> buffSpells) {
+    public WizardSupportGoal<T> setSpells(
+            List<AbstractSpell> healingSpells, List<AbstractSpell> buffSpells) {
         this.healingSpells.clear();
         this.buffSpells.clear();
 
@@ -81,7 +87,10 @@ public class WizardSupportGoal<T extends PathfinderMob & SupportMob & IMagicEnti
             return false;
         }
         LivingEntity livingentity = this.mob.getSupportTarget();
-        if (livingentity != null && livingentity.isAlive() && Utils.shouldHealEntity(mob, livingentity) && livingentity.getHealth() < livingentity.getMaxHealth() * 0.9f) {
+        if (livingentity != null
+                && livingentity.isAlive()
+                && Utils.shouldHealEntity(mob, livingentity)
+                && livingentity.getHealth() < livingentity.getMaxHealth() * 0.9f) {
             this.target = livingentity;
             return true;
         } else {
@@ -117,7 +126,8 @@ public class WizardSupportGoal<T extends PathfinderMob & SupportMob & IMagicEnti
             return;
         }
 
-        double distanceSquared = this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
+        double distanceSquared =
+                this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
         hasLineOfSight = this.mob.getSensing().hasLineOfSight(this.target);
         if (hasLineOfSight) {
             ++this.seeTime;
@@ -128,7 +138,6 @@ public class WizardSupportGoal<T extends PathfinderMob & SupportMob & IMagicEnti
         doMovement(distanceSquared);
 
         handleAttackLogic(distanceSquared);
-
     }
 
     protected void handleAttackLogic(double distanceSquared) {
@@ -140,44 +149,58 @@ public class WizardSupportGoal<T extends PathfinderMob & SupportMob & IMagicEnti
             }
 
             resetAttackTimer(distanceSquared);
-            //irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.2: attackTime.1: {}", attackTime);
+            // irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.2: attackTime.1: {}",
+            // attackTime);
         }
         if (mob.isCasting()) {
             var spellData = MagicData.getPlayerMagicData(mob).getCastingSpell();
-            if (target.isDeadOrDying() || spellData.getSpell().shouldAIStopCasting(spellData.getLevel(), mob, target))
+            if (target.isDeadOrDying()
+                    || spellData.getSpell().shouldAIStopCasting(spellData.getLevel(), mob, target))
                 mob.cancelCast();
-
         }
     }
 
     protected void resetAttackTimer(double distanceSquared) {
         float f = (float) Math.sqrt(distanceSquared) / this.attackRadius;
-        this.attackTime = (int) (f * (float) (this.attackIntervalMax - this.attackIntervalMin) + (float) this.attackIntervalMin);
+        this.attackTime =
+                (int)
+                        (f * (float) (this.attackIntervalMax - this.attackIntervalMin)
+                                + (float) this.attackIntervalMin);
     }
 
     protected void doMovement(double distanceSquared) {
         float movementDebuff = mob.isCasting() ? .2f : 1f;
         double effectiveSpeed = movementDebuff * speedModifier;
 
-        //move closer to target or strafe around
+        // move closer to target or strafe around
         if (distanceSquared < attackRadiusSqr && seeTime >= 5) {
-            //irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.1: distanceSquared: {},attackRadiusSqr: {}, seeTime: {}, attackTime: {}", distanceSquared, attackRadiusSqr, seeTime, attackTime);
+            // irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.1: distanceSquared:
+            // {},attackRadiusSqr: {}, seeTime: {}, attackTime: {}", distanceSquared,
+            // attackRadiusSqr, seeTime, attackTime);
             this.mob.getNavigation().stop();
             mob.lookAt(target, 30, 30);
         } else {
             if (isFlying)
-                this.mob.getMoveControl().setWantedPosition(target.getX(), target.getY() + 2, target.getZ(), speedModifier);
-            else
-                this.mob.getNavigation().moveTo(this.target, effectiveSpeed);
+                this.mob
+                        .getMoveControl()
+                        .setWantedPosition(
+                                target.getX(), target.getY() + 2, target.getZ(), speedModifier);
+            else this.mob.getNavigation().moveTo(this.target, effectiveSpeed);
         }
     }
 
     protected void doSpellAction() {
-        int spellLevel = (int) (getNextSpellType().getMaxLevel() * Mth.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
+        int spellLevel =
+                (int)
+                        (getNextSpellType().getMaxLevel()
+                                * Mth.lerp(
+                                        mob.getRandom().nextFloat(),
+                                        minSpellQuality,
+                                        maxSpellQuality));
         spellLevel = Math.max(spellLevel, 1);
         var abstractSpell = getNextSpellType();
 
-        //Make sure cast is valid
+        // Make sure cast is valid
         if (!abstractSpell.shouldAIStopCasting(spellLevel, mob, target))
             mob.initiateCastSpell(abstractSpell, spellLevel);
         mob.setSupportTarget(null);
@@ -192,8 +215,7 @@ public class WizardSupportGoal<T extends PathfinderMob & SupportMob & IMagicEnti
     }
 
     protected AbstractSpell getSpell(List<AbstractSpell> spells) {
-        if (spells.isEmpty())
-            return SpellRegistry.none();
+        if (spells.isEmpty()) return SpellRegistry.none();
         return spells.get(mob.getRandom().nextInt(spells.size()));
     }
 

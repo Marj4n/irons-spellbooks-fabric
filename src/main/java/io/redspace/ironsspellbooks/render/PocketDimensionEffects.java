@@ -36,16 +36,29 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         return false;
     }
 
-    public static final ResourceLocation SKY_LOCATION = IronsSpellbooks.id("textures/environment/pocket_dimension_sky.png");
-    public static final ResourceLocation CLOUDS_LOCATION = IronsSpellbooks.id("textures/environment/pocket_clouds.png");
-    public static final ResourceLocation WISP_LOCATION = IronsSpellbooks.id("textures/environment/single_cloud.png");
-    public static final ResourceLocation NOISE = IronsSpellbooks.id("textures/environment/noise_tile.png");
+    public static final ResourceLocation SKY_LOCATION =
+            IronsSpellbooks.id("textures/environment/pocket_dimension_sky.png");
+    public static final ResourceLocation CLOUDS_LOCATION =
+            IronsSpellbooks.id("textures/environment/pocket_clouds.png");
+    public static final ResourceLocation WISP_LOCATION =
+            IronsSpellbooks.id("textures/environment/single_cloud.png");
+    public static final ResourceLocation NOISE =
+            IronsSpellbooks.id("textures/environment/noise_tile.png");
 
     @Override
-    public boolean renderSky(ClientLevel level, int ticks, float partialTick, /*Matrix4f modelViewMatrix,*/PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
-        // in 1.20.1, we aren't given the raw view matrix, but we are given a posestack. im gonna assume its the same thing
-//        PoseStack poseStack = new PoseStack();
-//        poseStack.mulPose(modelViewMatrix);
+    public boolean renderSky(
+            ClientLevel level,
+            int ticks,
+            float partialTick, /*Matrix4f modelViewMatrix,*/
+            PoseStack poseStack,
+            Camera camera,
+            Matrix4f projectionMatrix,
+            boolean isFoggy,
+            Runnable setupFog) {
+        // in 1.20.1, we aren't given the raw view matrix, but we are given a posestack. im gonna
+        // assume its the same thing
+        //        PoseStack poseStack = new PoseStack();
+        //        poseStack.mulPose(modelViewMatrix);
         poseStack.pushPose();
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
@@ -56,7 +69,15 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
          * Skybox
          */
         float skyDistance = 100;
-        renderBox(poseStack, tesselator, skyDistance, 0, 1, GameRenderer::getPositionTexColorShader, SKY_LOCATION, 0xFF454545);
+        renderBox(
+                poseStack,
+                tesselator,
+                skyDistance,
+                0,
+                1,
+                GameRenderer::getPositionTexColorShader,
+                SKY_LOCATION,
+                0xFF454545);
         /*
          * Stars
          */
@@ -75,21 +96,36 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             poseStack.mulPose(Axis.XP.rotationDegrees(x));
             poseStack.mulPose(Axis.YP.rotationDegrees(y));
             poseStack.mulPose(Axis.ZP.rotationDegrees(z));
-            Vector3f rgb = new Vector3f(random.nextFloat() * 0.5f + 0.5f, random.nextFloat() * 0.5f + 0.5f, random.nextFloat() * 0.5f + 0.5f);
+            Vector3f rgb =
+                    new Vector3f(
+                            random.nextFloat() * 0.5f + 0.5f,
+                            random.nextFloat() * 0.5f + 0.5f,
+                            random.nextFloat() * 0.5f + 0.5f);
             float intensity = Mth.lerp(j / (float) layers, 0.25f, 0.8f);
             rgb.mul(intensity);
             rgb = new Vector3f(Math.min(rgb.x, 1), Math.min(rgb.y, 1), Math.min(rgb.z, 1));
             RenderSystem.setShaderColor(rgb.x, rgb.y, rgb.z, 1f);
-            renderBox(poseStack, tesselator, skyDistance * scale, 0, 4f + 2f * scale, GameRenderer::getPositionTexColorShader, CLOUDS_LOCATION, 0xFF808080);
+            renderBox(
+                    poseStack,
+                    tesselator,
+                    skyDistance * scale,
+                    0,
+                    4f + 2f * scale,
+                    GameRenderer::getPositionTexColorShader,
+                    CLOUDS_LOCATION,
+                    0xFF808080);
             poseStack.popPose();
-            scale -= 0.04f; // give slight separation between layers to prevent too much zfighting/artifacting
+            scale -=
+                    0.04f; // give slight separation between layers to prevent too much
+                           // zfighting/artifacting
         }
         /*
          * Nebula
          */
         var color = new Vector3f(.1f, .4f, .6f);
         color.mul(0.075f);
-        // use ever-enclosing z offset to ensure new planes are always in front of old planes, preventing alpha clipping
+        // use ever-enclosing z offset to ensure new planes are always in front of old planes,
+        // preventing alpha clipping
         float zoff = renderNebula(poseStack, color, random, f, skyDistance, tesselator, scale, 0f);
         color = new Vector3f(.6f, .1f, .5f);
         color.mul(0.125f);
@@ -98,7 +134,8 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         color.mul(0.125f);
         zoff = renderNebula(poseStack, color, random, f, skyDistance, tesselator, scale, zoff);
 
-        renderBorderAura(level, ticks, partialTick, poseStack/*modelViewMatrix*/, camera, projectionMatrix);
+        renderBorderAura(
+                level, ticks, partialTick, poseStack /*modelViewMatrix*/, camera, projectionMatrix);
 
         RenderSystem.enableDepthTest();
         RenderSystem.depthMask(true);
@@ -108,30 +145,40 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         return true;
     }
 
-    public void renderBorderAura(ClientLevel level, int ticks, float partialTick, /*Matrix4f modelViewMatrix,*/PoseStack poseStack, Camera camera, Matrix4f projectionMatrix) {
-//        PoseStack poseStack = new PoseStack();
+    public void renderBorderAura(
+            ClientLevel level,
+            int ticks,
+            float partialTick, /*Matrix4f modelViewMatrix,*/
+            PoseStack poseStack,
+            Camera camera,
+            Matrix4f projectionMatrix) {
+        //        PoseStack poseStack = new PoseStack();
         poseStack.pushPose();
         Quaternionf quaternionf = camera.rotation().conjugate(new Quaternionf());
         Vec3 cameraPos = camera.getPosition();
-//        Matrix4f matrix4f1 = new Matrix4f().rotation(quaternionf).translate((float) -cameraPos.x, (float) -cameraPos.y, (float) -cameraPos.z);
-//        poseStack.mulPose(matrix4f1);
+        //        Matrix4f matrix4f1 = new Matrix4f().rotation(quaternionf).translate((float)
+        // -cameraPos.x, (float) -cameraPos.y, (float) -cameraPos.z);
+        //        poseStack.mulPose(matrix4f1);
         poseStack.translate((float) -cameraPos.x, (float) -cameraPos.y, (float) -cameraPos.z);
-        int traversal = (int) (cameraPos.z / PocketDimensionManager.POCKET_SPACING) * PocketDimensionManager.POCKET_SPACING;
+        int traversal =
+                (int) (cameraPos.z / PocketDimensionManager.POCKET_SPACING)
+                        * PocketDimensionManager.POCKET_SPACING;
         float HARDCODE_WIDTH = 7.0f;
         float halfWidth = HARDCODE_WIDTH / 2.0f;
         float HARDCODE_X = 4 + halfWidth;
         float HARDCODE_Y = 1;
         float HARDCODE_Z = 4 + halfWidth + traversal;
 
-
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE); //additive
+        RenderSystem.blendFunc(
+                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE); // additive
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.enableBlend();
         RenderSystem.disableDepthTest();
-//        renderBox(poseStack, Tesselator.getInstance(), 1, 0, 1, GameRenderer::getPositionTexColorShader, SKY_LOCATION, 0xFF454545);
+        //        renderBox(poseStack, Tesselator.getInstance(), 1, 0, 1,
+        // GameRenderer::getPositionTexColorShader, SKY_LOCATION, 0xFF454545);
         poseStack.translate(HARDCODE_X, HARDCODE_Y, HARDCODE_Z);
-//        renderBox(poseStack, Tesselator.getInstance(), 1, 0, 1, GameRenderer::getPositionTexColorShader, SKY_LOCATION, 0xFF454545);
-
+        //        renderBox(poseStack, Tesselator.getInstance(), 1, 0, 1,
+        // GameRenderer::getPositionTexColorShader, SKY_LOCATION, 0xFF454545);
 
         Tesselator tesselator = Tesselator.getInstance();
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
@@ -144,20 +191,47 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             poseStack.mulPose(Axis.YP.rotationDegrees(i * 90));
 
             Matrix4f matrix4f = poseStack.last().pose();
-            BufferBuilder bufferbuilder = tesselator.getBuilder();//(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+            BufferBuilder bufferbuilder =
+                    tesselator
+                            .getBuilder(); // (VertexFormat.Mode.QUADS,
+                                           // DefaultVertexFormat.POSITION_TEX_COLOR);
             bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
             int baseColor = 0xFF9911AA;
-            bufferbuilder.vertex(matrix4f, -halfWidth, HARDCODE_Y - 1, halfWidth).uv(0, uvScrollMax).color(baseColor).endVertex();
-            bufferbuilder.vertex(matrix4f, -halfWidth, HARDCODE_Y + 2, halfWidth).uv(0, uvScrollMin).color(0xFF000000).endVertex();
-            bufferbuilder.vertex(matrix4f, halfWidth, HARDCODE_Y + 2, halfWidth).uv(uvTile, uvScrollMin).color(0xFF000000).endVertex();
-            bufferbuilder.vertex(matrix4f, halfWidth, HARDCODE_Y - 1, halfWidth).uv(uvTile, uvScrollMax).color(baseColor).endVertex();
+            bufferbuilder
+                    .vertex(matrix4f, -halfWidth, HARDCODE_Y - 1, halfWidth)
+                    .uv(0, uvScrollMax)
+                    .color(baseColor)
+                    .endVertex();
+            bufferbuilder
+                    .vertex(matrix4f, -halfWidth, HARDCODE_Y + 2, halfWidth)
+                    .uv(0, uvScrollMin)
+                    .color(0xFF000000)
+                    .endVertex();
+            bufferbuilder
+                    .vertex(matrix4f, halfWidth, HARDCODE_Y + 2, halfWidth)
+                    .uv(uvTile, uvScrollMin)
+                    .color(0xFF000000)
+                    .endVertex();
+            bufferbuilder
+                    .vertex(matrix4f, halfWidth, HARDCODE_Y - 1, halfWidth)
+                    .uv(uvTile, uvScrollMax)
+                    .color(baseColor)
+                    .endVertex();
             BufferUploader.drawWithShader(bufferbuilder.end());
             poseStack.popPose();
         }
         poseStack.popPose();
     }
 
-    private static float renderNebula(PoseStack poseStack, Vector3f color, Random random, float f, float skyDistance, Tesselator tesselator, float scale, float zoff) {
+    private static float renderNebula(
+            PoseStack poseStack,
+            Vector3f color,
+            Random random,
+            float f,
+            float skyDistance,
+            Tesselator tesselator,
+            float scale,
+            float zoff) {
         RenderSystem.setShaderColor(color.x, color.y, color.z, 1f);
         int clouds = 15;
         for (int i = 0; i < clouds; i++) {
@@ -172,17 +246,26 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             poseStack.mulPose(Axis.YP.rotationDegrees(y));
             poseStack.mulPose(Axis.ZP.rotationDegrees(z));
             for (int j = 0; j < count; j++) {
-                Vector3f offset = new Vector3f(
-                        (random.nextFloat() - 0.5f),
-                        0, // y is distal axis
-                        (random.nextFloat() - 0.5f)
-                );
+                Vector3f offset =
+                        new Vector3f(
+                                (random.nextFloat() - 0.5f),
+                                0, // y is distal axis
+                                (random.nextFloat() - 0.5f));
                 offset.mul(skyDistance * 0.25f * (1 + j * .025f));
                 poseStack.pushPose();
                 poseStack.translate(offset.x, zoff, offset.z);
-                renderPlane(poseStack, tesselator, skyDistance * scale, 0, 1, GameRenderer::getPositionTexColorShader, WISP_LOCATION, clusterScale, 0xFF606060);
+                renderPlane(
+                        poseStack,
+                        tesselator,
+                        skyDistance * scale,
+                        0,
+                        1,
+                        GameRenderer::getPositionTexColorShader,
+                        WISP_LOCATION,
+                        clusterScale,
+                        0xFF606060);
                 poseStack.popPose();
-//                poseStack.scale(0.75f, 0.75f, 0.75f);
+                //                poseStack.scale(0.75f, 0.75f, 0.75f);
                 zoff += 0.03f;
             }
             poseStack.popPose();
@@ -190,7 +273,15 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
         return zoff;
     }
 
-    private static void renderBox(PoseStack poseStack, Tesselator tesselator, float skyDistance, float uvMin, float uvMax, Supplier<ShaderInstance> shaderSupplier, ResourceLocation texture, int color) {
+    private static void renderBox(
+            PoseStack poseStack,
+            Tesselator tesselator,
+            float skyDistance,
+            float uvMin,
+            float uvMax,
+            Supplier<ShaderInstance> shaderSupplier,
+            ResourceLocation texture,
+            int color) {
         RenderSystem.setShader(shaderSupplier);
         RenderSystem.setShaderTexture(0, texture);
         for (int i = 0; i < 6; i++) {
@@ -217,26 +308,67 @@ public class PocketDimensionEffects extends DimensionSpecialEffects {
             Matrix4f matrix4f = poseStack.last().pose();
             BufferBuilder bufferbuilder = tesselator.getBuilder();
             bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            bufferbuilder.vertex(matrix4f, -skyDistance, -skyDistance, -skyDistance).uv(uvMin, uvMin).color(color).endVertex();
-            bufferbuilder.vertex(matrix4f, -skyDistance, -skyDistance, skyDistance).uv(uvMin, uvMax).color(color).endVertex();
-            bufferbuilder.vertex(matrix4f, skyDistance, -skyDistance, skyDistance).uv(uvMax, uvMax).color(color).endVertex();
-            bufferbuilder.vertex(matrix4f, skyDistance, -skyDistance, -skyDistance).uv(uvMax, uvMin).color(color).endVertex();
+            bufferbuilder
+                    .vertex(matrix4f, -skyDistance, -skyDistance, -skyDistance)
+                    .uv(uvMin, uvMin)
+                    .color(color)
+                    .endVertex();
+            bufferbuilder
+                    .vertex(matrix4f, -skyDistance, -skyDistance, skyDistance)
+                    .uv(uvMin, uvMax)
+                    .color(color)
+                    .endVertex();
+            bufferbuilder
+                    .vertex(matrix4f, skyDistance, -skyDistance, skyDistance)
+                    .uv(uvMax, uvMax)
+                    .color(color)
+                    .endVertex();
+            bufferbuilder
+                    .vertex(matrix4f, skyDistance, -skyDistance, -skyDistance)
+                    .uv(uvMax, uvMin)
+                    .color(color)
+                    .endVertex();
             BufferUploader.drawWithShader(bufferbuilder.end());
             poseStack.popPose();
         }
     }
 
-    private static void renderPlane(PoseStack poseStack, Tesselator tesselator, float skyDistance, float uvMin, float uvMax, Supplier<ShaderInstance> shaderSupplier, ResourceLocation texture, float scale, int color) {
+    private static void renderPlane(
+            PoseStack poseStack,
+            Tesselator tesselator,
+            float skyDistance,
+            float uvMin,
+            float uvMax,
+            Supplier<ShaderInstance> shaderSupplier,
+            ResourceLocation texture,
+            float scale,
+            int color) {
         RenderSystem.setShader(shaderSupplier);
         RenderSystem.setShaderTexture(0, texture);
         poseStack.pushPose();
         Matrix4f matrix4f = poseStack.last().pose();
         BufferBuilder bufferbuilder = tesselator.getBuilder();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferbuilder.vertex(matrix4f, -skyDistance * scale, -skyDistance, -skyDistance * scale).uv(uvMin, uvMin).color(color).endVertex();
-        bufferbuilder.vertex(matrix4f, -skyDistance * scale, -skyDistance, skyDistance * scale).uv(uvMin, uvMax).color(color).endVertex();
-        bufferbuilder.vertex(matrix4f, skyDistance * scale, -skyDistance, skyDistance * scale).uv(uvMax, uvMax).color(color).endVertex();
-        bufferbuilder.vertex(matrix4f, skyDistance * scale, -skyDistance, -skyDistance * scale).uv(uvMax, uvMin).color(color).endVertex();
+        bufferbuilder
+                .vertex(matrix4f, -skyDistance * scale, -skyDistance, -skyDistance * scale)
+                .uv(uvMin, uvMin)
+                .color(color)
+                .endVertex();
+        bufferbuilder
+                .vertex(matrix4f, -skyDistance * scale, -skyDistance, skyDistance * scale)
+                .uv(uvMin, uvMax)
+                .color(color)
+                .endVertex();
+        bufferbuilder
+                .vertex(matrix4f, skyDistance * scale, -skyDistance, skyDistance * scale)
+                .uv(uvMax, uvMax)
+                .color(color)
+                .endVertex();
+        bufferbuilder
+                .vertex(matrix4f, skyDistance * scale, -skyDistance, -skyDistance * scale)
+                .uv(uvMax, uvMin)
+                .color(color)
+                .endVertex();
         BufferUploader.drawWithShader(bufferbuilder.end());
         poseStack.popPose();
     }

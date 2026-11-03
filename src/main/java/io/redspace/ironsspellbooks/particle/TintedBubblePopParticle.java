@@ -19,8 +19,15 @@ public class TintedBubblePopParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
 
     protected TintedBubblePopParticle(
-            ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, SpriteSet sprites, BlockPos cauldronPos
-    ) {
+            ClientLevel level,
+            double x,
+            double y,
+            double z,
+            double xSpeed,
+            double ySpeed,
+            double zSpeed,
+            SpriteSet sprites,
+            BlockPos cauldronPos) {
         super(level, x, y, z);
         this.sprites = sprites;
         this.lifetime = 4;
@@ -78,9 +85,9 @@ public class TintedBubblePopParticle extends TextureSheetParticle {
                 double z,
                 double xSpeed,
                 double ySpeed,
-                double zSpeed
-        ) {
-            return new TintedBubblePopParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, this.sprites, options.cauldronPos());
+                double zSpeed) {
+            return new TintedBubblePopParticle(
+                    level, x, y, z, xSpeed, ySpeed, zSpeed, this.sprites, options.cauldronPos());
         }
     }
 }

@@ -48,13 +48,33 @@ public class Comet extends AbstractMagicProjectile {
         for (int i = 0; i < count; i++) {
             Vec3 random = Utils.getRandomVec3(0.04);
             Vec3 p = vec.scale(f * i);
-            level().addParticle(ParticleHelper.UNSTABLE_ENDER, this.getX() + random.x + p.x, this.getY() + random.y + p.y, this.getZ() + random.z + p.z, random.x, random.y, random.z);
+            level().addParticle(
+                            ParticleHelper.UNSTABLE_ENDER,
+                            this.getX() + random.x + p.x,
+                            this.getY() + random.y + p.y,
+                            this.getZ() + random.z + p.z,
+                            random.x,
+                            random.y,
+                            random.z);
         }
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), new BlastwaveParticleOptions(SpellRegistry.STARFALL_SPELL.get().getSchoolType().getTargetingColor(), 1.25f), x, y, z, 1, 0, 0, 0, 0, true);
+        MagicManager.spawnParticles(
+                level(),
+                new BlastwaveParticleOptions(
+                        SpellRegistry.STARFALL_SPELL.get().getSchoolType().getTargetingColor(),
+                        1.25f),
+                x,
+                y,
+                z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
     }
 
     @Override
@@ -64,7 +84,15 @@ public class Comet extends AbstractMagicProjectile {
 
     @Override
     protected void doImpactSound(Supplier<SoundEvent> sound) {
-        level().playSound(null, getX(), getY(), getZ(), sound.get(), SoundSource.NEUTRAL, .8f, 1.35f + Utils.random.nextFloat() * .3f);
+        level().playSound(
+                        null,
+                        getX(),
+                        getY(),
+                        getZ(),
+                        sound.get(),
+                        SoundSource.NEUTRAL,
+                        .8f,
+                        1.35f + Utils.random.nextFloat() * .3f);
     }
 
     @Override
@@ -78,15 +106,18 @@ public class Comet extends AbstractMagicProjectile {
             impactParticles(xOld, yOld, zOld);
             getImpactSound().ifPresent(this::doImpactSound);
             float explosionRadius = getExplosionRadius();
-            var entities = level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            var entities =
+                    level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
             for (Entity entity : entities) {
                 double distance = entity.distanceToSqr(hitResult.getLocation());
                 if (distance < explosionRadius * explosionRadius && canHitEntity(entity)) {
-                    DamageSources.applyDamage(entity, damage, SpellRegistry.STARFALL_SPELL.get().getDamageSource(this, getOwner()));
+                    DamageSources.applyDamage(
+                            entity,
+                            damage,
+                            SpellRegistry.STARFALL_SPELL.get().getDamageSource(this, getOwner()));
                 }
             }
             this.discardHelper(hitResult);
         }
     }
-
 }

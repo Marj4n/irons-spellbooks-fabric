@@ -11,10 +11,17 @@ import net.fabricmc.api.Environment;
 public class ElectricityParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
 
-    public ElectricityParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public ElectricityParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
-
 
         this.friction = .77f;
         this.xd = xd;
@@ -30,7 +37,6 @@ public class ElectricityParticle extends TextureSheetParticle {
         this.rCol = 1f;
         this.gCol = 1f;
         this.bCol = 1f;
-
     }
 
     @Override
@@ -60,9 +66,15 @@ public class ElectricityParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new ElectricityParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }

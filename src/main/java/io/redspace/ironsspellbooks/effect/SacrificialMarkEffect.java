@@ -20,7 +20,8 @@ public class SacrificialMarkEffect extends MagicMobEffect implements ISyncedMobE
 
     public static void onLivingDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        if (entity.level().isClientSide() || !entity.hasEffect(MobEffectRegistry.SACRIFICIAL_MARK.get())) {
+        if (entity.level().isClientSide()
+                || !entity.hasEffect(MobEffectRegistry.SACRIFICIAL_MARK.get())) {
             return;
         }
         var mark = entity.getEffect(MobEffectRegistry.SACRIFICIAL_MARK.get());
@@ -28,7 +29,10 @@ public class SacrificialMarkEffect extends MagicMobEffect implements ISyncedMobE
             return;
         }
 
-        LivingEntity owner = SummonManager.getOwner(entity) instanceof LivingEntity livingOwner ? livingOwner : entity;
+        LivingEntity owner =
+                SummonManager.getOwner(entity) instanceof LivingEntity livingOwner
+                        ? livingOwner
+                        : entity;
         SacrificeSpell spell = (SacrificeSpell) SpellRegistry.SACRIFICE_SPELL.get();
         float damage = spell.getDamage(mark.getAmplifier() + 1, owner);
         float explosionRadius = spell.getRadius(entity);
@@ -38,8 +42,7 @@ public class SacrificialMarkEffect extends MagicMobEffect implements ISyncedMobE
                 spell.getDamageSource(entity, owner),
                 damage,
                 explosionRadius,
-                entity.getBoundingBox().getCenter()
-        );
+                entity.getBoundingBox().getCenter());
         entity.remove(Entity.RemovalReason.KILLED);
     }
 
@@ -48,13 +51,25 @@ public class SacrificialMarkEffect extends MagicMobEffect implements ISyncedMobE
         ParticleOptions particle = ParticleHelper.BLOOD;
         var random = livingEntity.getRandom();
         for (int i = 0; i < 2; i++) {
-            Vec3 motion = new Vec3(
-                    random.nextFloat() * 2 - 1,
-                    random.nextFloat() * 2 - 1,
-                    random.nextFloat() * 2 - 1
-            );
-            motion = motion.scale(.04f).add(livingEntity.getDeltaMovement().scale(1)).add(0, 0.04, 0);
-            livingEntity.level().addParticle(particle, livingEntity.getRandomX(.75f), livingEntity.getRandomY(), livingEntity.getRandomZ(.75f), motion.x, motion.y + 0.1, motion.z);
+            Vec3 motion =
+                    new Vec3(
+                            random.nextFloat() * 2 - 1,
+                            random.nextFloat() * 2 - 1,
+                            random.nextFloat() * 2 - 1);
+            motion =
+                    motion.scale(.04f)
+                            .add(livingEntity.getDeltaMovement().scale(1))
+                            .add(0, 0.04, 0);
+            livingEntity
+                    .level()
+                    .addParticle(
+                            particle,
+                            livingEntity.getRandomX(.75f),
+                            livingEntity.getRandomY(),
+                            livingEntity.getRandomZ(.75f),
+                            motion.x,
+                            motion.y + 0.1,
+                            motion.z);
         }
     }
 }

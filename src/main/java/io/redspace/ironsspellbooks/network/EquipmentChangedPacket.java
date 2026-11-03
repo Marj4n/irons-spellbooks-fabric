@@ -7,13 +7,10 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class EquipmentChangedPacket implements CustomPacketPayload {
-    public EquipmentChangedPacket() {
-    }
+    public EquipmentChangedPacket() {}
 
-    public EquipmentChangedPacket(FriendlyByteBuf buf) {
-    }
+    public EquipmentChangedPacket(FriendlyByteBuf buf) {}
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBoolean(true);

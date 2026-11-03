@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.spells;
 
-
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
@@ -9,18 +8,22 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class SpinAttackModel extends GeoModel<AbstractSpellCastingMob> {
-    public static final ResourceLocation FIRE_TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/fire_riptide.png");
-    public static final ResourceLocation LIGHTNING_TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/lightning_riptide.png");
-    public static final ResourceLocation DEFAULT_TEXTURE = new ResourceLocation("textures/entity/trident_riptide.png");
+    public static final ResourceLocation FIRE_TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/fire_riptide.png");
+    public static final ResourceLocation LIGHTNING_TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/lightning_riptide.png");
+    public static final ResourceLocation DEFAULT_TEXTURE =
+            new ResourceLocation("textures/entity/trident_riptide.png");
 
-    private static final ResourceLocation MODEL = new ResourceLocation(IronsSpellbooks.MODID, "geo/spin_attack_model.geo.json");
+    private static final ResourceLocation MODEL =
+            new ResourceLocation(IronsSpellbooks.MODID, "geo/spin_attack_model.geo.json");
 
-    public SpinAttackModel() {
-    }
+    public SpinAttackModel() {}
 
     @Override
     public ResourceLocation getTextureResource(AbstractSpellCastingMob object) {
-        SpinAttackType spinAttackType = ClientMagicData.getSyncedSpellData(object).getSpinAttackType();
+        SpinAttackType spinAttackType =
+                ClientMagicData.getSyncedSpellData(object).getSpinAttackType();
         return spinAttackType.textureId();
     }
 
@@ -33,5 +36,4 @@ public class SpinAttackModel extends GeoModel<AbstractSpellCastingMob> {
     public ResourceLocation getModelResource(AbstractSpellCastingMob object) {
         return MODEL;
     }
-
 }

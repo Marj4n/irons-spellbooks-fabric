@@ -32,19 +32,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class IceBlockSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "ice_block");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "ice_block");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(6)
-            .setCooldownSeconds(15)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(6)
+                    .setCooldownSeconds(15)
+                    .build();
 
     public IceBlockSpell() {
         this.manaCostPerLevel = 10;
@@ -75,17 +80,24 @@ public class IceBlockSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .35f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 spawn = null;
         LivingEntity target = null;
         int spawnheight = 4;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             target = castTargetingData.getTarget((ServerLevel) level);
             if (target != null) {
                 spawn = target.position();
@@ -93,11 +105,12 @@ public class IceBlockSpell extends AbstractSpell {
             }
         }
         if (spawn == null) {
-            HitResult raycast = RaycastBuilder.begin(level, entity)
-                    .range(32)
-                    .checkForBlocks(true)
-                    .bbInflation(.25f)
-                    .build();
+            HitResult raycast =
+                    RaycastBuilder.begin(level, entity)
+                            .range(32)
+                            .checkForBlocks(true)
+                            .bbInflation(.25f)
+                            .build();
             if (raycast.getType() == HitResult.Type.ENTITY) {
                 spawn = ((EntityHitResult) raycast).getEntity().position();
                 if (((EntityHitResult) raycast).getEntity() instanceof LivingEntity livingEntity)
@@ -121,10 +134,8 @@ public class IceBlockSpell extends AbstractSpell {
     private Vec3 raiseWithCollision(Vec3 start, int blocks, Level level) {
         for (int i = 0; i < blocks; i++) {
             Vec3 raised = start.add(0, 1, 0);
-            if (level.getBlockState(BlockPos.containing(raised)).isAir())
-                start = raised;
-            else
-                break;
+            if (level.getBlockState(BlockPos.containing(raised)).isAir()) start = raised;
+            else break;
         }
         return start;
     }

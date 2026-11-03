@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MobEffectMixin {
     @Inject(method = "applyEffectTick", at = @At(value = "HEAD"))
     private void markPoisoned(LivingEntity pLivingEntity, int pAmplifier, CallbackInfo ci) {
-        if ((Object) this == MobEffects.POISON && pLivingEntity instanceof ServerPlayer serverPlayer) {
+        if ((Object) this == MobEffects.POISON
+                && pLivingEntity instanceof ServerPlayer serverPlayer) {
             MagicData.getPlayerMagicData(serverPlayer).markPoisoned();
         }
     }

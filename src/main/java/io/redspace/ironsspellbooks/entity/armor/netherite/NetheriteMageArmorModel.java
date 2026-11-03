@@ -23,6 +23,7 @@ public class NetheriteMageArmorModel extends DefaultedItemGeoModel<NetheriteMage
 
     @Override
     public ResourceLocation getAnimationResource(NetheriteMageArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

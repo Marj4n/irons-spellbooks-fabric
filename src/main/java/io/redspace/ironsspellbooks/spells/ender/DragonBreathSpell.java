@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.spells.ender;
 
-
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
@@ -27,19 +26,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class DragonBreathSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "dragon_breath");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "dragon_breath");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(12)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(12)
+                    .build();
 
     public DragonBreathSpell() {
         this.manaCostPerLevel = 1;
@@ -75,14 +79,21 @@ public class DragonBreathSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
 
-        if (playerMagicData.isCasting() && playerMagicData.getCastingSpell().getSpell().equals(this)
+        if (playerMagicData.isCasting()
+                && playerMagicData.getCastingSpell().getSpell().equals(this)
                 && playerMagicData.getAdditionalCastData() instanceof EntityCastData entityCastData
                 && entityCastData.getCastingEntity() instanceof AbstractConeProjectile cone) {
             cone.setDealDamageActive();
         } else {
-            DragonBreathProjectile dragonBreathProjectile = new DragonBreathProjectile(world, entity);
+            DragonBreathProjectile dragonBreathProjectile =
+                    new DragonBreathProjectile(world, entity);
             dragonBreathProjectile.setPos(entity.position().add(0, entity.getEyeHeight() * .7, 0));
             dragonBreathProjectile.setDamage(getDamage(spellLevel, entity));
             world.addFreshEntity(dragonBreathProjectile);
@@ -100,5 +111,4 @@ public class DragonBreathSpell extends AbstractSpell {
     public boolean shouldAIStopCasting(int spellLevel, Mob mob, LivingEntity target) {
         return mob.distanceToSqr(target) > (10 * 10) * 1.2;
     }
-
 }

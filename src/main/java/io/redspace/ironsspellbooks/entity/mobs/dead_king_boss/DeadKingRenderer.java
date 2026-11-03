@@ -22,26 +22,80 @@ public class DeadKingRenderer extends AbstractSpellCastingMobRenderer {
     }
 
     @Override
-    public void render(AbstractSpellCastingMob entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        getGeoModel().getBone(PartNames.LEFT_LEG).ifPresent((bone) -> bone.setHidden(entity instanceof DeadKingBoss king && king.isPhase(DeadKingBoss.Phases.FinalPhase)));
-        getGeoModel().getBone(PartNames.RIGHT_LEG).ifPresent((bone) -> bone.setHidden(entity instanceof DeadKingBoss king && king.isPhase(DeadKingBoss.Phases.FinalPhase)));
+    public void render(
+            AbstractSpellCastingMob entity,
+            float entityYaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
+        getGeoModel()
+                .getBone(PartNames.LEFT_LEG)
+                .ifPresent(
+                        (bone) ->
+                                bone.setHidden(
+                                        entity instanceof DeadKingBoss king
+                                                && king.isPhase(DeadKingBoss.Phases.FinalPhase)));
+        getGeoModel()
+                .getBone(PartNames.RIGHT_LEG)
+                .ifPresent(
+                        (bone) ->
+                                bone.setHidden(
+                                        entity instanceof DeadKingBoss king
+                                                && king.isPhase(DeadKingBoss.Phases.FinalPhase)));
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
     @Override
-    public void preRender(PoseStack poseStack, AbstractSpellCastingMob animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float r, float g, float b, float a) {
-        if (animatable instanceof DeadKingBoss)
-            poseStack.scale(1.3f, 1.3f, 1.3f);
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, r, g, b, a);
+    public void preRender(
+            PoseStack poseStack,
+            AbstractSpellCastingMob animatable,
+            BakedGeoModel model,
+            @Nullable MultiBufferSource bufferSource,
+            @Nullable VertexConsumer buffer,
+            boolean isReRender,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            float r,
+            float g,
+            float b,
+            float a) {
+        if (animatable instanceof DeadKingBoss) poseStack.scale(1.3f, 1.3f, 1.3f);
+        super.preRender(
+                poseStack,
+                animatable,
+                model,
+                bufferSource,
+                buffer,
+                isReRender,
+                partialTick,
+                packedLight,
+                packedOverlay,
+                r,
+                g,
+                b,
+                a);
     }
 
     @Override
-    public RenderType getRenderType(AbstractSpellCastingMob animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return animatable.isInvisible() ? RenderType.entityTranslucent(texture) : RenderType.entityCutoutNoCull(texture);
+    public RenderType getRenderType(
+            AbstractSpellCastingMob animatable,
+            ResourceLocation texture,
+            @Nullable MultiBufferSource bufferSource,
+            float partialTick) {
+        return animatable.isInvisible()
+                ? RenderType.entityTranslucent(texture)
+                : RenderType.entityCutoutNoCull(texture);
     }
 
     @Override
-    protected void adjustHandItemRendering(PoseStack poseStack, ItemStack itemStack, AbstractSpellCastingMob animatable, float partialTick, boolean offhand) {
+    protected void adjustHandItemRendering(
+            PoseStack poseStack,
+            ItemStack itemStack,
+            AbstractSpellCastingMob animatable,
+            float partialTick,
+            boolean offhand) {
         if (itemStack.is(ItemRegistry.BLOOD_STAFF.get())) {
             poseStack.translate(0, .25, 0);
         }

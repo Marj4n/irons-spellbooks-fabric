@@ -15,20 +15,23 @@ import org.marj4n.irons_spellbooks.registry.RegistryEntry;
 
 import java.util.function.Supplier;
 
-
 public class MenuRegistry {
-    private static final DeferredRegistry<MenuType<?>> MENUS = DeferredRegistry.create(Registries.MENU, IronsSpellbooks.MODID);
+    private static final DeferredRegistry<MenuType<?>> MENUS =
+            DeferredRegistry.create(Registries.MENU, IronsSpellbooks.MODID);
 
     public static void register() {
         MENUS.register();
     }
 
-    private static <T extends AbstractContainerMenu> RegistryEntry<MenuType<T>> registerMenuType(ExtendedFactory<T> factory, String name) {
+    private static <T extends AbstractContainerMenu> RegistryEntry<MenuType<T>> registerMenuType(
+            ExtendedFactory<T> factory, String name) {
         return MENUS.register(name, () -> new ExtendedScreenHandlerType<>(factory));
     }
 
-    public static final Supplier<MenuType<InscriptionTableMenu>> INSCRIPTION_TABLE_MENU = registerMenuType(InscriptionTableMenu::new, "inscription_table_menu");
-    public static final Supplier<MenuType<ScrollForgeMenu>> SCROLL_FORGE_MENU = registerMenuType(ScrollForgeMenu::new, "scroll_forge_menu");
-    public static final Supplier<MenuType<ArcaneAnvilMenu>> ARCANE_ANVIL_MENU = registerMenuType(ArcaneAnvilMenu::new, "arcane_anvil_menu");
-
+    public static final Supplier<MenuType<InscriptionTableMenu>> INSCRIPTION_TABLE_MENU =
+            registerMenuType(InscriptionTableMenu::new, "inscription_table_menu");
+    public static final Supplier<MenuType<ScrollForgeMenu>> SCROLL_FORGE_MENU =
+            registerMenuType(ScrollForgeMenu::new, "scroll_forge_menu");
+    public static final Supplier<MenuType<ArcaneAnvilMenu>> ARCANE_ANVIL_MENU =
+            registerMenuType(ArcaneAnvilMenu::new, "arcane_anvil_menu");
 }

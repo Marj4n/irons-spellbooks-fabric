@@ -26,8 +26,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class AlchemistCauldronRecipeCategory implements IRecipeCategory<AlchemistCauldronJeiRecipe> {
-    public static final RecipeType<AlchemistCauldronJeiRecipe> ALCHEMIST_CAULDRON_RECIPE_TYPE = RecipeType.create(IronsSpellbooks.MODID, "alchemist_cauldron", AlchemistCauldronJeiRecipe.class);
+public class AlchemistCauldronRecipeCategory
+        implements IRecipeCategory<AlchemistCauldronJeiRecipe> {
+    public static final RecipeType<AlchemistCauldronJeiRecipe> ALCHEMIST_CAULDRON_RECIPE_TYPE =
+            RecipeType.create(
+                    IronsSpellbooks.MODID, "alchemist_cauldron", AlchemistCauldronJeiRecipe.class);
 
     private final IDrawable background;
     private final IDrawable cauldron_block_icon;
@@ -38,10 +41,14 @@ public class AlchemistCauldronRecipeCategory implements IRecipeCategory<Alchemis
     private final int paddingBottom = 20;
 
     public AlchemistCauldronRecipeCategory(IGuiHelper guiHelper) {
-        background = guiHelper.drawableBuilder(JeiPlugin.ALCHEMIST_CAULDRON_GUI, 0, 0, 125, 19)
-                .addPadding(0, paddingBottom, 0, 0)
-                .build();
-        cauldron_block_icon = guiHelper.createDrawableItemStack(new ItemStack(BlockRegistry.ALCHEMIST_CAULDRON.get()));
+        background =
+                guiHelper
+                        .drawableBuilder(JeiPlugin.ALCHEMIST_CAULDRON_GUI, 0, 0, 125, 19)
+                        .addPadding(0, paddingBottom, 0, 0)
+                        .build();
+        cauldron_block_icon =
+                guiHelper.createDrawableItemStack(
+                        new ItemStack(BlockRegistry.ALCHEMIST_CAULDRON.get()));
     }
 
     @Override
@@ -65,46 +72,68 @@ public class AlchemistCauldronRecipeCategory implements IRecipeCategory<Alchemis
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, AlchemistCauldronJeiRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(
+            IRecipeLayoutBuilder builder, AlchemistCauldronJeiRecipe recipe, IFocusGroup focuses) {
         int fluidRenderHeight = 16;
-        IRecipeSlotBuilder itemInput = builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                .addItemStacks(Arrays.stream(recipe.itemIn().getItems()).toList())
-                .setSlotName(inputSlotName);
+        IRecipeSlotBuilder itemInput =
+                builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+                        .addItemStacks(Arrays.stream(recipe.itemIn().getItems()).toList())
+                        .setSlotName(inputSlotName);
 
-        IRecipeSlotBuilder fluidInput = builder.addSlot(RecipeIngredientRole.INPUT, 54, 1 + 16 - fluidRenderHeight)
-                .addFluidStack(recipe.fluidIn().getFluid(), recipe.fluidIn().getAmount() * 81L, recipe.fluidIn().getTag())
-                .setFluidRenderer(recipe.fluidIn().getAmount() * 81L, false, 16, fluidRenderHeight)
-                .setSlotName(fluidInputSlotName);
+        IRecipeSlotBuilder fluidInput =
+                builder.addSlot(RecipeIngredientRole.INPUT, 54, 1 + 16 - fluidRenderHeight)
+                        .addFluidStack(
+                                recipe.fluidIn().getFluid(),
+                                recipe.fluidIn().getAmount() * 81L,
+                                recipe.fluidIn().getTag())
+                        .setFluidRenderer(
+                                recipe.fluidIn().getAmount() * 81L, false, 16, fluidRenderHeight)
+                        .setSlotName(fluidInputSlotName);
 
         if (!recipe.results().isEmpty()) {
             int width = 16 / recipe.results().size();
             int diff = 16 - width * recipe.results().size();
             int xpos = 108;
-            long maxCap = recipe.results().stream().mapToLong(fluid -> fluid.getAmount() * 81L).max().orElse(0);
+            long maxCap =
+                    recipe.results().stream()
+                            .mapToLong(fluid -> fluid.getAmount() * 81L)
+                            .max()
+                            .orElse(0);
             for (int i = 0; i < recipe.results().size(); i++) {
                 int w = width + (i == 0 ? diff : 0);
                 var stack = recipe.results().get(i);
-                IRecipeSlotBuilder outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, xpos, 1 + 16 - fluidRenderHeight)
-                        .addFluidStack(stack.getFluid(), stack.getAmount() * 81L, stack.getTag())
-                        .setFluidRenderer(maxCap, false, w, fluidRenderHeight)
-                        .setSlotName(outputSlotNameBase + i);
+                IRecipeSlotBuilder outputSlot =
+                        builder.addSlot(
+                                        RecipeIngredientRole.OUTPUT,
+                                        xpos,
+                                        1 + 16 - fluidRenderHeight)
+                                .addFluidStack(
+                                        stack.getFluid(), stack.getAmount() * 81L, stack.getTag())
+                                .setFluidRenderer(maxCap, false, w, fluidRenderHeight)
+                                .setSlotName(outputSlotNameBase + i);
                 xpos += w;
             }
         }
         if (!recipe.resultByproduct().isEmpty()) {
             int ypos = recipe.results().isEmpty() ? 1 : 17;
-            IRecipeSlotBuilder byproductSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 108, ypos)
-                    .addItemStacks(List.of(recipe.resultByproduct()))
-                    .setSlotName(byproductSlotName);
+            IRecipeSlotBuilder byproductSlot =
+                    builder.addSlot(RecipeIngredientRole.OUTPUT, 108, ypos)
+                            .addItemStacks(List.of(recipe.resultByproduct()))
+                            .setSlotName(byproductSlotName);
         }
-
     }
 
-
     @Override
-    public void draw(@NotNull AlchemistCauldronJeiRecipe recipe, IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiHelper, double mouseX, double mouseY) {
-        Optional<ItemStack> leftStack = recipeSlotsView.findSlotByName(inputSlotName)
-                .flatMap(IRecipeSlotView::getDisplayedItemStack);
+    public void draw(
+            @NotNull AlchemistCauldronJeiRecipe recipe,
+            IRecipeSlotsView recipeSlotsView,
+            @NotNull GuiGraphics guiHelper,
+            double mouseX,
+            double mouseY) {
+        Optional<ItemStack> leftStack =
+                recipeSlotsView
+                        .findSlotByName(inputSlotName)
+                        .flatMap(IRecipeSlotView::getDisplayedItemStack);
 
         guiHelper.pose().pushPose();
         {
@@ -115,12 +144,20 @@ public class AlchemistCauldronRecipeCategory implements IRecipeCategory<Alchemis
         guiHelper.pose().popPose();
 
         if (leftStack.isPresent() && leftStack.get().is(ItemRegistry.SCROLL.get())) {
-            var inputText = String.format("%s%%", (int) (ServerConfigs.SCROLL_RECYCLE_CHANCE.get() * 100));
+            var inputText =
+                    String.format("%s%%", (int) (ServerConfigs.SCROLL_RECYCLE_CHANCE.get() * 100));
 
             var font = Minecraft.getInstance().font;
             int y = (getHeight() / 2);
             int x = (getWidth() - font.width(inputText)) * 3 / 4;
-            guiHelper.drawString(font, inputText, x, y, Math.min(ServerConfigs.SCROLL_RECYCLE_CHANCE.get(), 1d) == 1d ? ChatFormatting.GREEN.getColor() : ChatFormatting.RED.getColor());
+            guiHelper.drawString(
+                    font,
+                    inputText,
+                    x,
+                    y,
+                    Math.min(ServerConfigs.SCROLL_RECYCLE_CHANCE.get(), 1d) == 1d
+                            ? ChatFormatting.GREEN.getColor()
+                            : ChatFormatting.RED.getColor());
         }
     }
 }

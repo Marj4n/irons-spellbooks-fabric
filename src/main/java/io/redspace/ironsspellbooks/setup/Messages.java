@@ -10,27 +10,38 @@ import net.minecraft.world.entity.Entity;
 @Deprecated(forRemoval = true)
 public class Messages {
     public static <MSG> void sendToServer(MSG message) {
-        IronsSpellbooks.LOGGER.warn("Warning! {} packet attemping to be sent via deprecated messages channel.", message.getClass().getCanonicalName());
+        IronsSpellbooks.LOGGER.warn(
+                "Warning! {} packet attemping to be sent via deprecated messages channel.",
+                message.getClass().getCanonicalName());
         PacketDistributor.sendToServer(message);
     }
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
-        IronsSpellbooks.LOGGER.warn("Warning! {} packet attemping to be sent via deprecated messages channel.", message.getClass().getCanonicalName());
+        IronsSpellbooks.LOGGER.warn(
+                "Warning! {} packet attemping to be sent via deprecated messages channel.",
+                message.getClass().getCanonicalName());
         PacketDistributor.sendToPlayer(player, message);
     }
 
     public static <MSG> void sendToAllPlayers(MSG message) {
-        IronsSpellbooks.LOGGER.warn("Warning! {} packet attemping to be sent via deprecated messages channel.", message.getClass().getCanonicalName());
+        IronsSpellbooks.LOGGER.warn(
+                "Warning! {} packet attemping to be sent via deprecated messages channel.",
+                message.getClass().getCanonicalName());
         PacketDistributor.sendToAllPlayers(message);
     }
 
     public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity) {
-        IronsSpellbooks.LOGGER.warn("Warning! {} packet attemping to be sent via deprecated messages channel.", message.getClass().getCanonicalName());
+        IronsSpellbooks.LOGGER.warn(
+                "Warning! {} packet attemping to be sent via deprecated messages channel.",
+                message.getClass().getCanonicalName());
         PacketDistributor.sendToPlayersTrackingEntity(entity, message);
     }
 
-    public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity, boolean sendToSource) {
-        IronsSpellbooks.LOGGER.warn("Warning! {} packet attemping to be sent via deprecated messages channel.", message.getClass().getCanonicalName());
+    public static <MSG> void sendToPlayersTrackingEntity(
+            MSG message, Entity entity, boolean sendToSource) {
+        IronsSpellbooks.LOGGER.warn(
+                "Warning! {} packet attemping to be sent via deprecated messages channel.",
+                message.getClass().getCanonicalName());
         PacketDistributor.sendToPlayersTrackingEntity(entity, message);
         if (sendToSource && entity instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer, message);

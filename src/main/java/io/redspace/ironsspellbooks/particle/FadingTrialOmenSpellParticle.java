@@ -18,8 +18,14 @@ public class FadingTrialOmenSpellParticle extends TextureSheetParticle {
     private float originalAlpha = 1.0F;
 
     protected FadingTrialOmenSpellParticle(
-            ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, SpriteSet sprites
-    ) {
+            ClientLevel level,
+            double x,
+            double y,
+            double z,
+            double xSpeed,
+            double ySpeed,
+            double zSpeed,
+            SpriteSet sprites) {
         super(level, x, y, z, 0.5 - RANDOM.nextDouble(), ySpeed, 0.5 - RANDOM.nextDouble());
         this.friction = 0.96F;
         this.gravity = -0.1F;
@@ -82,7 +88,8 @@ public class FadingTrialOmenSpellParticle extends TextureSheetParticle {
         if (player == null || !minecraft.options.getCameraType().isFirstPerson()) {
             return;
         }
-        float factor = (float) ((player.getEyePosition().distanceToSqr(this.x, this.y, this.z) - 1) / 3f);
+        float factor =
+                (float) ((player.getEyePosition().distanceToSqr(this.x, this.y, this.z) - 1) / 3f);
         this.alpha = Mth.clamp(this.alpha * factor, 0.0F, 1.0F);
     }
 
@@ -95,8 +102,17 @@ public class FadingTrialOmenSpellParticle extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            return new FadingTrialOmenSpellParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, this.sprites);
+        public Particle createParticle(
+                SimpleParticleType type,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double xSpeed,
+                double ySpeed,
+                double zSpeed) {
+            return new FadingTrialOmenSpellParticle(
+                    level, x, y, z, xSpeed, ySpeed, zSpeed, this.sprites);
         }
     }
 }

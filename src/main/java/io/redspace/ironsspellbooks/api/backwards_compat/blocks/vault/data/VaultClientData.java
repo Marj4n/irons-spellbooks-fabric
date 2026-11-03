@@ -7,8 +7,7 @@ public class VaultClientData {
     private float currentSpin;
     private float previousSpin;
 
-    VaultClientData() {
-    }
+    VaultClientData() {}
 
     public float currentSpin() {
         return this.currentSpin;

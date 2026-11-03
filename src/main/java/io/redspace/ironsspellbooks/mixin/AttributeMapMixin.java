@@ -11,10 +11,13 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(AttributeMap.class)
 public abstract class AttributeMapMixin {
     @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true)
-    private static AttributeSupplier ironsSpellbooks$addMagicAttributes(AttributeSupplier original) {
-        var instances = new java.util.HashMap<>(
-                ((AttributeSupplierAccessor) original).ironsSpellbooks$getInstances());
-        ((AttributeSupplierAccessor) AttributeRegistry.createDefaults()).ironsSpellbooks$getInstances()
+    private static AttributeSupplier ironsSpellbooks$addMagicAttributes(
+            AttributeSupplier original) {
+        var instances =
+                new java.util.HashMap<>(
+                        ((AttributeSupplierAccessor) original).ironsSpellbooks$getInstances());
+        ((AttributeSupplierAccessor) AttributeRegistry.createDefaults())
+                .ironsSpellbooks$getInstances()
                 .forEach(instances::putIfAbsent);
         return new AttributeSupplier(instances);
     }

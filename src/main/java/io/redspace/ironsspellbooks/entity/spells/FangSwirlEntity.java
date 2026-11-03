@@ -33,9 +33,7 @@ public class FangSwirlEntity extends AoeEntity {
     }
 
     @Override
-    public void applyEffect(LivingEntity target) {
-
-    }
+    public void applyEffect(LivingEntity target) {}
 
     @Override
     public float getParticleCount() {
@@ -59,7 +57,16 @@ public class FangSwirlEntity extends AoeEntity {
             spawn = Utils.moveToRelativeGroundLevel(level(), spawn.add(oscillation), 6);
             float yrot = Utils.getAngle(startPos.x, startPos.z, getX(), getZ());
             if (!level().getBlockState(BlockPos.containing(spawn).below()).isAir()) {
-                ExtendedEvokerFang fang = new ExtendedEvokerFang(level(), spawn.x, spawn.y, spawn.z, yrot, 0, this.getOwner() instanceof LivingEntity e ? e : null, this.getDamage());
+                ExtendedEvokerFang fang =
+                        new ExtendedEvokerFang(
+                                level(),
+                                spawn.x,
+                                spawn.y,
+                                spawn.z,
+                                yrot,
+                                0,
+                                this.getOwner() instanceof LivingEntity e ? e : null,
+                                this.getDamage());
                 level().addFreshEntity(fang);
             }
         }
@@ -87,7 +94,16 @@ public class FangSwirlEntity extends AoeEntity {
             Vec3 spawn = center.add(axis.scale(t * radius));
             spawn = Utils.moveToRelativeGroundLevel(level(), spawn, 4);
             int delay = Math.abs((int) (t * radius * 0.5));
-            ExtendedEvokerFang fang = new ExtendedEvokerFang(level(), spawn.x, spawn.y, spawn.z, fangYawRad, delay, owner, getDamage());
+            ExtendedEvokerFang fang =
+                    new ExtendedEvokerFang(
+                            level(),
+                            spawn.x,
+                            spawn.y,
+                            spawn.z,
+                            fangYawRad,
+                            delay,
+                            owner,
+                            getDamage());
             level().addFreshEntity(fang);
         }
     }

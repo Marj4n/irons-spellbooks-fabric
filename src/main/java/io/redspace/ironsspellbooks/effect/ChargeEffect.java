@@ -10,5 +10,4 @@ public class ChargeEffect extends MagicMobEffect implements ISyncedMobEffect {
     public ChargeEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
     }
-
 }

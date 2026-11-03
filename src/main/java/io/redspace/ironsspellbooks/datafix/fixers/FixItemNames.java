@@ -1,12 +1,12 @@
-//package io.redspace.ironsspellbooks.datafix.fixers;
+// package io.redspace.ironsspellbooks.datafix.fixers;
 //
-//import io.redspace.ironsspellbooks.datafix.DataFixerElement;
-//import io.redspace.ironsspellbooks.datafix.DataFixerHelpers;
-//import net.minecraft.nbt.CompoundTag;
+// import io.redspace.ironsspellbooks.datafix.DataFixerElement;
+// import io.redspace.ironsspellbooks.datafix.DataFixerHelpers;
+// import net.minecraft.nbt.CompoundTag;
 //
-//import java.util.List;
+// import java.util.List;
 //
-//public class FixItemNames extends DataFixerElement {
+// public class FixItemNames extends DataFixerElement {
 //    @Override
 //    public List<String> preScanValuesToMatch() {
 //        return DataFixerHelpers.LEGACY_ITEM_IDS.keySet().stream().toList();
@@ -14,7 +14,8 @@
 //
 //    @Override
 //    public boolean runFixer(CompoundTag tag) {
-//        //itemStack.save saves a compound tag with id "id". it can probably be safely assumed that all items are saved like this
+//        //itemStack.save saves a compound tag with id "id". it can probably be safely assumed that
+// all items are saved like this
 //        //8 is string tag
 //        if (tag != null && tag.contains("id", 8)) {
 //            String itemName = tag.getString("id");
@@ -26,4 +27,4 @@
 //        }
 //        return false;
 //    }
-//}
+// }

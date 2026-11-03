@@ -25,13 +25,25 @@ public class SnowballRenderer extends EntityRenderer<AbstractMagicProjectile> {
     }
 
     @Override
-    public void render(AbstractMagicProjectile entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            AbstractMagicProjectile entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBoundingBox().getYsize() * .5f, 0);
 
         Vec3 motion = entity.getDeltaMovement();
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
 
@@ -42,7 +54,8 @@ public class SnowballRenderer extends EntityRenderer<AbstractMagicProjectile> {
         poseStack.mulPose(Axis.XP.rotationDegrees(swirlX));
         poseStack.mulPose(Axis.YP.rotationDegrees(swirlY));
         poseStack.mulPose(Axis.ZP.rotationDegrees(swirlZ));
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
+        VertexConsumer consumer =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
         this.orb.render(poseStack, consumer, light, OverlayTexture.NO_OVERLAY);
 
         poseStack.popPose();
@@ -52,5 +65,4 @@ public class SnowballRenderer extends EntityRenderer<AbstractMagicProjectile> {
     public ResourceLocation getTextureLocation(AbstractMagicProjectile entity) {
         return new ResourceLocation("textures/block/snow.png");
     }
-
 }

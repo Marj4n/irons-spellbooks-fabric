@@ -21,7 +21,8 @@ public class PotionFluid extends NoopFluid {
         super(properties);
     }
 
-    public static FluidStack of(int amount, Potion potionContents, PotionFluid.BottleType bottleType) {
+    public static FluidStack of(
+            int amount, Potion potionContents, PotionFluid.BottleType bottleType) {
         FluidStack fluidStack = new FluidStack(FluidRegistry.POTION_FLUID.get(), amount);
         addPotionToFluidStack(fluidStack, potionContents);
         BottleType.set(fluidStack, bottleType);
@@ -34,45 +35,54 @@ public class PotionFluid extends NoopFluid {
 
     public static FluidStack addPotionToFluidStack(FluidStack fs, Potion potionContents) {
         if (potionContents == Potions.EMPTY) {
-//            fs.remove(DataComponents.POTION_CONTENTS);
+            //            fs.remove(DataComponents.POTION_CONTENTS);
             return fs;
         } else {
-//            fs.set(DataComponents.POTION_CONTENTS, potionContents);
+            //            fs.set(DataComponents.POTION_CONTENTS, potionContents);
             FluidHelper.setPotionContents(fs, potionContents);
             return fs;
         }
     }
 
     public static FluidStack from(ItemStack stack) {
-//        if (!stack.has(DataComponents.POTION_CONTENTS)) {
-//            return FluidStack.EMPTY;
-//        }
+        //        if (!stack.has(DataComponents.POTION_CONTENTS)) {
+        //            return FluidStack.EMPTY;
+        //        }
         var potion = PotionUtils.getPotion(stack);
         if (potion == Potions.EMPTY) {
             return FluidStack.EMPTY;
         }
-        BottleType type = stack.is(Items.LINGERING_POTION) ? BottleType.LINGERING
-                : stack.is(Items.SPLASH_POTION) ? BottleType.SPLASH
-                : BottleType.REGULAR;
+        BottleType type =
+                stack.is(Items.LINGERING_POTION)
+                        ? BottleType.LINGERING
+                        : stack.is(Items.SPLASH_POTION) ? BottleType.SPLASH : BottleType.REGULAR;
         var fs = new FluidStack(FluidRegistry.POTION_FLUID.get(), 250);
         FluidHelper.setPotionContents(fs, potion);
         BottleType.set(fs, type);
-//        fs.set(DataComponents.POTION_CONTENTS, stack.get(DataComponents.POTION_CONTENTS));
-//        fs.set(ComponentRegistry.POTION_BOTTLE_TYPE, type);
+        //        fs.set(DataComponents.POTION_CONTENTS, stack.get(DataComponents.POTION_CONTENTS));
+        //        fs.set(ComponentRegistry.POTION_BOTTLE_TYPE, type);
         return fs;
     }
 
     public static ItemStack from(FluidStack stack) {
-        if (stack.getAmount() < 250 || !(stack.getFluid().is(FluidTags.WATER) || FluidHelper.hasPotionContents(stack))) {
+        if (stack.getAmount() < 250
+                || !(stack.getFluid().is(FluidTags.WATER)
+                        || FluidHelper.hasPotionContents(stack))) {
             return ItemStack.EMPTY;
         }
         PotionFluid.BottleType type = BottleType.get(stack);
-        Item item = type == BottleType.LINGERING ? Items.LINGERING_POTION
-                : type == BottleType.SPLASH ? Items.SPLASH_POTION
-                : Items.POTION;
+        Item item =
+                type == BottleType.LINGERING
+                        ? Items.LINGERING_POTION
+                        : type == BottleType.SPLASH ? Items.SPLASH_POTION : Items.POTION;
         var is = new ItemStack(item);
-//        is.set(DataComponents.POTION_CONTENTS, stack.getOrDefault(DataComponents.POTION_CONTENTS, new Potion(Potions.WATER)));
-        PotionUtils.setPotion(is, FluidHelper.hasPotionContents(stack) ? FluidHelper.getPotionContents(stack) : Potions.WATER);
+        //        is.set(DataComponents.POTION_CONTENTS,
+        // stack.getOrDefault(DataComponents.POTION_CONTENTS, new Potion(Potions.WATER)));
+        PotionUtils.setPotion(
+                is,
+                FluidHelper.hasPotionContents(stack)
+                        ? FluidHelper.getPotionContents(stack)
+                        : Potions.WATER);
         return is;
     }
 
@@ -82,8 +92,11 @@ public class PotionFluid extends NoopFluid {
         LINGERING("lingering", "lingering_potion");
         final String id, descriptionId;
 
-        public static final Codec<PotionFluid.BottleType> CODEC = StringRepresentable.fromEnum(PotionFluid.BottleType::values);
-//        public static final StreamCodec<ByteBuf, PotionFluid.BottleType> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+        public static final Codec<PotionFluid.BottleType> CODEC =
+                StringRepresentable.fromEnum(PotionFluid.BottleType::values);
+
+        //        public static final StreamCodec<ByteBuf, PotionFluid.BottleType> STREAM_CODEC =
+        // ByteBufCodecs.fromCodec(CODEC);
 
         BottleType(String id, String descriptionId) {
             this.id = id;

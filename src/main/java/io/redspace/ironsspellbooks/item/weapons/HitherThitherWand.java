@@ -19,9 +19,15 @@ public class HitherThitherWand extends Item implements IPresetSpellContainer, Un
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Level context, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack,
+            Level context,
+            List<Component> pTooltipComponents,
+            TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, context, pTooltipComponents, pIsAdvanced);
-        pTooltipComponents.add(Component.translatable("tooltip.irons_spellbooks.spellbook_unique").withStyle(TooltipsUtils.UNIQUE_STYLE));
+        pTooltipComponents.add(
+                Component.translatable("tooltip.irons_spellbooks.spellbook_unique")
+                        .withStyle(TooltipsUtils.UNIQUE_STYLE));
     }
 
     @Override

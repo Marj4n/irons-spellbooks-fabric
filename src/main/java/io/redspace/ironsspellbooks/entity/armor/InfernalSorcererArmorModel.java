@@ -18,11 +18,13 @@ public class InfernalSorcererArmorModel extends DefaultedItemGeoModel<InfernalSo
 
     @Override
     public ResourceLocation getTextureResource(InfernalSorcererArmorItem object) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "textures/models/armor/infernal_sorcerer.png");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "textures/models/armor/infernal_sorcerer.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(InfernalSorcererArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

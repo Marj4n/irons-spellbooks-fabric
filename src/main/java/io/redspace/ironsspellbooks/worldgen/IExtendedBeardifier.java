@@ -1,9 +1,9 @@
-//package io.redspace.ironsspellbooks.worldgen;
+// package io.redspace.ironsspellbooks.worldgen;
 //
-//import net.minecraft.world.level.levelgen.NoiseChunk;
+// import net.minecraft.world.level.levelgen.NoiseChunk;
 //
-//public interface IExtendedBeardifier {
+// public interface IExtendedBeardifier {
 //
 //    void setNoiseChunk(NoiseChunk noiseChunk);
 //    NoiseChunk getNoiseChunk();
-//}
+// }

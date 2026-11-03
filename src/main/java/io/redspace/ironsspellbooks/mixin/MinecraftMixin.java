@@ -16,24 +16,33 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MinecraftMixin {
 
     @Inject(method = "shouldEntityAppearGlowing", at = @At(value = "RETURN"), cancellable = true)
-    public void irons_spellbooks$changeGlowOutline(Entity pEntity, CallbackInfoReturnable<Boolean> cir) {
+    public void irons_spellbooks$changeGlowOutline(
+            Entity pEntity, CallbackInfoReturnable<Boolean> cir) {
         if (Minecraft.getInstance().player == null || pEntity == null || cir.getReturnValue()) {
             return;
         }
-        if (ClientConfigs.SUMMONS_GLOW.get() && ClientMagicData.getActiveSummons().contains(pEntity.getUUID())) {
+        if (ClientConfigs.SUMMONS_GLOW.get()
+                && ClientMagicData.getActiveSummons().contains(pEntity.getUUID())) {
             cir.setReturnValue(true);
-        } else if (Minecraft.getInstance().player.hasEffect(MobEffectRegistry.PLANAR_SIGHT.get()) && pEntity instanceof LivingEntity && Mth.abs((float) (pEntity.getY() - Minecraft.getInstance().player.getY())) < 18) {
+        } else if (Minecraft.getInstance().player.hasEffect(MobEffectRegistry.PLANAR_SIGHT.get())
+                && pEntity instanceof LivingEntity
+                && Mth.abs((float) (pEntity.getY() - Minecraft.getInstance().player.getY())) < 18) {
             cir.setReturnValue(true);
         }
     }
+
     @Inject(method = "setScreen", at = @At("HEAD"))
-    private void irons_spellbooks$openingScreen(net.minecraft.client.gui.screens.Screen screen,
+    private void irons_spellbooks$openingScreen(
+            net.minecraft.client.gui.screens.Screen screen,
             org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
         if (screen != null && Minecraft.getInstance().player != null)
             io.redspace.ironsspellbooks.player.ClientPlayerEvents.onPlayerOpenScreen();
     }
-    @Inject(method="startUseItem",at=@At("HEAD"),cancellable=true)
-    private void irons_spellbooks$suppressUse(org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci){
-        if(io.redspace.ironsspellbooks.player.ClientSpellCastHelper.shouldSuppressRightClicks())ci.cancel();
+
+    @Inject(method = "startUseItem", at = @At("HEAD"), cancellable = true)
+    private void irons_spellbooks$suppressUse(
+            org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+        if (io.redspace.ironsspellbooks.player.ClientSpellCastHelper.shouldSuppressRightClicks())
+            ci.cancel();
     }
 }

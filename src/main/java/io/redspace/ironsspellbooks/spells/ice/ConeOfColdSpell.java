@@ -28,19 +28,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class ConeOfColdSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "cone_of_cold");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "cone_of_cold");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(12)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(12)
+                    .build();
 
     public ConeOfColdSpell() {
         this.manaCostPerLevel = 1;
@@ -76,7 +81,12 @@ public class ConeOfColdSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.isCasting()
                 && playerMagicData.getCastingSpellId().equals(this.getSpellId())
                 && playerMagicData.getAdditionalCastData() instanceof EntityCastData entityCastData
@@ -91,7 +101,6 @@ public class ConeOfColdSpell extends AbstractSpell {
             super.onCast(world, spellLevel, entity, castSource, playerMagicData);
         }
     }
-
 
     @Override
     public SpellDamageSource getDamageSource(@Nullable Entity projectile, Entity attacker) {

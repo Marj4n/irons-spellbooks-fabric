@@ -7,7 +7,6 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 
-
 public class ShieldPart extends PartEntity<AbstractShieldEntity> {
 
     public final AbstractShieldEntity parentEntity;
@@ -15,7 +14,12 @@ public class ShieldPart extends PartEntity<AbstractShieldEntity> {
     private final EntityDimensions size;
     private final boolean hasCollision;
 
-    public ShieldPart(AbstractShieldEntity shieldEntity, String name, float scaleX, float scaleY, boolean hasCollision) {
+    public ShieldPart(
+            AbstractShieldEntity shieldEntity,
+            String name,
+            float scaleX,
+            float scaleY,
+            boolean hasCollision) {
         super(shieldEntity);
         this.size = EntityDimensions.scalable(scaleX, scaleY);
         this.refreshDimensions();
@@ -46,18 +50,13 @@ public class ShieldPart extends PartEntity<AbstractShieldEntity> {
     }
 
     @Override
-    protected void defineSynchedData() {
-    }
+    protected void defineSynchedData() {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
-
-    }
+    protected void readAdditionalSaveData(CompoundTag compoundTag) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
-
-    }
+    protected void addAdditionalSaveData(CompoundTag compoundTag) {}
 
     @Override
     public boolean is(Entity entity) {

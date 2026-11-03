@@ -9,14 +9,19 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
-public class ElectromancerArmorItem extends ImbuableChestplateArmorItem implements IArmorCapeProvider {
+public class ElectromancerArmorItem extends ImbuableChestplateArmorItem
+        implements IArmorCapeProvider {
     public ElectromancerArmorItem(ArmorItem.Type slot, Properties settings) {
-        super(ExtendedArmorMaterials.ELECTROMANCER, slot, settings/*, schoolAttributes(AttributeRegistry.LIGHTNING_SPELL_POWER)*/);
+        super(
+                ExtendedArmorMaterials.ELECTROMANCER,
+                slot,
+                settings /*, schoolAttributes(AttributeRegistry.LIGHTNING_SPELL_POWER)*/);
     }
 
     @Override
     public ResourceLocation getCapeResourceLocation() {
-        return new ResourceLocation(IronsSpellbooks.MODID, "textures/models/armor/electromancer_cape.png");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "textures/models/armor/electromancer_cape.png");
     }
 
     @Override
@@ -24,6 +29,4 @@ public class ElectromancerArmorItem extends ImbuableChestplateArmorItem implemen
     public GeoArmorRenderer<?> supplyRenderer() {
         return new GenericCustomArmorRenderer<>(new ElectromancerArmorModel());
     }
-
-
 }

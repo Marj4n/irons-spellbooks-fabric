@@ -19,14 +19,23 @@ import org.marj4n.irons_spellbooks.equipment.EquipmentItem;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class CurioBaseItem extends Item implements EquipmentItem, org.marj4n.irons_spellbooks.client.item.NativeClientItem {
+public class CurioBaseItem extends Item
+        implements EquipmentItem, org.marj4n.irons_spellbooks.client.item.NativeClientItem {
     public java.util.List<net.minecraft.network.chat.Component> getSlotsTooltip(
-            java.util.List<net.minecraft.network.chat.Component> lines, ItemStack stack) { return lines; }
-    @Override public void appendHoverText(ItemStack stack, net.minecraft.world.level.Level level,
-            java.util.List<net.minecraft.network.chat.Component> lines, net.minecraft.world.item.TooltipFlag flags) {
-        super.appendHoverText(stack,level,lines,flags);
-        getSlotsTooltip(lines,stack);
+            java.util.List<net.minecraft.network.chat.Component> lines, ItemStack stack) {
+        return lines;
     }
+
+    @Override
+    public void appendHoverText(
+            ItemStack stack,
+            net.minecraft.world.level.Level level,
+            java.util.List<net.minecraft.network.chat.Component> lines,
+            net.minecraft.world.item.TooltipFlag flags) {
+        super.appendHoverText(stack, level, lines, flags);
+        getSlotsTooltip(lines, stack);
+    }
+
     String attributeSlot = "";
     Function<Integer, Multimap<Attribute, AttributeModifier>> attributes = null;
 
@@ -37,7 +46,8 @@ public class CurioBaseItem extends Item implements EquipmentItem, org.marj4n.iro
 
     @Override
     public net.minecraft.world.InteractionResultHolder<ItemStack> use(
-            net.minecraft.world.level.Level level, net.minecraft.world.entity.player.Player player,
+            net.minecraft.world.level.Level level,
+            net.minecraft.world.entity.player.Player player,
             net.minecraft.world.InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         var component = dev.emi.trinkets.api.TrinketsApi.getTrinketComponent(player);
@@ -55,7 +65,8 @@ public class CurioBaseItem extends Item implements EquipmentItem, org.marj4n.iro
                             onEquipFromUse(context, equipped);
                             player.gameEvent(net.minecraft.world.level.gameevent.GameEvent.EQUIP);
                             stack.setCount(0);
-                            return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+                            return net.minecraft.world.InteractionResultHolder.sidedSuccess(
+                                    stack, level.isClientSide);
                         }
                     }
                 }
@@ -65,30 +76,39 @@ public class CurioBaseItem extends Item implements EquipmentItem, org.marj4n.iro
     }
 
     public boolean isEquippedBy(@Nullable LivingEntity entity) {
-        return entity != null && EquipmentApi.getCuriosInventory(entity).map(inv -> inv.findFirstCurio(this).isPresent()).orElse(false);
+        return entity != null
+                && EquipmentApi.getCuriosInventory(entity)
+                        .map(inv -> inv.findFirstCurio(this).isPresent())
+                        .orElse(false);
     }
 
     @NotNull
     @Override
-    public EquipmentItem.SoundInfo getEquipSound(EquipmentSlotContext slotContext, ItemStack stack) {
+    public EquipmentItem.SoundInfo getEquipSound(
+            EquipmentSlotContext slotContext, ItemStack stack) {
         return new EquipmentItem.SoundInfo(SoundEvents.ARMOR_EQUIP_CHAIN, 1.0f, 1.0f);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotContext slotContext, UUID uuid, ItemStack stack) {
-        return attributes != null && slotContext.identifier().equals(this.attributeSlot) ? attributes.apply(slotContext.index()) : EquipmentItem.super.getAttributeModifiers(slotContext, uuid, stack);
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(
+            EquipmentSlotContext slotContext, UUID uuid, ItemStack stack) {
+        return attributes != null && slotContext.identifier().equals(this.attributeSlot)
+                ? attributes.apply(slotContext.index())
+                : EquipmentItem.super.getAttributeModifiers(slotContext, uuid, stack);
     }
 
     public CurioBaseItem withAttributes(String slot, AttributeContainer... attributes) {
         this.attributeSlot = slot;
-        this.attributes = (index) -> {
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-            for (AttributeContainer holder : attributes) {
-                String id = String.format("%s_%s", attributeSlot, index);
-                builder.put(holder.attribute().get(), holder.createModifier(id));
-            }
-            return builder.build();
-        };
+        this.attributes =
+                (index) -> {
+                    ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
+                            ImmutableMultimap.builder();
+                    for (AttributeContainer holder : attributes) {
+                        String id = String.format("%s_%s", attributeSlot, index);
+                        builder.put(holder.attribute().get(), holder.createModifier(id));
+                    }
+                    return builder.build();
+                };
         return this;
     }
 

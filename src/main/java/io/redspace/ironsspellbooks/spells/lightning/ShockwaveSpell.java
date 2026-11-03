@@ -33,22 +33,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class ShockwaveSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "shockwave");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "shockwave");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 2))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(30)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(30)
+                    .build();
 
     public ShockwaveSpell() {
         this.manaCostPerLevel = 5;
@@ -84,37 +89,135 @@ public class ShockwaveSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float radius = getRadius(spellLevel, entity);
         Vector3f edge = new Vector3f(.7f, 1f, 1f);
         Vector3f center = new Vector3f(1, 1f, 1f);
-        //this is immaculately stupid
-        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(edge, radius * 1.02f), entity.getX(), entity.getY() + .15f, entity.getZ(), 1, 0, 0, 0, 0, true);
-        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(edge, radius * 0.98f), entity.getX(), entity.getY() + .15f, entity.getZ(), 1, 0, 0, 0, 0, true);
-        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(center, radius), entity.getX(), entity.getY() + .165f, entity.getZ(), 1, 0, 0, 0, 0, true);
-        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(center, radius), entity.getX(), entity.getY() + .135f, entity.getZ(), 1, 0, 0, 0, 0, true);
-        MagicManager.spawnParticles(level, ParticleHelper.ELECTRICITY, entity.getX(), entity.getY() + 1, entity.getZ(), 80, .25, .25, .25, 0.7f + radius * .1f, false);
-        CameraShakeManager.addCameraShake(new CameraShakeData(level, 30, entity.position(), radius * 2));
+        // this is immaculately stupid
+        MagicManager.spawnParticles(
+                level,
+                new BlastwaveParticleOptions(edge, radius * 1.02f),
+                entity.getX(),
+                entity.getY() + .15f,
+                entity.getZ(),
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        MagicManager.spawnParticles(
+                level,
+                new BlastwaveParticleOptions(edge, radius * 0.98f),
+                entity.getX(),
+                entity.getY() + .15f,
+                entity.getZ(),
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        MagicManager.spawnParticles(
+                level,
+                new BlastwaveParticleOptions(center, radius),
+                entity.getX(),
+                entity.getY() + .165f,
+                entity.getZ(),
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        MagicManager.spawnParticles(
+                level,
+                new BlastwaveParticleOptions(center, radius),
+                entity.getX(),
+                entity.getY() + .135f,
+                entity.getZ(),
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        MagicManager.spawnParticles(
+                level,
+                ParticleHelper.ELECTRICITY,
+                entity.getX(),
+                entity.getY() + 1,
+                entity.getZ(),
+                80,
+                .25,
+                .25,
+                .25,
+                0.7f + radius * .1f,
+                false);
+        CameraShakeManager.addCameraShake(
+                new CameraShakeData(level, 30, entity.position(), radius * 2));
 
         Vec3 start = entity.getBoundingBox().getCenter();
         float damage = getDamage(spellLevel, entity);
         var dummyLightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
         dummyLightningBolt.addTag("irons_spellbooks:no_lightning_damage");
         dummyLightningBolt.setVisualOnly(true);
-        level.getEntities(entity, entity.getBoundingBox().inflate(radius, radius, radius), (target) -> !DamageSources.isFriendlyFireBetween(target, entity) && Utils.hasLineOfSight(level, entity, target, true)).forEach(target -> {
-            if (target instanceof LivingEntity livingEntity && canHit(entity, target) && livingEntity.distanceToSqr(entity) < radius * radius) {
-                Vec3 dest = livingEntity.getBoundingBox().getCenter();
-                ((ServerLevel) level).sendParticles(new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
-                MagicManager.spawnParticles(level, ParticleHelper.ELECTRICITY, livingEntity.getX(), livingEntity.getY() + livingEntity.getBbHeight() / 2, livingEntity.getZ(), 10, livingEntity.getBbWidth() / 3, livingEntity.getBbHeight() / 3, livingEntity.getBbWidth() / 3, 0.1, false);
-                DamageSources.applyDamage(target, damage, getDamageSource(entity));
-                if (target instanceof Creeper creeper) {
-                    creeper.thunderHit((ServerLevel) level, dummyLightningBolt);
-                }
-            }
-        });
+        level.getEntities(
+                        entity,
+                        entity.getBoundingBox().inflate(radius, radius, radius),
+                        (target) ->
+                                !DamageSources.isFriendlyFireBetween(target, entity)
+                                        && Utils.hasLineOfSight(level, entity, target, true))
+                .forEach(
+                        target -> {
+                            if (target instanceof LivingEntity livingEntity
+                                    && canHit(entity, target)
+                                    && livingEntity.distanceToSqr(entity) < radius * radius) {
+                                Vec3 dest = livingEntity.getBoundingBox().getCenter();
+                                ((ServerLevel) level)
+                                        .sendParticles(
+                                                new ZapParticleOption(dest),
+                                                start.x,
+                                                start.y,
+                                                start.z,
+                                                1,
+                                                0,
+                                                0,
+                                                0,
+                                                0);
+                                MagicManager.spawnParticles(
+                                        level,
+                                        ParticleHelper.ELECTRICITY,
+                                        livingEntity.getX(),
+                                        livingEntity.getY() + livingEntity.getBbHeight() / 2,
+                                        livingEntity.getZ(),
+                                        10,
+                                        livingEntity.getBbWidth() / 3,
+                                        livingEntity.getBbHeight() / 3,
+                                        livingEntity.getBbWidth() / 3,
+                                        0.1,
+                                        false);
+                                DamageSources.applyDamage(target, damage, getDamageSource(entity));
+                                if (target instanceof Creeper creeper) {
+                                    creeper.thunderHit((ServerLevel) level, dummyLightningBolt);
+                                }
+                            }
+                        });
         for (int i = 0; i < 3 + radius * 0.5f; i++) {
-            Vec3 dest = Utils.getRandomVec3(1).add(0, 0.75, 0).scale(radius).multiply(0.75f, 0.25f, 0.75f).add(start);
-            ((ServerLevel) level).sendParticles(new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
+            Vec3 dest =
+                    Utils.getRandomVec3(1)
+                            .add(0, 0.75, 0)
+                            .scale(radius)
+                            .multiply(0.75f, 0.25f, 0.75f)
+                            .add(start);
+            ((ServerLevel) level)
+                    .sendParticles(
+                            new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
         }
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
@@ -133,7 +236,9 @@ public class ShockwaveSpell extends AbstractSpell {
 
     @Override
     public void playSound(Optional<SoundEvent> sound, Entity entity) {
-        sound.ifPresent((soundEvent -> entity.playSound(soundEvent, 3.0f, .9f + Utils.random.nextFloat() * .2f)));
+        sound.ifPresent(
+                (soundEvent ->
+                        entity.playSound(soundEvent, 3.0f, .9f + Utils.random.nextFloat() * .2f)));
     }
 
     @Override

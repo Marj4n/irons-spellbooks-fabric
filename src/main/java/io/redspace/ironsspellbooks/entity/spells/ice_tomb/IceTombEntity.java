@@ -22,15 +22,19 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class IceTombEntity extends Entity implements PreventDismount, AntiMagicSusceptible, ICritablePartEntity, org.marj4n.irons_spellbooks.events.RiderSettings {
-    @Nullable
-    private Entity cachedOwner;
-    @Nullable
-    private UUID ownerUUID;
+public class IceTombEntity extends Entity
+        implements PreventDismount,
+                AntiMagicSusceptible,
+                ICritablePartEntity,
+                org.marj4n.irons_spellbooks.events.RiderSettings {
+    @Nullable private Entity cachedOwner;
+    @Nullable private UUID ownerUUID;
+
     /**
      * evil tombs hurt, versus heal
      */
     private boolean evil;
+
     private float health = 1;
     private int lifetime = -1;
 
@@ -98,8 +102,8 @@ public class IceTombEntity extends Entity implements PreventDismount, AntiMagicS
                 getPassengers().forEach(this::doPositiveEffects);
             }
         }
-        if(!this.isNoGravity()){
-            this.setDeltaMovement(getDeltaMovement().add(0,-LivingEntity.DEFAULT_BASE_GRAVITY,0));
+        if (!this.isNoGravity()) {
+            this.setDeltaMovement(getDeltaMovement().add(0, -LivingEntity.DEFAULT_BASE_GRAVITY, 0));
         }
         this.move(MoverType.SELF, getDeltaMovement());
         if (onGround()) {
@@ -114,13 +118,16 @@ public class IceTombEntity extends Entity implements PreventDismount, AntiMagicS
 
     public void doPositiveEffects(Entity entity) {
         if (entity instanceof LivingEntity livingEntity) {
-            org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellHealEvent(livingEntity, livingEntity, this.healing, SchoolRegistry.ICE.get()));
+            org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                    new SpellHealEvent(
+                            livingEntity, livingEntity, this.healing, SchoolRegistry.ICE.get()));
             livingEntity.heal(this.healing);
         }
     }
 
     public void doNegativeEffects(Entity entity) {
-        entity.setTicksFrozen(Math.min(entity.getTicksRequiredToFreeze() * 3, entity.getTicksFrozen() + 10));
+        entity.setTicksFrozen(
+                Math.min(entity.getTicksRequiredToFreeze() * 3, entity.getTicksFrozen() + 10));
     }
 
     @Override
@@ -129,7 +136,9 @@ public class IceTombEntity extends Entity implements PreventDismount, AntiMagicS
             if (DamageSources.isFriendlyFireBetween(source.getEntity(), this.getFirstPassenger())) {
                 return false;
             }
-            if (!isInvulnerableTo(source) && (source.getEntity() == null || !isPassengerOfSameVehicle(source.getEntity()))) {
+            if (!isInvulnerableTo(source)
+                    && (source.getEntity() == null
+                            || !isPassengerOfSameVehicle(source.getEntity()))) {
                 health -= amount;
                 if (health <= 0) {
                     die(source, amount);
@@ -154,9 +163,7 @@ public class IceTombEntity extends Entity implements PreventDismount, AntiMagicS
     }
 
     @Override
-    protected void defineSynchedData() {
-
-    }
+    protected void defineSynchedData() {}
 
     @Override
     public boolean canEntityDismount(Entity entity) {
@@ -179,8 +186,30 @@ public class IceTombEntity extends Entity implements PreventDismount, AntiMagicS
         if (!level().isClientSide) {
             this.ejectPassengers();
             this.playSound(SoundEvents.GLASS_BREAK, 2, 1);
-            MagicManager.spawnParticles(level(), ParticleHelper.SNOW_DUST, getX(), getY() + 1, getZ(), 50, 0.2, 0.2, 0.2, 0.2, false);
-            MagicManager.spawnParticles(level(), ParticleHelper.SNOWFLAKE, getX(), getY() + 1, getZ(), 50, 0.2, 0.2, 0.2, 0.2, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleHelper.SNOW_DUST,
+                    getX(),
+                    getY() + 1,
+                    getZ(),
+                    50,
+                    0.2,
+                    0.2,
+                    0.2,
+                    0.2,
+                    false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleHelper.SNOWFLAKE,
+                    getX(),
+                    getY() + 1,
+                    getZ(),
+                    50,
+                    0.2,
+                    0.2,
+                    0.2,
+                    0.2,
+                    false);
             this.discard();
         }
     }
@@ -194,7 +223,6 @@ public class IceTombEntity extends Entity implements PreventDismount, AntiMagicS
     public void positionRider(Entity passenger, Entity.MoveFunction p_19958_) {
         passenger.setPos(this.getX(), this.getY(), this.getZ());
     }
-
 
     @Override
     public boolean isPushedByFluid() {
@@ -250,9 +278,18 @@ public class IceTombEntity extends Entity implements PreventDismount, AntiMagicS
         float hScale = 1f;
         float vScale = 1f;
         if (!passengers.isEmpty() && passengers.get(0) instanceof LivingEntity livingEntity) {
-            hScale = livingEntity.getBbWidth() + .4f;//* 1.66f; // ratio of our default hitbox to the players default hitbox
-            vScale = (livingEntity.getBbHeight() + .2f) / 2;//* 0.555f;  // ratio of our default hitbox to the players default hitbox
-            vScale = (vScale + hScale) * .5f; // average fixed-scale to desired scale. no change for humanoids, but will stretch for more cuboid entities
+            hScale =
+                    livingEntity.getBbWidth()
+                            + .4f; // * 1.66f; // ratio of our default hitbox to the players default
+                                   // hitbox
+            vScale =
+                    (livingEntity.getBbHeight() + .2f)
+                            / 2; // * 0.555f;  // ratio of our default hitbox to the players default
+                                 // hitbox
+            vScale =
+                    (vScale + hScale)
+                            * .5f; // average fixed-scale to desired scale. no change for humanoids,
+                                   // but will stretch for more cuboid entities
         }
         return super.getDimensions(pPose).scale(hScale * .9f, vScale * .9f);
     }
@@ -273,9 +310,7 @@ public class IceTombEntity extends Entity implements PreventDismount, AntiMagicS
     }
 
     @Override
-    public void push(@NotNull Entity pEntity) {
-
-    }
+    public void push(@NotNull Entity pEntity) {}
 
     @Override
     public void onAntiMagic(MagicData playerMagicData) {

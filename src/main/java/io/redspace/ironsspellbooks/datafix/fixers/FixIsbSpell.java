@@ -1,12 +1,12 @@
-//package io.redspace.ironsspellbooks.datafix.fixers;
+// package io.redspace.ironsspellbooks.datafix.fixers;
 //
-//import io.redspace.ironsspellbooks.datafix.DataFixerElement;
-//import io.redspace.ironsspellbooks.datafix.DataFixerHelpers;
-//import net.minecraft.nbt.CompoundTag;
+// import io.redspace.ironsspellbooks.datafix.DataFixerElement;
+// import io.redspace.ironsspellbooks.datafix.DataFixerHelpers;
+// import net.minecraft.nbt.CompoundTag;
 //
-//import java.util.List;
+// import java.util.List;
 //
-//public class FixIsbSpell extends DataFixerElement {
+// public class FixIsbSpell extends DataFixerElement {
 //    @Override
 //    public List<String> preScanValuesToMatch() {
 //        return List.of(LegacySpellData.ISB_SPELL);
@@ -23,7 +23,8 @@
 //                    fixed = true;
 //                }
 //                if (spellTag.contains(LegacySpellData.SPELL_ID)) {
-//                    String newName = DataFixerHelpers.NEW_SPELL_IDS.get(spellTag.get(LegacySpellData.SPELL_ID).getAsString());
+//                    String newName =
+// DataFixerHelpers.NEW_SPELL_IDS.get(spellTag.get(LegacySpellData.SPELL_ID).getAsString());
 //                    if (newName != null) {
 //                        spellTag.putString(LegacySpellData.SPELL_ID, newName);
 //                        fixed = true;
@@ -39,6 +40,7 @@
 //    private void fixScrollData(CompoundTag tag) {
 //        var legacySpellId = tag.getInt(LegacySpellData.LEGACY_SPELL_TYPE);
 //        tag.remove(LegacySpellData.LEGACY_SPELL_TYPE);
-//        tag.putString(LegacySpellData.SPELL_ID, DataFixerHelpers.LEGACY_SPELL_MAPPING.getOrDefault(legacySpellId, "irons_spellbooks:none"));
+//        tag.putString(LegacySpellData.SPELL_ID,
+// DataFixerHelpers.LEGACY_SPELL_MAPPING.getOrDefault(legacySpellId, "irons_spellbooks:none"));
 //    }
-//}
+// }

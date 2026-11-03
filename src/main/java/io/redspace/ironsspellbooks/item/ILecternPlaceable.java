@@ -15,7 +15,5 @@ public interface ILecternPlaceable {
         return Optional.empty();
     }
 
-    default void handleCustomLecternPosing(PoseStack poseStack) {
-
-    }
+    default void handleCustomLecternPosing(PoseStack poseStack) {}
 }

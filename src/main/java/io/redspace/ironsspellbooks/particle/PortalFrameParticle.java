@@ -14,7 +14,14 @@ public class PortalFrameParticle extends TextureSheetParticle {
     float pathWidth, pathHeight, yRad, rotSpeed, rot;
     final Vec3 origin;
 
-    public PortalFrameParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, double pathWidth, double pathHeight, double yDegrees) {
+    public PortalFrameParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            double pathWidth,
+            double pathHeight,
+            double yDegrees) {
         super(level, xCoord, yCoord, zCoord, pathWidth, pathHeight, yDegrees);
         this.origin = new Vec3(xCoord, yCoord, zCoord);
         this.pathWidth = (float) pathWidth * .5f;
@@ -25,7 +32,7 @@ public class PortalFrameParticle extends TextureSheetParticle {
         this.gravity = 0.0F;
         this.rotSpeed = Utils.random.nextIntBetweenInclusive(5, 10) * .04f;
         this.rotSpeed *= this.rotSpeed * (Utils.random.nextBoolean() ? -1 : 1);
-//https://www.desmos.com/calculator/mpx189dgxi
+        // https://www.desmos.com/calculator/mpx189dgxi
         this.rot = Utils.random.nextFloat() * Mth.TWO_PI;
         this.quadSize = .0625f;
         float f = this.random.nextFloat() * 0.6F + 0.4F;
@@ -81,9 +88,15 @@ public class PortalFrameParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             var particle = new PortalFrameParticle(level, x, y, z, dx, dy, dz);
             particle.pickSprite(this.sprites);
             return particle;

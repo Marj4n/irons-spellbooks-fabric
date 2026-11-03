@@ -1,12 +1,12 @@
-//package io.redspace.ironsspellbooks.compat.apotheosis;
+// package io.redspace.ironsspellbooks.compat.apotheosis;
 //
-//import net.minecraft.world.entity.EquipmentSlot;
-//import net.minecraft.world.item.ItemStack;
-//import net.fabricmc.loader.api.FabricLoader;
-//import shadows.apotheosis.adventure.loot.LootCategory;
+// import net.minecraft.world.entity.EquipmentSlot;
+// import net.minecraft.world.item.ItemStack;
+// import net.fabricmc.loader.api.FabricLoader;
+// import shadows.apotheosis.adventure.loot.LootCategory;
 //
 //
-//public class ApotheosisHandler {
+// public class ApotheosisHandler {
 //    public static LootCategory SPELLBOOK;
 //
 //    private static EquipmentSlot[] arr(EquipmentSlot... s) {
@@ -21,7 +21,8 @@
 //        //If Apothic Curios is not installed, then we need a register a placeholder category.
 //        //If it is installed, it handles itself and we do nothing
 //        if (!FabricLoader.getInstance().isModLoaded("apothiccurios")) {
-//            SPELLBOOK = LootCategory.register(LootCategory.SWORD, "curios:spellbook", s -> false, arr());
+//            SPELLBOOK = LootCategory.register(LootCategory.SWORD, "curios:spellbook", s -> false,
+// arr());
 //        }
 //    }
-//}
+// }

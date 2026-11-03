@@ -61,18 +61,16 @@ public class ThunderstepProjectile extends AbstractMagicProjectile {
     }
 
     private boolean shouldFall() {
-        return this.inGround && this.level().noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
+        return this.inGround
+                && this.level()
+                        .noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
     }
 
     @Override
-    public void trailParticles() {
-
-    }
+    public void trailParticles() {}
 
     @Override
-    public void impactParticles(double x, double y, double z) {
-
-    }
+    public void impactParticles(double x, double y, double z) {}
 
     @Override
     public float getSpeed() {

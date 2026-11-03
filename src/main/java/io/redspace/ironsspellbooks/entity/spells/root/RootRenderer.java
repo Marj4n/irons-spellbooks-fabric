@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.spells.root;
 
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.redspace.ironsspellbooks.render.GeoLivingEntityRenderer;
@@ -15,13 +14,39 @@ public class RootRenderer extends GeoLivingEntityRenderer<RootEntity> {
     }
 
     @Override
-    public void preRender(PoseStack poseStack, RootEntity animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float r, float g, float b, float a) {
+    public void preRender(
+            PoseStack poseStack,
+            RootEntity animatable,
+            BakedGeoModel model,
+            @Nullable MultiBufferSource bufferSource,
+            @Nullable VertexConsumer buffer,
+            boolean isReRender,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            float r,
+            float g,
+            float b,
+            float a) {
         var rooted = animatable.getFirstPassenger();
 
         if (rooted != null) {
-            float scale = rooted.getBbWidth() / 0.6f; //.6 is the default player bb width
+            float scale = rooted.getBbWidth() / 0.6f; // .6 is the default player bb width
             poseStack.scale(scale, scale, scale);
         }
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, r,g,b,a);
+        super.preRender(
+                poseStack,
+                animatable,
+                model,
+                bufferSource,
+                buffer,
+                isReRender,
+                partialTick,
+                packedLight,
+                packedOverlay,
+                r,
+                g,
+                b,
+                a);
     }
 }

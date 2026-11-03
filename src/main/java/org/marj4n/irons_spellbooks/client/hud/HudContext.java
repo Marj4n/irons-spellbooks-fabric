@@ -9,7 +9,11 @@ import net.minecraft.world.entity.LivingEntity;
 public final class HudContext {
     public int leftHeight = 39;
     public int rightHeight = 39;
-    public Font getFont() { return Minecraft.getInstance().font; }
+
+    public Font getFont() {
+        return Minecraft.getInstance().font;
+    }
+
     public void beginFrame() {
         leftHeight = rightHeight = 39;
         var player = Minecraft.getInstance().player;

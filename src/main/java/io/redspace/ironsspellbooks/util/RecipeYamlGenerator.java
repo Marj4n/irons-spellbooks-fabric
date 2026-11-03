@@ -11,10 +11,10 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 public class RecipeYamlGenerator {
-    private record ItemInfo(String name, String path) {
-    }
+    private record ItemInfo(String name, String path) {}
 
-    private static final String RECIPE_DATA_TEMPLATE = """
+    private static final String RECIPE_DATA_TEMPLATE =
+            """
             - name: "%s"
               path: "%s"
               item0: "%s"
@@ -48,47 +48,70 @@ public class RecipeYamlGenerator {
         Gson g = new Gson();
 
         try {
-            Files.walk(Path.of(baseDir, recipesDir)).forEach(path -> {
-                System.out.println(path);
+            Files.walk(Path.of(baseDir, recipesDir))
+                    .forEach(
+                            path -> {
+                                System.out.println(path);
 
-                if (path.toFile().isFile()) {
-                    try {
-                        JsonObject jsonObject = JsonParser.parseReader(new FileReader(path.toFile())).getAsJsonObject();
-                        var type = jsonObject.get("type").getAsString();
-                        if (type.equals("minecraft:crafting_shaped")) {
-                            var result = jsonObject.get("result").getAsJsonObject().get("item").getAsString();
-                            System.out.println(result);
-                            var itemInfoArray = new ItemInfo[9];
-                            var pattern = jsonObject.get("pattern").getAsJsonArray();
-                            var keyMap = jsonObject.get("key").getAsJsonObject().asMap();
+                                if (path.toFile().isFile()) {
+                                    try {
+                                        JsonObject jsonObject =
+                                                JsonParser.parseReader(
+                                                                new FileReader(path.toFile()))
+                                                        .getAsJsonObject();
+                                        var type = jsonObject.get("type").getAsString();
+                                        if (type.equals("minecraft:crafting_shaped")) {
+                                            var result =
+                                                    jsonObject
+                                                            .get("result")
+                                                            .getAsJsonObject()
+                                                            .get("item")
+                                                            .getAsString();
+                                            System.out.println(result);
+                                            var itemInfoArray = new ItemInfo[9];
+                                            var pattern =
+                                                    jsonObject.get("pattern").getAsJsonArray();
+                                            var keyMap =
+                                                    jsonObject.get("key").getAsJsonObject().asMap();
 
+                                            int count = 0;
+                                            for (int i = 0; i < pattern.size(); i++) {
+                                                var slots = pattern.get(i).getAsString();
+                                                for (int j = 0; j < slots.length(); j++) {
+                                                    var key = slots.charAt(j);
+                                                    if (key != ' ') {
+                                                        var item =
+                                                                keyMap.get(String.valueOf(key))
+                                                                        .getAsJsonObject()
+                                                                        .get("item");
+                                                        if (item == null) {
+                                                            item =
+                                                                    keyMap.get(String.valueOf(key))
+                                                                            .getAsJsonObject()
+                                                                            .get("tag");
+                                                        }
+                                                        itemInfoArray[count] =
+                                                                new ItemInfo(
+                                                                        item.getAsString(),
+                                                                        item.getAsString());
+                                                    }
+                                                    count++;
+                                                }
+                                            }
 
-                            int count = 0;
-                            for (int i = 0; i < pattern.size(); i++) {
-                                var slots = pattern.get(i).getAsString();
-                                for (int j = 0; j < slots.length(); j++) {
-                                    var key = slots.charAt(j);
-                                    if (key != ' ') {
-                                        var item = keyMap.get(String.valueOf(key)).getAsJsonObject().get("item");
-                                        if (item == null) {
-                                            item = keyMap.get(String.valueOf(key)).getAsJsonObject().get("tag");
+                                            for (int i = 0; i < itemInfoArray.length; i++) {
+                                                System.out.println(
+                                                        String.format(
+                                                                "%d: %s", i, itemInfoArray[i]));
+                                            }
                                         }
-                                        itemInfoArray[count] = new ItemInfo(item.getAsString(), item.getAsString());
+                                    } catch (Exception e) {
+                                        System.out.println(e.getMessage());
+                                        Arrays.stream(e.getStackTrace())
+                                                .forEach(System.out::println);
                                     }
-                                    count++;
                                 }
-                            }
-
-                            for (int i = 0; i < itemInfoArray.length; i++) {
-                                System.out.println(String.format("%d: %s", i, itemInfoArray[i]));
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                        Arrays.stream(e.getStackTrace()).forEach(System.out::println);
-                    }
-                }
-            });
+                            });
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

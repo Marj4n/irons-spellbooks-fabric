@@ -18,7 +18,10 @@ public class SlowedEffect extends CustomDescriptionMobEffect {
     @Override
     public Component getDescriptionLine(MobEffectInstance instance) {
         float reductionAmount = getPercentForAmplifier(instance.getAmplifier(), null);
-        return Component.translatable("tooltip.irons_spellbooks.slowed_description", (int) (reductionAmount * 100)).withStyle(ChatFormatting.RED);
+        return Component.translatable(
+                        "tooltip.irons_spellbooks.slowed_description",
+                        (int) (reductionAmount * 100))
+                .withStyle(ChatFormatting.RED);
     }
 
     public static float getPercentForAmplifier(int amplifier, @Nullable LivingEntity livingEntity) {

@@ -19,9 +19,9 @@ import net.minecraft.world.item.ItemStack;
 
 public class AffinityRingRenderer extends BlockEntityWithoutLevelRenderer {
 
-
     private final ItemRenderer renderer;
-    private final ResourceLocation defaultModel = IronsSpellbooks.id("item/affinity_ring_evocation");
+    private final ResourceLocation defaultModel =
+            IronsSpellbooks.id("item/affinity_ring_evocation");
 
     public AffinityRingRenderer(ItemRenderer renderDispatcher, EntityModelSet modelSet) {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), modelSet);
@@ -29,7 +29,13 @@ public class AffinityRingRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack itemStack, ItemDisplayContext transformType, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLightIn, int combinedOverlayIn) {
+    public void renderByItem(
+            ItemStack itemStack,
+            ItemDisplayContext transformType,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int combinedLightIn,
+            int combinedOverlayIn) {
         poseStack.pushPose();
         poseStack.translate(0.5f, 0.5f, 0.5f);
 
@@ -37,23 +43,45 @@ public class AffinityRingRenderer extends BlockEntityWithoutLevelRenderer {
         if (!AffinityData.hasAffinityData(itemStack)) {
             model = renderer.getItemModelShaper().getModelManager().getModel(defaultModel);
         } else {
-            var modelResource = (getAffinityRingModelLocation(AffinityData.getAffinityData(itemStack).getSpell().getSchoolType()));
+            var modelResource =
+                    (getAffinityRingModelLocation(
+                            AffinityData.getAffinityData(itemStack).getSpell().getSchoolType()));
             model = renderer.getItemModelShaper().getModelManager().getModel(modelResource);
         }
 
         if (transformType == ItemDisplayContext.GUI) {
             Lighting.setupForFlatItems();
-            renderer.render(itemStack, transformType, false, poseStack, bufferSource, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, model);
+            renderer.render(
+                    itemStack,
+                    transformType,
+                    false,
+                    poseStack,
+                    bufferSource,
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    model);
             Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
             Lighting.setupFor3DItems();
         } else {
-            boolean leftHand = transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || transformType == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
-            renderer.render(itemStack, transformType, leftHand, poseStack, bufferSource, combinedLightIn, combinedOverlayIn, model);
+            boolean leftHand =
+                    transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                            || transformType == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+            renderer.render(
+                    itemStack,
+                    transformType,
+                    leftHand,
+                    poseStack,
+                    bufferSource,
+                    combinedLightIn,
+                    combinedOverlayIn,
+                    model);
         }
         poseStack.popPose();
     }
 
     public static ResourceLocation getAffinityRingModelLocation(SchoolType schoolType) {
-        return new ResourceLocation(schoolType.getId().getNamespace(), String.format("item/affinity_ring_%s", schoolType.getId().getPath()));
+        return new ResourceLocation(
+                schoolType.getId().getNamespace(),
+                String.format("item/affinity_ring_%s", schoolType.getId().getPath()));
     }
 }

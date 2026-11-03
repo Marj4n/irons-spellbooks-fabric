@@ -24,7 +24,6 @@ public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
 
     public HealingAoe(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-
     }
 
     public HealingAoe(Level level) {
@@ -35,7 +34,12 @@ public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
     public void applyEffect(LivingEntity target) {
         if (getOwner() instanceof LivingEntity owner && Utils.shouldHealEntity(owner, target)) {
             float healAmount = getDamage();
-            org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellHealEvent((LivingEntity) getOwner(), target, healAmount, SchoolRegistry.HOLY.get()));
+            org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                    new SpellHealEvent(
+                            (LivingEntity) getOwner(),
+                            target,
+                            healAmount,
+                            SchoolRegistry.HOLY.get()));
             target.heal(healAmount);
         }
     }
@@ -54,21 +58,27 @@ public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
         float f = getParticleCount();
         f = Mth.clamp(f * getRadius(), f / 4, f * 10);
         for (int i = 0; i < f; i++) {
-            if (f - i < 1 && random.nextFloat() > f - i)
-                return;
+            if (f - i < 1 && random.nextFloat() > f - i) return;
             var r = getRadius();
             Vec3 pos;
             if (isCircular()) {
                 float distance = (1 - this.random.nextFloat() * this.random.nextFloat()) * r;
                 pos = new Vec3(0, 0, distance).yRot(this.random.nextFloat() * 360);
             } else {
-                pos = new Vec3(
-                        Utils.getRandomScaled(r * .85f),
-                        .2f,
-                        Utils.getRandomScaled(r * .85f)
-                );
+                pos =
+                        new Vec3(
+                                Utils.getRandomScaled(r * .85f),
+                                .2f,
+                                Utils.getRandomScaled(r * .85f));
             }
-            level().addParticle(ParticleTypes.ENTITY_EFFECT, getX() + pos.x, getY() + pos.y + particleYOffset(), getZ() + pos.z, d0, d1, d2);
+            level().addParticle(
+                            ParticleTypes.ENTITY_EFFECT,
+                            getX() + pos.x,
+                            getY() + pos.y + particleYOffset(),
+                            getZ() + pos.z,
+                            d0,
+                            d1,
+                            d2);
         }
     }
 
@@ -96,7 +106,6 @@ public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
     public Optional<ParticleOptions> getParticle() {
         return Optional.empty();
     }
-
 
     @Override
     public void onAntiMagic(MagicData magicData) {

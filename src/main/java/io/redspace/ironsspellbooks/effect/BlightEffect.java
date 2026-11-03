@@ -7,7 +7,6 @@ import net.minecraft.world.entity.LivingEntity;
 import org.marj4n.irons_spellbooks.events.LivingHealEvent;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingHurtEvent;
 
-
 public class BlightEffect extends MagicMobEffect {
     public static final float DAMAGE_PER_LEVEL = -.05f;
     public static final float HEALING_PER_LEVEL = -.10f;
@@ -23,7 +22,8 @@ public class BlightEffect extends MagicMobEffect {
             float healingMult = 1 + HEALING_PER_LEVEL * lvl;
             float before = event.getAmount();
             event.setAmount(event.getAmount() * healingMult);
-            //IronsSpellbooks.LOGGER.debug("BlightEffect.reduceHealing: {}->{}", before, event.getAmount());
+            // IronsSpellbooks.LOGGER.debug("BlightEffect.reduceHealing: {}->{}", before,
+            // event.getAmount());
 
         }
     }
@@ -37,7 +37,8 @@ public class BlightEffect extends MagicMobEffect {
                 float before = event.getAmount();
                 float multiplier = 1 + BlightEffect.DAMAGE_PER_LEVEL * lvl;
                 event.setAmount(event.getAmount() * multiplier);
-                //IronsSpellbooks.LOGGER.debug("BlightEffect.reduceDamageOutput: {}->{}", before, event.getAmount());
+                // IronsSpellbooks.LOGGER.debug("BlightEffect.reduceDamageOutput: {}->{}", before,
+                // event.getAmount());
             }
         }
     }

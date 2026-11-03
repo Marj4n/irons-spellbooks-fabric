@@ -27,17 +27,41 @@ import java.util.Optional;
 
 public class IndividualTerrainStructurePoolElement extends SinglePoolElement {
 
-    public static final Codec<IndividualTerrainStructurePoolElement> CODEC = RecordCodecBuilder.create((instance) -> {
-        return instance.group(templateCodec(), processorsCodec(), projectionCodec(), TerrainAdjustment.CODEC.optionalFieldOf("terrain_adjustment").forGetter(element -> {
-            return Optional.ofNullable(element.terrainAdjustment);
-        })).apply(instance, (either, processorListHolder, projection, terrainAdjustment) -> {
-            return new IndividualTerrainStructurePoolElement(either, processorListHolder, projection, terrainAdjustment.orElse(null));
-        });
-    });
+    public static final Codec<IndividualTerrainStructurePoolElement> CODEC =
+            RecordCodecBuilder.create(
+                    (instance) -> {
+                        return instance.group(
+                                        templateCodec(),
+                                        processorsCodec(),
+                                        projectionCodec(),
+                                        TerrainAdjustment.CODEC
+                                                .optionalFieldOf("terrain_adjustment")
+                                                .forGetter(
+                                                        element -> {
+                                                            return Optional.ofNullable(
+                                                                    element.terrainAdjustment);
+                                                        }))
+                                .apply(
+                                        instance,
+                                        (either,
+                                                processorListHolder,
+                                                projection,
+                                                terrainAdjustment) -> {
+                                            return new IndividualTerrainStructurePoolElement(
+                                                    either,
+                                                    processorListHolder,
+                                                    projection,
+                                                    terrainAdjustment.orElse(null));
+                                        });
+                    });
 
     private final @Nullable TerrainAdjustment terrainAdjustment;
 
-    public IndividualTerrainStructurePoolElement(Either<ResourceLocation, StructureTemplate> resourceLocation, Holder<StructureProcessorList> processors, StructureTemplatePool.Projection projection, @Nullable TerrainAdjustment terrainAdjustment) {
+    public IndividualTerrainStructurePoolElement(
+            Either<ResourceLocation, StructureTemplate> resourceLocation,
+            Holder<StructureProcessorList> processors,
+            StructureTemplatePool.Projection projection,
+            @Nullable TerrainAdjustment terrainAdjustment) {
         super(resourceLocation, processors, projection);
         this.terrainAdjustment = terrainAdjustment;
     }

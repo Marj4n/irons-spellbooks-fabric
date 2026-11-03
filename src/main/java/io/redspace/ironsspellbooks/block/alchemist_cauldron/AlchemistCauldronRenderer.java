@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-
 public class AlchemistCauldronRenderer implements BlockEntityRenderer<AlchemistCauldronTile> {
     ItemRenderer itemRenderer;
 
@@ -46,7 +45,13 @@ public class AlchemistCauldronRenderer implements BlockEntityRenderer<AlchemistC
     private static final Vec3 ITEM_POS = new Vec3(.5, 1.5, .5);
 
     @Override
-    public void render(AlchemistCauldronTile cauldron, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(
+            AlchemistCauldronTile cauldron,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         int waterLevel = cauldron.getFluidAmount();
 
         float waterOffset = Mth.lerp(waterLevel / 1000f, .25f, .9f);
@@ -62,43 +67,71 @@ public class AlchemistCauldronRenderer implements BlockEntityRenderer<AlchemistC
                 float f = waterLevel > 0 ? cauldron.getLevel().getGameTime() + partialTick : 15;
                 Vec2 floatOffset = getFloatingItemOffset(f, i * 587);
                 float yRot = (f + i * 213) / (i + 1) * 1.5f;
-                renderItem(itemStack,
-                        new Vec3(
-                                floatOffset.x,
-                                waterOffset + i * .01f,
-                                floatOffset.y),
-                        yRot, cauldron, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
-
+                renderItem(
+                        itemStack,
+                        new Vec3(floatOffset.x, waterOffset + i * .01f, floatOffset.y),
+                        yRot,
+                        cauldron,
+                        partialTick,
+                        poseStack,
+                        bufferSource,
+                        packedLight,
+                        packedOverlay);
             }
         }
         var player = Minecraft.getInstance().player;
         if (player != null) {
-            if (Math.abs(player.getX() - cauldron.getBlockPos().getX()) < 5 && Math.abs(player.getY() - cauldron.getBlockPos().getY()) < 5 && Math.abs(player.getZ() - cauldron.getBlockPos().getZ()) < 5) {
-                if (player.isCrouching() && Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getBlockPos().equals(cauldron.getBlockPos())) {
+            if (Math.abs(player.getX() - cauldron.getBlockPos().getX()) < 5
+                    && Math.abs(player.getY() - cauldron.getBlockPos().getY()) < 5
+                    && Math.abs(player.getZ() - cauldron.getBlockPos().getZ()) < 5) {
+                if (player.isCrouching()
+                        && Minecraft.getInstance().hitResult
+                                instanceof BlockHitResult blockHitResult
+                        && blockHitResult.getBlockPos().equals(cauldron.getBlockPos())) {
                     List<Component> text = new ArrayList<>();
-                    text.add(Component.translatable("block.irons_spellbooks.alchemist_cauldron").withStyle(ChatFormatting.UNDERLINE, ChatFormatting.WHITE));
+                    text.add(
+                            Component.translatable("block.irons_spellbooks.alchemist_cauldron")
+                                    .withStyle(ChatFormatting.UNDERLINE, ChatFormatting.WHITE));
                     var fluids = cauldron.fluidInventory.fluids();
                     if (fluids.isEmpty()) {
-                        text.add(Component.translatable("ui.irons_spellbooks.empty").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+                        text.add(
+                                Component.translatable("ui.irons_spellbooks.empty")
+                                        .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
                     } else {
-                        List<ObjectIntImmutablePair<MutableComponent>> fluidInfo = new ArrayList<>();
+                        List<ObjectIntImmutablePair<MutableComponent>> fluidInfo =
+                                new ArrayList<>();
                         for (int i = fluids.size() - 1; i >= 0; i--) {
-                            var fluid  = fluids.get(i);
-                            fluidInfo.add(new ObjectIntImmutablePair<>(fluid.getFluid().getFluidType().getDescription(fluid).copy().withStyle(ChatFormatting.DARK_AQUA), Math.toIntExact(fluid.getAmount())));
+                            var fluid = fluids.get(i);
+                            fluidInfo.add(
+                                    new ObjectIntImmutablePair<>(
+                                            fluid.getFluid()
+                                                    .getFluidType()
+                                                    .getDescription(fluid)
+                                                    .copy()
+                                                    .withStyle(ChatFormatting.DARK_AQUA),
+                                            Math.toIntExact(fluid.getAmount())));
                         }
 
                         for (ObjectIntImmutablePair<MutableComponent> info : fluidInfo) {
-                            text.add(Component.literal("  ").append(info.left()).append(": ").append(Component.literal(info.rightInt() + "mb").withStyle(ChatFormatting.GOLD)));
+                            text.add(
+                                    Component.literal("  ")
+                                            .append(info.left())
+                                            .append(": ")
+                                            .append(
+                                                    Component.literal(info.rightInt() + "mb")
+                                                            .withStyle(ChatFormatting.GOLD)));
                         }
                     }
-                    ScreenTooltipOverlay.renderTooltip(text, (sw, sh, mx, my, tw, th) -> new Vector2i(sw / 2 + 30, sh / 2 - th / 2));
+                    ScreenTooltipOverlay.renderTooltip(
+                            text,
+                            (sw, sh, mx, my, tw, th) -> new Vector2i(sw / 2 + 30, sh / 2 - th / 2));
                 }
             }
         }
     }
 
     public Vec2 getFloatingItemOffset(float time, int offset) {
-        //for our case, offset never changes
+        // for our case, offset never changes
         float xspeed = offset % 2 == 0 ? .0075f : .025f * (1 + (offset % 88) * .001f);
         float yspeed = offset % 2 == 0 ? .025f : .0075f * (1 + (offset % 88) * .001f);
         float x = (time + offset) * xspeed;
@@ -106,14 +139,19 @@ public class AlchemistCauldronRenderer implements BlockEntityRenderer<AlchemistC
         float y = (time + offset + 4356) * yspeed;
         y = (Math.abs((y % 2) - 1) + 1) / 2;
 
-        //these values are "bouncing" between 0-1. however, this needs to be bounded to inside the limits of the cauldron, taking into account the item size
+        // these values are "bouncing" between 0-1. however, this needs to be bounded to inside the
+        // limits of the cauldron, taking into account the item size
         x = Mth.lerp(x, -.2f, .75f);
         y = Mth.lerp(y, -.2f, .75f);
         return new Vec2(x, y);
-
     }
 
-    private void renderWater(AlchemistCauldronTile cauldron, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float waterOffset) {
+    private void renderWater(
+            AlchemistCauldronTile cauldron,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            float waterOffset) {
         Matrix4f pose = poseStack.last().pose();
         float totalFluid = cauldron.getFluidAmount();
         float runningFluid = totalFluid;
@@ -121,19 +159,65 @@ public class AlchemistCauldronRenderer implements BlockEntityRenderer<AlchemistC
         float padding = 1 / 16f;
         for (FluidStack fluid : cauldron.fluidInventory.fluids()) {
             int skylight = packedLight >> 4 & 15;
-            int luminosity = Math.max(skylight, fluid.getFluid().getFluidType().getLightLevel(fluid));
+            int luminosity =
+                    Math.max(skylight, fluid.getFluid().getFluidType().getLightLevel(fluid));
             int fluidlight = packedLight & 0xF00000 | luminosity << 4;
             FluidAppearance clientFluid = FluidAppearance.of(fluid.getFluid());
-            Function<ResourceLocation, TextureAtlasSprite> spriteAtlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
-            TextureAtlasSprite texture = spriteAtlas.apply(clientFluid.getStillTexture(fluid.getFluid().defaultFluidState(), cauldron.getLevel(), cauldron.getBlockPos()));
-            VertexConsumer consumer = texture.wrap(bufferSource.getBuffer(RenderType.translucent()));
-            var rgb = colorFromLong(clientFluid.getTintColor(fluid) & clientFluid.getTintColor(fluid.getFluid().defaultFluidState(), cauldron.getLevel(), cauldron.getBlockPos())); // if either returns 0xFFFFFF (white) the bitwise and will choose the one that doesnt. if they return the same, we get the same
-            float opacity = runningFluid / totalFluid; // creates naturally weighted sum for the opacity of proceeding layers
+            Function<ResourceLocation, TextureAtlasSprite> spriteAtlas =
+                    Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
+            TextureAtlasSprite texture =
+                    spriteAtlas.apply(
+                            clientFluid.getStillTexture(
+                                    fluid.getFluid().defaultFluidState(),
+                                    cauldron.getLevel(),
+                                    cauldron.getBlockPos()));
+            VertexConsumer consumer =
+                    texture.wrap(bufferSource.getBuffer(RenderType.translucent()));
+            var rgb =
+                    colorFromLong(
+                            clientFluid.getTintColor(fluid)
+                                    & clientFluid.getTintColor(
+                                            fluid.getFluid().defaultFluidState(),
+                                            cauldron.getLevel(),
+                                            cauldron
+                                                    .getBlockPos())); // if either returns 0xFFFFFF
+                                                                      // (white) the bitwise and
+                                                                      // will choose the one that
+                                                                      // doesnt. if they return the
+                                                                      // same, we get the same
+            float opacity =
+                    runningFluid
+                            / totalFluid; // creates naturally weighted sum for the opacity of
+                                          // proceeding layers
             runningFluid -= Math.toIntExact(fluid.getAmount());
-            consumer.vertex(pose, 1 - padding, waterOffset + f, 0 + padding).color(rgb.x(), rgb.y(), rgb.z(), opacity).uv(1 - padding, 0 + padding).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(fluidlight).normal(0, 1, 0).endVertex();
-            consumer.vertex(pose, 0 + padding, waterOffset + f, 0 + padding).color(rgb.x(), rgb.y(), rgb.z(), opacity).uv(0 + padding, 0 + padding).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(fluidlight).normal(0, 1, 0).endVertex();
-            consumer.vertex(pose, 0 + padding, waterOffset + f, 1 - padding).color(rgb.x(), rgb.y(), rgb.z(), opacity).uv(0 + padding, 1 - padding).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(fluidlight).normal(0, 1, 0).endVertex();
-            consumer.vertex(pose, 1 - padding, waterOffset + f, 1 - padding).color(rgb.x(), rgb.y(), rgb.z(), opacity).uv(1 - padding, 1 - padding).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(fluidlight).normal(0, 1, 0).endVertex();
+            consumer.vertex(pose, 1 - padding, waterOffset + f, 0 + padding)
+                    .color(rgb.x(), rgb.y(), rgb.z(), opacity)
+                    .uv(1 - padding, 0 + padding)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(fluidlight)
+                    .normal(0, 1, 0)
+                    .endVertex();
+            consumer.vertex(pose, 0 + padding, waterOffset + f, 0 + padding)
+                    .color(rgb.x(), rgb.y(), rgb.z(), opacity)
+                    .uv(0 + padding, 0 + padding)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(fluidlight)
+                    .normal(0, 1, 0)
+                    .endVertex();
+            consumer.vertex(pose, 0 + padding, waterOffset + f, 1 - padding)
+                    .color(rgb.x(), rgb.y(), rgb.z(), opacity)
+                    .uv(0 + padding, 1 - padding)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(fluidlight)
+                    .normal(0, 1, 0)
+                    .endVertex();
+            consumer.vertex(pose, 1 - padding, waterOffset + f, 1 - padding)
+                    .color(rgb.x(), rgb.y(), rgb.z(), opacity)
+                    .uv(1 - padding, 1 - padding)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(fluidlight)
+                    .normal(0, 1, 0)
+                    .endVertex();
             f += 0.001f;
         }
     }
@@ -142,23 +226,38 @@ public class AlchemistCauldronRenderer implements BlockEntityRenderer<AlchemistC
         return new Vector3f(
                 ((color >> 16) & 0xFF) / 255.0f,
                 ((color >> 8) & 0xFF) / 255.0f,
-                (color & 0xFF) / 255.0f
-        );
+                (color & 0xFF) / 255.0f);
     }
 
-    private void renderItem(ItemStack itemStack, Vec3 offset, float yRot, AlchemistCauldronTile tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    private void renderItem(
+            ItemStack itemStack,
+            Vec3 offset,
+            float yRot,
+            AlchemistCauldronTile tile,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         poseStack.pushPose();
-        //renderId seems to be some kind of uuid/salt
+        // renderId seems to be some kind of uuid/salt
         int renderId = (int) tile.getBlockPos().asLong();
-        //BakedModel model = itemRenderer.getModel(itemStack, null, null, renderId);
+        // BakedModel model = itemRenderer.getModel(itemStack, null, null, renderId);
         poseStack.translate(offset.x, offset.y, offset.z);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(90));
         poseStack.scale(0.4f, 0.4f, 0.4f);
 
-        itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos()), packedOverlay, poseStack, bufferSource, tile.getLevel(), renderId);
+        itemRenderer.renderStatic(
+                itemStack,
+                ItemDisplayContext.FIXED,
+                LevelRenderer.getLightColor(tile.getLevel(), tile.getBlockPos()),
+                packedOverlay,
+                poseStack,
+                bufferSource,
+                tile.getLevel(),
+                renderId);
 
         poseStack.popPose();
     }
-
 }

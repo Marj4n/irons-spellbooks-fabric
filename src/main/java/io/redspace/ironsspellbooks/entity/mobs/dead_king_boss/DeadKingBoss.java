@@ -94,17 +94,39 @@ import software.bernie.geckolib.core.object.PlayState;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAnimatedAttacker, IClientEventEntity, IOminousEntity {
-    private static final AttributeModifier OMINOUS_DAMAGE_MODIFIER = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("ominous_mode")), "ominous_mode", 0.20, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private static final AttributeModifier OMINOUS_SPEED_MODIFIER = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("ominous_mode")), "ominous_mode", 0.10, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private static final AttributeModifier OMINOUS_SUMMON_MODIFIER = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("ominous_mode")), "ominous_mode", 0.50, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private static final AttributeModifier OMINOUS_ARMOR_MODIFIER = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("ominous_mode")), "ominous_mode", 30, AttributeModifier.Operation.ADDITION);
+public class DeadKingBoss extends AbstractSpellCastingMob
+        implements Enemy, IAnimatedAttacker, IClientEventEntity, IOminousEntity {
+    private static final AttributeModifier OMINOUS_DAMAGE_MODIFIER =
+            new AttributeModifier(
+                    AttributeHelper.uuidFromId(IronsSpellbooks.id("ominous_mode")),
+                    "ominous_mode",
+                    0.20,
+                    AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier OMINOUS_SPEED_MODIFIER =
+            new AttributeModifier(
+                    AttributeHelper.uuidFromId(IronsSpellbooks.id("ominous_mode")),
+                    "ominous_mode",
+                    0.10,
+                    AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier OMINOUS_SUMMON_MODIFIER =
+            new AttributeModifier(
+                    AttributeHelper.uuidFromId(IronsSpellbooks.id("ominous_mode")),
+                    "ominous_mode",
+                    0.50,
+                    AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier OMINOUS_ARMOR_MODIFIER =
+            new AttributeModifier(
+                    AttributeHelper.uuidFromId(IronsSpellbooks.id("ominous_mode")),
+                    "ominous_mode",
+                    30,
+                    AttributeModifier.Operation.ADDITION);
 
     public static final byte CLIENT_STOP_TRACKING = 0;
     public static final byte CLIENT_START_TRACKING = 1;
 
     public static void sacrificialMarkHandler(SetSummonOwnerEvent event) {
-        if (event.getOwner() instanceof DeadKingBoss boss && event.getSummon() instanceof LivingEntity living) {
+        if (event.getOwner() instanceof DeadKingBoss boss
+                && event.getSummon() instanceof LivingEntity living) {
             if (!boss.isOminous()) {
                 return;
             }
@@ -112,7 +134,14 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
             if (boss.getRandom().nextFloat() < f) {
                 int maxLevel = SpellRegistry.SACRIFICE_SPELL.get().getMaxLevel();
                 int spellLevel = Mth.clamp(Mth.floor(f * (maxLevel - 1) + 1), 1, maxLevel);
-                living.addEffect(new MobEffectInstance(MobEffectRegistry.SACRIFICIAL_MARK.get(), Integer.MAX_VALUE, spellLevel - 1, false, false, true));
+                living.addEffect(
+                        new MobEffectInstance(
+                                MobEffectRegistry.SACRIFICIAL_MARK.get(),
+                                Integer.MAX_VALUE,
+                                spellLevel - 1,
+                                false,
+                                false,
+                                true));
             }
         }
     }
@@ -122,14 +151,18 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         this.setIsOminous(true);
         this.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(OMINOUS_DAMAGE_MODIFIER);
         this.getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(OMINOUS_DAMAGE_MODIFIER);
-        this.getAttribute(AttributeRegistry.SPELL_POWER.get()).removeModifier(OMINOUS_DAMAGE_MODIFIER);
-        this.getAttribute(AttributeRegistry.SPELL_POWER.get()).addPermanentModifier(OMINOUS_DAMAGE_MODIFIER);
+        this.getAttribute(AttributeRegistry.SPELL_POWER.get())
+                .removeModifier(OMINOUS_DAMAGE_MODIFIER);
+        this.getAttribute(AttributeRegistry.SPELL_POWER.get())
+                .addPermanentModifier(OMINOUS_DAMAGE_MODIFIER);
         this.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(OMINOUS_SPEED_MODIFIER);
         this.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(OMINOUS_SPEED_MODIFIER);
         this.getAttribute(Attributes.FLYING_SPEED).removeModifier(OMINOUS_SPEED_MODIFIER);
         this.getAttribute(Attributes.FLYING_SPEED).addPermanentModifier(OMINOUS_SPEED_MODIFIER);
-        this.getAttribute(AttributeRegistry.SUMMON_DAMAGE.get()).removeModifier(OMINOUS_SUMMON_MODIFIER);
-        this.getAttribute(AttributeRegistry.SUMMON_DAMAGE.get()).addPermanentModifier(OMINOUS_SUMMON_MODIFIER);
+        this.getAttribute(AttributeRegistry.SUMMON_DAMAGE.get())
+                .removeModifier(OMINOUS_SUMMON_MODIFIER);
+        this.getAttribute(AttributeRegistry.SUMMON_DAMAGE.get())
+                .addPermanentModifier(OMINOUS_SUMMON_MODIFIER);
         this.getAttribute(Attributes.ARMOR).removeModifier(OMINOUS_ARMOR_MODIFIER);
         this.getAttribute(Attributes.ARMOR).addPermanentModifier(OMINOUS_ARMOR_MODIFIER);
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(1000);
@@ -159,13 +192,14 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         }
     }
 
-    private static final BossbarManager.BossbarSprite BOSSBAR_SPRITE = new BossbarManager.BossbarSprite(IronsSpellbooks.id("boss_bars/dead_king_bossbar"), 192, 21, 3, -2);
+    private static final BossbarManager.BossbarSprite BOSSBAR_SPRITE =
+            new BossbarManager.BossbarSprite(
+                    IronsSpellbooks.id("boss_bars/dead_king_bossbar"), 192, 21, 3, -2);
 
     public DeadKingBoss(Level pLevel) {
         this(EntityRegistry.DEAD_KING.get(), pLevel);
         setPersistenceRequired();
     }
-
 
     public enum Phases {
         FirstPhase(0),
@@ -189,9 +223,16 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         public final AttackAnimationData data;
     }
 
-    private static final AttributeModifier MANA_MODIFIER = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("mana")), "mana", 2000, AttributeModifier.Operation.ADDITION);
-    private final static EntityDataAccessor<Integer> PHASE = SynchedEntityData.defineId(DeadKingBoss.class, EntityDataSerializers.INT);
-    private final static EntityDataAccessor<Boolean> IS_OMINOUS = SynchedEntityData.defineId(DeadKingBoss.class, EntityDataSerializers.BOOLEAN);
+    private static final AttributeModifier MANA_MODIFIER =
+            new AttributeModifier(
+                    AttributeHelper.uuidFromId(IronsSpellbooks.id("mana")),
+                    "mana",
+                    2000,
+                    AttributeModifier.Operation.ADDITION);
+    private final static EntityDataAccessor<Integer> PHASE =
+            SynchedEntityData.defineId(DeadKingBoss.class, EntityDataSerializers.INT);
+    private final static EntityDataAccessor<Boolean> IS_OMINOUS =
+            SynchedEntityData.defineId(DeadKingBoss.class, EntityDataSerializers.BOOLEAN);
     private int transitionAnimationTime = 139; // Animation Length in ticks
     private boolean isCloseToGround;
     public boolean isMeleeing;
@@ -200,8 +241,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
     private int playerScale;
     private final BossLootHandler bossLoot = new BossLootHandler();
 
-    @Nullable
-    private Vec3 spawnPos;
+    @Nullable private Vec3 spawnPos;
 
     public DeadKingBoss(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -213,20 +253,31 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
     }
 
     private DeadKingAnimatedWarlockAttackGoal getCombatGoal() {
-        return (DeadKingAnimatedWarlockAttackGoal) new DeadKingAnimatedWarlockAttackGoal(this, 1f, 55, 85).setMeleeAttackInverval(0, 20).setSpellQuality(.3f, .5f).setSpells(
-                List.of(
-                        SpellRegistry.RAY_OF_SIPHONING_SPELL.get(),
-                        SpellRegistry.BLOOD_SLASH_SPELL.get(), SpellRegistry.BLOOD_SLASH_SPELL.get(),
-                        SpellRegistry.WITHER_SKULL_SPELL.get(), SpellRegistry.WITHER_SKULL_SPELL.get(), SpellRegistry.WITHER_SKULL_SPELL.get(),
-                        SpellRegistry.FANG_STRIKE_SPELL.get(), SpellRegistry.FANG_STRIKE_SPELL.get(),
-                        SpellRegistry.POISON_ARROW_SPELL.get(), SpellRegistry.POISON_ARROW_SPELL.get(),
-                        SpellRegistry.BLIGHT_SPELL.get(),
-                        SpellRegistry.ACID_ORB_SPELL.get()
-                ),
-                List.of(SpellRegistry.FANG_WARD_SPELL.get(), SpellRegistry.BLOOD_STEP_SPELL.get()),
-                List.of(/*SpellType.BLOOD_STEP_SPELL*/),
-                List.of()
-        ).setMeleeBias(0.8f, 0.8f).setAllowFleeing(false);
+        return (DeadKingAnimatedWarlockAttackGoal)
+                new DeadKingAnimatedWarlockAttackGoal(this, 1f, 55, 85)
+                        .setMeleeAttackInverval(0, 20)
+                        .setSpellQuality(.3f, .5f)
+                        .setSpells(
+                                List.of(
+                                        SpellRegistry.RAY_OF_SIPHONING_SPELL.get(),
+                                        SpellRegistry.BLOOD_SLASH_SPELL.get(),
+                                        SpellRegistry.BLOOD_SLASH_SPELL.get(),
+                                        SpellRegistry.WITHER_SKULL_SPELL.get(),
+                                        SpellRegistry.WITHER_SKULL_SPELL.get(),
+                                        SpellRegistry.WITHER_SKULL_SPELL.get(),
+                                        SpellRegistry.FANG_STRIKE_SPELL.get(),
+                                        SpellRegistry.FANG_STRIKE_SPELL.get(),
+                                        SpellRegistry.POISON_ARROW_SPELL.get(),
+                                        SpellRegistry.POISON_ARROW_SPELL.get(),
+                                        SpellRegistry.BLIGHT_SPELL.get(),
+                                        SpellRegistry.ACID_ORB_SPELL.get()),
+                                List.of(
+                                        SpellRegistry.FANG_WARD_SPELL.get(),
+                                        SpellRegistry.BLOOD_STEP_SPELL.get()),
+                                List.of(/*SpellType.BLOOD_STEP_SPELL*/ ),
+                                List.of())
+                        .setMeleeBias(0.8f, 0.8f)
+                        .setAllowFleeing(false);
     }
 
     @Override
@@ -234,10 +285,14 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         setFirstPhaseGoals();
         this.targetSelector.addGoal(1, new MomentHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Villager.class, true));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, AbstractIllager.class, true));
-        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, FireBossEntity.class, true));
+        this.targetSelector.addGoal(
+                3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+        this.targetSelector.addGoal(
+                4, new NearestAttackableTargetGoal<>(this, Villager.class, true));
+        this.targetSelector.addGoal(
+                5, new NearestAttackableTargetGoal<>(this, AbstractIllager.class, true));
+        this.targetSelector.addGoal(
+                6, new NearestAttackableTargetGoal<>(this, FireBossEntity.class, true));
     }
 
     protected void setGenericGoals() {
@@ -248,31 +303,58 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
 
         // Use root in ominous mode
-        this.goalSelector.addGoal(3, new DeadKingBarrageGoal(this, SpellRegistry.ROOT_SPELL.get(), 1, 1, 200, 400, 1) {
-            @Override
-            public boolean canUse() {
-                return isOminous() && super.canUse();
-            }
-        });
+        this.goalSelector.addGoal(
+                3,
+                new DeadKingBarrageGoal(this, SpellRegistry.ROOT_SPELL.get(), 1, 1, 200, 400, 1) {
+                    @Override
+                    public boolean canUse() {
+                        return isOminous() && super.canUse();
+                    }
+                });
     }
 
     protected void setFirstPhaseGoals() {
         this.goalSelector.getAvailableGoals().forEach(WrappedGoal::stop);
         this.goalSelector.removeAllGoals((x) -> true);
-        this.goalSelector.addGoal(1, new DeadKingBarrageGoal(this, SpellRegistry.WITHER_SKULL_SPELL.get(), 3, 4, 70, 140, 3));
-        this.goalSelector.addGoal(2, new DeadKingBarrageGoal(this, SpellRegistry.RAISE_DEAD_SPELL.get(), 4, 4, 400, 600, 1));
-        this.goalSelector.addGoal(3, new DeadKingBarrageGoal(this, SpellRegistry.BLOOD_STEP_SPELL.get(), 1, 1, 100, 180, 1));
-        this.goalSelector.addGoal(4, getCombatGoal().setSingleUseSpell(SpellRegistry.RAISE_DEAD_SPELL.get(), 20, 20, 8, 8));
+        this.goalSelector.addGoal(
+                1,
+                new DeadKingBarrageGoal(
+                        this, SpellRegistry.WITHER_SKULL_SPELL.get(), 3, 4, 70, 140, 3));
+        this.goalSelector.addGoal(
+                2,
+                new DeadKingBarrageGoal(
+                        this, SpellRegistry.RAISE_DEAD_SPELL.get(), 4, 4, 400, 600, 1));
+        this.goalSelector.addGoal(
+                3,
+                new DeadKingBarrageGoal(
+                        this, SpellRegistry.BLOOD_STEP_SPELL.get(), 1, 1, 100, 180, 1));
+        this.goalSelector.addGoal(
+                4,
+                getCombatGoal()
+                        .setSingleUseSpell(SpellRegistry.RAISE_DEAD_SPELL.get(), 20, 20, 8, 8));
         setGenericGoals();
     }
 
     protected void setFinalPhaseGoals() {
         this.goalSelector.getAvailableGoals().forEach(WrappedGoal::stop);
         this.goalSelector.removeAllGoals((x) -> true);
-        this.goalSelector.addGoal(1, new DeadKingBarrageGoal(this, SpellRegistry.WITHER_SKULL_SPELL.get(), 5, 5, 60, 140, 4));
-        this.goalSelector.addGoal(2, new DeadKingBarrageGoal(this, SpellRegistry.SUMMON_VEX_SPELL.get(), 2, 4, 200, 400, 1));
-        this.goalSelector.addGoal(3, new DeadKingBarrageGoal(this, SpellRegistry.BLOOD_STEP_SPELL.get(), 1, 1, 100, 180, 1));
-        this.goalSelector.addGoal(4, getCombatGoal().setIsFlying().setSingleUseSpell(SpellRegistry.BLAZE_STORM_SPELL.get(), 10, 30, 10, 10));
+        this.goalSelector.addGoal(
+                1,
+                new DeadKingBarrageGoal(
+                        this, SpellRegistry.WITHER_SKULL_SPELL.get(), 5, 5, 60, 140, 4));
+        this.goalSelector.addGoal(
+                2,
+                new DeadKingBarrageGoal(
+                        this, SpellRegistry.SUMMON_VEX_SPELL.get(), 2, 4, 200, 400, 1));
+        this.goalSelector.addGoal(
+                3,
+                new DeadKingBarrageGoal(
+                        this, SpellRegistry.BLOOD_STEP_SPELL.get(), 1, 1, 100, 180, 1));
+        this.goalSelector.addGoal(
+                4,
+                getCombatGoal()
+                        .setIsFlying()
+                        .setSingleUseSpell(SpellRegistry.BLAZE_STORM_SPELL.get(), 10, 30, 10, 10));
         this.hasUsedSingleAttack = false;
         this.moveControl = new NotIdioticFlyingMoveControl(this, 30, true);
         setGenericGoals();
@@ -293,7 +375,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
     @Override
     public void handleEntityEvent(byte pId) {
         if (pId == 3) {
-            //play death sound event
+            // play death sound event
         } else {
             super.handleEntityEvent(pId);
         }
@@ -306,17 +388,27 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
 
     @Override
     public boolean isPushable() {
-        return false;//!isPhaseTransitioning();
+        return false; // !isPhaseTransitioning();
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         RandomSource randomsource = Utils.random;
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         this.getAttribute(AttributeRegistry.MAX_MANA.get()).addPermanentModifier(MANA_MODIFIER);
-        List<? extends Player> nearbyPlayers = pLevel.players().stream()
-                .filter(player -> distanceToSqr(player) < 3600 && !player.isSpectator() && !player.isCreative())
-                .toList();
+        List<? extends Player> nearbyPlayers =
+                pLevel.players().stream()
+                        .filter(
+                                player ->
+                                        distanceToSqr(player) < 3600
+                                                && !player.isSpectator()
+                                                && !player.isCreative())
+                        .toList();
         this.playerScale = nearbyPlayers.size();
         this.bossLoot.setParticipantsFromPlayers(nearbyPlayers);
         int extraPlayers = Math.max(0, playerScale - 1);
@@ -325,33 +417,59 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         double extraDamage = ServerConfigs.DEAD_KING_ADDITIONAL_ATTACK_DAMAGE.get();
         double extraPower = ServerConfigs.DEAD_KING_ADDITIONAL_SPELL_POWER.get();
         if (extraHealth != 0) {
-            this.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("config")), "config", extraHealth, AttributeModifier.Operation.ADDITION));
+            this.getAttribute(Attributes.MAX_HEALTH)
+                    .addPermanentModifier(
+                            new AttributeModifier(
+                                    AttributeHelper.uuidFromId(IronsSpellbooks.id("config")),
+                                    "config",
+                                    extraHealth,
+                                    AttributeModifier.Operation.ADDITION));
         }
         if (extraHealthPercent != 0) {
-            this.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("player_scale")), "player_scale", extraHealthPercent, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            this.getAttribute(Attributes.MAX_HEALTH)
+                    .addPermanentModifier(
+                            new AttributeModifier(
+                                    AttributeHelper.uuidFromId(IronsSpellbooks.id("player_scale")),
+                                    "player_scale",
+                                    extraHealthPercent,
+                                    AttributeModifier.Operation.MULTIPLY_TOTAL));
         }
         if (extraDamage != 0) {
-            this.getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("config")), "config", extraDamage, AttributeModifier.Operation.ADDITION));
+            this.getAttribute(Attributes.ATTACK_DAMAGE)
+                    .addPermanentModifier(
+                            new AttributeModifier(
+                                    AttributeHelper.uuidFromId(IronsSpellbooks.id("config")),
+                                    "config",
+                                    extraDamage,
+                                    AttributeModifier.Operation.ADDITION));
         }
         if (extraPower != 0) {
-            this.getAttribute(AttributeRegistry.SPELL_POWER.get()).addPermanentModifier(new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("config")), "config", extraPower, AttributeModifier.Operation.ADDITION));
+            this.getAttribute(AttributeRegistry.SPELL_POWER.get())
+                    .addPermanentModifier(
+                            new AttributeModifier(
+                                    AttributeHelper.uuidFromId(IronsSpellbooks.id("config")),
+                                    "config",
+                                    extraPower,
+                                    AttributeModifier.Operation.ADDITION));
         }
         this.setHealth(this.getMaxHealth());
         return pSpawnData;
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(
+            RandomSource pRandom, DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemRegistry.BLOOD_STAFF.get()));
         this.setDropChance(EquipmentSlot.OFFHAND, 0f);
     }
 
     @Override
     public boolean isAlliedTo(Entity pEntity) {
-        return super.isAlliedTo(pEntity) || (pEntity instanceof IMagicSummon summon && summon.getSummoner() == this);
+        return super.isAlliedTo(pEntity)
+                || (pEntity instanceof IMagicSummon summon && summon.getSummoner() == this);
     }
 
-    //Instead of being undead (smite is ridiculous)
+    // Instead of being undead (smite is ridiculous)
     @Override
     public boolean isInvertedHealAndHarm() {
         return true;
@@ -365,7 +483,8 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         } else {
             float halfHealth = this.getMaxHealth() / 2;
             if (isPhase(Phases.FirstPhase)) {
-                this.bossEvent.setProgress((this.getHealth() - halfHealth) / (this.getMaxHealth() - halfHealth));
+                this.bossEvent.setProgress(
+                        (this.getHealth() - halfHealth) / (this.getMaxHealth() - halfHealth));
                 if (this.getHealth() <= halfHealth) {
                     setPhase(Phases.Transitioning);
                     if (!isDeadOrDying()) {
@@ -379,12 +498,31 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
             } else if (isPhase(Phases.Transitioning)) {
                 if (--transitionAnimationTime <= 0) {
                     setPhase(Phases.FinalPhase);
-                    var particle = this.isOminous() ? ParticleHelper.SOUL_FIRE : ParticleHelper.FIRE;
-                    MagicManager.spawnParticles(level(), particle, position().x, position().y + 2.5, position().z, 80, .2, .2, .2, .25, true);
+                    var particle =
+                            this.isOminous() ? ParticleHelper.SOUL_FIRE : ParticleHelper.FIRE;
+                    MagicManager.spawnParticles(
+                            level(),
+                            particle,
+                            position().x,
+                            position().y + 2.5,
+                            position().z,
+                            80,
+                            .2,
+                            .2,
+                            .2,
+                            .25,
+                            true);
                     setFinalPhaseGoals();
                     setNoGravity(true);
                     playSound(SoundRegistry.DEAD_KING_EXPLODE.get());
-                    level().getEntities(this, this.getBoundingBox().inflate(5), (entity) -> entity instanceof LivingEntity && entity.isPickable() && entity.distanceToSqr(position()) < 5 * 5).forEach(super::doHurtTarget);
+                    level().getEntities(
+                                    this,
+                                    this.getBoundingBox().inflate(5),
+                                    (entity) ->
+                                            entity instanceof LivingEntity
+                                                    && entity.isPickable()
+                                                    && entity.distanceToSqr(position()) < 5 * 5)
+                            .forEach(super::doHurtTarget);
                     setInvulnerable(false);
                 }
             } else if (isPhase(Phases.FinalPhase)) {
@@ -407,12 +545,16 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
                 float torsoHeight = 18;
                 float z = 1 - torsoHeight * Mth.sin(Mth.PI - rotation);
                 float y = torsoHeight * (Mth.cos(Mth.PI - rotation) + 1);
-                Vec3 offset = new Vec3(0, y / 16f, z / 16f).yRot((180 - this.yBodyRot) * Mth.DEG_TO_RAD);
-                Vec3 random = position().add(new Vec3(
-                        (this.random.nextFloat() * 2 - 1) * radius,
-                        (this.random.nextFloat() * 2 - 1) * radius + 1.4,
-                        (this.random.nextFloat() * 2 - 1) * radius
-                )).add(offset);
+                Vec3 offset =
+                        new Vec3(0, y / 16f, z / 16f).yRot((180 - this.yBodyRot) * Mth.DEG_TO_RAD);
+                Vec3 random =
+                        position()
+                                .add(
+                                        new Vec3(
+                                                (this.random.nextFloat() * 2 - 1) * radius,
+                                                (this.random.nextFloat() * 2 - 1) * radius + 1.4,
+                                                (this.random.nextFloat() * 2 - 1) * radius))
+                                .add(offset);
                 level().addParticle(ParticleTypes.SMOKE, random.x, random.y, random.z, 0, -.1, 0);
             }
         }
@@ -424,18 +566,34 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
                 float radius = 6 * this.getScale();
                 Vec3 normal = new Vec3(Mth.sin(f) * wobble, 1, Mth.cos(f) * wobble).normalize();
                 Vec3 up = new Vec3(1, 0, 0);
-                Vec3 pos = this.getBoundingBox().getCenter().add(Utils.getRandomVec3(0.2)).add(0, 0.5, 0);
-                Vec3 motion = this.getDeltaMovement().add(0, 0.04, 0).scale(0.25).add(Utils.getRandomVec3(0.01));
+                Vec3 pos =
+                        this.getBoundingBox()
+                                .getCenter()
+                                .add(Utils.getRandomVec3(0.2))
+                                .add(0, 0.5, 0);
+                Vec3 motion =
+                        this.getDeltaMovement()
+                                .add(0, 0.04, 0)
+                                .scale(0.25)
+                                .add(Utils.getRandomVec3(0.01));
                 float shrink = -radius / 20;
                 float speed = random.nextIntBetweenInclusive(8, 12);
-                level().addParticle(new SwirlingParticleOptions(ParticleHelper.TRIAL_OMEN, normal, up, new Vec3(radius, radius, speed), new Vec3(shrink, shrink, 0.1f)),
-                        pos.x, pos.y, pos.z,
-                        motion.x, motion.y, motion.z
-                );
+                level().addParticle(
+                                new SwirlingParticleOptions(
+                                        ParticleHelper.TRIAL_OMEN,
+                                        normal,
+                                        up,
+                                        new Vec3(radius, radius, speed),
+                                        new Vec3(shrink, shrink, 0.1f)),
+                                pos.x,
+                                pos.y,
+                                pos.z,
+                                motion.x,
+                                motion.y,
+                                motion.z);
             }
         }
     }
-
 
     @Override
     public boolean causeFallDamage(float pFallDistance, float pMultiplier, DamageSource pSource) {
@@ -463,7 +621,12 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         var entity = pSource.getEntity();
         if (entity != null) {
             float distance = entity.distanceTo(this);
-            float damageReduction = Mth.clampedLerp(1, 0.5f, (distance - 8) / 16); // reduce damage from 8-24 blocks away, down to 50%
+            float damageReduction =
+                    Mth.clampedLerp(
+                            1,
+                            0.5f,
+                            (distance - 8)
+                                    / 16); // reduce damage from 8-24 blocks away, down to 50%
             pAmount *= damageReduction;
         }
         return super.hurt(pSource, pAmount);
@@ -481,13 +644,15 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
     public void startSeenByPlayer(ServerPlayer pPlayer) {
         super.startSeenByPlayer(pPlayer);
         this.bossEvent.addPlayer(pPlayer);
-        PacketDistributor.sendToPlayer(pPlayer, new EntityEventPacket<DeadKingBoss>(this, CLIENT_START_TRACKING));
+        PacketDistributor.sendToPlayer(
+                pPlayer, new EntityEventPacket<DeadKingBoss>(this, CLIENT_START_TRACKING));
     }
 
     public void stopSeenByPlayer(ServerPlayer pPlayer) {
         super.stopSeenByPlayer(pPlayer);
         this.bossEvent.removePlayer(pPlayer);
-        PacketDistributor.sendToPlayer(pPlayer, new EntityEventPacket<DeadKingBoss>(this, CLIENT_STOP_TRACKING));
+        PacketDistributor.sendToPlayer(
+                pPlayer, new EntityEventPacket<DeadKingBoss>(this, CLIENT_STOP_TRACKING));
     }
 
     @Override
@@ -495,8 +660,12 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        ServerPlayer lastDamagingPlayer = attackedRecently && this.lastHurtByPlayer instanceof ServerPlayer serverPlayer ? serverPlayer : null;
-        bossLoot.prepareDrops(this, serverLevel, damageSource, attackedRecently, isOminous(), lastDamagingPlayer);
+        ServerPlayer lastDamagingPlayer =
+                attackedRecently && this.lastHurtByPlayer instanceof ServerPlayer serverPlayer
+                        ? serverPlayer
+                        : null;
+        bossLoot.prepareDrops(
+                this, serverLevel, damageSource, attackedRecently, isOminous(), lastDamagingPlayer);
         bossLoot.spawnPreparedDrops(this);
     }
 
@@ -509,7 +678,10 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
                 .add(Attributes.MAX_HEALTH, 500.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8)
                 .add(Attributes.ATTACK_KNOCKBACK, .6)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH, 4)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .ENTITY_REACH,
+                        4)
                 .add(Attributes.FOLLOW_RANGE, 32.0)
                 .add(Attributes.FLYING_SPEED, .325)
                 .add(Attributes.MOVEMENT_SPEED, .155);
@@ -583,12 +755,15 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
         this.entityData.define(IS_OMINOUS, false);
     }
 
-    private final RawAnimation phase_transition_animation = RawAnimation.begin().thenPlay("dead_king_die");
+    private final RawAnimation phase_transition_animation =
+            RawAnimation.begin().thenPlay("dead_king_die");
     private final RawAnimation melee = RawAnimation.begin().thenPlay("dead_king_melee");
     private final RawAnimation slam = RawAnimation.begin().thenPlay("dead_king_slam");
 
-    private final AnimationController<DeadKingBoss> transitionController = new AnimationController<>(this, "dead_king_transition", 0, this::transitionPredicate);
-    private final AnimationController<DeadKingBoss> meleeController = new AnimationController<>(this, "dead_king_animations", 0, this::meleePredicate);
+    private final AnimationController<DeadKingBoss> transitionController =
+            new AnimationController<>(this, "dead_king_transition", 0, this::transitionPredicate);
+    private final AnimationController<DeadKingBoss> meleeController =
+            new AnimationController<>(this, "dead_king_animations", 0, this::meleePredicate);
     RawAnimation animationToPlay = null;
 
     @Override
@@ -597,21 +772,26 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
             var attackType = AttackType.valueOf(animationId);
             animationToPlay = RawAnimation.begin().thenPlay(attackType.data.animationId);
         } catch (Exception ignored) {
-            IronsSpellbooks.LOGGER.error("Entity {} Failed to play animation: {}", this, animationId);
+            IronsSpellbooks.LOGGER.error(
+                    "Entity {} Failed to play animation: {}", this, animationId);
         }
     }
 
-    private PlayState meleePredicate(software.bernie.geckolib.core.animation.AnimationState<DeadKingBoss> animationEvent) {
+    private PlayState meleePredicate(
+            software.bernie.geckolib.core.animation.AnimationState<DeadKingBoss> animationEvent) {
         var controller = animationEvent.getController();
         if (this.animationToPlay != null) {
             controller.forceAnimationReset();
             controller.setAnimation(animationToPlay);
             animationToPlay = null;
         }
-        return transitionController.getAnimationState() == AnimationController.State.STOPPED ? PlayState.CONTINUE : PlayState.STOP;
+        return transitionController.getAnimationState() == AnimationController.State.STOPPED
+                ? PlayState.CONTINUE
+                : PlayState.STOP;
     }
 
-    private PlayState transitionPredicate(software.bernie.geckolib.core.animation.AnimationState animationEvent) {
+    private PlayState transitionPredicate(
+            software.bernie.geckolib.core.animation.AnimationState animationEvent) {
         var controller = animationEvent.getController();
         if (isPhaseTransitioning()) {
             controller.setAnimation(phase_transition_animation);
@@ -639,12 +819,22 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
 
     @Override
     public boolean isAnimating() {
-        return transitionController.getAnimationState() != AnimationController.State.STOPPED || meleeController.getAnimationState() != AnimationController.State.STOPPED || super.isAnimating();
+        return transitionController.getAnimationState() != AnimationController.State.STOPPED
+                || meleeController.getAnimationState() != AnimationController.State.STOPPED
+                || super.isAnimating();
     }
 
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        level().playSound(null, getX(), getY(), getZ(), SoundRegistry.DEAD_KING_HIT.get(), SoundSource.HOSTILE, 1, 1);
+        level().playSound(
+                        null,
+                        getX(),
+                        getY(),
+                        getZ(),
+                        SoundRegistry.DEAD_KING_HIT.get(),
+                        SoundSource.HOSTILE,
+                        1,
+                        1);
         return super.doHurtTarget(pEntity);
     }
 
@@ -654,8 +844,22 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
     }
 
     private class DeadKingBarrageGoal extends SpellBarrageGoal {
-        public DeadKingBarrageGoal(IMagicEntity abstractSpellCastingMob, AbstractSpell spell, int minLevel, int maxLevel, int pAttackIntervalMin, int pAttackIntervalMax, int projectileCount) {
-            super(abstractSpellCastingMob, spell, minLevel, maxLevel, pAttackIntervalMin, pAttackIntervalMax, projectileCount);
+        public DeadKingBarrageGoal(
+                IMagicEntity abstractSpellCastingMob,
+                AbstractSpell spell,
+                int minLevel,
+                int maxLevel,
+                int pAttackIntervalMin,
+                int pAttackIntervalMax,
+                int projectileCount) {
+            super(
+                    abstractSpellCastingMob,
+                    spell,
+                    minLevel,
+                    maxLevel,
+                    pAttackIntervalMin,
+                    pAttackIntervalMax,
+                    projectileCount);
         }
 
         @Override
@@ -666,7 +870,8 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
 
     protected LookControl createLookControl() {
         return new LookControl(this) {
-            //This allows us to more rapidly turn towards our target. Helps to make sure his targets are aligned with his swing animations
+            // This allows us to more rapidly turn towards our target. Helps to make sure his
+            // targets are aligned with his swing animations
             @Override
             protected float rotateTowards(float pFrom, float pTo, float pMaxDelta) {
                 return super.rotateTowards(pFrom, pTo, pMaxDelta * 2.5f);
@@ -681,8 +886,9 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
 
     protected MoveControl createMoveControl() {
         return new MoveControl(this) {
-            //This fixes a bug where a mob tries to path into the block it's already standing, and spins around trying to look "forward"
-            //We nullify our rotation calculation if we are close to block we are trying to get to
+            // This fixes a bug where a mob tries to path into the block it's already standing, and
+            // spins around trying to look "forward"
+            // We nullify our rotation calculation if we are close to block we are trying to get to
             @Override
             protected float rotlerp(float pSourceAngle, float pTargetAngle, float pMaximumChange) {
                 double d0 = this.wantedX - this.mob.getX();
@@ -710,7 +916,15 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy, IAni
     }
 
     protected void createBossEvent() {
-        this.bossEvent = (ExtendedServerBossEvent) (new ExtendedServerBossEvent(this.getUUID(), this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true).setCreateWorldFog(true);
+        this.bossEvent =
+                (ExtendedServerBossEvent)
+                        (new ExtendedServerBossEvent(
+                                        this.getUUID(),
+                                        this.getDisplayName(),
+                                        BossEvent.BossBarColor.RED,
+                                        BossEvent.BossBarOverlay.PROGRESS))
+                                .setDarkenScreen(true)
+                                .setCreateWorldFog(true);
     }
 
     @Override

@@ -21,12 +21,16 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class MagicMissileProjectile extends AbstractMagicProjectile {
-    public MagicMissileProjectile(EntityType<? extends MagicMissileProjectile> entityType, Level level) {
+    public MagicMissileProjectile(
+            EntityType<? extends MagicMissileProjectile> entityType, Level level) {
         super(entityType, level);
         this.setNoGravity(true);
     }
 
-    public MagicMissileProjectile(EntityType<? extends MagicMissileProjectile> entityType, Level levelIn, LivingEntity shooter) {
+    public MagicMissileProjectile(
+            EntityType<? extends MagicMissileProjectile> entityType,
+            Level levelIn,
+            LivingEntity shooter) {
         this(entityType, levelIn);
         setOwner(shooter);
     }
@@ -37,7 +41,8 @@ public class MagicMissileProjectile extends AbstractMagicProjectile {
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.ENDER_SPARKS, x, y, z, 15, 0, 0, 0, .18, true);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.ENDER_SPARKS, x, y, z, 15, 0, 0, 0, .18, true);
     }
 
     @Override
@@ -59,7 +64,10 @@ public class MagicMissileProjectile extends AbstractMagicProjectile {
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
-        DamageSources.applyDamage(entityHitResult.getEntity(), damage, SpellRegistry.MAGIC_MISSILE_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                entityHitResult.getEntity(),
+                damage,
+                SpellRegistry.MAGIC_MISSILE_SPELL.get().getDamageSource(this, getOwner()));
         consumeEntityImpact(entityHitResult, true);
     }
 
@@ -72,7 +80,14 @@ public class MagicMissileProjectile extends AbstractMagicProjectile {
         for (int i = 0; i < count; i++) {
             Vec3 random = Utils.getRandomVec3(0.02);
             Vec3 p = vec.scale(f * i);
-            level().addParticle(ParticleHelper.UNSTABLE_ENDER, this.getX() + random.x + p.x, this.getY() + random.y + p.y, this.getZ() + random.z + p.z, random.x, random.y, random.z);
+            level().addParticle(
+                            ParticleHelper.UNSTABLE_ENDER,
+                            this.getX() + random.x + p.x,
+                            this.getY() + random.y + p.y,
+                            this.getZ() + random.z + p.z,
+                            random.x,
+                            random.y,
+                            random.z);
         }
     }
 }

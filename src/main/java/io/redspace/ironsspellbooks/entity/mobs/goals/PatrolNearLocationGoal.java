@@ -24,7 +24,8 @@ public class PatrolNearLocationGoal extends WaterAvoidingRandomStrollGoal {
     @Override
     protected Vec3 getPosition() {
         var f = super.getPosition();
-        //IronsSpellbooks.LOGGER.debug("PatrolNearLocationGoal origin: {}", origin.resolve().get());
+        // IronsSpellbooks.LOGGER.debug("PatrolNearLocationGoal origin: {}",
+        // origin.resolve().get());
         if (origin == null) {
             origin = originHolder.get();
         }
@@ -32,8 +33,7 @@ public class PatrolNearLocationGoal extends WaterAvoidingRandomStrollGoal {
             f = LandRandomPos.getPosTowards(mob, 8, 4, origin);
         }
 
-        //IronsSpellbooks.LOGGER.debug("PatrolNearLocationGoal newPosition: {}", f);
+        // IronsSpellbooks.LOGGER.debug("PatrolNearLocationGoal newPosition: {}", f);
         return f;
-
     }
 }

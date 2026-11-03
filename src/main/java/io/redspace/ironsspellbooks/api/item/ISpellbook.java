@@ -1,4 +1,3 @@
 package io.redspace.ironsspellbooks.api.item;
 
-public interface ISpellbook {
-}
+public interface ISpellbook {}

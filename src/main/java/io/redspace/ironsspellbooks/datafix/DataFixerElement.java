@@ -10,9 +10,13 @@ public abstract class DataFixerElement {
 
     final public List<byte[]> preScanValueBytes() {
         if (preScanData == null) {
-            preScanData = preScanValuesToMatch().stream().map(item -> {
-                return item.getBytes(StandardCharsets.UTF_8);
-            }).toList();
+            preScanData =
+                    preScanValuesToMatch().stream()
+                            .map(
+                                    item -> {
+                                        return item.getBytes(StandardCharsets.UTF_8);
+                                    })
+                            .toList();
         }
 
         return preScanData;

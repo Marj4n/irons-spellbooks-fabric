@@ -28,21 +28,28 @@ import java.util.Optional;
 
 @AutoSpellConfig
 public class SoulfireRaySpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "soulfire_ray");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(15)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "soulfire_ray");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(15)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.reduced_healing", Utils.timeFromTicks(getFreezeTime(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.reduced_healing",
+                        Utils.timeFromTicks(getFreezeTime(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getRange(spellLevel, caster), 1)));
     }
 
     public SoulfireRaySpell() {
@@ -89,15 +96,46 @@ public class SoulfireRaySpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        var hitResult = RaycastBuilder.begin(level, entity).range(getRange(spellLevel, entity)).checkForBlocks(true).bbInflation(0.15f).performRaycast();
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        var hitResult =
+                RaycastBuilder.begin(level, entity)
+                        .range(getRange(spellLevel, entity))
+                        .checkForBlocks(true)
+                        .bbInflation(0.15f)
+                        .performRaycast();
         if (hitResult.getType() == HitResult.Type.ENTITY) {
             Entity target = ((EntityHitResult) hitResult).getEntity();
-            DamageSources.applyDamage(target, getDamage(spellLevel, entity), getDamageSource(entity));
-            //todo: soul burn
+            DamageSources.applyDamage(
+                    target, getDamage(spellLevel, entity), getDamageSource(entity));
+            // todo: soul burn
         }
-        Vec3 origin = entity.getEyePosition().add(entity.getForward().scale(0.5).subtract(0, 0.4, 0));
-        MagicManager.spawnParticles(level, new SoulfireRayParticleOptions(hitResult.getLocation().subtract(hitResult.getLocation().subtract(origin).normalize().scale(0.25))), origin.x, origin.y, origin.z, 1, 0, 0, 0, 0, true);
+        Vec3 origin =
+                entity.getEyePosition().add(entity.getForward().scale(0.5).subtract(0, 0.4, 0));
+        MagicManager.spawnParticles(
+                level,
+                new SoulfireRayParticleOptions(
+                        hitResult
+                                .getLocation()
+                                .subtract(
+                                        hitResult
+                                                .getLocation()
+                                                .subtract(origin)
+                                                .normalize()
+                                                .scale(0.25))),
+                origin.x,
+                origin.y,
+                origin.z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 

@@ -33,7 +33,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class BloodSlashProjectile extends AbstractMagicProjectile {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(BloodSlashProjectile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_RADIUS =
+            SynchedEntityData.defineId(BloodSlashProjectile.class, EntityDataSerializers.FLOAT);
     private static final float SPEED = 1f;
     public final int animationSeed;
     private final float maxRadius;
@@ -42,7 +43,8 @@ public class BloodSlashProjectile extends AbstractMagicProjectile {
     public int animationTime;
     private List<Entity> victims;
 
-    public BloodSlashProjectile(EntityType<? extends BloodSlashProjectile> entityType, Level level) {
+    public BloodSlashProjectile(
+            EntityType<? extends BloodSlashProjectile> entityType, Level level) {
         super(entityType, level);
         animationSeed = Utils.random.nextInt(9999);
 
@@ -53,7 +55,10 @@ public class BloodSlashProjectile extends AbstractMagicProjectile {
         this.setNoGravity(true);
     }
 
-    public BloodSlashProjectile(EntityType<? extends BloodSlashProjectile> entityType, Level levelIn, LivingEntity shooter) {
+    public BloodSlashProjectile(
+            EntityType<? extends BloodSlashProjectile> entityType,
+            Level levelIn,
+            LivingEntity shooter) {
         this(entityType, levelIn);
         setOwner(shooter);
         setYRot(shooter.getYRot());
@@ -81,14 +86,20 @@ public class BloodSlashProjectile extends AbstractMagicProjectile {
             double dx = Math.random() * speed * 2 - speed;
             double dy = Math.random() * speed * 2 - speed;
             double dz = Math.random() * speed * 2 - speed;
-            level().addParticle(ParticleHelper.BLOOD, false, x + rotX + dx, y + dy, z + rotZ + dz, dx, dy, dz);
+            level().addParticle(
+                            ParticleHelper.BLOOD,
+                            false,
+                            x + rotX + dx,
+                            y + dy,
+                            z + rotZ + dz,
+                            dx,
+                            dy,
+                            dz);
         }
     }
 
     @Override
-    public void impactParticles(double x, double y, double z) {
-
-    }
+    public void impactParticles(double x, double y, double z) {}
 
     @Override
     public float getSpeed() {
@@ -112,13 +123,27 @@ public class BloodSlashProjectile extends AbstractMagicProjectile {
         if (hitresult.getType() == HitResult.Type.BLOCK) {
             onHitBlock((BlockHitResult) hitresult);
         }
-        if(!level().isClientSide) {
-            var entities = level().getEntities(this, this.getBoundingBox()).stream().filter(target -> canHitEntity(target) && !victims.contains(target)).collect(Collectors.toSet());
+        if (!level().isClientSide) {
+            var entities =
+                    level().getEntities(this, this.getBoundingBox()).stream()
+                            .filter(target -> canHitEntity(target) && !victims.contains(target))
+                            .collect(Collectors.toSet());
             if (!entities.isEmpty()) {
                 Entity last = null;
                 for (Entity entity : entities) {
                     damageEntity(entity);
-                    MagicManager.spawnParticles(level(), ParticleHelper.BLOOD, entity.getX(), entity.getY(), entity.getZ(), 50, 0, 0, 0, .5, true);
+                    MagicManager.spawnParticles(
+                            level(),
+                            ParticleHelper.BLOOD,
+                            entity.getX(),
+                            entity.getY(),
+                            entity.getZ(),
+                            50,
+                            0,
+                            0,
+                            0,
+                            .5,
+                            true);
                     last = entity;
                     if (entity instanceof ShieldPart || entity instanceof AbstractShieldEntity) {
                         discard();
@@ -155,15 +180,14 @@ public class BloodSlashProjectile extends AbstractMagicProjectile {
         this.setPos(d0, d1, d2);
     }
 
-
     public EntityDimensions getDimensions(Pose p_19721_) {
-        //irons_spellbooks.LOGGER.info("Accessing Blood Slash Dimensions. Age: {}", age);
+        // irons_spellbooks.LOGGER.info("Accessing Blood Slash Dimensions. Age: {}", age);
         this.getBoundingBox();
         return EntityDimensions.scalable(this.getRadius() * 2.0F, 0.5F);
     }
 
     public void onSyncedDataUpdated(EntityDataAccessor<?> p_19729_) {
-        //irons_spellbooks.LOGGER.info("onSynchedDataUpdated");
+        // irons_spellbooks.LOGGER.info("onSynchedDataUpdated");
 
         if (DATA_RADIUS.equals(p_19729_)) {
             this.refreshDimensions();
@@ -180,7 +204,10 @@ public class BloodSlashProjectile extends AbstractMagicProjectile {
 
     private void damageEntity(Entity entity) {
         if (!victims.contains(entity)) {
-            DamageSources.applyDamage(entity, damage, SpellRegistry.BLOOD_SLASH_SPELL.get().getDamageSource(this, getOwner()));
+            DamageSources.applyDamage(
+                    entity,
+                    damage,
+                    SpellRegistry.BLOOD_SLASH_SPELL.get().getDamageSource(this, getOwner()));
             victims.add(entity);
         }
     }

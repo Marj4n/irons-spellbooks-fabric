@@ -23,13 +23,20 @@ public class DebugWizard extends AbstractSpellCastingMob implements Enemy {
     private boolean targetsPlayer;
     private String spellInfo = "No Spell Found";
     private int cancelCastAfterTicks;
-    private static final EntityDataAccessor<String> DEBUG_SPELL_INFO = SynchedEntityData.defineId(DebugWizard.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> DEBUG_SPELL_INFO =
+            SynchedEntityData.defineId(DebugWizard.class, EntityDataSerializers.STRING);
 
     public DebugWizard(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public DebugWizard(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel, AbstractSpell spell, int spellLevel, boolean targetsPlayer, int cancelCastAfterTicks) {
+    public DebugWizard(
+            EntityType<? extends AbstractSpellCastingMob> pEntityType,
+            Level pLevel,
+            AbstractSpell spell,
+            int spellLevel,
+            boolean targetsPlayer,
+            int cancelCastAfterTicks) {
         super(pEntityType, pLevel);
 
         this.targetsPlayer = targetsPlayer;
@@ -63,13 +70,15 @@ public class DebugWizard extends AbstractSpellCastingMob implements Enemy {
     }
 
     private void initGoals() {
-        this.goalSelector.addGoal(1, new DebugWizardAttackGoal(this, spell, spellLevel, cancelCastAfterTicks));
+        this.goalSelector.addGoal(
+                1, new DebugWizardAttackGoal(this, spell, spellLevel, cancelCastAfterTicks));
 
         if (this.targetsPlayer) {
             IronsSpellbooks.LOGGER.debug("DebugWizard: Adding DebugTargetClosestEntityGoal");
             this.targetSelector.addGoal(1, new DebugTargetClosestEntityGoal(this));
         }
-        entityData.set(DEBUG_SPELL_INFO, String.format("%s (L%s)", spell.getSpellName(), spellLevel));
+        entityData.set(
+                DEBUG_SPELL_INFO, String.format("%s (L%s)", spell.getSpellName(), spellLevel));
     }
 
     @Override

@@ -10,21 +10,19 @@ import java.util.function.Supplier;
 
 public class CastPacket implements CustomPacketPayload {
 
-    public CastPacket() {
-    }
+    public CastPacket() {}
 
-    public CastPacket(FriendlyByteBuf buf) {
-    }
+    public CastPacket(FriendlyByteBuf buf) {}
 
-    public void toBytes(FriendlyByteBuf buf) {
-    }
+    public void toBytes(FriendlyByteBuf buf) {}
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer serverPlayer = ctx.getSender();
-            Utils.serverSideInitiateCast(serverPlayer);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ServerPlayer serverPlayer = ctx.getSender();
+                    Utils.serverSideInitiateCast(serverPlayer);
+                });
         return true;
     }
 }

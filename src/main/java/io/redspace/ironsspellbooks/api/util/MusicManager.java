@@ -35,7 +35,8 @@ public class MusicManager {
     }
 
     public static void stopEvent(UUID uuid) {
-        // while we only create events per-dimension, if something in any dimension calls for a specific uuid to be cancelled, we cancel it
+        // while we only create events per-dimension, if something in any dimension calls for a
+        // specific uuid to be cancelled, we cancel it
         for (MusicManager manager : MUSIC_MANAGERS.values()) {
             for (var itr = manager.musicHandlers.iterator(); itr.hasNext(); ) {
                 var entry = itr.next();
@@ -67,44 +68,44 @@ public class MusicManager {
     }
 
     //    static long lastMillis;
-//    static long lastTick;
-//    static long runningMillis;
-//
-//    //fixme: something is terribly desynced
-//    @SubscribeEvent
-//    public static void tick(TickEvent.RenderTickEvent event) {
-//        if(event.phase == TickEvent.Phase.END){
-//            return;
-//        }
-//        if (lastMillis == 0) {
-//            lastMillis = System.currentTimeMillis();
-//            lastTick = System.currentTimeMillis();
-//        }
-//        long currentMillis = System.currentTimeMillis();
-//        if (!Minecraft.getInstance().isPaused()) {
-//            runningMillis += currentMillis - lastMillis;
-//        }
-//        lastMillis = currentMillis;
-//        if (Minecraft.getInstance().player != null && runningMillis - lastTick > 50) {
-//            lastTick = runningMillis;
-//            var manager = getManagerFor(Minecraft.getInstance().player.level.dimension());
-//            if (manager.musicHandlers.isEmpty()) {
-//                return;
-//            }
-//            var entry = manager.musicHandlers.peek();
-//            UUID uuid = entry.left();
-//            IMusicHandler musicHandler = entry.right();
-//            if (manager.resumeNext) {
-//                musicHandler.triggerResume();
-//                manager.resumeNext = false;
-//            }
-//            if (musicHandler.isDone()) {
-//                manager.musicHandlers.remove(uuid);
-//            } else {
-//                musicHandler.tick();
-//            }
-//        }
-//    }
+    //    static long lastTick;
+    //    static long runningMillis;
+    //
+    //    //fixme: something is terribly desynced
+    //    @SubscribeEvent
+    //    public static void tick(TickEvent.RenderTickEvent event) {
+    //        if(event.phase == TickEvent.Phase.END){
+    //            return;
+    //        }
+    //        if (lastMillis == 0) {
+    //            lastMillis = System.currentTimeMillis();
+    //            lastTick = System.currentTimeMillis();
+    //        }
+    //        long currentMillis = System.currentTimeMillis();
+    //        if (!Minecraft.getInstance().isPaused()) {
+    //            runningMillis += currentMillis - lastMillis;
+    //        }
+    //        lastMillis = currentMillis;
+    //        if (Minecraft.getInstance().player != null && runningMillis - lastTick > 50) {
+    //            lastTick = runningMillis;
+    //            var manager = getManagerFor(Minecraft.getInstance().player.level.dimension());
+    //            if (manager.musicHandlers.isEmpty()) {
+    //                return;
+    //            }
+    //            var entry = manager.musicHandlers.peek();
+    //            UUID uuid = entry.left();
+    //            IMusicHandler musicHandler = entry.right();
+    //            if (manager.resumeNext) {
+    //                musicHandler.triggerResume();
+    //                manager.resumeNext = false;
+    //            }
+    //            if (musicHandler.isDone()) {
+    //                manager.musicHandlers.remove(uuid);
+    //            } else {
+    //                musicHandler.tick();
+    //            }
+    //        }
+    //    }
 
     public static void tick() {
         if (Minecraft.getInstance().player != null && !Minecraft.getInstance().isPaused()) {
@@ -112,9 +113,9 @@ public class MusicManager {
             if (manager.musicHandlers.isEmpty()) {
                 return;
             }
-//            var entry = manager.musicHandlers.lastEntry();
-//            UUID uuid = entry.getKey();
-//            IMusicHandler musicHandler = entry.getValue();
+            //            var entry = manager.musicHandlers.lastEntry();
+            //            UUID uuid = entry.getKey();
+            //            IMusicHandler musicHandler = entry.getValue();
             var entry = manager.musicHandlers.peek();
             UUID uuid = entry.left();
             IMusicHandler musicHandler = entry.right();

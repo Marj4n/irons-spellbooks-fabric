@@ -28,15 +28,18 @@ public class ThrowSpell extends AbstractSpell {
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", getDamageText(spellLevel, caster)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage", getDamageText(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(8)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(8)
+                    .build();
 
     public ThrowSpell() {
         this.manaCostPerLevel = 5;
@@ -48,7 +51,7 @@ public class ThrowSpell extends AbstractSpell {
 
     @Override
     public int getEffectiveCastTime(int spellLevel, @Nullable LivingEntity entity) {
-        //due to melee animation timing, we do not want cast time attribute to affect this spell
+        // due to melee animation timing, we do not want cast time attribute to affect this spell
         return getCastTime(spellLevel);
     }
 
@@ -83,11 +86,25 @@ public class ThrowSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        ItemStack stack = playerMagicData.getCastingEquipmentSlot().equals(SpellSelectionManager.OFFHAND) ? entity.getOffhandItem() : entity.getMainHandItem();
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        ItemStack stack =
+                playerMagicData.getCastingEquipmentSlot().equals(SpellSelectionManager.OFFHAND)
+                        ? entity.getOffhandItem()
+                        : entity.getMainHandItem();
         ThrownItemProjectile thrownItem = new ThrownItemProjectile(world, stack);
         thrownItem.setOwner(entity);
-        thrownItem.setPos(entity.position().add(0, entity.getEyeHeight() - thrownItem.getBoundingBox().getYsize() * .5f, 0));
+        thrownItem.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight()
+                                        - thrownItem.getBoundingBox().getYsize() * .5f,
+                                0));
         thrownItem.shoot(entity.getLookAngle());
         thrownItem.setDamage(getDamage(spellLevel, entity));
         thrownItem.setScale(entity.getScale());

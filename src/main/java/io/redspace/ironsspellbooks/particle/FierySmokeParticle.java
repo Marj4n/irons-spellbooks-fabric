@@ -18,7 +18,15 @@ public class FierySmokeParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
     private final boolean mirrored;
 
-    public FierySmokeParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public FierySmokeParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
         this.xd = xd;
         this.yd = yd;
@@ -34,10 +42,18 @@ public class FierySmokeParticle extends TextureSheetParticle {
     private float cameraAlphaFactor(float min, float range) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        if (player == null/* || !minecraft.options.getCameraType().isFirstPerson()*/) {
+        if (player == null /* || !minecraft.options.getCameraType().isFirstPerson()*/) {
             return 1f;
         }
-        float factor = (float) ((minecraft.getEntityRenderDispatcher().camera.getPosition().distanceToSqr(this.x, this.y, this.z) - 1) / range);
+        float factor =
+                (float)
+                        ((minecraft
+                                                .getEntityRenderDispatcher()
+                                                .camera
+                                                .getPosition()
+                                                .distanceToSqr(this.x, this.y, this.z)
+                                        - 1)
+                                / range);
         return Mth.clamp(factor, min, 1.0F);
     }
 
@@ -52,9 +68,11 @@ public class FierySmokeParticle extends TextureSheetParticle {
             this.remove();
         } else {
             move(xd, yd, zd);
-            this.xd += this.random.nextFloat() / 500.0F * (float) (this.random.nextBoolean() ? 1 : -1);
+            this.xd +=
+                    this.random.nextFloat() / 500.0F * (float) (this.random.nextBoolean() ? 1 : -1);
             this.yd += this.random.nextFloat() / 100.0F - this.gravity;
-            this.zd += this.random.nextFloat() / 500.0F * (float) (this.random.nextBoolean() ? 1 : -1);
+            this.zd +=
+                    this.random.nextFloat() / 500.0F * (float) (this.random.nextBoolean() ? 1 : -1);
             this.setSpriteFromAge(this.sprites);
             this.scale(1.023f);
         }
@@ -83,9 +101,15 @@ public class FierySmokeParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new FierySmokeParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }

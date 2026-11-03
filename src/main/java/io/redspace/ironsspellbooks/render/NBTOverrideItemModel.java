@@ -31,38 +31,51 @@ public abstract class NBTOverrideItemModel implements BakedModel {
         this.original = original;
         BlockModel missing = (BlockModel) loader.getModel(ModelBakery.MISSING_MODEL_LOCATION);
 
-        this.itemOverrides = new ItemOverrides(new ModelBaker() {
-            public Function<Material, TextureAtlasSprite> getModelTextureGetter() {
-                return null;
-            }
+        this.itemOverrides =
+                new ItemOverrides(
+                        new ModelBaker() {
+                            public Function<Material, TextureAtlasSprite> getModelTextureGetter() {
+                                return null;
+                            }
 
-            public BakedModel bake(ResourceLocation location, ModelState state, Function<Material, TextureAtlasSprite> sprites) {
-                return null;
-            }
+                            public BakedModel bake(
+                                    ResourceLocation location,
+                                    ModelState state,
+                                    Function<Material, TextureAtlasSprite> sprites) {
+                                return null;
+                            }
 
-            public UnbakedModel getModel(ResourceLocation resourceLocation) {
-                return null;
-            }
+                            public UnbakedModel getModel(ResourceLocation resourceLocation) {
+                                return null;
+                            }
 
-            public @Nullable BakedModel bake(ResourceLocation resourceLocation, ModelState modelState) {
-                return null;
-            }
-        }, missing, Collections.emptyList()) {
-            @Override
-            public BakedModel resolve(@NotNull BakedModel original, @NotNull ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity livingEntity, int seed) {
-                if (itemStack.hasTag()) {
-                    var override = getModelFromTag(itemStack, itemStack.getTag());
-                    if (override.isPresent()) {
-                        var manager = Minecraft.getInstance().getModelManager();
-                        var missing = manager.getModel(ModelBakery.MISSING_MODEL_LOCATION);
-                        var model = manager.getModel(override.get());
-                        return model == missing ? original : model;
+                            public @Nullable BakedModel bake(
+                                    ResourceLocation resourceLocation, ModelState modelState) {
+                                return null;
+                            }
+                        },
+                        missing,
+                        Collections.emptyList()) {
+                    @Override
+                    public BakedModel resolve(
+                            @NotNull BakedModel original,
+                            @NotNull ItemStack itemStack,
+                            @Nullable ClientLevel level,
+                            @Nullable LivingEntity livingEntity,
+                            int seed) {
+                        if (itemStack.hasTag()) {
+                            var override = getModelFromTag(itemStack, itemStack.getTag());
+                            if (override.isPresent()) {
+                                var manager = Minecraft.getInstance().getModelManager();
+                                var missing = manager.getModel(ModelBakery.MISSING_MODEL_LOCATION);
+                                var model = manager.getModel(override.get());
+                                return model == missing ? original : model;
+                            }
+                        }
+
+                        return original;
                     }
-                }
-
-                return original;
-            }
-        };
+                };
     }
 
     abstract Optional<ResourceLocation> getModelFromTag(ItemStack itemStack, CompoundTag tag);
@@ -75,7 +88,8 @@ public abstract class NBTOverrideItemModel implements BakedModel {
 
     @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) {
+    public List<BakedQuad> getQuads(
+            @Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) {
         return original.getQuads(state, side, rand);
     }
 

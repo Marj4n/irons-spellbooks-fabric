@@ -23,6 +23,7 @@ public class CryomancerArmorModel extends DefaultedItemGeoModel<CryomancerArmorI
 
     @Override
     public ResourceLocation getAnimationResource(CryomancerArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

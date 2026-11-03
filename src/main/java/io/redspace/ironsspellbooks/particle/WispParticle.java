@@ -10,11 +10,19 @@ import net.fabricmc.api.Environment;
 public class WispParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
 
-    public WispParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public WispParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
 
-        //this.friction = 1.0f;
+        // this.friction = 1.0f;
         this.xd = xd;
         this.yd = yd;
         this.zd = zd;
@@ -49,9 +57,15 @@ public class WispParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new WispParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }

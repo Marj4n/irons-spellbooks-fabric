@@ -21,19 +21,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class AbyssalShroudSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "abyssal_shroud");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "abyssal_shroud");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
-            .setMaxLevel(3)
-            .setCooldownSeconds(200)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
+                    .setMaxLevel(3)
+                    .setCooldownSeconds(200)
+                    .build();
 
     public AbyssalShroudSpell() {
         this.manaCostPerLevel = 20;
@@ -69,8 +74,20 @@ public class AbyssalShroudSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.ABYSSAL_SHROUD.get(), (int) getSpellPower(spellLevel, entity) * 20, 0, false, false, true));
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.ABYSSAL_SHROUD.get(),
+                        (int) getSpellPower(spellLevel, entity) * 20,
+                        0,
+                        false,
+                        false,
+                        true));
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
 

@@ -18,13 +18,16 @@ public class ScrollModel extends NBTOverrideItemModel {
     @Override
     Optional<ResourceLocation> getModelFromTag(ItemStack itemStack, CompoundTag tag) {
         if (ISpellContainer.isSpellContainer(itemStack)) {
-            var school = ISpellContainer.get(itemStack).getSpellAtIndex(0).getSpell().getSchoolType();
+            var school =
+                    ISpellContainer.get(itemStack).getSpellAtIndex(0).getSpell().getSchoolType();
             return Optional.of(getScrollModelLocation(school));
         }
         return Optional.empty();
     }
 
     public static ResourceLocation getScrollModelLocation(SchoolType schoolType) {
-        return new ResourceLocation(schoolType.getId().getNamespace(), String.format("item/scroll_%s", schoolType.getId().getPath()));
+        return new ResourceLocation(
+                schoolType.getId().getNamespace(),
+                String.format("item/scroll_%s", schoolType.getId().getPath()));
     }
 }

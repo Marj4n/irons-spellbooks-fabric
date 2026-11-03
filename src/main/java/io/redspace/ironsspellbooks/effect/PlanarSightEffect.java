@@ -26,20 +26,44 @@ public class PlanarSightEffect extends MagicMobEffect {
     public void applyEffectTick(LivingEntity livingEntity, int pAmplifier) {
         if (livingEntity.level().isClientSide && livingEntity == Minecraft.getInstance().player) {
             for (int i = 0; i < 3; i++) {
-                Vec3 pos = new Vec3(Utils.getRandomScaled(16), Utils.getRandomScaled(5f) + 5, Utils.getRandomScaled(16)).add(livingEntity.position());
-                Vec3 random = new Vec3(Utils.getRandomScaled(.08f), Utils.getRandomScaled(.08f), Utils.getRandomScaled(.08f));
-                livingEntity.level().addParticle(ParticleTypes.WHITE_ASH, pos.x, pos.y, pos.z, random.x, random.y, random.z);
+                Vec3 pos =
+                        new Vec3(
+                                        Utils.getRandomScaled(16),
+                                        Utils.getRandomScaled(5f) + 5,
+                                        Utils.getRandomScaled(16))
+                                .add(livingEntity.position());
+                Vec3 random =
+                        new Vec3(
+                                Utils.getRandomScaled(.08f),
+                                Utils.getRandomScaled(.08f),
+                                Utils.getRandomScaled(.08f));
+                livingEntity
+                        .level()
+                        .addParticle(
+                                ParticleTypes.WHITE_ASH,
+                                pos.x,
+                                pos.y,
+                                pos.z,
+                                random.x,
+                                random.y,
+                                random.z);
             }
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public static class EcholocationBlindnessFogFunction implements FogRenderer.MobEffectFogFunction {
+    public static class EcholocationBlindnessFogFunction
+            implements FogRenderer.MobEffectFogFunction {
         public MobEffect getMobEffect() {
             return MobEffectRegistry.PLANAR_SIGHT.get();
         }
 
-        public void setupFog(FogRenderer.FogData fogData, LivingEntity entity, MobEffectInstance mobEffectInstance, float p_234184_, float p_234185_) {
+        public void setupFog(
+                FogRenderer.FogData fogData,
+                LivingEntity entity,
+                MobEffectInstance mobEffectInstance,
+                float p_234184_,
+                float p_234185_) {
             float f = 160f;
             if (fogData.mode == FogRenderer.FogMode.FOG_SKY) {
                 fogData.start = 0.0F;

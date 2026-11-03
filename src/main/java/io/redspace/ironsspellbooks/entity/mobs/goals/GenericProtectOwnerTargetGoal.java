@@ -16,6 +16,7 @@ public class GenericProtectOwnerTargetGoal extends TargetGoal {
     private final Supplier<Entity> owner;
     private int intervalToCheck;
     private final int maxIntensity = 100; // tick delay at minimum intensity
+
     /**
      * integer that slowly decays after repeated failed checks, meaning we can check less frequently
      */
@@ -36,17 +37,41 @@ public class GenericProtectOwnerTargetGoal extends TargetGoal {
             return false;
         } else {
             if (--intervalToCheck <= 0) {
-                var entities = owner.level().getEntitiesOfClass(Mob.class, owner.getBoundingBox().inflate(16, 8, 16), potentionalAggressor -> potentionalAggressor.getTarget() != null &&
-                        (potentionalAggressor.getTarget().getUUID().equals(owner.getUUID())
-                                || (potentionalAggressor.getTarget() instanceof IMagicSummon summon
-                                && summon.getSummoner() != null && summon.getSummoner().getUUID().equals(owner.getUUID())))
-                        && Utils.hasLineOfSight(mob.level(), mob.getEyePosition(), potentionalAggressor.getEyePosition(), false)
-                );
+                var entities =
+                        owner.level()
+                                .getEntitiesOfClass(
+                                        Mob.class,
+                                        owner.getBoundingBox().inflate(16, 8, 16),
+                                        potentionalAggressor ->
+                                                potentionalAggressor.getTarget() != null
+                                                        && (potentionalAggressor
+                                                                        .getTarget()
+                                                                        .getUUID()
+                                                                        .equals(owner.getUUID())
+                                                                || (potentionalAggressor.getTarget()
+                                                                                instanceof
+                                                                                IMagicSummon summon
+                                                                        && summon.getSummoner()
+                                                                                != null
+                                                                        && summon.getSummoner()
+                                                                                .getUUID()
+                                                                                .equals(
+                                                                                        owner
+                                                                                                .getUUID())))
+                                                        && Utils.hasLineOfSight(
+                                                                mob.level(),
+                                                                mob.getEyePosition(),
+                                                                potentionalAggressor
+                                                                        .getEyePosition(),
+                                                                false));
                 if (entities.isEmpty()) {
                     currentIntensity = Math.max(0, currentIntensity - 10);
                     return false;
                 } else {
-                    mob.setTarget(entities.stream().min(Comparator.comparingDouble(o -> o.distanceToSqr(owner))).orElse(entities.get(0)));
+                    mob.setTarget(
+                            entities.stream()
+                                    .min(Comparator.comparingDouble(o -> o.distanceToSqr(owner)))
+                                    .orElse(entities.get(0)));
                     return true;
                 }
             } else {
@@ -67,5 +92,4 @@ public class GenericProtectOwnerTargetGoal extends TargetGoal {
         currentIntensity = maxIntensity;
         super.start();
     }
-
 }

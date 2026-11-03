@@ -21,17 +21,27 @@ public class SunbeamRenderer extends EntityRenderer<SunbeamEntity> {
         super(context);
     }
 
-
     @Override
-    public boolean shouldRender(SunbeamEntity pLivingEntity, Frustum pCamera, double pCamX, double pCamY, double pCamZ) {
+    public boolean shouldRender(
+            SunbeamEntity pLivingEntity,
+            Frustum pCamera,
+            double pCamX,
+            double pCamY,
+            double pCamZ) {
         return true;
     }
 
     @Override
-    public void render(SunbeamEntity entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            SunbeamEntity entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
 
-        //poseStack.mulPose(Axis.XP.rotationDegrees(90));
+        // poseStack.mulPose(Axis.XP.rotationDegrees(90));
         float maxRadius = 2.5f;
         float minRadius = 0.005f;
         float deltaTicks = entity.tickCount + partialTicks;
@@ -41,28 +51,87 @@ public class SunbeamRenderer extends EntityRenderer<SunbeamEntity> {
         float f = deltaTicks / SunbeamEntity.WARMUP_TIME;
         f *= f;
         float radius = Mth.clampedLerp(maxRadius, minRadius, f);
-        VertexConsumer inner = bufferSource.getBuffer(RenderHelper.CustomerRenderType.magic(SpellRenderingHelper.BEACON));
-        //SpellRenderingHelper.drawHull(Vec3.ZERO, new Vec3(0, 100, 0), radius, radius, poseStack.last(), inner, 255, 255, 255, (int) (255 * f), min, max);
+        VertexConsumer inner =
+                bufferSource.getBuffer(
+                        RenderHelper.CustomerRenderType.magic(SpellRenderingHelper.BEACON));
+        // SpellRenderingHelper.drawHull(Vec3.ZERO, new Vec3(0, 100, 0), radius, radius,
+        // poseStack.last(), inner, 255, 255, 255, (int) (255 * f), min, max);
         float halfRadius = radius * .5f;
         float quarterRadius = halfRadius * .5f;
-        float yMin = entity.onGround() ? 0 : Utils.findRelativeGroundLevel(entity.level(), entity.position(), 8) - (float) entity.getY();
+        float yMin =
+                entity.onGround()
+                        ? 0
+                        : Utils.findRelativeGroundLevel(entity.level(), entity.position(), 8)
+                                - (float) entity.getY();
         for (int i = 0; i < 4; i++) {
-            //orange glow
+            // orange glow
             int r = (int) (Mth.clamp(.8f * f, 0, 1) * 255);
             int g = (int) (Mth.clamp(.8f * f * f, 0, 1) * 255);
-            int b = (int) ( Mth.clamp(.5f * f * f, 0, 1)*255);
+            int b = (int) (Mth.clamp(.5f * f * f, 0, 1) * 255);
             int a = 255;
             var poseMatrix = poseStack.last().pose();
             var normalMatrix = poseStack.last().normal();
-            inner.vertex(poseMatrix, -halfRadius, yMin, -halfRadius).color(r, g, b, a).uv(0, min).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-            inner.vertex(poseMatrix, -halfRadius, yMin, halfRadius).color(r, g, b, a).uv(1, min).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-            inner.vertex(poseMatrix, -halfRadius, 250, halfRadius).color(r, g, b, a).uv(1, max).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-            inner.vertex(poseMatrix, -halfRadius, 250, -halfRadius).color(r, g, b, a).uv(0, max).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-            var color = RenderHelper.colorf(Mth.clamp(1f * f, 0, 1), Mth.clamp(.85f * f, 0, 1), Mth.clamp(.7f * f * f, 0, 1));
-            inner.vertex(poseMatrix, -quarterRadius, yMin, -quarterRadius).color(color).uv(0, min).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-            inner.vertex(poseMatrix, -quarterRadius, yMin, quarterRadius).color(color).uv(1, min).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-            inner.vertex(poseMatrix, -quarterRadius, 250, quarterRadius).color(color).uv(1, max).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-            inner.vertex(poseMatrix, -quarterRadius, 250, -quarterRadius).color(color).uv(0, max).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
+            inner.vertex(poseMatrix, -halfRadius, yMin, -halfRadius)
+                    .color(r, g, b, a)
+                    .uv(0, min)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(normalMatrix, 0f, 1f, 0f)
+                    .endVertex();
+            inner.vertex(poseMatrix, -halfRadius, yMin, halfRadius)
+                    .color(r, g, b, a)
+                    .uv(1, min)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(normalMatrix, 0f, 1f, 0f)
+                    .endVertex();
+            inner.vertex(poseMatrix, -halfRadius, 250, halfRadius)
+                    .color(r, g, b, a)
+                    .uv(1, max)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(normalMatrix, 0f, 1f, 0f)
+                    .endVertex();
+            inner.vertex(poseMatrix, -halfRadius, 250, -halfRadius)
+                    .color(r, g, b, a)
+                    .uv(0, max)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(normalMatrix, 0f, 1f, 0f)
+                    .endVertex();
+            var color =
+                    RenderHelper.colorf(
+                            Mth.clamp(1f * f, 0, 1),
+                            Mth.clamp(.85f * f, 0, 1),
+                            Mth.clamp(.7f * f * f, 0, 1));
+            inner.vertex(poseMatrix, -quarterRadius, yMin, -quarterRadius)
+                    .color(color)
+                    .uv(0, min)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(normalMatrix, 0f, 1f, 0f)
+                    .endVertex();
+            inner.vertex(poseMatrix, -quarterRadius, yMin, quarterRadius)
+                    .color(color)
+                    .uv(1, min)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(normalMatrix, 0f, 1f, 0f)
+                    .endVertex();
+            inner.vertex(poseMatrix, -quarterRadius, 250, quarterRadius)
+                    .color(color)
+                    .uv(1, max)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(normalMatrix, 0f, 1f, 0f)
+                    .endVertex();
+            inner.vertex(poseMatrix, -quarterRadius, 250, -quarterRadius)
+                    .color(color)
+                    .uv(0, max)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(normalMatrix, 0f, 1f, 0f)
+                    .endVertex();
 
             poseStack.mulPose(Axis.YP.rotationDegrees(90));
         }
@@ -76,5 +145,4 @@ public class SunbeamRenderer extends EntityRenderer<SunbeamEntity> {
     public ResourceLocation getTextureLocation(SunbeamEntity entity) {
         return SpellRenderingHelper.BEACON;
     }
-
 }

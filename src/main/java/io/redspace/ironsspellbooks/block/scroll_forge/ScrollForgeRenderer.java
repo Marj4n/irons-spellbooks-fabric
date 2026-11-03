@@ -22,10 +22,11 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
-
 public class ScrollForgeRenderer implements BlockEntityRenderer<ScrollForgeTile> {
-    private static final ResourceLocation PAPER_TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/block/scroll_forge_paper.png");
-    private static final ResourceLocation SIGIL_TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/block/scroll_forge_sigil.png");
+    private static final ResourceLocation PAPER_TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/block/scroll_forge_paper.png");
+    private static final ResourceLocation SIGIL_TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/block/scroll_forge_sigil.png");
     ItemRenderer itemRenderer;
 
     public ScrollForgeRenderer(BlockEntityRendererProvider.Context context) {
@@ -37,16 +38,40 @@ public class ScrollForgeRenderer implements BlockEntityRenderer<ScrollForgeTile>
     private static final Vec3 PAPER_POS = new Vec3(.5, .876, .7);
 
     @Override
-    public void render(ScrollForgeTile scrollForgeTile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(
+            ScrollForgeTile scrollForgeTile,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         ItemStack inkStack = scrollForgeTile.getStackInSlot(0);
         ItemStack paperStack = scrollForgeTile.getStackInSlot(1);
         ItemStack focusStack = scrollForgeTile.getItemHandler().getStackInSlot(2);
 
         if (!inkStack.isEmpty() && inkStack.getItem() instanceof InkItem) {
-            renderItem(inkStack, INK_POS, 15, scrollForgeTile, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
+            renderItem(
+                    inkStack,
+                    INK_POS,
+                    15,
+                    scrollForgeTile,
+                    partialTick,
+                    poseStack,
+                    bufferSource,
+                    packedLight,
+                    packedOverlay);
         }
         if (!focusStack.isEmpty() && focusStack.is(ModTags.SCHOOL_FOCUS)) {
-            renderItem(focusStack, FOCUS_POS, 5, scrollForgeTile, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
+            renderItem(
+                    focusStack,
+                    FOCUS_POS,
+                    5,
+                    scrollForgeTile,
+                    partialTick,
+                    poseStack,
+                    bufferSource,
+                    packedLight,
+                    packedOverlay);
         }
 
         if (!paperStack.isEmpty() && paperStack.is(Items.PAPER)) {
@@ -55,12 +80,14 @@ public class ScrollForgeRenderer implements BlockEntityRenderer<ScrollForgeTile>
             poseStack.translate(PAPER_POS.x, PAPER_POS.y, PAPER_POS.z);
             poseStack.mulPose(Axis.YP.rotationDegrees(85));
             poseStack.mulPose(Axis.XP.rotationDegrees(180));
-            VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutout(PAPER_TEXTURE));
-            var light = LevelRenderer.getLightColor(scrollForgeTile.getLevel(), scrollForgeTile.getBlockPos());
+            VertexConsumer consumer =
+                    bufferSource.getBuffer(RenderType.entityCutout(PAPER_TEXTURE));
+            var light =
+                    LevelRenderer.getLightColor(
+                            scrollForgeTile.getLevel(), scrollForgeTile.getBlockPos());
 
             drawQuad(.45f, poseStack.last(), consumer, light);
             poseStack.popPose();
-
         }
 
         /*
@@ -77,14 +104,22 @@ public class ScrollForgeRenderer implements BlockEntityRenderer<ScrollForgeTile>
 
         */
 
-
     }
 
-    private void renderItem(ItemStack itemStack, Vec3 offset, float yRot, ScrollForgeTile scrollForgeTile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    private void renderItem(
+            ItemStack itemStack,
+            Vec3 offset,
+            float yRot,
+            ScrollForgeTile scrollForgeTile,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         poseStack.pushPose();
-        //renderId seems to be some kind of uuid/salt
+        // renderId seems to be some kind of uuid/salt
         int renderId = (int) scrollForgeTile.getBlockPos().asLong();
-        //BakedModel model = itemRenderer.getModel(itemStack, null, null, renderId);
+        // BakedModel model = itemRenderer.getModel(itemStack, null, null, renderId);
 
         rotatePoseWithBlock(poseStack, scrollForgeTile);
 
@@ -93,10 +128,19 @@ public class ScrollForgeRenderer implements BlockEntityRenderer<ScrollForgeTile>
         poseStack.mulPose(Axis.YP.rotationDegrees(180));
         poseStack.mulPose(Axis.ZP.rotationDegrees(-yRot));
 
-        //poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+        // poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
         poseStack.scale(0.45f, 0.45f, 0.45f);
 
-        itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, LevelRenderer.getLightColor(scrollForgeTile.getLevel(), scrollForgeTile.getBlockPos()), packedOverlay, poseStack, bufferSource, scrollForgeTile.getLevel(), renderId);
+        itemRenderer.renderStatic(
+                itemStack,
+                ItemDisplayContext.FIXED,
+                LevelRenderer.getLightColor(
+                        scrollForgeTile.getLevel(), scrollForgeTile.getBlockPos()),
+                packedOverlay,
+                poseStack,
+                bufferSource,
+                scrollForgeTile.getLevel(),
+                renderId);
         poseStack.popPose();
     }
 
@@ -104,11 +148,34 @@ public class ScrollForgeRenderer implements BlockEntityRenderer<ScrollForgeTile>
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
         float halfWidth = width * .5f;
-        consumer.vertex(poseMatrix, -halfWidth, 0, -halfWidth).color(255, 255, 255, 255).uv(0f, 1f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, -1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, halfWidth, 0, -halfWidth).color(255, 255, 255, 255).uv(0f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, -1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, halfWidth, 0, halfWidth).color(255, 255, 255, 255).uv(1f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, -1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, -halfWidth, 0, halfWidth).color(255, 255, 255, 255).uv(1f, 1f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, -1f, 0f).endVertex();
-
+        consumer.vertex(poseMatrix, -halfWidth, 0, -halfWidth)
+                .color(255, 255, 255, 255)
+                .uv(0f, 1f)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, -1f, 0f)
+                .endVertex();
+        consumer.vertex(poseMatrix, halfWidth, 0, -halfWidth)
+                .color(255, 255, 255, 255)
+                .uv(0f, 0f)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, -1f, 0f)
+                .endVertex();
+        consumer.vertex(poseMatrix, halfWidth, 0, halfWidth)
+                .color(255, 255, 255, 255)
+                .uv(1f, 0f)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, -1f, 0f)
+                .endVertex();
+        consumer.vertex(poseMatrix, -halfWidth, 0, halfWidth)
+                .color(255, 255, 255, 255)
+                .uv(1f, 1f)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, -1f, 0f)
+                .endVertex();
     }
 
     private void rotatePoseWithBlock(PoseStack poseStack, ScrollForgeTile scrollForgeTile) {
@@ -128,8 +195,6 @@ public class ScrollForgeRenderer implements BlockEntityRenderer<ScrollForgeTile>
                 case WEST -> -90;
                 default -> 0;
             };
-        } else
-            return 0;
-
+        } else return 0;
     }
 }

@@ -16,11 +16,21 @@ public class SpellData implements Comparable<SpellData> {
     public static final String SPELL_LEVEL = "level";
     public static final String SPELL_LOCKED = "locked";
 
-    public static final Codec<SpellData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ResourceLocation.CODEC.fieldOf(SPELL_ID).forGetter(data -> data.spell.getSpellResource()),
-            Codec.INT.fieldOf(SPELL_LEVEL).forGetter(SpellData::getLevel),
-            Codec.BOOL.optionalFieldOf(SPELL_LOCKED, false).forGetter(SpellData::isLocked)
-    ).apply(builder, SpellData::new));
+    public static final Codec<SpellData> CODEC =
+            RecordCodecBuilder.create(
+                    builder ->
+                            builder.group(
+                                            ResourceLocation.CODEC
+                                                    .fieldOf(SPELL_ID)
+                                                    .forGetter(
+                                                            data -> data.spell.getSpellResource()),
+                                            Codec.INT
+                                                    .fieldOf(SPELL_LEVEL)
+                                                    .forGetter(SpellData::getLevel),
+                                            Codec.BOOL
+                                                    .optionalFieldOf(SPELL_LOCKED, false)
+                                                    .forGetter(SpellData::isLocked))
+                                    .apply(builder, SpellData::new));
 
     public static final SpellData EMPTY = new SpellData(SpellRegistry.none(), 0, false);
 
@@ -77,7 +87,10 @@ public class SpellData implements Comparable<SpellData> {
     }
 
     public Component getDisplayName() {
-        return getSpell().getDisplayName(MinecraftInstanceHelper.instance.player()).append(" ").append(Component.translatable(ItemRegistry.SCROLL.get().getDescriptionId()));
+        return getSpell()
+                .getDisplayName(MinecraftInstanceHelper.instance.player())
+                .append(" ")
+                .append(Component.translatable(ItemRegistry.SCROLL.get().getDescriptionId()));
     }
 
     @Override

@@ -20,19 +20,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class LightningLanceSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "lightning_lance");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "lightning_lance");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(8)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(8)
+                    .build();
 
     public LightningLanceSpell() {
         this.manaCostPerLevel = 10;
@@ -68,7 +73,12 @@ public class LightningLanceSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         LightningLanceProjectile lance = new LightningLanceProjectile(level, entity);
         lance.setPos(entity.position().add(0, entity.getEyeHeight(), 0).add(entity.getForward()));
         lance.shoot(entity.getLookAngle());

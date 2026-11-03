@@ -28,8 +28,13 @@ public class DamageSources {
         return level.damageSources().source(damageType);
     }
 
-    public static Holder<DamageType> getHolderFromResource(Entity entity, ResourceKey<DamageType> damageTypeResourceKey) {
-        var option = entity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolder(damageTypeResourceKey);
+    public static Holder<DamageType> getHolderFromResource(
+            Entity entity, ResourceKey<DamageType> damageTypeResourceKey) {
+        var option =
+                entity.level()
+                        .registryAccess()
+                        .registryOrThrow(Registries.DAMAGE_TYPE)
+                        .getHolder(damageTypeResourceKey);
         if (option.isPresent()) {
             return option.get();
         } else {
@@ -38,13 +43,15 @@ public class DamageSources {
     }
 
     public static boolean applyDamage(Entity target, float baseAmount, DamageSource damageSource) {
-        if (target instanceof LivingEntity livingTarget && damageSource instanceof SpellDamageSource spellDamageSource) {
+        if (target instanceof LivingEntity livingTarget
+                && damageSource instanceof SpellDamageSource spellDamageSource) {
             var e = new SpellDamageEvent(livingTarget, baseAmount, spellDamageSource);
             if (org.marj4n.irons_spellbooks.events.SpellEvents.post(e)) {
                 return false;
             }
             baseAmount = e.getAmount();
-            float adjustedDamage = baseAmount * getResist(livingTarget, spellDamageSource.spell.getSchoolType());
+            float adjustedDamage =
+                    baseAmount * getResist(livingTarget, spellDamageSource.spell.getSchoolType());
             if (damageSource.getDirectEntity() instanceof NoKnockbackProjectile) {
                 ignoreNextKnockback(livingTarget);
             }
@@ -65,17 +72,19 @@ public class DamageSources {
     public static void ignoreNextKnockback(LivingEntity livingEntity) {
         if (livingEntity.getServer() != null) {
             var tickCount = livingEntity.getServer().getTickCount();
-            //help manage memory
+            // help manage memory
             knockbackImmunes.entrySet().removeIf(entry -> tickCount - entry.getValue() >= 10);
-            //enter entity
+            // enter entity
             knockbackImmunes.put(livingEntity.getUUID(), tickCount);
         }
     }
 
     public static void cancelKnockback(LivingKnockBackEvent event) {
-        //IronsSpellbooks.LOGGER.debug("DamageSources.cancelKnockback {}", event.getEntity().getName().getString());
+        // IronsSpellbooks.LOGGER.debug("DamageSources.cancelKnockback {}",
+        // event.getEntity().getName().getString());
         var entity = event.getEntity();
-        if (entity.getServer() != null && knockbackImmunes.containsKey(event.getEntity().getUUID())) {
+        if (entity.getServer() != null
+                && knockbackImmunes.containsKey(event.getEntity().getUUID())) {
             if (entity.getServer().getTickCount() - knockbackImmunes.get(entity.getUUID()) <= 1) {
                 event.setCanceled(true);
             }
@@ -85,7 +94,8 @@ public class DamageSources {
 
     public static void postHitEffects(LivingHurtEvent event) {
         var damageSource = event.getSource();
-        if (damageSource instanceof SpellDamageSource spellDamageSource && spellDamageSource.hasPostHitEffects()) {
+        if (damageSource instanceof SpellDamageSource spellDamageSource
+                && spellDamageSource.hasPostHitEffects()) {
             float actualDamage = event.getAmount();
             var target = event.getEntity();
             var attacker = event.getSource().getEntity();
@@ -95,17 +105,22 @@ public class DamageSources {
                 }
             }
             if (spellDamageSource.getFreezeTicks() > 0 && target.canFreeze()) {
-                //Freeze ticks count down by 2, so we * 2 so the spell damages source can be dumb
-                target.setTicksFrozen(target.getTicksFrozen() + spellDamageSource.getFreezeTicks() * 2);
+                // Freeze ticks count down by 2, so we * 2 so the spell damages source can be dumb
+                target.setTicksFrozen(
+                        target.getTicksFrozen() + spellDamageSource.getFreezeTicks() * 2);
             }
             if (spellDamageSource.getFireTime() > 0 && target instanceof LivingEntity) {
-                target.setRemainingFireTicks(Math.max(target.getRemainingFireTicks(), spellDamageSource.getFireTime()));
+                target.setRemainingFireTicks(
+                        Math.max(target.getRemainingFireTicks(), spellDamageSource.getFireTime()));
             }
             if (spellDamageSource.getIFrames() >= 0) {
                 target.invulnerableTime = spellDamageSource.getIFrames();
             }
         }
-        IMagicSummon fromSummon = damageSource.getDirectEntity() instanceof IMagicSummon summon ? summon : damageSource.getEntity() instanceof IMagicSummon summon ? summon : null;
+        IMagicSummon fromSummon =
+                damageSource.getDirectEntity() instanceof IMagicSummon summon
+                        ? summon
+                        : damageSource.getEntity() instanceof IMagicSummon summon ? summon : null;
         if (fromSummon != null) {
             var summoner = fromSummon.getSummoner();
             if (summoner != null && summoner.getUUID().equals(event.getEntity().getUUID())) {
@@ -113,12 +128,17 @@ public class DamageSources {
                 return;
             }
             if (summoner instanceof LivingEntity livingSummoner) {
-                event.setAmount(event.getAmount() * (float) livingSummoner.getAttributeValue(AttributeRegistry.SUMMON_DAMAGE.get()));
+                event.setAmount(
+                        event.getAmount()
+                                * (float)
+                                        livingSummoner.getAttributeValue(
+                                                AttributeRegistry.SUMMON_DAMAGE.get()));
             }
         }
     }
 
-    public static boolean isFriendlyFireBetween(@Nullable Entity attacker, @Nullable Entity target) {
+    public static boolean isFriendlyFireBetween(
+            @Nullable Entity attacker, @Nullable Entity target) {
         if (attacker == null || target == null) {
             return false;
         }
@@ -137,7 +157,8 @@ public class DamageSources {
         if (attacker.isPassengerOfSameVehicle(target)) {
             return true;
         }
-        if (attacker instanceof Player playerAttacker && target instanceof Player playertarget
+        if (attacker instanceof Player playerAttacker
+                && target instanceof Player playertarget
                 && !playerAttacker.canHarmPlayer(playertarget)) {
             return true;
         }
@@ -145,7 +166,8 @@ public class DamageSources {
         if (team != null) {
             return team.isAlliedTo(target.getTeam()) && !team.isAllowFriendlyFire();
         }
-        //We already manually checked for teams, so this will only return true for any overrides (such as summons)
+        // We already manually checked for teams, so this will only return true for any overrides
+        // (such as summons)
         return attacker.isAlliedTo(target);
     }
 
@@ -154,9 +176,11 @@ public class DamageSources {
      */
     public static float getResist(LivingEntity entity, SchoolType damageSchool) {
         var baseResist = entity.getAttributeValue(AttributeRegistry.SPELL_RESIST.get());
-        if (damageSchool == null)
-            return 2 - (float) Utils.softCapFormula(baseResist);
+        if (damageSchool == null) return 2 - (float) Utils.softCapFormula(baseResist);
         else
-            return 2 - (float) Utils.softCapFormula(damageSchool.getResistanceFor(entity) * baseResist);
+            return 2
+                    - (float)
+                            Utils.softCapFormula(
+                                    damageSchool.getResistanceFor(entity) * baseResist);
     }
 }

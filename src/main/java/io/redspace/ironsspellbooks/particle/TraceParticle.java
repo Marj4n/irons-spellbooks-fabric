@@ -19,16 +19,25 @@ public class TraceParticle extends TextureSheetParticle {
     private final Vec3 forward;
     private final double speed;
 
-    TraceParticle(ClientLevel pLevel, double pX, double pY, double pZ, SpriteSet spriteSet, double xd, double yd, double zd, TraceParticleOptions options) {
+    TraceParticle(
+            ClientLevel pLevel,
+            double pX,
+            double pY,
+            double pZ,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd,
+            TraceParticleOptions options) {
         super(pLevel, pX, pY, pZ, 0, 0, 0);
-
 
         this.lifetime = 4 + level.random.nextInt(5);
         this.gravity = 0;
         sprites = spriteSet;
 
         this.quadSize = 0.75f + level.random.nextFloat() * .25f;
-        this.destination = new Vec3(options.destination.x, options.destination.y, options.destination.z);
+        this.destination =
+                new Vec3(options.destination.x, options.destination.y, options.destination.z);
         this.forward = destination.subtract(new Vec3(pX, pY, pZ)).normalize();
         this.speed = new Vec3(xd, yd, zd).length();
         this.rCol = options.color.x;
@@ -73,8 +82,13 @@ public class TraceParticle extends TextureSheetParticle {
         Vec3 forward = this.forward;
         Vec3 up = forward.cross(ray);
 
-
-        Vector3f[] vertices = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
+        Vector3f[] vertices =
+                new Vector3f[] {
+                    new Vector3f(-1.0F, -1.0F, 0.0F),
+                    new Vector3f(-1.0F, 1.0F, 0.0F),
+                    new Vector3f(1.0F, 1.0F, 0.0F),
+                    new Vector3f(1.0F, -1.0F, 0.0F)
+                };
         for (int i = 0; i < 4; i++) {
             float x = (float) (forward.x * vertices[i].x + up.x * vertices[i].y);
             float y = (float) (forward.y * vertices[i].x + up.y * vertices[i].y);
@@ -88,16 +102,24 @@ public class TraceParticle extends TextureSheetParticle {
         this.makeCornerVertex(buffer, vertices[1], this.getU1(), this.getV0(), j);
         this.makeCornerVertex(buffer, vertices[2], this.getU0(), this.getV0(), j);
         this.makeCornerVertex(buffer, vertices[3], this.getU0(), this.getV1(), j);
-        //backface
+        // backface
         this.makeCornerVertex(buffer, vertices[3], this.getU0(), this.getV1(), j);
         this.makeCornerVertex(buffer, vertices[2], this.getU0(), this.getV0(), j);
         this.makeCornerVertex(buffer, vertices[1], this.getU1(), this.getV0(), j);
         this.makeCornerVertex(buffer, vertices[0], this.getU1(), this.getV1(), j);
-
     }
 
-    private void makeCornerVertex(VertexConsumer pConsumer, Vector3f pVec3f, float p_233996_, float p_233997_, int p_233998_) {
-        pConsumer.vertex(pVec3f.x(), pVec3f.y(), pVec3f.z()).uv(p_233996_, p_233997_).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(p_233998_);
+    private void makeCornerVertex(
+            VertexConsumer pConsumer,
+            Vector3f pVec3f,
+            float p_233996_,
+            float p_233997_,
+            int p_233998_) {
+        pConsumer
+                .vertex(pVec3f.x(), pVec3f.y(), pVec3f.z())
+                .uv(p_233996_, p_233997_)
+                .color(this.rCol, this.gCol, this.bCol, this.alpha)
+                .uv2(p_233998_);
     }
 
     @NotNull
@@ -119,12 +141,21 @@ public class TraceParticle extends TextureSheetParticle {
             this.sprite = pSprite;
         }
 
-        public Particle createParticle(@NotNull TraceParticleOptions options, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            TraceParticle shriekparticle = new TraceParticle(pLevel, pX, pY, pZ, sprite, pXSpeed, pYSpeed, pZSpeed, options);
+        public Particle createParticle(
+                @NotNull TraceParticleOptions options,
+                @NotNull ClientLevel pLevel,
+                double pX,
+                double pY,
+                double pZ,
+                double pXSpeed,
+                double pYSpeed,
+                double pZSpeed) {
+            TraceParticle shriekparticle =
+                    new TraceParticle(
+                            pLevel, pX, pY, pZ, sprite, pXSpeed, pYSpeed, pZSpeed, options);
             shriekparticle.setSpriteFromAge(this.sprite);
             shriekparticle.setAlpha(1.0F);
             return shriekparticle;
         }
     }
-
 }

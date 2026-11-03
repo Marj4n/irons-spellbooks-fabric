@@ -33,42 +33,54 @@ public final class AlchemistCauldronRecipeMaker {
     public static List<AlchemistCauldronJeiRecipe> recipes = List.of();
 
     private AlchemistCauldronRecipeMaker() {
-        //private constructor prevents anyone from instantiating this class
+        // private constructor prevents anyone from instantiating this class
     }
 
-    static List<AlchemistCauldronJeiRecipe> getRecipes(IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
-        recipes = Stream.of(
-                        getScrollRecipes(vanillaRecipeFactory, itemFinder),
-                        getCauldronRecipes(vanillaRecipeFactory, itemFinder),
-                        getPotionRecipes(vanillaRecipeFactory, itemFinder))
-                .flatMap(Function.identity())
-                .toList();
+    static List<AlchemistCauldronJeiRecipe> getRecipes(
+            IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
+        recipes =
+                Stream.of(
+                                getScrollRecipes(vanillaRecipeFactory, itemFinder),
+                                getCauldronRecipes(vanillaRecipeFactory, itemFinder),
+                                getPotionRecipes(vanillaRecipeFactory, itemFinder))
+                        .flatMap(Function.identity())
+                        .toList();
         return recipes;
     }
 
-    private static Stream<AlchemistCauldronJeiRecipe> getScrollRecipes(IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
+    private static Stream<AlchemistCauldronJeiRecipe> getScrollRecipes(
+            IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
         return Arrays.stream(SpellRarity.values())
                 .map(AlchemistCauldronRecipeMaker::enumerateSpellsForRarity);
     }
 
-    private static Stream<AlchemistCauldronJeiRecipe> getCauldronRecipes(IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
+    private static Stream<AlchemistCauldronJeiRecipe> getCauldronRecipes(
+            IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
         if (Minecraft.getInstance().level == null) {
             return Stream.of();
         }
         RecipeManager manager = Minecraft.getInstance().level.getRecipeManager();
-        return manager.getAllRecipesFor(RecipeRegistry.ALCHEMIST_CAULDRON_BREW_TYPE.get()).stream().map(
-                recipe -> new AlchemistCauldronJeiRecipe(recipe.reagent(), recipe.fluidIn(), recipe.results(), recipe.byproduct().orElse(ItemStack.EMPTY))
-        );
+        return manager.getAllRecipesFor(RecipeRegistry.ALCHEMIST_CAULDRON_BREW_TYPE.get()).stream()
+                .map(
+                        recipe ->
+                                new AlchemistCauldronJeiRecipe(
+                                        recipe.reagent(),
+                                        recipe.fluidIn(),
+                                        recipe.results(),
+                                        recipe.byproduct().orElse(ItemStack.EMPTY)));
     }
 
-    private static Stream<Item> getBrewingReagents(/*PotionBrewing potionBrewing*/) {
+    private static Stream<Item> getBrewingReagents(/*PotionBrewing potionBrewing*/ ) {
         return Stream.concat(
-                PotionBrewing.CONTAINER_MIXES.stream(),
-                PotionBrewing.POTION_MIXES.stream()
-        ).map(mix->mix.ingredient).flatMap(i -> Arrays.stream(i.getItems())).map(ItemStack::getItem).distinct();
+                        PotionBrewing.CONTAINER_MIXES.stream(), PotionBrewing.POTION_MIXES.stream())
+                .map(mix -> mix.ingredient)
+                .flatMap(i -> Arrays.stream(i.getItems()))
+                .map(ItemStack::getItem)
+                .distinct();
     }
 
-    private static Stream<AlchemistCauldronJeiRecipe> getPotionRecipes(IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
+    private static Stream<AlchemistCauldronJeiRecipe> getPotionRecipes(
+            IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
         if (!ServerConfigs.ALLOW_CAULDRON_BREWING.get()) {
             return Stream.of();
         }
@@ -76,38 +88,65 @@ public final class AlchemistCauldronRecipeMaker {
         if (level == null) {
             return Stream.of();
         }
-//        PotionBrewing potionBrewing = /*Minecraft.getInstance().level.potionBrewing();*/ PotionBrewing;
-        Stream<ItemStack> brewablePotions = BuiltInRegistries.POTION.holders().flatMap(potion -> Stream.of(
-                FluidHelper.createItemStack(Items.POTION, potion),
-                FluidHelper.createItemStack(Items.SPLASH_POTION, potion),
-                FluidHelper.createItemStack(Items.LINGERING_POTION, potion)));
-//        var allIngredients =
-        return brewablePotions.flatMap(potion -> getBrewingReagents(/*potionBrewing*/)
-                .filter(reagent -> PotionBrewing.hasMix(potion, reagent.getDefaultInstance())).map(
-                        reagent ->
-                                new AlchemistCauldronJeiRecipe(
-                                        Ingredient.of(reagent),
-                                        PotionFluid.from(potion),
-                                        List.of(PotionFluid.from(PotionBrewing.mix(reagent.getDefaultInstance(), potion))),
-                                        ItemStack.EMPTY
-                                )
-                ));
+        //        PotionBrewing potionBrewing = /*Minecraft.getInstance().level.potionBrewing();*/
+        // PotionBrewing;
+        Stream<ItemStack> brewablePotions =
+                BuiltInRegistries.POTION
+                        .holders()
+                        .flatMap(
+                                potion ->
+                                        Stream.of(
+                                                FluidHelper.createItemStack(Items.POTION, potion),
+                                                FluidHelper.createItemStack(
+                                                        Items.SPLASH_POTION, potion),
+                                                FluidHelper.createItemStack(
+                                                        Items.LINGERING_POTION, potion)));
+        //        var allIngredients =
+        return brewablePotions.flatMap(
+                potion ->
+                        getBrewingReagents(/*potionBrewing*/ )
+                                .filter(
+                                        reagent ->
+                                                PotionBrewing.hasMix(
+                                                        potion, reagent.getDefaultInstance()))
+                                .map(
+                                        reagent ->
+                                                new AlchemistCauldronJeiRecipe(
+                                                        Ingredient.of(reagent),
+                                                        PotionFluid.from(potion),
+                                                        List.of(
+                                                                PotionFluid.from(
+                                                                        PotionBrewing.mix(
+                                                                                reagent
+                                                                                        .getDefaultInstance(),
+                                                                                potion))),
+                                                        ItemStack.EMPTY)));
     }
 
     private static AlchemistCauldronJeiRecipe enumerateSpellsForRarity(SpellRarity spellRarity) {
 
         var scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
 
-        Stream<ItemStack> scrolls = SpellRegistry.getEnabledSpells().stream().flatMap(
-                spell -> IntStream.rangeClosed(spell.getMinLevel(), spell.getMaxLevel())
-                        .filter(spellLevel -> spell.getRarity(spellLevel) == spellRarity)
-                        .mapToObj(i -> getScrollStack(scrollStack, spell, i)));
+        Stream<ItemStack> scrolls =
+                SpellRegistry.getEnabledSpells().stream()
+                        .flatMap(
+                                spell ->
+                                        IntStream.rangeClosed(
+                                                        spell.getMinLevel(), spell.getMaxLevel())
+                                                .filter(
+                                                        spellLevel ->
+                                                                spell.getRarity(spellLevel)
+                                                                        == spellRarity)
+                                                .mapToObj(
+                                                        i ->
+                                                                getScrollStack(
+                                                                        scrollStack, spell, i)));
         FluidStack ink = new FluidStack(InkItem.getInkForRarity(spellRarity).fluid().get(), 250);
         FluidStack water = new FluidStack(Fluids.WATER, 250);
 
-        return new AlchemistCauldronJeiRecipe(Ingredient.of(scrolls), water, List.of(ink), ItemStack.EMPTY);
+        return new AlchemistCauldronJeiRecipe(
+                Ingredient.of(scrolls), water, List.of(ink), ItemStack.EMPTY);
     }
-
 
     private static ItemStack getScrollStack(ItemStack stack, AbstractSpell spell, int spellLevel) {
         var scrollStack = stack.copy();
@@ -119,7 +158,8 @@ public final class AlchemistCauldronRecipeMaker {
         try {
             return PotionBrewing.isIngredient(itemStack);
         } catch (RuntimeException | LinkageError e) {
-            IronsSpellbooks.LOGGER.error("Failed to check if item is a potion reagent {}.", itemStack.toString(), e);
+            IronsSpellbooks.LOGGER.error(
+                    "Failed to check if item is a potion reagent {}.", itemStack.toString(), e);
             return false;
         }
     }

@@ -27,17 +27,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class HeartstopSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "heartstop");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(120)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "heartstop");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(120)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getSpellPower(spellLevel, caster), 1)));
     }
 
     public HeartstopSpell() {
@@ -46,7 +51,6 @@ public class HeartstopSpell extends AbstractSpell {
         this.spellPowerPerLevel = 30;
         this.castTime = 0;
         this.baseManaCost = 100;
-
     }
 
     @Override
@@ -75,10 +79,37 @@ public class HeartstopSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.HEARTSTOP.get(), (int) getSpellPower(spellLevel, entity), 0, false, false, true));
-        MagicManager.spawnParticles(world, new SwirlingParticleOptions(ParticleHelper.BLOOD, new Vec3(0, 1, 0), new Vec3(1, 0, 0),
-                new Vec3(0, 0, 5), new Vec3(0.25, 0.25,2)), entity.getX(), entity.getY() + 1, entity.getZ(), 35, 0, 0.2, 0, 0.1, false);
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.HEARTSTOP.get(),
+                        (int) getSpellPower(spellLevel, entity),
+                        0,
+                        false,
+                        false,
+                        true));
+        MagicManager.spawnParticles(
+                world,
+                new SwirlingParticleOptions(
+                        ParticleHelper.BLOOD,
+                        new Vec3(0, 1, 0),
+                        new Vec3(1, 0, 0),
+                        new Vec3(0, 0, 5),
+                        new Vec3(0.25, 0.25, 2)),
+                entity.getX(),
+                entity.getY() + 1,
+                entity.getZ(),
+                35,
+                0,
+                0.2,
+                0,
+                0.1,
+                false);
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
 }

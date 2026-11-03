@@ -18,11 +18,13 @@ public class ElectromancerArmorModel extends DefaultedItemGeoModel<Electromancer
 
     @Override
     public ResourceLocation getTextureResource(ElectromancerArmorItem object) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "textures/models/armor/electromancer.png");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "textures/models/armor/electromancer.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(ElectromancerArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

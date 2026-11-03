@@ -9,7 +9,10 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 public class PlaguedArmorItem extends ImbuableChestplateArmorItem {
     public PlaguedArmorItem(ArmorItem.Type slot, Properties settings) {
-        super(ExtendedArmorMaterials.PLAGUED, slot, settings/*, schoolAttributes(AttributeRegistry.NATURE_SPELL_POWER)*/);
+        super(
+                ExtendedArmorMaterials.PLAGUED,
+                slot,
+                settings /*, schoolAttributes(AttributeRegistry.NATURE_SPELL_POWER)*/);
     }
 
     @Override

@@ -17,16 +17,17 @@ public interface ISpellContainerMutable {
 
     boolean removeSpell(AbstractSpell spell);
 
-    @NotNull SpellSlot[] getAllSpells();
+    @NotNull
+    SpellSlot[] getAllSpells();
 
-    @NotNull List<SpellSlot> getActiveSpells();
+    @NotNull
+    List<SpellSlot> getActiveSpells();
 
     /*
     Getters. Currently, a copy of ISpellContainer
      */
 
     int getMaxSpellCount();
-
 
     int getActiveSpellCount();
 
@@ -38,7 +39,8 @@ public interface ISpellContainerMutable {
 
     boolean isSpellWheel();
 
-    @NotNull SpellData getSpellAtIndex(int index);
+    @NotNull
+    SpellData getSpellAtIndex(int index);
 
     int getIndexForSpell(AbstractSpell spell);
 
@@ -46,4 +48,3 @@ public interface ISpellContainerMutable {
 
     ISpellContainer toImmutable();
 }
-

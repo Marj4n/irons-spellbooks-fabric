@@ -20,22 +20,27 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class ScapegoatSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "scapegoat");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "scapegoat");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.taunt_range", Utils.stringTruncation(tauntRange(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.hp", Utils.stringTruncation(getGoatHealth(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.taunt_range",
+                        Utils.stringTruncation(tauntRange(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.hp",
+                        Utils.stringTruncation(getGoatHealth(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(3)
-            .setCooldownSeconds(45)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(3)
+                    .setCooldownSeconds(45)
+                    .build();
 
     public ScapegoatSpell() {
         this.baseSpellPower = 20;
@@ -61,9 +66,30 @@ public class ScapegoatSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
-        Vec3 targetPos = Utils.moveToRelativeGroundLevel(world, Utils.raycastForBlock(world, entity.getEyePosition(), entity.getEyePosition().add(entity.getForward().scale(getRange(spellLevel, entity))), ClipContext.Fluid.NONE).getLocation(), 4, 24);
+        Vec3 targetPos =
+                Utils.moveToRelativeGroundLevel(
+                        world,
+                        Utils.raycastForBlock(
+                                        world,
+                                        entity.getEyePosition(),
+                                        entity.getEyePosition()
+                                                .add(
+                                                        entity.getForward()
+                                                                .scale(
+                                                                        getRange(
+                                                                                spellLevel,
+                                                                                entity))),
+                                        ClipContext.Fluid.NONE)
+                                .getLocation(),
+                        4,
+                        24);
         ScapegoatEntity goat = new ScapegoatEntity(world);
         goat.setOwner(entity);
         goat.setTargetPos(BlockPos.containing(targetPos));
@@ -74,9 +100,11 @@ public class ScapegoatSpell extends AbstractSpell {
         goat.yRotO = y;
         goat.yHeadRot = y;
         goat.yHeadRotO = y;
-        //todo: clip?
+        // todo: clip?
         goat.moveTo(entity.getEyePosition().add(entity.getForward().scale(2)));
-        goat.getAttributes().getInstance(Attributes.MAX_HEALTH).setBaseValue(getGoatHealth(spellLevel, entity));
+        goat.getAttributes()
+                .getInstance(Attributes.MAX_HEALTH)
+                .setBaseValue(getGoatHealth(spellLevel, entity));
         goat.setHealth(goat.getMaxHealth());
         goat.poofParticles(20, 1f);
         // todo: expose to tootip/power scaling?

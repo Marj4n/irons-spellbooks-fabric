@@ -11,11 +11,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SimpleTexture.class)
 public class SimpleTextureMixin implements IExtendedSimpleTexture {
-    @Unique
-    boolean irons_spellbooks$isRectangular;
+    @Unique boolean irons_spellbooks$isRectangular;
 
     @Inject(method = "doLoad", at = @At("HEAD"))
-    void irons_spellbooks$captureImageData(NativeImage image, boolean blur, boolean clamp, CallbackInfo ci) {
+    void irons_spellbooks$captureImageData(
+            NativeImage image, boolean blur, boolean clamp, CallbackInfo ci) {
         irons_spellbooks$isRectangular = image.getHeight() != image.getWidth();
     }
 

@@ -11,7 +11,8 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class EntityEventPacket<T extends Entity & IClientEventEntity> implements CustomPacketPayload {
+public class EntityEventPacket<T extends Entity & IClientEventEntity>
+        implements CustomPacketPayload {
     private final int entityId;
     private final byte eventId;
 
@@ -33,16 +34,18 @@ public class EntityEventPacket<T extends Entity & IClientEventEntity> implements
         pBuffer.writeByte(this.eventId);
     }
 
-
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            MinecraftInstanceHelper.ifPlayerPresent(player -> {
-                if (getEntity(player.level()) instanceof IClientEventEntity entity) {
-                    entity.handleClientEvent(this.eventId);
-                }
-            });
-        });
+        ctx.enqueueWork(
+                () -> {
+                    MinecraftInstanceHelper.ifPlayerPresent(
+                            player -> {
+                                if (getEntity(player.level())
+                                        instanceof IClientEventEntity entity) {
+                                    entity.handleClientEvent(this.eventId);
+                                }
+                            });
+                });
 
         return true;
     }

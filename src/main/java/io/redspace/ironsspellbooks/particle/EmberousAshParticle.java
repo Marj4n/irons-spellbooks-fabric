@@ -11,14 +11,21 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 public class EmberousAshParticle extends TextureSheetParticle {
-    public EmberousAshParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, double xd, double yd, double zd) {
+    public EmberousAshParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            double xd,
+            double yd,
+            double zd) {
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
         this.scale(this.random.nextFloat() * .65f + .4f);
         this.lifetime = 40 + (int) (Math.random() * 45);
         this.gravity = 0;
         this.friction = 1;
         this.quadSize = .0625f;
-        //1, .6f, 0.3
+        // 1, .6f, 0.3
         this.rCol = 1 * (.9f + this.random.nextFloat() * 0.1f);
         this.gCol = .6f * (.9f + this.random.nextFloat() * 0.1f);
         this.bCol = .3f * (.9f + this.random.nextFloat() * 0.1f);
@@ -42,15 +49,13 @@ public class EmberousAshParticle extends TextureSheetParticle {
     }
 
     private float function(float x) {
-        return 0.2f *
-                0.25f * (f(2 * x) +
-                1f * f(.25f * x) +
-                2f * f(.125f * x));
+        return 0.2f * 0.25f * (f(2 * x) + 1f * f(.25f * x) + 2f * f(.125f * x));
     }
 
     @Override
     public float getQuadSize(float pScaleFactor) {
-        return Mth.lerp((age + pScaleFactor) / (float) lifetime, super.getQuadSize(pScaleFactor), 0) * Mth.clamp((age + pScaleFactor) / 5f, 0, 1);
+        return Mth.lerp((age + pScaleFactor) / (float) lifetime, super.getQuadSize(pScaleFactor), 0)
+                * Mth.clamp((age + pScaleFactor) / 5f, 0, 1);
     }
 
     @Override
@@ -58,14 +63,27 @@ public class EmberousAshParticle extends TextureSheetParticle {
         super.tick();
 
         float f = Math.abs(seed) < .2 ? 1 : seed;
-        this.xd = 0.3 * seed * (.05f * Mth.sin((this.age + 700 * seed) * 0.2f / f) + function(this.age * 0.2f + 700 * seed));
-        this.yd = 0.3 * seed * (.05f * Mth.sin((this.age + 500 * seed) * 0.2f / f) + function(this.age * 0.2f + 500 * seed));
-        this.zd = 0.3 * seed * (.05f * Mth.cos((this.age + 100 * seed) * 0.2f / f) + function(this.age * 0.2f + 100 * seed));
+        this.xd =
+                0.3
+                        * seed
+                        * (.05f * Mth.sin((this.age + 700 * seed) * 0.2f / f)
+                                + function(this.age * 0.2f + 700 * seed));
+        this.yd =
+                0.3
+                        * seed
+                        * (.05f * Mth.sin((this.age + 500 * seed) * 0.2f / f)
+                                + function(this.age * 0.2f + 500 * seed));
+        this.zd =
+                0.3
+                        * seed
+                        * (.05f * Mth.cos((this.age + 100 * seed) * 0.2f / f)
+                                + function(this.age * 0.2f + 100 * seed));
         if (speed > 4) {
             xd = Math.abs(xd) * 3;
         }
         if (random.nextFloat() < 0.5) {
-            this.level.addParticle(ParticleTypes.SMOKE, this.x, this.y, this.z, this.xd, this.yd, this.zd);
+            this.level.addParticle(
+                    ParticleTypes.SMOKE, this.x, this.y, this.z, this.xd, this.yd, this.zd);
         }
         if (new Vec3(x - xo, y - yo, z - zo).lengthSqr() < 0.001) {
             this.remove();
@@ -85,9 +103,15 @@ public class EmberousAshParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             var p = new EmberousAshParticle(level, x, y, z, dx, dy, dz);
             p.pickSprite(this.sprites);
             return p;

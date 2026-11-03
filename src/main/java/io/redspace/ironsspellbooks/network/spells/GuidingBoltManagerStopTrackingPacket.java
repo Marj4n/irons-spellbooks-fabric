@@ -22,14 +22,14 @@ public class GuidingBoltManagerStopTrackingPacket implements CustomPacketPayload
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(entity);
-
     }
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            GuidingBoltManager.handleClientboundStopTracking(entity);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    GuidingBoltManager.handleClientboundStopTracking(entity);
+                });
         return true;
     }
 }

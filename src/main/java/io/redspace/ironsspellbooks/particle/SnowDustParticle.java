@@ -14,7 +14,15 @@ import net.fabricmc.api.Environment;
 public class SnowDustParticle extends SnowflakeParticle {
     float maxSize, minSize;
 
-    public SnowDustParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public SnowDustParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
         super(level, xCoord, yCoord, zCoord, spriteSet, xd, yd, zd);
         this.minSize = this.quadSize;
         this.maxSize = Utils.random.nextFloat() * .4f + .7f;
@@ -38,8 +46,18 @@ public class SnowDustParticle extends SnowflakeParticle {
             this.sprites = pSprites;
         }
 
-        public Particle createParticle(SimpleParticleType pType, ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            SnowDustParticle snowflakeparticle = new SnowDustParticle(pLevel, pX, pY, pZ, this.sprites, pXSpeed, pYSpeed, pZSpeed);
+        public Particle createParticle(
+                SimpleParticleType pType,
+                ClientLevel pLevel,
+                double pX,
+                double pY,
+                double pZ,
+                double pXSpeed,
+                double pYSpeed,
+                double pZSpeed) {
+            SnowDustParticle snowflakeparticle =
+                    new SnowDustParticle(
+                            pLevel, pX, pY, pZ, this.sprites, pXSpeed, pYSpeed, pZSpeed);
             snowflakeparticle.setColor(0.923F, 0.964F, 0.999F);
             snowflakeparticle.setAlpha(.5f);
             return snowflakeparticle;

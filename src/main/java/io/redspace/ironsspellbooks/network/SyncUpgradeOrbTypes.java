@@ -42,16 +42,19 @@ public class SyncUpgradeOrbTypes implements CustomPacketPayload {
         }
     }
 
-
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            try {
-                UpgradeTypeCache.onClientLoad(Minecraft.getInstance().player.level().registryAccess(), this.types);
-            } catch (Exception e) {
-                IronsSpellbooks.LOGGER.error("Failed to sync upgrade orb types: {}", e.getMessage());
-            }
-        });
+        ctx.enqueueWork(
+                () -> {
+                    try {
+                        UpgradeTypeCache.onClientLoad(
+                                Minecraft.getInstance().player.level().registryAccess(),
+                                this.types);
+                    } catch (Exception e) {
+                        IronsSpellbooks.LOGGER.error(
+                                "Failed to sync upgrade orb types: {}", e.getMessage());
+                    }
+                });
 
         return true;
     }

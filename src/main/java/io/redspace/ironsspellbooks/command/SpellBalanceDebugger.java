@@ -1,18 +1,18 @@
-//package io.redspace.ironsspellbooks.command;
+// package io.redspace.ironsspellbooks.command;
 //
-//import io.redspace.ironsspellbooks.IronsSpellbooks;
-//import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
-//import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
-//import io.redspace.ironsspellbooks.api.util.Utils;
-//import net.minecraft.network.chat.Component;
-//import net.minecraft.network.chat.contents.TranslatableContents;
+// import io.redspace.ironsspellbooks.IronsSpellbooks;
+// import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+// import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
+// import io.redspace.ironsspellbooks.api.util.Utils;
+// import net.minecraft.network.chat.Component;
+// import net.minecraft.network.chat.contents.TranslatableContents;
 //
-//import java.io.IOException;
-//import java.nio.file.Files;
-//import java.nio.file.Path;
-//import java.util.*;
+// import java.io.IOException;
+// import java.nio.file.Files;
+// import java.nio.file.Path;
+// import java.util.*;
 //
-//public class SpellBalanceDebugger {
+// public class SpellBalanceDebugger {
 //    record Info(AbstractSpell spell, Map<String, String> values) {
 //    }
 //
@@ -40,9 +40,12 @@
 //        Set<String> tracked = new HashSet<>();
 //        for (Component component : info) {
 //            if (component.getContents() instanceof TranslatableContents translatableContents) {
-////                String property = Component.translatable(translatableContents.getKey()).getString().replace("%s ",""); // get translation key, generate without args, then remove empty args from resulting string
+////                String property =
+// Component.translatable(translatableContents.getKey()).getString().replace("%s ",""); // get
+// translation key, generate without args, then remove empty args from resulting string
 //                String fullLine = component.getString();
-//                String translate = Component.translatable(translatableContents.getKey()).getString();
+//                String translate =
+// Component.translatable(translatableContents.getKey()).getString();
 //                int valueBeginIndex = translate.indexOf("%s");
 //                if (valueBeginIndex < 0) {
 //                    IronsSpellbooks.LOGGER.info("skipping property {}", translate);
@@ -113,4 +116,4 @@
 //            IronsSpellbooks.LOGGER.error("Failed to generate csv: {}", e.getMessage());
 //        }
 //    }
-//}
+// }

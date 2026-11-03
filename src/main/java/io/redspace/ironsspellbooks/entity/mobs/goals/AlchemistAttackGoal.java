@@ -24,7 +24,13 @@ public class AlchemistAttackGoal extends WizardAttackGoal {
     protected float throwRange;
     protected float potionBias;
 
-    public AlchemistAttackGoal(IMagicEntity abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval, float throwRange, float potionBias) {
+    public AlchemistAttackGoal(
+            IMagicEntity abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval,
+            float throwRange,
+            float potionBias) {
         super(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
         this.throwRange = throwRange;
         this.throwRangeSqr = throwRange * throwRange;
@@ -34,8 +40,13 @@ public class AlchemistAttackGoal extends WizardAttackGoal {
     }
 
     @Override
-    public AlchemistAttackGoal setSpells(List<AbstractSpell> attackSpells, List<AbstractSpell> defenseSpells, List<AbstractSpell> movementSpells, List<AbstractSpell> supportSpells) {
-        return (AlchemistAttackGoal) super.setSpells(attackSpells, defenseSpells, movementSpells, supportSpells);
+    public AlchemistAttackGoal setSpells(
+            List<AbstractSpell> attackSpells,
+            List<AbstractSpell> defenseSpells,
+            List<AbstractSpell> movementSpells,
+            List<AbstractSpell> supportSpells) {
+        return (AlchemistAttackGoal)
+                super.setSpells(attackSpells, defenseSpells, movementSpells, supportSpells);
     }
 
     @Override
@@ -44,8 +55,10 @@ public class AlchemistAttackGoal extends WizardAttackGoal {
     }
 
     @Override
-    public AlchemistAttackGoal setSingleUseSpell(AbstractSpell spellType, int minDelay, int maxDelay, int minLevel, int maxLevel) {
-        return (AlchemistAttackGoal) super.setSingleUseSpell(spellType, minDelay, maxDelay, minLevel, maxLevel);
+    public AlchemistAttackGoal setSingleUseSpell(
+            AbstractSpell spellType, int minDelay, int maxDelay, int minLevel, int maxLevel) {
+        return (AlchemistAttackGoal)
+                super.setSingleUseSpell(spellType, minDelay, maxDelay, minLevel, maxLevel);
     }
 
     @Override
@@ -53,22 +66,36 @@ public class AlchemistAttackGoal extends WizardAttackGoal {
         return (AlchemistAttackGoal) super.setIsFlying();
     }
 
-    public static final List<MobEffect> ATTACK_POTIONS = List.of(MobEffects.WEAKNESS, MobEffects.BLINDNESS, MobEffects.LEVITATION, MobEffects.MOVEMENT_SLOWDOWN, MobEffects.DIG_SLOWDOWN);
+    public static final List<MobEffect> ATTACK_POTIONS =
+            List.of(
+                    MobEffects.WEAKNESS,
+                    MobEffects.BLINDNESS,
+                    MobEffects.LEVITATION,
+                    MobEffects.MOVEMENT_SLOWDOWN,
+                    MobEffects.DIG_SLOWDOWN);
 
     @Override
     protected void doSpellAction() {
-        //Instead of taking a normal casting action, there is a chance to attempt a potion action
-        if (this.mob.distanceToSqr(this.target) < throwRangeSqr && this.mob.getRandom().nextFloat() < potionBias) {
+        // Instead of taking a normal casting action, there is a chance to attempt a potion action
+        if (this.mob.distanceToSqr(this.target) < throwRangeSqr
+                && this.mob.getRandom().nextFloat() < potionBias) {
             int attackWeight = getAttackWeight();
             int supportWeight = getSupportWeight();
             ItemStack potion = new ItemStack(Items.SPLASH_POTION);
             var targetedEntity = target;
-            if (hasLineOfSight && mob.getRandom().nextFloat() * (attackWeight + supportWeight) > supportWeight) {
-                // We want the potion amplifier to scale with the "difficulty" of our target, with a chunk of randomness. For vanilla players, this will stick to from I-II.
-                int amplifier = (mob.getRandom().nextFloat() < 0.75f ? 0 : 1) + (target.getMaxHealth() > 30 ? (mob.getRandom().nextFloat() < 0.5f ? 0 : 1) : 0);
+            if (hasLineOfSight
+                    && mob.getRandom().nextFloat() * (attackWeight + supportWeight)
+                            > supportWeight) {
+                // We want the potion amplifier to scale with the "difficulty" of our target, with a
+                // chunk of randomness. For vanilla players, this will stick to from I-II.
+                int amplifier =
+                        (mob.getRandom().nextFloat() < 0.75f ? 0 : 1)
+                                + (target.getMaxHealth() > 30
+                                        ? (mob.getRandom().nextFloat() < 0.5f ? 0 : 1)
+                                        : 0);
                 var effect = target.isInvertedHealAndHarm() ? MobEffects.HEAL : MobEffects.HARM;
                 if (mob.getRandom().nextFloat() < 0.45f) {
-                    //Effect, instead of damage
+                    // Effect, instead of damage
                     for (int i = 0; i < ATTACK_POTIONS.size(); i++) {
                         int p = mob.getRandom().nextInt(ATTACK_POTIONS.size());
                         if (!target.hasEffect(ATTACK_POTIONS.get(p))) {
@@ -77,8 +104,16 @@ public class AlchemistAttackGoal extends WizardAttackGoal {
                         }
                     }
                 }
-                PotionUtils.setCustomEffects(potion, List.of(new MobEffectInstance(effect, effect.isInstantenous() ? 0 : 200, amplifier)));
-                PotionUtils.setPotion(potion, Potions.WATER); //"Empty" potion skips rendering color. "water" checks for the effect and renders properly
+                PotionUtils.setCustomEffects(
+                        potion,
+                        List.of(
+                                new MobEffectInstance(
+                                        effect, effect.isInstantenous() ? 0 : 200, amplifier)));
+                PotionUtils.setPotion(
+                        potion,
+                        Potions
+                                .WATER); // "Empty" potion skips rendering color. "water" checks for
+                                         // the effect and renders properly
             } else {
                 Utils.setPotion(potion, Potions.STRONG_HEALING);
                 targetedEntity = this.mob;
@@ -91,9 +126,28 @@ public class AlchemistAttackGoal extends WizardAttackGoal {
             double d1 = targetedEntity.getEyeY() - (double) 1.1F - this.mob.getEyeY();
             double d2 = targetedEntity.getZ() + vec3.z - this.mob.getZ();
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-            thrownpotion.shoot(d0, d1 + d3 * 0.2D, d2, (float) Mth.clampedLerp(0.5f, 1.25f, this.mob.distanceToSqr(targetedEntity) / throwRangeSqr), 8.0F);
+            thrownpotion.shoot(
+                    d0,
+                    d1 + d3 * 0.2D,
+                    d2,
+                    (float)
+                            Mth.clampedLerp(
+                                    0.5f,
+                                    1.25f,
+                                    this.mob.distanceToSqr(targetedEntity) / throwRangeSqr),
+                    8.0F);
             if (!this.mob.isSilent()) {
-                this.mob.level().playSound(null, this.mob.getX(), this.mob.getY(), this.mob.getZ(), SoundEvents.WITCH_THROW, this.mob.getSoundSource(), 1.0F, 0.8F + this.mob.getRandom().nextFloat() * 0.4F);
+                this.mob
+                        .level()
+                        .playSound(
+                                null,
+                                this.mob.getX(),
+                                this.mob.getY(),
+                                this.mob.getZ(),
+                                SoundEvents.WITCH_THROW,
+                                this.mob.getSoundSource(),
+                                1.0F,
+                                0.8F + this.mob.getRandom().nextFloat() * 0.4F);
             }
             this.mob.level().addFreshEntity(thrownpotion);
             this.mob.swing(InteractionHand.MAIN_HAND, true);

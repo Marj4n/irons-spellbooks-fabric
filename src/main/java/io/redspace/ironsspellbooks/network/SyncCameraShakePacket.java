@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.network;
 
-
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.backwards_compat.CustomPacketPayload;
 import io.redspace.ironsspellbooks.api.util.CameraShakeData;
@@ -11,14 +10,20 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-public record SyncCameraShakePacket(CameraShakeData data, boolean remove) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<SyncCameraShakePacket> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(IronsSpellbooks.MODID, "sync_camera_shake"));
-//    public static final StreamCodec<RegistryFriendlyByteBuf, SyncCameraShakePacket> STREAM_CODEC = CustomPacketPayload.codec(SyncCameraShakePacket::write, SyncCameraShakePacket::new);
+public record SyncCameraShakePacket(CameraShakeData data, boolean remove)
+        implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<SyncCameraShakePacket> TYPE =
+            new CustomPacketPayload.Type<>(
+                    new ResourceLocation(IronsSpellbooks.MODID, "sync_camera_shake"));
 
-//    @Override
-//    public Type<? extends CustomPacketPayload> type() {
-//        return TYPE;
-//    }
+    //    public static final StreamCodec<RegistryFriendlyByteBuf, SyncCameraShakePacket>
+    // STREAM_CODEC = CustomPacketPayload.codec(SyncCameraShakePacket::write,
+    // SyncCameraShakePacket::new);
+
+    //    @Override
+    //    public Type<? extends CustomPacketPayload> type() {
+    //        return TYPE;
+    //    }
 
     public SyncCameraShakePacket(FriendlyByteBuf buf) {
         this(CameraShakeData.deserializeFromBuffer(buf), buf.readBoolean());
@@ -31,13 +36,14 @@ public record SyncCameraShakePacket(CameraShakeData data, boolean remove) implem
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            if (remove) {
-                CameraShakeManager.removeClientCameraShake(data);
-            } else {
-                CameraShakeManager.addClientCameraShake(data);
-            }
-        });
+        ctx.enqueueWork(
+                () -> {
+                    if (remove) {
+                        CameraShakeManager.removeClientCameraShake(data);
+                    } else {
+                        CameraShakeManager.addClientCameraShake(data);
+                    }
+                });
         return true;
     }
 }

@@ -16,7 +16,10 @@ public record Color(int packedARGB, int red, int green, int blue) {
     }
 
     public int luminance() {
-        return (int)(0.2126 * (double)this.red + 0.7152 * (double)this.green + 0.0722 * (double)this.blue);
+        return (int)
+                (0.2126 * (double) this.red
+                        + 0.7152 * (double) this.green
+                        + 0.0722 * (double) this.blue);
     }
 
     public int alpha() {
@@ -33,7 +36,10 @@ public record Color(int packedARGB, int red, int green, int blue) {
     }
 
     public Color multiply(Color other) {
-        return new Color(this.red * other.red / 255, this.green * other.green / 255, this.blue * other.blue / 255);
+        return new Color(
+                this.red * other.red / 255,
+                this.green * other.green / 255,
+                this.blue * other.blue / 255);
     }
 
     public static Color rgba(int rgba) {
@@ -49,11 +55,36 @@ public record Color(int packedARGB, int red, int green, int blue) {
     }
 
     public static Color lerp(float f, Color a, Color b) {
-        return new Color((int)Mth.clamp((float)Mth.lerp((float)f, (float)a.red, (float)b.red), (float)0.0f, (float)255.0f), (int)Mth.clamp((float)Mth.lerp((float)f, (float)a.green, (float)b.green), (float)0.0f, (float)255.0f), (int)Mth.clamp((float)Mth.lerp((float)f, (float)a.blue, (float)b.blue), (float)0.0f, (float)255.0f));
+        return new Color(
+                (int)
+                        Mth.clamp(
+                                (float) Mth.lerp((float) f, (float) a.red, (float) b.red),
+                                (float) 0.0f,
+                                (float) 255.0f),
+                (int)
+                        Mth.clamp(
+                                (float) Mth.lerp((float) f, (float) a.green, (float) b.green),
+                                (float) 0.0f,
+                                (float) 255.0f),
+                (int)
+                        Mth.clamp(
+                                (float) Mth.lerp((float) f, (float) a.blue, (float) b.blue),
+                                (float) 0.0f,
+                                (float) 255.0f));
     }
 
     public Color scale(float scalar) {
-        return new Color((int)Mth.clamp((float)((float)this.red * scalar), (float)0.0f, (float)255.0f), (int)Mth.clamp((float)((float)this.green * scalar), (float)0.0f, (float)255.0f), (int)Mth.clamp((float)((float)this.blue * scalar), (float)0.0f, (float)255.0f));
+        return new Color(
+                (int) Mth.clamp((float) ((float) this.red * scalar), (float) 0.0f, (float) 255.0f),
+                (int)
+                        Mth.clamp(
+                                (float) ((float) this.green * scalar),
+                                (float) 0.0f,
+                                (float) 255.0f),
+                (int)
+                        Mth.clamp(
+                                (float) ((float) this.blue * scalar),
+                                (float) 0.0f,
+                                (float) 255.0f));
     }
 }
-

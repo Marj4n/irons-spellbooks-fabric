@@ -32,7 +32,8 @@ public class IceSpiderNavigation extends GroundPathNavigation {
             var baseY = mob.getY();
             var maxStepUp = mob.maxUpStep();
             var finalNode = path.getEndNode().asVec3();
-            // if the target position has a next elevation change greater than our step-up abilities, attempt to shortcut the path to utilize our climbing abilities
+            // if the target position has a next elevation change greater than our step-up
+            // abilities, attempt to shortcut the path to utilize our climbing abilities
             // do this by finding the most direct node
             if (finalNode.y - baseY > maxStepUp) {
                 Vec3 directionVector = finalNode.subtract(mob.position());
@@ -51,13 +52,13 @@ public class IceSpiderNavigation extends GroundPathNavigation {
             }
         } catch (Exception e) {
             IronsSpellbooks.LOGGER.error(e.getMessage());
-            //cancel navigation
+            // cancel navigation
             this.path = null;
         }
         super.trimPath();
     }
 
-    //fixme: this is duplicated from notidioticnav
+    // fixme: this is duplicated from notidioticnav
     protected boolean isTraversable(Vec3 pos1, Vec3 pos2) {
         Vec3 step = pos2.subtract(pos1);
         double distance = step.length();
@@ -66,7 +67,8 @@ public class IceSpiderNavigation extends GroundPathNavigation {
             BlockPos currentPos = BlockPos.containing(pos1.add(step.scale(i)));
             if (mob.getType().isBlockDangerous(level.getBlockState(currentPos))) {
                 return false; // block is dangerous to traverse through (ie fire)
-            } else if (!level.getBlockState(currentPos.below()).isFaceSturdy(level, currentPos.below(), Direction.UP)) {
+            } else if (!level.getBlockState(currentPos.below())
+                    .isFaceSturdy(level, currentPos.below(), Direction.UP)) {
                 return false; // block does not support upwards (ie is pitfall or no collision)
             }
         }

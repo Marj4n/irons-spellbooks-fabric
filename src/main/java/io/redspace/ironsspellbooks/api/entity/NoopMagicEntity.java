@@ -5,35 +5,29 @@ import io.redspace.ironsspellbooks.capabilities.magic.SyncedSpellData;
 import net.minecraft.world.entity.projectile.Projectile;
 
 public interface NoopMagicEntity extends IMagicEntity {
-//    default MagicData getMagicData() {
-//        return ((Entity) this).getData(DataAttachmentRegistry.MAGIC_DATA);
-//    }
+    //    default MagicData getMagicData() {
+    //        return ((Entity) this).getData(DataAttachmentRegistry.MAGIC_DATA);
+    //    }
 
-    default void setSyncedSpellData(SyncedSpellData syncedSpellData) {
-    }
+    default void setSyncedSpellData(SyncedSpellData syncedSpellData) {}
 
     default boolean isCasting() {
         return false;
     }
 
-    default void initiateCastSpell(AbstractSpell spell, int spellLevel) {
-    }
+    default void initiateCastSpell(AbstractSpell spell, int spellLevel) {}
 
-    default void cancelCast() {
-    }
+    default void cancelCast() {}
 
-    default void castComplete() {
-    }
+    default void castComplete() {}
 
-    default void notifyDangerousProjectile(Projectile projectile) {
-    }
+    default void notifyDangerousProjectile(Projectile projectile) {}
 
     default boolean setTeleportLocationBehindTarget(int distance) {
         return false;
     }
 
-    default void setBurningDashDirectionData() {
-    }
+    default void setBurningDashDirectionData() {}
 
     default boolean isDrinkingPotion() {
         return false;
@@ -43,9 +37,7 @@ public interface NoopMagicEntity extends IMagicEntity {
         return false;
     }
 
-    default void setHasUsedSingleAttack(boolean bool) {
-    }
+    default void setHasUsedSingleAttack(boolean bool) {}
 
-    default void startDrinkingPotion() {
-    }
+    default void startDrinkingPotion() {}
 }

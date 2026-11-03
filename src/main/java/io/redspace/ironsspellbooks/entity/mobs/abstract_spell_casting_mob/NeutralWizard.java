@@ -35,9 +35,9 @@ public class NeutralWizard extends AbstractSpellCastingMob implements NeutralMob
 
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private int remainingPersistentAngerTime;
-    @Nullable
-    private UUID persistentAngerTarget;
+    @Nullable private UUID persistentAngerTarget;
     private int lastAngerLevelUpdate;
+
     /**
      * Tracks spectrum of anger on a per-entity basis, allowing for more nuanced behavior than just "is angry", as well as "anger = hostility"
      * <br>
@@ -91,7 +91,9 @@ public class NeutralWizard extends AbstractSpellCastingMob implements NeutralMob
             ListTag entries = pCompound.getList("angerLevels", CompoundTag.TAG_COMPOUND);
             for (Tag tag : entries) {
                 try {
-                    this.angerLevels.put(((CompoundTag) tag).getUUID("player"), ((CompoundTag) tag).getInt("anger"));
+                    this.angerLevels.put(
+                            ((CompoundTag) tag).getUUID("player"),
+                            ((CompoundTag) tag).getInt("anger"));
                 } catch (Exception exception) {
                     continue;
                 }
@@ -108,7 +110,8 @@ public class NeutralWizard extends AbstractSpellCastingMob implements NeutralMob
             this.updatePersistentAnger((ServerLevel) this.level(), true);
         }
         if (!angerLevels.isEmpty() && lastAngerLevelUpdate + 20 * 20 < tickCount) {
-            ObjectIterator<Object2IntMap.Entry<UUID>> it = angerLevels.object2IntEntrySet().iterator();
+            ObjectIterator<Object2IntMap.Entry<UUID>> it =
+                    angerLevels.object2IntEntrySet().iterator();
             while (it.hasNext()) {
                 Object2IntMap.Entry<UUID> entry = it.next();
                 int newLevel = entry.getIntValue() - 1;
@@ -138,8 +141,20 @@ public class NeutralWizard extends AbstractSpellCastingMob implements NeutralMob
         angerLevels.put(angryAt.getUUID(), anger);
         lastAngerLevelUpdate = tickCount;
         if (anger < getAngerThreshold() && showParticles) {
-            MagicManager.spawnParticles(level(), ParticleTypes.ANGRY_VILLAGER, getX(), getY() + 1.25, getZ(), 15, .3, .2, .3, 0, false);
-            getAngerSound().ifPresent((sound) -> playSound(sound, getSoundVolume(), getVoicePitch()));
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleTypes.ANGRY_VILLAGER,
+                    getX(),
+                    getY() + 1.25,
+                    getZ(),
+                    15,
+                    .3,
+                    .2,
+                    .3,
+                    0,
+                    false);
+            getAngerSound()
+                    .ifPresent((sound) -> playSound(sound, getSoundVolume(), getVoicePitch()));
         }
         if (anger >= getAngerThreshold()) {
             setPersistentAngerTarget(angryAt.getUUID());
@@ -169,12 +184,15 @@ public class NeutralWizard extends AbstractSpellCastingMob implements NeutralMob
     }
 
     public boolean isHostileTowards(LivingEntity entity) {
-        return isAngryAt(entity) && (entity.getType() != EntityType.PLAYER || angerLevels.getOrDefault(entity.getUUID(), 0) >= getAngerThreshold());
+        return isAngryAt(entity)
+                && (entity.getType() != EntityType.PLAYER
+                        || angerLevels.getOrDefault(entity.getUUID(), 0) >= getAngerThreshold());
     }
 
     @Override
     public boolean isAngryAt(LivingEntity pTarget) {
-        return (pTarget.getType() == EntityType.PLAYER && angerLevels.containsKey(pTarget.getUUID()))
+        return (pTarget.getType() == EntityType.PLAYER
+                        && angerLevels.containsKey(pTarget.getUUID()))
                 || NeutralMob.super.isAngryAt(pTarget);
     }
 

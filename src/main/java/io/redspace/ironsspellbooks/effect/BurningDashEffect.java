@@ -16,12 +16,19 @@ public class BurningDashEffect extends MagicMobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity livingEntity, int amplifier) {
-        List<Entity> list = livingEntity.level().getEntities(livingEntity, livingEntity.getBoundingBox().inflate(.25, .5, .25));
+        List<Entity> list =
+                livingEntity
+                        .level()
+                        .getEntities(
+                                livingEntity, livingEntity.getBoundingBox().inflate(.25, .5, .25));
         if (!list.isEmpty()) {
             for (Entity entity : list) {
                 if (entity instanceof LivingEntity) {
-                    DamageSources.applyDamage(entity, amplifier, SpellRegistry.BURNING_DASH_SPELL.get().getDamageSource(livingEntity));
-                    //Guarantee that the entity receives i-frames, since we are damaging every tick
+                    DamageSources.applyDamage(
+                            entity,
+                            amplifier,
+                            SpellRegistry.BURNING_DASH_SPELL.get().getDamageSource(livingEntity));
+                    // Guarantee that the entity receives i-frames, since we are damaging every tick
                     entity.invulnerableTime = 20;
                 }
             }

@@ -35,8 +35,7 @@ public class RenderHelper {
         return color255(
                 (int) Mth.lerp(f, redA, redB),
                 (int) Mth.lerp(f, greenA, greenB),
-                (int) Mth.lerp(f, blueA, blueB)
-        );
+                (int) Mth.lerp(f, blueA, blueB));
     }
 
     public static int color255(int pRed, int pGreen, int pBlue, int pAlpha) {
@@ -48,7 +47,11 @@ public class RenderHelper {
     }
 
     public static int colorf(float pRed, float pGreen, float pBlue, float pAlpha) {
-        return color255((int) (255 * pRed), (int) (255 * pGreen), (int) (255 * pBlue), (int) (255 * pAlpha));
+        return color255(
+                (int) (255 * pRed),
+                (int) (255 * pGreen),
+                (int) (255 * pBlue),
+                (int) (255 * pAlpha));
     }
 
     public static int colorf(float pRed, float pGreen, float pBlue) {
@@ -90,7 +93,6 @@ public class RenderHelper {
             this.uvs.add(new Vec2(u, v));
             return this;
         }
-
 
         public QuadBuilder normal(float x, float y, float z) {
             this.normals.add(new Vector3f(x, y, z));
@@ -164,19 +166,21 @@ public class RenderHelper {
                     color = colors.get(i);
                 }
                 if (matrix != null) {
-//                    vertex = matrix.transformPosition(vertex.x, vertex.y, vertex.z, new Vector3f());
+                    //                    vertex = matrix.transformPosition(vertex.x, vertex.y,
+                    // vertex.z, new Vector3f());
                     consumer.vertex(matrix, vertex.x, vertex.y, vertex.z);
                 } else {
                     consumer.vertex(vertex.x, vertex.y, vertex.z);
                 }
-//                consumer.vertex(vertex.x, vertex.y, vertex.z).color(color);
+                //                consumer.vertex(vertex.x, vertex.y, vertex.z).color(color);
                 consumer.color(color);
                 if (!uvs.isEmpty()) {
                     consumer.uv(uvs.get(i).x, uvs.get(i).y);
                 }
                 if (!normals.isEmpty()) {
                     if (normalmatrix != null) {
-                        consumer.normal(normalmatrix, normals.get(i).x, normals.get(i).y, normals.get(i).z);
+                        consumer.normal(
+                                normalmatrix, normals.get(i).x, normals.get(i).y, normals.get(i).z);
                     } else {
                         consumer.normal(normals.get(i).x, normals.get(i).y, normals.get(i).z);
                     }
@@ -202,56 +206,131 @@ public class RenderHelper {
     }
 
     public static class CustomerRenderType extends RenderType {
-        public CustomerRenderType(String pName, VertexFormat pFormat, VertexFormat.Mode pMode, int pBufferSize, boolean pAffectsCrumbling, boolean pSortOnUpload, Runnable pSetupState, Runnable pClearState) {
-            super(pName, pFormat, pMode, pBufferSize, pAffectsCrumbling, pSortOnUpload, pSetupState, pClearState);
+        public CustomerRenderType(
+                String pName,
+                VertexFormat pFormat,
+                VertexFormat.Mode pMode,
+                int pBufferSize,
+                boolean pAffectsCrumbling,
+                boolean pSortOnUpload,
+                Runnable pSetupState,
+                Runnable pClearState) {
+            super(
+                    pName,
+                    pFormat,
+                    pMode,
+                    pBufferSize,
+                    pAffectsCrumbling,
+                    pSortOnUpload,
+                    pSetupState,
+                    pClearState);
         }
 
         public static @NotNull RenderType darkGlow(@NotNull ResourceLocation pLocation) {
             return DARK_PORTAL_GLOW.apply(pLocation);
         }
 
-        protected static final RenderStateShard.TransparencyStateShard ONE_MINUS = new RenderStateShard.TransparencyStateShard("one_minus", () -> {
-            RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        }, () -> {
-            RenderSystem.disableBlend();
-            RenderSystem.defaultBlendFunc();
-        });
+        protected static final RenderStateShard.TransparencyStateShard ONE_MINUS =
+                new RenderStateShard.TransparencyStateShard(
+                        "one_minus",
+                        () -> {
+                            RenderSystem.enableBlend();
+                            RenderSystem.blendFuncSeparate(
+                                    GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA,
+                                    GlStateManager.DestFactor.SRC_COLOR,
+                                    GlStateManager.SourceFactor.ONE,
+                                    GlStateManager.DestFactor.ZERO);
+                        },
+                        () -> {
+                            RenderSystem.disableBlend();
+                            RenderSystem.defaultBlendFunc();
+                        });
 
-        private static final Function<ResourceLocation, RenderType> DARK_PORTAL_GLOW = Util.memoize(
-                pLocation -> {
-                    return create("dark_portal", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER).setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false)).setTransparencyState(ONE_MINUS).setCullState(NO_CULL).setLightmapState(LIGHTMAP).setOverlayState(OVERLAY).createCompositeState(false));
-                }
-        );
-        private static final Function<ResourceLocation, RenderType> MAGIC = Util.memoize(
-                pLocation -> {
-                    return create("magic_glow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER).setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false)).setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(CULL).setLightmapState(LIGHTMAP).setOverlayState(OVERLAY).createCompositeState(false));
-                }
-        );
-        private static final Function<ResourceLocation, RenderType> MAGIC_NO_CULL = Util.memoize(
-                pLocation -> {
-                    return create("magic_glow_no_cull", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER).setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false)).setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(NO_CULL).setLightmapState(LIGHTMAP).setOverlayState(OVERLAY).createCompositeState(false));
-                }
-        );
+        private static final Function<ResourceLocation, RenderType> DARK_PORTAL_GLOW =
+                Util.memoize(
+                        pLocation -> {
+                            return create(
+                                    "dark_portal",
+                                    DefaultVertexFormat.NEW_ENTITY,
+                                    VertexFormat.Mode.QUADS,
+                                    256,
+                                    false,
+                                    true,
+                                    RenderType.CompositeState.builder()
+                                            .setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+                                            .setTextureState(
+                                                    new RenderStateShard.TextureStateShard(
+                                                            pLocation, false, false))
+                                            .setTransparencyState(ONE_MINUS)
+                                            .setCullState(NO_CULL)
+                                            .setLightmapState(LIGHTMAP)
+                                            .setOverlayState(OVERLAY)
+                                            .createCompositeState(false));
+                        });
+        private static final Function<ResourceLocation, RenderType> MAGIC =
+                Util.memoize(
+                        pLocation -> {
+                            return create(
+                                    "magic_glow",
+                                    DefaultVertexFormat.NEW_ENTITY,
+                                    VertexFormat.Mode.QUADS,
+                                    256,
+                                    false,
+                                    true,
+                                    RenderType.CompositeState.builder()
+                                            .setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+                                            .setTextureState(
+                                                    new RenderStateShard.TextureStateShard(
+                                                            pLocation, false, false))
+                                            .setTransparencyState(ADDITIVE_TRANSPARENCY)
+                                            .setCullState(CULL)
+                                            .setLightmapState(LIGHTMAP)
+                                            .setOverlayState(OVERLAY)
+                                            .createCompositeState(false));
+                        });
+        private static final Function<ResourceLocation, RenderType> MAGIC_NO_CULL =
+                Util.memoize(
+                        pLocation -> {
+                            return create(
+                                    "magic_glow_no_cull",
+                                    DefaultVertexFormat.NEW_ENTITY,
+                                    VertexFormat.Mode.QUADS,
+                                    256,
+                                    false,
+                                    true,
+                                    RenderType.CompositeState.builder()
+                                            .setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+                                            .setTextureState(
+                                                    new RenderStateShard.TextureStateShard(
+                                                            pLocation, false, false))
+                                            .setTransparencyState(ADDITIVE_TRANSPARENCY)
+                                            .setCullState(NO_CULL)
+                                            .setLightmapState(LIGHTMAP)
+                                            .setOverlayState(OVERLAY)
+                                            .createCompositeState(false));
+                        });
 
-        public static final Function<ResourceLocation, RenderType> PYRIUM_STAFF_ORB = Util.memoize(
-                pLocation -> {
-                    return create("dark_portal_cull",
-                            DefaultVertexFormat.NEW_ENTITY,
-                            VertexFormat.Mode.QUADS,
-                            256,
-                            false,
-                            true,
-                            RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
-                                    .setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false))
-                                    .setTransparencyState(NO_TRANSPARENCY)
-                                    .setCullState(CULL)
-                                    .setLightmapState(LIGHTMAP)
-                                    .setOverlayState(OVERLAY)
-                                    .createCompositeState(false));
-
-                }
-        );
+        public static final Function<ResourceLocation, RenderType> PYRIUM_STAFF_ORB =
+                Util.memoize(
+                        pLocation -> {
+                            return create(
+                                    "dark_portal_cull",
+                                    DefaultVertexFormat.NEW_ENTITY,
+                                    VertexFormat.Mode.QUADS,
+                                    256,
+                                    false,
+                                    true,
+                                    RenderType.CompositeState.builder()
+                                            .setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+                                            .setTextureState(
+                                                    new RenderStateShard.TextureStateShard(
+                                                            pLocation, false, false))
+                                            .setTransparencyState(NO_TRANSPARENCY)
+                                            .setCullState(CULL)
+                                            .setLightmapState(LIGHTMAP)
+                                            .setOverlayState(OVERLAY)
+                                            .createCompositeState(false));
+                        });
 
         public static RenderType magic(ResourceLocation pLocation) {
             return MAGIC.apply(pLocation);
@@ -262,9 +341,24 @@ public class RenderHelper {
         }
 
         public static RenderType magicSwirl(ResourceLocation pLocation, float pU, float pV) {
-            return create("magic_glow_swirl", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER).setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false)).setTexturingState(new RenderStateShard.OffsetTexturingStateShard(pU, pV)).setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(CULL).setLightmapState(LIGHTMAP).setOverlayState(OVERLAY).createCompositeState(false));
+            return create(
+                    "magic_glow_swirl",
+                    DefaultVertexFormat.NEW_ENTITY,
+                    VertexFormat.Mode.QUADS,
+                    256,
+                    false,
+                    true,
+                    RenderType.CompositeState.builder()
+                            .setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+                            .setTextureState(
+                                    new RenderStateShard.TextureStateShard(pLocation, false, false))
+                            .setTexturingState(
+                                    new RenderStateShard.OffsetTexturingStateShard(pU, pV))
+                            .setTransparencyState(ADDITIVE_TRANSPARENCY)
+                            .setCullState(CULL)
+                            .setLightmapState(LIGHTMAP)
+                            .setOverlayState(OVERLAY)
+                            .createCompositeState(false));
         }
-
-
     }
 }

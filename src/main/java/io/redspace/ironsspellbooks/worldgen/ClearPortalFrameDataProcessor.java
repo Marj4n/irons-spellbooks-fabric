@@ -13,24 +13,23 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.jetbrains.annotations.NotNull;
 
 public class ClearPortalFrameDataProcessor extends StructureProcessor {
-    public static final Codec<ClearPortalFrameDataProcessor> CODEC = MapCodec.unit(ClearPortalFrameDataProcessor::new).codec();
+    public static final Codec<ClearPortalFrameDataProcessor> CODEC =
+            MapCodec.unit(ClearPortalFrameDataProcessor::new).codec();
 
-
-    public ClearPortalFrameDataProcessor() {
-    }
+    public ClearPortalFrameDataProcessor() {}
 
     @Override
-    public StructureTemplate.StructureBlockInfo processBlock(@NotNull LevelReader levelReader,
-                                                             @NotNull BlockPos jigsawPiecePos,
-                                                             @NotNull BlockPos jigsawPieceBottomCenterPos,
-                                                             StructureTemplate.@NotNull StructureBlockInfo blockInfoLocal,
-                                                             StructureTemplate.StructureBlockInfo blockInfoGlobal,
-                                                             StructurePlaceSettings structurePlacementData) {
+    public StructureTemplate.StructureBlockInfo processBlock(
+            @NotNull LevelReader levelReader,
+            @NotNull BlockPos jigsawPiecePos,
+            @NotNull BlockPos jigsawPieceBottomCenterPos,
+            StructureTemplate.@NotNull StructureBlockInfo blockInfoLocal,
+            StructureTemplate.StructureBlockInfo blockInfoGlobal,
+            StructurePlaceSettings structurePlacementData) {
         if (blockInfoGlobal.state().getBlock() instanceof PortalFrameBlock) {
-            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(
-                    blockInfoGlobal.pos(),
-                    blockInfoGlobal.state(),
-                    null);
+            blockInfoGlobal =
+                    new StructureTemplate.StructureBlockInfo(
+                            blockInfoGlobal.pos(), blockInfoGlobal.state(), null);
         }
         return blockInfoGlobal;
     }

@@ -53,7 +53,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class CursedArmorStandEntity extends AbstractSpellCastingMob implements IAnimatedAttacker, NeutralMob {
+public class CursedArmorStandEntity extends AbstractSpellCastingMob
+        implements IAnimatedAttacker, NeutralMob {
     public enum Pose {
         /**
          * vanilla armor stand pose
@@ -75,12 +76,14 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
 
     public static final int JIGGLE_TIME = 15;
 
-    private static final EntityDataAccessor<Boolean> DATA_FROZEN = SynchedEntityData.defineId(CursedArmorStandEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<String> DATA_POSE = SynchedEntityData.defineId(CursedArmorStandEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Boolean> DATA_FROZEN =
+            SynchedEntityData.defineId(CursedArmorStandEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<String> DATA_POSE =
+            SynchedEntityData.defineId(CursedArmorStandEntity.class, EntityDataSerializers.STRING);
 
-    @Nullable
-    Vec3 spawn = null;
+    @Nullable Vec3 spawn = null;
     float originalYRot = 0;
+
     /**
      * client tick timers for animating interactions
      */
@@ -118,7 +121,18 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
             this.setYBodyRot(originalYRot);
             this.setYRot(originalYRot);
         } else if (wasFrozen && !level().isClientSide) {
-            MagicManager.spawnParticles(level(), ParticleTypes.ANGRY_VILLAGER, getX(), getY() + 1.25, getZ(), 15, .3, .2, .3, 0, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleTypes.ANGRY_VILLAGER,
+                    getX(),
+                    getY() + 1.25,
+                    getZ(),
+                    15,
+                    .3,
+                    .2,
+                    .3,
+                    0,
+                    false);
         }
     }
 
@@ -126,30 +140,43 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
     public InteractionResult interactAt(Player pPlayer, Vec3 pVector, InteractionHand pHand) {
         if (isArmorStandFrozen()) {
             if (pPlayer.level().isClientSide) {
-                handleInteraction(pVector, slot -> {
-                    switch (slot) {
-                        case HEAD -> helmetJiggle = JIGGLE_TIME;
-                        case CHEST -> chestJiggle = JIGGLE_TIME;
-                        case LEGS -> legJiggle = JIGGLE_TIME;
-                        case FEET -> bootJiggle = JIGGLE_TIME;
-                    }
-                });
+                handleInteraction(
+                        pVector,
+                        slot -> {
+                            switch (slot) {
+                                case HEAD -> helmetJiggle = JIGGLE_TIME;
+                                case CHEST -> chestJiggle = JIGGLE_TIME;
+                                case LEGS -> legJiggle = JIGGLE_TIME;
+                                case FEET -> bootJiggle = JIGGLE_TIME;
+                            }
+                        });
             } else {
-                AtomicReference<SoundEvent> sound = new AtomicReference<>(SoundEvents.ARMOR_STAND_HIT);
+                AtomicReference<SoundEvent> sound =
+                        new AtomicReference<>(SoundEvents.ARMOR_STAND_HIT);
 
-                handleInteraction(pVector, slot -> {
-                    if (hasItemInSlot(slot) && getItemBySlot(slot).getItem() instanceof ArmorItem armorItem) {
-                        sound.set(armorItem.getMaterial().getEquipSound());
-                    }
-                    if (pPlayer.isCreative() && pPlayer.isCrouching()) {
-                        ItemStack equipped = getItemBySlot(slot);
-                        ItemStack playerHeld = pPlayer.getItemInHand(pHand);
-                        if ((equipped.isEmpty() || equipped.getItem() instanceof ArmorItem) && (playerHeld.isEmpty() || (playerHeld.getItem() instanceof ArmorItem armorItem && armorItem.getEquipmentSlot().equals(slot)))) {
-                            pPlayer.setItemInHand(pHand, equipped);
-                            this.setItemSlot(slot, playerHeld);
-                        }
-                    }
-                });
+                handleInteraction(
+                        pVector,
+                        slot -> {
+                            if (hasItemInSlot(slot)
+                                    && getItemBySlot(slot).getItem()
+                                            instanceof ArmorItem armorItem) {
+                                sound.set(armorItem.getMaterial().getEquipSound());
+                            }
+                            if (pPlayer.isCreative() && pPlayer.isCrouching()) {
+                                ItemStack equipped = getItemBySlot(slot);
+                                ItemStack playerHeld = pPlayer.getItemInHand(pHand);
+                                if ((equipped.isEmpty() || equipped.getItem() instanceof ArmorItem)
+                                        && (playerHeld.isEmpty()
+                                                || (playerHeld.getItem()
+                                                                instanceof ArmorItem armorItem
+                                                        && armorItem
+                                                                .getEquipmentSlot()
+                                                                .equals(slot)))) {
+                                    pPlayer.setItemInHand(pHand, equipped);
+                                    this.setItemSlot(slot, playerHeld);
+                                }
+                            }
+                        });
                 playSound(sound.get());
                 if (canAttack(pPlayer) && interactionAnger++ >= 2) {
                     this.setTarget(pPlayer);
@@ -178,7 +205,8 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
         return !isArmorStandFrozen();
     }
 
-    public CursedArmorStandEntity(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
+    public CursedArmorStandEntity(
+            EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         xpReward = 0;
         this.lookControl = createLookControl();
@@ -187,7 +215,8 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
 
     protected LookControl createLookControl() {
         return new LookControl(this) {
-            //This allows us to more rapidly turn towards our target. Helps to make sure his targets are aligned with his swing animations
+            // This allows us to more rapidly turn towards our target. Helps to make sure his
+            // targets are aligned with his swing animations
             @Override
             protected float rotateTowards(float pFrom, float pTo, float pMaxDelta) {
                 return super.rotateTowards(pFrom, pTo, pMaxDelta * 2.5f);
@@ -202,8 +231,9 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
 
     protected MoveControl createMoveControl() {
         return new MoveControl(this) {
-            //This fixes a bug where a mob tries to path into the block it's already standing, and spins around trying to look "forward"
-            //We nullify our rotation calculation if we are close to block we are trying to get to
+            // This fixes a bug where a mob tries to path into the block it's already standing, and
+            // spins around trying to look "forward"
+            // We nullify our rotation calculation if we are close to block we are trying to get to
             @Override
             protected float rotlerp(float pSourceAngle, float pTargetAngle, float pMaximumChange) {
                 double d0 = this.wantedX - this.mob.getX();
@@ -240,7 +270,10 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
     protected void playHurtSound(DamageSource pSource) {
         var chestplate = this.getItemBySlot(EquipmentSlot.CHEST);
         if (!chestplate.isEmpty() && chestplate.getItem() instanceof ArmorItem armorItem) {
-            this.playSound(armorItem.getMaterial().getEquipSound(), this.getSoundVolume(), this.getVoicePitch());
+            this.playSound(
+                    armorItem.getMaterial().getEquipSound(),
+                    this.getSoundVolume(),
+                    this.getVoicePitch());
         }
         super.playHurtSound(pSource);
     }
@@ -275,7 +308,8 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
         try {
             this.setArmorstandPose(Pose.valueOf(pose));
         } catch (Exception ignored) {
-            IronsSpellbooks.LOGGER.warn("Entity {} attempting to load invalid pose: {}", this, pose);
+            IronsSpellbooks.LOGGER.warn(
+                    "Entity {} attempting to load invalid pose: {}", this, pose);
             this.setArmorstandPose(Pose.DEFAULT);
         }
         this.readPersistentAngerSaveData(this.level(), pCompound);
@@ -298,27 +332,27 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(3, new ArmorStandAttackGoal(this, 1f, 50, 75)
-                .setMoveset(List.of(
-                        new AttackAnimationData(10, "simple_sword_horizontal_cross_swipe", 8),
-                        new AttackAnimationData(20, "simple_sword_downstrike", 16)
-                ))
-                .setComboChance(.2f)
-                .setMeleeAttackInverval(10, 30)
-                .setMeleeMovespeedModifier(1.5f)
-                .setMeleeBias(1f, 1f)
-                .setSpells(
-                        List.of(),
-                        List.of(),
-                        List.of(),
-                        List.of()
-                )
+        this.goalSelector.addGoal(
+                3,
+                new ArmorStandAttackGoal(this, 1f, 50, 75)
+                        .setMoveset(
+                                List.of(
+                                        new AttackAnimationData(
+                                                10, "simple_sword_horizontal_cross_swipe", 8),
+                                        new AttackAnimationData(20, "simple_sword_downstrike", 16)))
+                        .setComboChance(.2f)
+                        .setMeleeAttackInverval(10, 30)
+                        .setMeleeMovespeedModifier(1.5f)
+                        .setMeleeBias(1f, 1f)
+                        .setSpells(List.of(), List.of(), List.of(), List.of()));
 
-        );
         this.goalSelector.addGoal(5, new ArmorStandReturnToHomeGoal(this, 1));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+        this.targetSelector.addGoal(
+                3,
+                new NearestAttackableTargetGoal<>(
+                        this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -347,7 +381,8 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (pSource.getEntity() != null && pSource.getEntity().getType().is(Tags.EntityTypes.BOSSES)) {
+        if (pSource.getEntity() != null
+                && pSource.getEntity().getType().is(Tags.EntityTypes.BOSSES)) {
             return false;
         }
         setArmorStandFrozen(false);
@@ -355,7 +390,12 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
     }
 
     @Override
-        public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         if (pReason.equals(MobSpawnType.STRUCTURE)) {
             this.originalYRot = getYRot();
             this.spawn = null;
@@ -367,9 +407,8 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
-
-    }
+    protected void populateDefaultEquipmentSlots(
+            RandomSource pRandom, DifficultyInstance pDifficulty) {}
 
     public static AttributeSupplier.Builder prepareAttributes() {
         return LivingEntity.createLivingAttributes()
@@ -377,19 +416,24 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
                 .add(Attributes.ATTACK_KNOCKBACK, 0.0)
                 .add(Attributes.MAX_HEALTH, 60.0)
                 .add(Attributes.FOLLOW_RANGE, 24.0)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH, 3)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .ENTITY_REACH,
+                        3)
                 .add(Attributes.MOVEMENT_SPEED, .25);
     }
 
     RawAnimation animationToPlay = null;
-    private final AnimationController<CursedArmorStandEntity> meleeController = new AnimationController<>(this, "keeper_animations", 0, this::predicate);
+    private final AnimationController<CursedArmorStandEntity> meleeController =
+            new AnimationController<>(this, "keeper_animations", 0, this::predicate);
 
     @Override
     public void playAnimation(String animationId) {
         try {
             animationToPlay = RawAnimation.begin().thenPlay(animationId);
         } catch (Exception ignored) {
-            IronsSpellbooks.LOGGER.error("Entity {} Failed to play animation: {}", this, animationId);
+            IronsSpellbooks.LOGGER.error(
+                    "Entity {} Failed to play animation: {}", this, animationId);
         }
     }
 
@@ -412,23 +456,21 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
 
     @Override
     public boolean isAnimating() {
-        return meleeController.getAnimationState() != AnimationController.State.STOPPED || super.isAnimating();
+        return meleeController.getAnimationState() != AnimationController.State.STOPPED
+                || super.isAnimating();
     }
-
 
     @Override
     protected PathNavigation createNavigation(Level pLevel) {
         return new NotIdioticNavigation(this, pLevel);
     }
 
-
     /*
     Neutral mob impl
      */
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private int remainingPersistentAngerTime;
-    @Nullable
-    private UUID persistentAngerTarget;
+    @Nullable private UUID persistentAngerTarget;
 
     @Override
     public int getRemainingPersistentAngerTime() {
@@ -447,7 +489,8 @@ public class CursedArmorStandEntity extends AbstractSpellCastingMob implements I
     }
 
     @Override
-    public void setPersistentAngerTarget(@org.jetbrains.annotations.Nullable UUID pPersistentAngerTarget) {
+    public void setPersistentAngerTarget(
+            @org.jetbrains.annotations.Nullable UUID pPersistentAngerTarget) {
         persistentAngerTarget = pPersistentAngerTarget;
     }
 

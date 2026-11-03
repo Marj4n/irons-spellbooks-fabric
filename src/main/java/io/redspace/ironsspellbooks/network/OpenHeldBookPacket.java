@@ -26,14 +26,13 @@ public class OpenHeldBookPacket implements CustomPacketPayload {
         pBuffer.writeByte(this.hand);
     }
 
-
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientHelper.handleOpenBookPacket(this);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientHelper.handleOpenBookPacket(this);
+                });
 
         return true;
     }
-
 }

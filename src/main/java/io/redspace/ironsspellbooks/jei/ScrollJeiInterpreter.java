@@ -6,18 +6,18 @@ import mezz.jei.api.ingredients.subtypes.UidContext;
 import net.minecraft.world.item.ItemStack;
 
 public class ScrollJeiInterpreter implements IIngredientSubtypeInterpreter<ItemStack> {
-//    @Override
-//    public @Nullable Object getSubtypeData(ItemStack ingredient, UidContext context) {
-//        if (ISpellContainer.isSpellContainer(ingredient)) {
-//            return ISpellContainer.get(ingredient);
-//        }
-//        return null;
-//    }
-//
-//    @Override
-//    public String getLegacyStringSubtypeInfo(ItemStack ingredient, UidContext context) {
-//        return "null";
-//    }
+    //    @Override
+    //    public @Nullable Object getSubtypeData(ItemStack ingredient, UidContext context) {
+    //        if (ISpellContainer.isSpellContainer(ingredient)) {
+    //            return ISpellContainer.get(ingredient);
+    //        }
+    //        return null;
+    //    }
+    //
+    //    @Override
+    //    public String getLegacyStringSubtypeInfo(ItemStack ingredient, UidContext context) {
+    //        return "null";
+    //    }
 
     @Override
     public String apply(ItemStack stack, UidContext uidContext) {

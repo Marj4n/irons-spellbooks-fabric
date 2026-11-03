@@ -41,15 +41,14 @@ public class PedestalTile extends BlockEntity implements Clearable {
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        //Ironsspellbooks.logger.debug("Loading Pedestal NBT");
+        // Ironsspellbooks.logger.debug("Loading Pedestal NBT");
         readNBT(nbt);
-
     }
 
     @Override
     protected void saveAdditional(@Nonnull CompoundTag tag) {
-        //irons_spellbooks.LOGGER.debug("saveAdditional tag:{}", tag);
-        //tag.put("inventory", itemHandler.serializeNBT());
+        // irons_spellbooks.LOGGER.debug("saveAdditional tag:{}", tag);
+        // tag.put("inventory", itemHandler.serializeNBT());
         writeNBT(tag);
     }
 
@@ -57,16 +56,17 @@ public class PedestalTile extends BlockEntity implements Clearable {
     public void setChanged() {
         super.setChanged();
         if (level != null) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            level.sendBlockUpdated(
+                    worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
-        //tag.put("inventory", itemHandler.serializeNBT());
+        // tag.put("inventory", itemHandler.serializeNBT());
         writeNBT(tag);
-        //irons_spellbooks.LOGGER.debug("getUpdateTag tag:{}", tag);
+        // irons_spellbooks.LOGGER.debug("getUpdateTag tag:{}", tag);
         return tag;
     }
 
@@ -81,24 +81,21 @@ public class PedestalTile extends BlockEntity implements Clearable {
         return ClientboundBlockEntityDataPacket.create(this, (block) -> nbt);
     }
 
-
-
-
-
     private CompoundTag writeNBT(CompoundTag nbt) {
         nbt.put(NBT_HELD_ITEM, heldItem.serializeNBT());
-        //irons_spellbooks.LOGGER.debug("getUpdateTag tag:{}", tag);
+        // irons_spellbooks.LOGGER.debug("getUpdateTag tag:{}", tag);
         return nbt;
     }
 
     private CompoundTag readNBT(CompoundTag nbt) {
         if (nbt.contains(NBT_HELD_ITEM)) {
-            //itemHandler.deserializeNBT(nbt.getCompound("inventory"));
-            //Ironsspellbooks.logger.debug("Pedestal NBT contains held item ({})", nbt.getCompound(NBT_HELD_ITEM));
+            // itemHandler.deserializeNBT(nbt.getCompound("inventory"));
+            // Ironsspellbooks.logger.debug("Pedestal NBT contains held item ({})",
+            // nbt.getCompound(NBT_HELD_ITEM));
 
-            //heldItem.deserializeNBT(nbt.getCompound(NBT_HELD_ITEM));
+            // heldItem.deserializeNBT(nbt.getCompound(NBT_HELD_ITEM));
             heldItem = ItemStack.of(nbt.getCompound(NBT_HELD_ITEM));
-            //Ironsspellbooks.logger.debug("Held Item: {}", heldItem);
+            // Ironsspellbooks.logger.debug("Held Item: {}", heldItem);
 
         }
         return nbt;

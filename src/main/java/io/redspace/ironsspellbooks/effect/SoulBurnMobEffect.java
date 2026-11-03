@@ -8,6 +8,7 @@ import org.marj4n.irons_spellbooks.events.LivingHealEvent;
 
 public class SoulBurnMobEffect extends MagicMobEffect {
     public static final float PERCENT_PER_AMPLIFIER = 0.05f;
+
     public SoulBurnMobEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }

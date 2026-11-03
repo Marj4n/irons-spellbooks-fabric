@@ -21,21 +21,37 @@ public class SpellDamageSource extends DamageSource {
     int iFrames = -1;
     boolean indirectOverride;
 
-    protected SpellDamageSource(@NotNull Entity directEntity, @NotNull Entity causingEntity, @Nullable Vec3 damageSourcePosition, AbstractSpell spell) {
-        super(getHolderFromResource(directEntity, spell.getSchoolType().getDamageType()), directEntity, causingEntity, damageSourcePosition);
+    protected SpellDamageSource(
+            @NotNull Entity directEntity,
+            @NotNull Entity causingEntity,
+            @Nullable Vec3 damageSourcePosition,
+            AbstractSpell spell) {
+        super(
+                getHolderFromResource(directEntity, spell.getSchoolType().getDamageType()),
+                directEntity,
+                causingEntity,
+                damageSourcePosition);
         this.spell = spell;
     }
 
     @Override
     public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity pLivingEntity) {
         String s = "death.attack." + spell.getDeathMessageId();
-        Component component = this.causingEntity == null ? this.directEntity.getDisplayName() : this.causingEntity.getDisplayName();
+        Component component =
+                this.causingEntity == null
+                        ? this.directEntity.getDisplayName()
+                        : this.causingEntity.getDisplayName();
         return Component.translatable(s, pLivingEntity.getDisplayName(), component);
     }
 
-    //TODO: need a better way to get the registry access without going through the level each time
-    private static Holder<DamageType> getHolderFromResource(Entity entity, ResourceKey<DamageType> damageTypeResourceKey) {
-        var option = entity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolder(damageTypeResourceKey);
+    // TODO: need a better way to get the registry access without going through the level each time
+    private static Holder<DamageType> getHolderFromResource(
+            Entity entity, ResourceKey<DamageType> damageTypeResourceKey) {
+        var option =
+                entity.level()
+                        .registryAccess()
+                        .registryOrThrow(Registries.DAMAGE_TYPE)
+                        .getHolder(damageTypeResourceKey);
         if (option.isPresent()) {
             return option.get();
         } else {
@@ -47,7 +63,10 @@ public class SpellDamageSource extends DamageSource {
         return source(entity, entity, spell);
     }
 
-    public static SpellDamageSource source(@NotNull Entity directEntity, @NotNull Entity causingEntity, @NotNull AbstractSpell spell) {
+    public static SpellDamageSource source(
+            @NotNull Entity directEntity,
+            @NotNull Entity causingEntity,
+            @NotNull AbstractSpell spell) {
         return new SpellDamageSource(directEntity, causingEntity, null, spell);
     }
 
@@ -106,6 +125,9 @@ public class SpellDamageSource extends DamageSource {
     }
 
     public boolean hasPostHitEffects() {
-        return getLifestealPercent() > 0 || getFireTime() > 0 || getFreezeTicks() > 0 || getIFrames() >=0;
+        return getLifestealPercent() > 0
+                || getFireTime() > 0
+                || getFreezeTicks() > 0
+                || getIFrames() >= 0;
     }
 }

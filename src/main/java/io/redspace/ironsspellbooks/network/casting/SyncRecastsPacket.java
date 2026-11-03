@@ -18,7 +18,8 @@ public class SyncRecastsPacket implements CustomPacketPayload {
     }
 
     public SyncRecastsPacket(FriendlyByteBuf buf) {
-        this.recastLookup = buf.readMap(SyncRecastsPacket::readSpellID, SyncRecastsPacket::readRecastInstance);
+        this.recastLookup =
+                buf.readMap(SyncRecastsPacket::readSpellID, SyncRecastsPacket::readRecastInstance);
     }
 
     public static String readSpellID(FriendlyByteBuf buffer) {
@@ -40,14 +41,18 @@ public class SyncRecastsPacket implements CustomPacketPayload {
     }
 
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeMap(recastLookup, SyncRecastsPacket::writeSpellId, SyncRecastsPacket::writeRecastInstance);
+        buf.writeMap(
+                recastLookup,
+                SyncRecastsPacket::writeSpellId,
+                SyncRecastsPacket::writeRecastInstance);
     }
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientMagicData.setRecasts(new PlayerRecasts(recastLookup));
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientMagicData.setRecasts(new PlayerRecasts(recastLookup));
+                });
         return true;
     }
 }

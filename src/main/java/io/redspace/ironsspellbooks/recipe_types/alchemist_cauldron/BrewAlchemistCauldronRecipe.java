@@ -25,13 +25,17 @@ import java.util.Optional;
 /**
  * Recipe Type for brewing new liquids in the cauldron based on a base liquid and a reagent item
  */
-public record BrewAlchemistCauldronRecipe(ResourceLocation id, FluidStack fluidIn, Ingredient reagent,
-                                          List<FluidStack> results,
-                                          Optional<ItemStack> byproduct) implements Recipe<BrewAlchemistCauldronRecipe.Input> {
+public record BrewAlchemistCauldronRecipe(
+        ResourceLocation id,
+        FluidStack fluidIn,
+        Ingredient reagent,
+        List<FluidStack> results,
+        Optional<ItemStack> byproduct)
+        implements Recipe<BrewAlchemistCauldronRecipe.Input> {
 
-//    public static BrewAlchemistCauldronRecipe.Builder builder() {
-//        return new BrewAlchemistCauldronRecipe.Builder();
-//    }
+    //    public static BrewAlchemistCauldronRecipe.Builder builder() {
+    //        return new BrewAlchemistCauldronRecipe.Builder();
+    //    }
 
     public record Input(FluidStack fluidIn, ItemStack reagent) implements Container {
         @Override
@@ -60,14 +64,10 @@ public record BrewAlchemistCauldronRecipe(ResourceLocation id, FluidStack fluidI
         }
 
         @Override
-        public void setItem(int pSlot, ItemStack pStack) {
-
-        }
+        public void setItem(int pSlot, ItemStack pStack) {}
 
         @Override
-        public void setChanged() {
-
-        }
+        public void setChanged() {}
 
         @Override
         public boolean stillValid(Player pPlayer) {
@@ -75,9 +75,7 @@ public record BrewAlchemistCauldronRecipe(ResourceLocation id, FluidStack fluidI
         }
 
         @Override
-        public void clearContent() {
-
-        }
+        public void clearContent() {}
     }
 
     @Override
@@ -97,7 +95,8 @@ public record BrewAlchemistCauldronRecipe(ResourceLocation id, FluidStack fluidI
 
     @Override
     public boolean matches(BrewAlchemistCauldronRecipe.Input input, Level level) {
-        return FluidHelper.isSameFluidSameComponents(fluidIn, input.fluidIn()) && reagent.test(input.reagent());
+        return FluidHelper.isSameFluidSameComponents(fluidIn, input.fluidIn())
+                && reagent.test(input.reagent());
     }
 
     @Override
@@ -133,46 +132,63 @@ public record BrewAlchemistCauldronRecipe(ResourceLocation id, FluidStack fluidI
 
     public static class Serializer implements RecipeSerializer<BrewAlchemistCauldronRecipe> {
 
-//        public static final MapCodec<BrewAlchemistCauldronRecipe> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-//                FluidStack.CODEC.fieldOf("base_fluid").forGetter(BrewAlchemistCauldronRecipe::fluidIn),
-//                Ingredient.CODEC.fieldOf("input").forGetter(BrewAlchemistCauldronRecipe::reagent),
-//                Codec.list(FluidStack.CODEC).fieldOf("results").forGetter(BrewAlchemistCauldronRecipe::results),
-//                ItemStack.CODEC.optionalFieldOf("byproduct").forGetter(BrewAlchemistCauldronRecipe::byproduct)
-//        ).apply(builder, BrewAlchemistCauldronRecipe::new));
+        //        public static final MapCodec<BrewAlchemistCauldronRecipe> CODEC =
+        // RecordCodecBuilder.mapCodec(builder -> builder.group(
+        //
+        // FluidStack.CODEC.fieldOf("base_fluid").forGetter(BrewAlchemistCauldronRecipe::fluidIn),
+        //
+        // Ingredient.CODEC.fieldOf("input").forGetter(BrewAlchemistCauldronRecipe::reagent),
+        //
+        // Codec.list(FluidStack.CODEC).fieldOf("results").forGetter(BrewAlchemistCauldronRecipe::results),
+        //
+        // ItemStack.CODEC.optionalFieldOf("byproduct").forGetter(BrewAlchemistCauldronRecipe::byproduct)
+        //        ).apply(builder, BrewAlchemistCauldronRecipe::new));
 
-//        public static final StreamCodec<RegistryFriendlyByteBuf, BrewAlchemistCauldronRecipe> STREAM_CODEC = StreamCodec.composite(
-//                FluidStack.STREAM_CODEC, BrewAlchemistCauldronRecipe::fluidIn,
-//                Ingredient.CONTENTS_STREAM_CODEC, BrewAlchemistCauldronRecipe::reagent,
-//                ByteBufCodecs.fromCodec(Codec.list(FluidStack.CODEC)), BrewAlchemistCauldronRecipe::results,
-//                ByteBufCodecs.optional(ItemStack.STREAM_CODEC), BrewAlchemistCauldronRecipe::byproduct,
-//                BrewAlchemistCauldronRecipe::new
-//        );
+        //        public static final StreamCodec<RegistryFriendlyByteBuf,
+        // BrewAlchemistCauldronRecipe> STREAM_CODEC = StreamCodec.composite(
+        //                FluidStack.STREAM_CODEC, BrewAlchemistCauldronRecipe::fluidIn,
+        //                Ingredient.CONTENTS_STREAM_CODEC, BrewAlchemistCauldronRecipe::reagent,
+        //                ByteBufCodecs.fromCodec(Codec.list(FluidStack.CODEC)),
+        // BrewAlchemistCauldronRecipe::results,
+        //                ByteBufCodecs.optional(ItemStack.STREAM_CODEC),
+        // BrewAlchemistCauldronRecipe::byproduct,
+        //                BrewAlchemistCauldronRecipe::new
+        //        );
 
-
-//        @Override
-//        public MapCodec<BrewAlchemistCauldronRecipe> codec() {
-//            return CODEC;
-//        }
-//
-//        @Override
-//        public StreamCodec<RegistryFriendlyByteBuf, BrewAlchemistCauldronRecipe> streamCodec() {
-//            return STREAM_CODEC;
-//        }
+        //        @Override
+        //        public MapCodec<BrewAlchemistCauldronRecipe> codec() {
+        //            return CODEC;
+        //        }
+        //
+        //        @Override
+        //        public StreamCodec<RegistryFriendlyByteBuf, BrewAlchemistCauldronRecipe>
+        // streamCodec() {
+        //            return STREAM_CODEC;
+        //        }
 
         @Override
-        public BrewAlchemistCauldronRecipe fromJson(ResourceLocation pRecipeId, JsonObject recipejson) {
-            FluidStack baseFluid = FluidStack.CODEC.decode(JsonOps.INSTANCE, GsonHelper.getNonNull(recipejson, "base_fluid")).getOrThrow(false, IronsSpellbooks.LOGGER::error).getFirst();
+        public BrewAlchemistCauldronRecipe fromJson(
+                ResourceLocation pRecipeId, JsonObject recipejson) {
+            FluidStack baseFluid =
+                    FluidStackJsonHelper.read(GsonHelper.getNonNull(recipejson, "base_fluid"));
             Ingredient input = Ingredient.fromJson(GsonHelper.getNonNull(recipejson, "input"));
-            List<FluidStack> results = Codec.list(FluidStack.CODEC).decode(JsonOps.INSTANCE, GsonHelper.getNonNull(recipejson, "results")).getOrThrow(false, IronsSpellbooks.LOGGER::error).getFirst();
+            List<FluidStack> results = new ArrayList<>();
+            for (var element : GsonHelper.getAsJsonArray(recipejson, "results")) {
+                results.add(FluidStackJsonHelper.read(element));
+            }
             Optional<ItemStack> byproduct = Optional.empty();
             if (recipejson.has("byproduct")) {
-                byproduct = Optional.of(ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(recipejson, "byproduct")));
+                byproduct =
+                        Optional.of(
+                                ShapedRecipe.itemStackFromJson(
+                                        GsonHelper.getAsJsonObject(recipejson, "byproduct")));
             }
             return new BrewAlchemistCauldronRecipe(pRecipeId, baseFluid, input, results, byproduct);
         }
 
         @Override
-        public @Nullable BrewAlchemistCauldronRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf buf) {
+        public @Nullable BrewAlchemistCauldronRecipe fromNetwork(
+                ResourceLocation pRecipeId, FriendlyByteBuf buf) {
             FluidStack baseFluid = FluidStack.readFromPacket(buf);
             Ingredient input = Ingredient.fromNetwork(buf);
             int i = buf.readInt();
@@ -202,112 +218,117 @@ public record BrewAlchemistCauldronRecipe(ResourceLocation id, FluidStack fluidI
         }
     }
 
-//    public static class Builder implements RecipeBuilder {
-//
-//        FluidStack input = null;
-//        Ingredient reagent = null;
-//        List<FluidStack> results = new ArrayList<>();
-//        ItemStack byproduct = null;
-//
-//        public Builder withInput(Holder<Fluid> fluid, int amount) {
-//            return withInput(new FluidStack(fluid.get(), amount));
-//        }
-//
-//        public Builder withInput(FluidStack fluidStack) {
-//            this.input = fluidStack;
-//            return this;
-//        }
-//
-//        public Builder withReagent(Item item) {
-//            this.reagent = Ingredient.of(item);
-//            return this;
-//        }
-//
-//        public Builder withReagent(ItemStack item) {
-//            this.reagent = Ingredient.of(item);
-//            return this;
-//        }
-//
-//        public Builder withReagent(TagKey<Item> item) {
-//            this.reagent = Ingredient.of(item);
-//            return this;
-//        }
-//
-//        public Builder withResult(FluidStack fluidStack) {
-//            results.add(fluidStack);
-//            return this;
-//        }
-//
-//        public Builder withResult(Holder<Fluid> fluid, int amount) {
-//            return withResult(new FluidStack(fluid, amount));
-//        }
-//
-//        public Builder withByproduct(ItemStack item) {
-//            this.byproduct = item;
-//            return this;
-//        }
-//
-//        public Builder withByproduct(Holder<Item> item) {
-//            return withByproduct(new ItemStack(item));
-//        }
-//
-//        public Builder withByproduct(Item item) {
-//            return withByproduct(new ItemStack(item));
-//        }
-//
-//        @Override
-//        public RecipeBuilder unlockedBy(String pCriterionName, CriterionTriggerInstance pCriterionTrigger) {
-//            return null;
-//        }
-//
-//        @Override
-//        public RecipeBuilder group(@Nullable String pGroupName) {
-//            return null;
-//        }
-//
-//        @Override
-//        public Item getResult() {
-//            return null;
-//        }
-//
-//        @Override
-//        public void save(Consumer<FinishedRecipe> recipeOutput, ResourceLocation id) {
-//            //todo: validity check results' size, custom throw (instead of null)
-//            Objects.requireNonNull(input);
-//            Objects.requireNonNull(reagent);
-//            recipeOutput.accept(new BrewAlchemistCauldronRecipe(id, input, reagent, results, Optional.ofNullable(byproduct)));
-//        }
-//
-////        @Override
-////        public RecipeBuilder unlockedBy(String name, Criterion<?> criterion) {
-////            return this;
-////        }
-////
-////        @Override
-////        public RecipeBuilder group(@Nullable String groupName) {
-////            return this;
-////        }
-////
-////        @Override
-////        public Item getResult() {
-////            return Items.AIR;
-////        }
-////
-////        @Override
-////        public void save(RecipeOutput recipeOutput, ResourceLocation id) {
-////            //todo: validity check results' size, custom throw (instead of null)
-////            Objects.requireNonNull(input);
-////            Objects.requireNonNull(reagent);
-////            recipeOutput.accept(id, new BrewAlchemistCauldronRecipe(input, reagent, results, Optional.ofNullable(byproduct)), null);
-////        }
-////
-////        @Override
-////        public void save(RecipeOutput recipeOutput) {
-////            save(recipeOutput, BuiltInRegistries.FLUID.getKey(results.getFirst().getFluid()).withPrefix("alchemist_cauldron/brew_"));
-////        }
-////
-////        public void saveSoak(RecipeOutput recipeOutput) {
-////            save(recipeOutput, BuiltInRegistries.ITEM.getKey(byproduct.getItem()).withPrefix("alchemist_cauldron/soak_"));
-////        }
-//    }
+    //    public static class Builder implements RecipeBuilder {
+    //
+    //        FluidStack input = null;
+    //        Ingredient reagent = null;
+    //        List<FluidStack> results = new ArrayList<>();
+    //        ItemStack byproduct = null;
+    //
+    //        public Builder withInput(Holder<Fluid> fluid, int amount) {
+    //            return withInput(new FluidStack(fluid.get(), amount));
+    //        }
+    //
+    //        public Builder withInput(FluidStack fluidStack) {
+    //            this.input = fluidStack;
+    //            return this;
+    //        }
+    //
+    //        public Builder withReagent(Item item) {
+    //            this.reagent = Ingredient.of(item);
+    //            return this;
+    //        }
+    //
+    //        public Builder withReagent(ItemStack item) {
+    //            this.reagent = Ingredient.of(item);
+    //            return this;
+    //        }
+    //
+    //        public Builder withReagent(TagKey<Item> item) {
+    //            this.reagent = Ingredient.of(item);
+    //            return this;
+    //        }
+    //
+    //        public Builder withResult(FluidStack fluidStack) {
+    //            results.add(fluidStack);
+    //            return this;
+    //        }
+    //
+    //        public Builder withResult(Holder<Fluid> fluid, int amount) {
+    //            return withResult(new FluidStack(fluid, amount));
+    //        }
+    //
+    //        public Builder withByproduct(ItemStack item) {
+    //            this.byproduct = item;
+    //            return this;
+    //        }
+    //
+    //        public Builder withByproduct(Holder<Item> item) {
+    //            return withByproduct(new ItemStack(item));
+    //        }
+    //
+    //        public Builder withByproduct(Item item) {
+    //            return withByproduct(new ItemStack(item));
+    //        }
+    //
+    //        @Override
+    //        public RecipeBuilder unlockedBy(String pCriterionName, CriterionTriggerInstance
+    // pCriterionTrigger) {
+    //            return null;
+    //        }
+    //
+    //        @Override
+    //        public RecipeBuilder group(@Nullable String pGroupName) {
+    //            return null;
+    //        }
+    //
+    //        @Override
+    //        public Item getResult() {
+    //            return null;
+    //        }
+    //
+    //        @Override
+    //        public void save(Consumer<FinishedRecipe> recipeOutput, ResourceLocation id) {
+    //            //todo: validity check results' size, custom throw (instead of null)
+    //            Objects.requireNonNull(input);
+    //            Objects.requireNonNull(reagent);
+    //            recipeOutput.accept(new BrewAlchemistCauldronRecipe(id, input, reagent, results,
+    // Optional.ofNullable(byproduct)));
+    //        }
+    //
+    ////        @Override
+    ////        public RecipeBuilder unlockedBy(String name, Criterion<?> criterion) {
+    ////            return this;
+    ////        }
+    ////
+    ////        @Override
+    ////        public RecipeBuilder group(@Nullable String groupName) {
+    ////            return this;
+    ////        }
+    ////
+    ////        @Override
+    ////        public Item getResult() {
+    ////            return Items.AIR;
+    ////        }
+    ////
+    ////        @Override
+    ////        public void save(RecipeOutput recipeOutput, ResourceLocation id) {
+    ////            //todo: validity check results' size, custom throw (instead of null)
+    ////            Objects.requireNonNull(input);
+    ////            Objects.requireNonNull(reagent);
+    ////            recipeOutput.accept(id, new BrewAlchemistCauldronRecipe(input, reagent, results,
+    // Optional.ofNullable(byproduct)), null);
+    ////        }
+    ////
+    ////        @Override
+    ////        public void save(RecipeOutput recipeOutput) {
+    ////            save(recipeOutput,
+    // BuiltInRegistries.FLUID.getKey(results.getFirst().getFluid()).withPrefix("alchemist_cauldron/brew_"));
+    ////        }
+    ////
+    ////        public void saveSoak(RecipeOutput recipeOutput) {
+    ////            save(recipeOutput,
+    // BuiltInRegistries.ITEM.getKey(byproduct.getItem()).withPrefix("alchemist_cauldron/soak_"));
+    ////        }
+    //    }
 }

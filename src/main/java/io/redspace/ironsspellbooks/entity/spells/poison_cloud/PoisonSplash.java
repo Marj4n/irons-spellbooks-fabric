@@ -37,25 +37,58 @@ public class PoisonSplash extends AoeEntity {
             playedParticles = true;
             if (level().isClientSide) {
                 for (int i = 0; i < 150; i++) {
-                    Vec3 pos = new Vec3(Utils.getRandomScaled(.5f), Utils.getRandomScaled(.2f), this.random.nextFloat() * getRadius()).yRot(this.random.nextFloat() * 360);
-                    Vec3 motion = new Vec3(
-                            Utils.getRandomScaled(.06f),
-                            this.random.nextDouble() * -.8 - .5,
-                            Utils.getRandomScaled(.06f)
-                    );
+                    Vec3 pos =
+                            new Vec3(
+                                            Utils.getRandomScaled(.5f),
+                                            Utils.getRandomScaled(.2f),
+                                            this.random.nextFloat() * getRadius())
+                                    .yRot(this.random.nextFloat() * 360);
+                    Vec3 motion =
+                            new Vec3(
+                                    Utils.getRandomScaled(.06f),
+                                    this.random.nextDouble() * -.8 - .5,
+                                    Utils.getRandomScaled(.06f));
 
-                    level().addParticle(ParticleHelper.ACID, getX() + pos.x, getY() + pos.y + getBoundingBox().getYsize(), getZ() + pos.z, motion.x, motion.y, motion.z);
+                    level().addParticle(
+                                    ParticleHelper.ACID,
+                                    getX() + pos.x,
+                                    getY() + pos.y + getBoundingBox().getYsize(),
+                                    getZ() + pos.z,
+                                    motion.x,
+                                    motion.y,
+                                    motion.z);
                 }
             } else {
-                MagicManager.spawnParticles(level(), ParticleHelper.POISON_CLOUD, getX(), getY() + getBoundingBox().getYsize(), getZ(), 9, getRadius() * .7f, .2f, getRadius() * .7f, 1, true);
-
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleHelper.POISON_CLOUD,
+                        getX(),
+                        getY() + getBoundingBox().getYsize(),
+                        getZ(),
+                        9,
+                        getRadius() * .7f,
+                        .2f,
+                        getRadius() * .7f,
+                        1,
+                        true);
             }
         }
 
         if (tickCount == 4) {
             checkHits();
             if (!level().isClientSide)
-                MagicManager.spawnParticles(level(), ParticleHelper.POISON_CLOUD, getX(), getY(), getZ(), 9, getRadius() * .7f, .2f, getRadius() * .7f, 1, true);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleHelper.POISON_CLOUD,
+                        getX(),
+                        getY(),
+                        getZ(),
+                        9,
+                        getRadius() * .7f,
+                        .2f,
+                        getRadius() * .7f,
+                        1,
+                        true);
             createPoisonCloud();
         }
 
@@ -77,10 +110,12 @@ public class PoisonSplash extends AoeEntity {
 
     @Override
     public void applyEffect(LivingEntity target) {
-        if (DamageSources.applyDamage(target, getDamage(), SpellRegistry.POISON_SPLASH_SPELL.get().getDamageSource(this, getOwner())))
+        if (DamageSources.applyDamage(
+                target,
+                getDamage(),
+                SpellRegistry.POISON_SPLASH_SPELL.get().getDamageSource(this, getOwner())))
             target.addEffect(new MobEffectInstance(MobEffects.POISON, getEffectDuration(), 0));
     }
-
 
     @Override
     public float getParticleCount() {

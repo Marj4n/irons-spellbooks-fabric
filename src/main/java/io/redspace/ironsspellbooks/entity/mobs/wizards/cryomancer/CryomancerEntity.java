@@ -46,7 +46,8 @@ import java.util.Objects;
 
 public class CryomancerEntity extends NeutralWizard implements IMerchantWizard {
 
-    public CryomancerEntity(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
+    public CryomancerEntity(
+            EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         xpReward = 25;
     }
@@ -55,38 +56,56 @@ public class CryomancerEntity extends NeutralWizard implements IMerchantWizard {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FocusOnTradingPlayerGoal<>(this));
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new SpellBarrageGoal(this, SpellRegistry.ICE_BLOCK_SPELL.get(), 3, 6, 100, 250, 1));
-        this.goalSelector.addGoal(3, new WizardAttackGoal(this, 1.25f, 50, 75)
-                .setSpells(
-                        List.of(SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.CONE_OF_COLD_SPELL.get()),
-                        List.of(SpellRegistry.COUNTERSPELL_SPELL.get()),
-                        List.of(SpellRegistry.FROST_STEP_SPELL.get()),
-                        List.of()
-                ).setSingleUseSpell(SpellRegistry.SUMMON_POLAR_BEAR_SPELL.get(), 80, 400, 3, 6)
-                .setDrinksPotions()
-        );
+        this.goalSelector.addGoal(
+                2,
+                new SpellBarrageGoal(this, SpellRegistry.ICE_BLOCK_SPELL.get(), 3, 6, 100, 250, 1));
+        this.goalSelector.addGoal(
+                3,
+                new WizardAttackGoal(this, 1.25f, 50, 75)
+                        .setSpells(
+                                List.of(
+                                        SpellRegistry.ICICLE_SPELL.get(),
+                                        SpellRegistry.ICICLE_SPELL.get(),
+                                        SpellRegistry.ICICLE_SPELL.get(),
+                                        SpellRegistry.CONE_OF_COLD_SPELL.get()),
+                                List.of(SpellRegistry.COUNTERSPELL_SPELL.get()),
+                                List.of(SpellRegistry.FROST_STEP_SPELL.get()),
+                                List.of())
+                        .setSingleUseSpell(
+                                SpellRegistry.SUMMON_POLAR_BEAR_SPELL.get(), 80, 400, 3, 6)
+                        .setDrinksPotions());
         this.goalSelector.addGoal(4, new PatrolNearLocationGoal(this, 30, .75f));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new WizardRecoverGoal(this));
 
-        //this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        //this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        // this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        // this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isHostileTowards));
+        this.targetSelector.addGoal(
+                3,
+                new NearestAttackableTargetGoal<>(
+                        this, Player.class, 10, true, false, this::isHostileTowards));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
     @Override
-        public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         RandomSource randomsource = Utils.random;
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(
+            RandomSource pRandom, DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemRegistry.CRYOMANCER_HELMET.get()));
-        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemRegistry.CRYOMANCER_CHESTPLATE.get()));
+        this.setItemSlot(
+                EquipmentSlot.CHEST, new ItemStack(ItemRegistry.CRYOMANCER_CHESTPLATE.get()));
         this.setDropChance(EquipmentSlot.HEAD, 0.0F);
         this.setDropChance(EquipmentSlot.CHEST, 0.0F);
     }
@@ -108,21 +127,20 @@ public class CryomancerEntity extends NeutralWizard implements IMerchantWizard {
     /**
      * Merchant implementations
      */
+    @Nullable private Player tradingPlayer;
 
-    @Nullable
-    private Player tradingPlayer;
-    @Nullable
-    protected MerchantOffers offers;
+    @Nullable protected MerchantOffers offers;
 
-    //Serialized
+    // Serialized
     private long lastRestockGameTime;
     private int numberOfRestocksToday;
-    //Not Serialized
+    // Not Serialized
     private long lastRestockCheckDayTime;
 
     @Override
     protected InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
-        boolean preventTrade = isAggressive() || (!this.level().isClientSide && this.getOffers().isEmpty());
+        boolean preventTrade =
+                isAggressive() || (!this.level().isClientSide && this.getOffers().isEmpty());
         if (!preventTrade) {
             if (!this.level().isClientSide && !this.getOffers().isEmpty()) {
                 if (shouldRestock()) {
@@ -193,85 +211,116 @@ public class CryomancerEntity extends NeutralWizard implements IMerchantWizard {
             this.offers.addAll(createRandomOffers(2, 3));
 
             if (this.random.nextFloat() < 0.25f) {
-                this.offers.add(new AdditionalWanderingTrades.InkBuyTrade((InkItem) ItemRegistry.INK_COMMON.get()).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.InkBuyTrade(
+                                        (InkItem) ItemRegistry.INK_COMMON.get())
+                                .getOffer(this, this.random));
             }
             if (this.random.nextFloat() < 0.25f) {
-                this.offers.add(new AdditionalWanderingTrades.InkBuyTrade((InkItem) ItemRegistry.INK_UNCOMMON.get()).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.InkBuyTrade(
+                                        (InkItem) ItemRegistry.INK_UNCOMMON.get())
+                                .getOffer(this, this.random));
             }
             if (this.random.nextFloat() < 0.25f) {
-                this.offers.add(new AdditionalWanderingTrades.InkBuyTrade((InkItem) ItemRegistry.INK_RARE.get()).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.InkBuyTrade(
+                                        (InkItem) ItemRegistry.INK_RARE.get())
+                                .getOffer(this, this.random));
             }
 
-            this.offers.add(new AdditionalWanderingTrades.RandomScrollTrade(new SpellFilter(SchoolRegistry.ICE.get()), 0f, .25f).getOffer(this, this.random));
+            this.offers.add(
+                    new AdditionalWanderingTrades.RandomScrollTrade(
+                                    new SpellFilter(SchoolRegistry.ICE.get()), 0f, .25f)
+                            .getOffer(this, this.random));
             if (this.random.nextFloat() < .8f) {
-                this.offers.add(new AdditionalWanderingTrades.RandomScrollTrade(new SpellFilter(SchoolRegistry.ICE.get()), .3f, .7f).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.RandomScrollTrade(
+                                        new SpellFilter(SchoolRegistry.ICE.get()), .3f, .7f)
+                                .getOffer(this, this.random));
             }
             if (this.random.nextFloat() < .8f) {
-                this.offers.add(new AdditionalWanderingTrades.RandomScrollTrade(new SpellFilter(SchoolRegistry.ICE.get()), .8f, 1f).getOffer(this, this.random));
+                this.offers.add(
+                        new AdditionalWanderingTrades.RandomScrollTrade(
+                                        new SpellFilter(SchoolRegistry.ICE.get()), .8f, 1f)
+                                .getOffer(this, this.random));
             }
-            this.offers.add(new MerchantOffer(
-                    new ItemStack(Items.EMERALD, 32),
-                    ItemStack.EMPTY,
-                    //todo: replace with dedicated ice spider map
-                    random.nextBoolean() ? FurledMapItem.of(IronsSpellbooks.id("impaled_icebreaker"), Component.translatable("item.irons_spellbooks.failed_arctic_voyage_map")) :
-                            FurledMapItem.of(IronsSpellbooks.id("ice_spider_den"), Component.translatable("item.irons_spellbooks.ice_spider_den_map")),
-                    0,
-                    1,
-                    5,
-                    10f
-            ));
+            this.offers.add(
+                    new MerchantOffer(
+                            new ItemStack(Items.EMERALD, 32),
+                            ItemStack.EMPTY,
+                            // todo: replace with dedicated ice spider map
+                            random.nextBoolean()
+                                    ? FurledMapItem.of(
+                                            IronsSpellbooks.id("impaled_icebreaker"),
+                                            Component.translatable(
+                                                    "item.irons_spellbooks.failed_arctic_voyage_map"))
+                                    : FurledMapItem.of(
+                                            IronsSpellbooks.id("ice_spider_den"),
+                                            Component.translatable(
+                                                    "item.irons_spellbooks.ice_spider_den_map")),
+                            0,
+                            1,
+                            5,
+                            10f));
 
-            this.offers.add(new MerchantOffer(
-                    new ItemStack(ItemRegistry.FIRE_ALE.get(), 4),
-                    ItemStack.EMPTY,
-                    ItemRegistry.MUSIC_DISC_WHISPERS_OF_ICE.get().getDefaultInstance(),
-                    0,
-                    1,
-                    5,
-                    0.1f
-            ));
-            this.offers.add(new MerchantOffer(
-                    new ItemStack(ItemRegistry.ICY_FANG.get(), 2),
-                    ItemStack.EMPTY,
-                    ItemRegistry.ICE_RUNE.get().getDefaultInstance(),
-                    0,
-                    1,
-                    5,
-                    0.1f
-            ));
+            this.offers.add(
+                    new MerchantOffer(
+                            new ItemStack(ItemRegistry.FIRE_ALE.get(), 4),
+                            ItemStack.EMPTY,
+                            ItemRegistry.MUSIC_DISC_WHISPERS_OF_ICE.get().getDefaultInstance(),
+                            0,
+                            1,
+                            5,
+                            0.1f));
+            this.offers.add(
+                    new MerchantOffer(
+                            new ItemStack(ItemRegistry.ICY_FANG.get(), 2),
+                            ItemStack.EMPTY,
+                            ItemRegistry.ICE_RUNE.get().getDefaultInstance(),
+                            0,
+                            1,
+                            5,
+                            0.1f));
             this.offers.removeIf(Objects::isNull);
-            //We count the creation of our stock as a restock so that we do not immediately refresh trades the same day.
+            // We count the creation of our stock as a restock so that we do not immediately refresh
+            // trades the same day.
             setLastRestockGameTime(level().getGameTime());
         }
         return this.offers;
     }
 
-    private static final List<VillagerTrades.ItemListing> fillerOffers = List.of(
-//            new AdditionalWanderingTrades.SimpleBuy(16, new ItemCost(Items.CANDLE, 4), 1, 1),
-//            new AdditionalWanderingTrades.SimpleSell(8, new ItemStack(Items.CANDLE, 4), 10, 14),
-//            new AdditionalWanderingTrades.SimpleSell(8, new ItemStack(Items.FIRE_CHARGE, 3), 9, 13),
-//            new AdditionalWanderingTrades.SimpleSell(12, new ItemStack(Items.LANTERN, 3), 6, 10),
-//            new AdditionalWanderingTrades.SimpleBuy(16, new ItemCost(Items.HONEY_BOTTLE, 2), 3, 5),
-//            new AdditionalWanderingTrades.SimpleBuy(16, new ItemCost(Items.BLAZE_ROD, 3), 4, 6)
-    );
+    private static final List<VillagerTrades.ItemListing> fillerOffers =
+            List.of(
+                    //            new AdditionalWanderingTrades.SimpleBuy(16, new
+                    // ItemCost(Items.CANDLE, 4), 1, 1),
+                    //            new AdditionalWanderingTrades.SimpleSell(8, new
+                    // ItemStack(Items.CANDLE, 4), 10, 14),
+                    //            new AdditionalWanderingTrades.SimpleSell(8, new
+                    // ItemStack(Items.FIRE_CHARGE, 3), 9, 13),
+                    //            new AdditionalWanderingTrades.SimpleSell(12, new
+                    // ItemStack(Items.LANTERN, 3), 6, 10),
+                    //            new AdditionalWanderingTrades.SimpleBuy(16, new
+                    // ItemCost(Items.HONEY_BOTTLE, 2), 3, 5),
+                    //            new AdditionalWanderingTrades.SimpleBuy(16, new
+                    // ItemCost(Items.BLAZE_ROD, 3), 4, 6)
+                    );
 
     private Collection<MerchantOffer> createRandomOffers(int min, int max) {
-//        Set<Integer> set = Sets.newHashSet();
-//        int fillerTrades = random.nextIntBetweenInclusive(min, max);
-//        for (int i = 0; i < 10 && set.size() < fillerTrades; i++) {
-//            set.add(random.nextInt(fillerOffers.size()));
-//        }
+        //        Set<Integer> set = Sets.newHashSet();
+        //        int fillerTrades = random.nextIntBetweenInclusive(min, max);
+        //        for (int i = 0; i < 10 && set.size() < fillerTrades; i++) {
+        //            set.add(random.nextInt(fillerOffers.size()));
+        //        }
         Collection<MerchantOffer> offers = new ArrayList<>();
-//        for (Integer integer : set) {
-//            offers.add(fillerOffers.get(integer).getOffer(this, this.random));
-//        }
+        //        for (Integer integer : set) {
+        //            offers.add(fillerOffers.get(integer).getOffer(this, this.random));
+        //        }
         return offers;
     }
 
     @Override
-    public void overrideOffers(MerchantOffers pOffers) {
-
-    }
+    public void overrideOffers(MerchantOffers pOffers) {}
 
     @Override
     public void notifyTrade(MerchantOffer pOffer) {
@@ -281,9 +330,13 @@ public class CryomancerEntity extends NeutralWizard implements IMerchantWizard {
 
     @Override
     public void notifyTradeUpdated(ItemStack pStack) {
-        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
+        if (!this.level().isClientSide
+                && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
             this.ambientSoundTime = -this.getAmbientSoundInterval();
-            this.playSound(this.getTradeUpdatedSound(!pStack.isEmpty()), this.getSoundVolume(), this.getVoicePitch());
+            this.playSound(
+                    this.getTradeUpdatedSound(!pStack.isEmpty()),
+                    this.getSoundVolume(),
+                    this.getVoicePitch());
         }
     }
 
@@ -299,7 +352,8 @@ public class CryomancerEntity extends NeutralWizard implements IMerchantWizard {
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        serializeMerchant(pCompound, this.offers, this.lastRestockGameTime, this.numberOfRestocksToday);
+        serializeMerchant(
+                pCompound, this.offers, this.lastRestockGameTime, this.numberOfRestocksToday);
     }
 
     @Override

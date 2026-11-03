@@ -26,7 +26,9 @@ public class InstantManaEffect extends CustomDescriptionMobEffect {
         int amp = instance.getAmplifier() + 1;
         int addition = amp * InstantManaEffect.manaPerAmplifier;
         int percent = (int) (amp * InstantManaEffect.manaPerAmplifierPercent * 100);
-        return Component.translatable("tooltip.irons_spellbooks.instant_mana_description", addition, percent).withStyle(ChatFormatting.BLUE);
+        return Component.translatable(
+                        "tooltip.irons_spellbooks.instant_mana_description", addition, percent)
+                .withStyle(ChatFormatting.BLUE);
     }
 
     @Override
@@ -35,18 +37,23 @@ public class InstantManaEffect extends CustomDescriptionMobEffect {
     }
 
     @Override
-    public void applyInstantenousEffect(@Nullable Entity pSource, @Nullable Entity pIndirectSource, LivingEntity livingEntity, int pAmplifier, double pHealth) {
-        //IronsSpellbooks.LOGGER.debug("Instant mana applying effect");
+    public void applyInstantenousEffect(
+            @Nullable Entity pSource,
+            @Nullable Entity pIndirectSource,
+            LivingEntity livingEntity,
+            int pAmplifier,
+            double pHealth) {
+        // IronsSpellbooks.LOGGER.debug("Instant mana applying effect");
         int i = pAmplifier + 1;
         int maxMana = (int) livingEntity.getAttributeValue(AttributeRegistry.MAX_MANA.get());
         int manaAdd = (int) (i * manaPerAmplifier + (maxMana * (i * manaPerAmplifierPercent)));
         MagicData pmg = MagicData.getPlayerMagicData(livingEntity);
-        //IronsSpellbooks.LOGGER.debug("old mana: {}", pmg.getMana());
+        // IronsSpellbooks.LOGGER.debug("old mana: {}", pmg.getMana());
         pmg.setMana(pmg.getMana() + manaAdd);
         if (livingEntity instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(pmg));
         }
-        //IronsSpellbooks.LOGGER.debug("new mana: {}", pmg.getMana());
+        // IronsSpellbooks.LOGGER.debug("new mana: {}", pmg.getMana());
 
     }
 

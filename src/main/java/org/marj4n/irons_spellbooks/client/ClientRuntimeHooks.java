@@ -16,41 +16,56 @@ import io.github.fabricators_of_create.porting_lib.entity.events.LivingEntityEve
 
 public final class ClientRuntimeHooks {
     private ClientRuntimeHooks() {}
+
     public static void register() {
-        ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
-            if (entity instanceof org.marj4n.irons_spellbooks.events.WorldRemovalListener listener) listener.onRemovedFromWorld();
-        });
+        ClientEntityEvents.ENTITY_UNLOAD.register(
+                (entity, level) -> {
+                    if (entity
+                            instanceof
+                            org.marj4n.irons_spellbooks.events.WorldRemovalListener listener)
+                        listener.onRemovedFromWorld();
+                });
         net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents.LAST.register(
                 io.redspace.ironsspellbooks.particle.FallingBlockParticle::globalrender);
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            ClientPlayerEvents.onClientLogin(client.player);
-            ClientPlayerEvents.onPlayerLogin(client.player);
-        });
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            org.marj4n.irons_spellbooks.ironlib.ChronicleData.update(java.util.List.of());
-            ClientPlayerEvents.onPlayerLogOut(client.player);
-            ClientShieldHelper.onPlayerLogOut();
-            CameraShakeManager.clientCameraShakeData.clear();
-        });
-        ClientTickEvents.START_CLIENT_TICK.register(client -> io.redspace.ironsspellbooks.api.util.MusicManager.tick());
+        ClientPlayConnectionEvents.JOIN.register(
+                (handler, sender, client) -> {
+                    ClientPlayerEvents.onClientLogin(client.player);
+                    ClientPlayerEvents.onPlayerLogin(client.player);
+                });
+        ClientPlayConnectionEvents.DISCONNECT.register(
+                (handler, client) -> {
+                    org.marj4n.irons_spellbooks.ironlib.ChronicleData.update(java.util.List.of());
+                    ClientPlayerEvents.onPlayerLogOut(client.player);
+                    ClientShieldHelper.onPlayerLogOut();
+                    CameraShakeManager.clientCameraShakeData.clear();
+                });
+        ClientTickEvents.START_CLIENT_TICK.register(
+                client -> io.redspace.ironsspellbooks.api.util.MusicManager.tick());
         FogEvents.SET_COLOR.register(io.redspace.ironsspellbooks.api.util.FogManager::fog);
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            ClientPlayerEvents.onPlayerTick(client.player);
-            CameraShakeManager.handleCameraShake();
-        });
-        LivingEntityEvents.LivingTickEvent.TICK.register(event -> {
-            if (event.getEntity().level().isClientSide) ClientPlayerEvents.onClientEntityTick(event);
-        });
-        ClientEntityEvents.ENTITY_LOAD.register((entity, level) -> ClientShieldHelper.trackShieldCreated(entity));
-        ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> ClientShieldHelper.trackShieldRemoved(entity));
+        ClientTickEvents.END_CLIENT_TICK.register(
+                client -> {
+                    ClientPlayerEvents.onPlayerTick(client.player);
+                    CameraShakeManager.handleCameraShake();
+                });
+        LivingEntityEvents.LivingTickEvent.TICK.register(
+                event -> {
+                    if (event.getEntity().level().isClientSide)
+                        ClientPlayerEvents.onClientEntityTick(event);
+                });
+        ClientEntityEvents.ENTITY_LOAD.register(
+                (entity, level) -> ClientShieldHelper.trackShieldCreated(entity));
+        ClientEntityEvents.ENTITY_UNLOAD.register(
+                (entity, level) -> ClientShieldHelper.trackShieldRemoved(entity));
         MovementInputUpdateCallback.EVENT.register(ClientPlayerEvents::onCalculatePlayerSpeed);
         ItemTooltipCallback.EVENT.register(ClientPlayerEvents::imbuedWeaponTooltips);
         ItemTooltipCallback.EVENT.register(ClientPlayerEvents::customPotionTooltips);
         FogEvents.SET_COLOR.register(ClientPlayerEvents::changeFogColor);
-        CameraSetupCallback.EVENT.register(info -> {
-            CameraShakeManager.handleCameraShake(info);
-            return false;
-        });
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> ClientPlayerEvents.onChatReceived(message));
+        CameraSetupCallback.EVENT.register(
+                info -> {
+                    CameraShakeManager.handleCameraShake(info);
+                    return false;
+                });
+        ClientReceiveMessageEvents.GAME.register(
+                (message, overlay) -> ClientPlayerEvents.onChatReceived(message));
     }
 }

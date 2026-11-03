@@ -37,32 +37,61 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
     }
 
     //    private static final VoxelShape INSIDE = box(2, 4, 2, 14, 16, 14);
-//    private static final VoxelShape BODY = box(0, 2, 0, 16, 16, 16);
-//    private static final VoxelShape RIM_NEGATIVE = box(0, 12, 0, 16, 14, 16);
-//    private static final VoxelShape RIM_INNER = box(1, 12, 1, 15, 14, 15);
-//    private static final VoxelShape LOGS = Shapes.or(box(0, 0, 4, 16, 2, 6), box(0, 0, 10, 16, 2, 12), box(4, 0, 0, 6, 2, 16), box(10, 0, 0, 12, 2, 16));
-//    private static final VoxelShape DETAILED_BODY = Shapes.join(Shapes.or(Shapes.join(BODY, RIM_NEGATIVE, BooleanOp.ONLY_FIRST), RIM_INNER), INSIDE, BooleanOp.ONLY_FIRST);
-//    private static final VoxelShape SHAPE = Shapes.or(LOGS, DETAILED_BODY);
-    //magic shape. see comment above for legible shape
-    private static final VoxelShape SHAPE = Shapes.or(Shapes.or(box(0, 0, 4, 16, 2, 6), box(0, 0, 10, 16, 2, 12), box(4, 0, 0, 6, 2, 16), box(10, 0, 0, 12, 2, 16)), Shapes.join(Shapes.or(Shapes.join(box(0, 2, 0, 16, 16, 16), box(0, 12, 0, 16, 14, 16), BooleanOp.ONLY_FIRST), box(1, 12, 1, 15, 14, 15)), box(2, 4, 2, 14, 16, 14), BooleanOp.ONLY_FIRST));
-
+    //    private static final VoxelShape BODY = box(0, 2, 0, 16, 16, 16);
+    //    private static final VoxelShape RIM_NEGATIVE = box(0, 12, 0, 16, 14, 16);
+    //    private static final VoxelShape RIM_INNER = box(1, 12, 1, 15, 14, 15);
+    //    private static final VoxelShape LOGS = Shapes.or(box(0, 0, 4, 16, 2, 6), box(0, 0, 10, 16,
+    // 2, 12), box(4, 0, 0, 6, 2, 16), box(10, 0, 0, 12, 2, 16));
+    //    private static final VoxelShape DETAILED_BODY = Shapes.join(Shapes.or(Shapes.join(BODY,
+    // RIM_NEGATIVE, BooleanOp.ONLY_FIRST), RIM_INNER), INSIDE, BooleanOp.ONLY_FIRST);
+    //    private static final VoxelShape SHAPE = Shapes.or(LOGS, DETAILED_BODY);
+    // magic shape. see comment above for legible shape
+    private static final VoxelShape SHAPE =
+            Shapes.or(
+                    Shapes.or(
+                            box(0, 0, 4, 16, 2, 6),
+                            box(0, 0, 10, 16, 2, 12),
+                            box(4, 0, 0, 6, 2, 16),
+                            box(10, 0, 0, 12, 2, 16)),
+                    Shapes.join(
+                            Shapes.or(
+                                    Shapes.join(
+                                            box(0, 2, 0, 16, 16, 16),
+                                            box(0, 12, 0, 16, 14, 16),
+                                            BooleanOp.ONLY_FIRST),
+                                    box(1, 12, 1, 15, 14, 15)),
+                            box(2, 4, 2, 14, 16, 14),
+                            BooleanOp.ONLY_FIRST));
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return createTicker(pLevel, pBlockEntityType, BlockRegistry.ALCHEMIST_CAULDRON_TILE.get());
     }
 
     @javax.annotation.Nullable
-    protected static <T extends BlockEntity> BlockEntityTicker<T> createTicker(Level pLevel, BlockEntityType<T> pServerType, BlockEntityType<? extends AlchemistCauldronTile> pClientType) {
-        return pLevel.isClientSide ? null : createTickerHelper(pServerType, pClientType, AlchemistCauldronTile::serverTick);
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createTicker(
+            Level pLevel,
+            BlockEntityType<T> pServerType,
+            BlockEntityType<? extends AlchemistCauldronTile> pClientType) {
+        return pLevel.isClientSide
+                ? null
+                : createTickerHelper(pServerType, pClientType, AlchemistCauldronTile::serverTick);
     }
 
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult pHit) {
+    public InteractionResult use(
+            BlockState pState,
+            Level level,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult pHit) {
         if (level.getBlockEntity(pos) instanceof AlchemistCauldronTile tile) {
             return tile.handleUse(level.getBlockState(pos), level, pos, player, hand);
         }
@@ -73,9 +102,24 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
     public void entityInside(BlockState blockState, Level level, BlockPos pos, Entity entity) {
         if (entity.tickCount % 20 == 0) {
             if (level.getBlockEntity(pos) instanceof AlchemistCauldronTile cauldronTile) {
-                if (entity instanceof LivingEntity livingEntity && livingEntity.hurt(DamageSources.get(level, ISSDamageTypes.CAULDRON), 2) && !livingEntity.level().isClientSide()) {
-                    MagicManager.spawnParticles(level, ParticleHelper.BLOOD, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(), 20, .05, .05, .05, .1, false);
-                    cauldronTile.fluidInventory.fill(new FluidStack(FluidRegistry.BLOOD.get(), 250), MillibucketHandler.FluidAction.EXECUTE);
+                if (entity instanceof LivingEntity livingEntity
+                        && livingEntity.hurt(DamageSources.get(level, ISSDamageTypes.CAULDRON), 2)
+                        && !livingEntity.level().isClientSide()) {
+                    MagicManager.spawnParticles(
+                            level,
+                            ParticleHelper.BLOOD,
+                            entity.getX(),
+                            entity.getY() + entity.getBbHeight() / 2,
+                            entity.getZ(),
+                            20,
+                            .05,
+                            .05,
+                            .05,
+                            .1,
+                            false);
+                    cauldronTile.fluidInventory.fill(
+                            new FluidStack(FluidRegistry.BLOOD.get(), 250),
+                            MillibucketHandler.FluidAction.EXECUTE);
                 }
             }
         }
@@ -89,7 +133,12 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+    public void onRemove(
+            BlockState pState,
+            Level pLevel,
+            BlockPos pPos,
+            BlockState pNewState,
+            boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof AlchemistCauldronTile cauldronTile) {
@@ -104,5 +153,4 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
     public @NotNull RenderShape getRenderShape(@NotNull BlockState blockState) {
         return RenderShape.MODEL;
     }
-
 }

@@ -18,19 +18,20 @@ import net.minecraft.world.phys.Vec3;
 
 public class MagmaBallRenderer extends EntityRenderer<FireBomb> {
 
-    private static ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/fireball/magma.png");
+    private static ResourceLocation TEXTURE =
+            IronsSpellbooks.id("textures/entity/fireball/magma.png");
     public static ResourceLocation SWIRL_TEXTURES[] = {
-            IronsSpellbooks.id("textures/entity/fireball/swirl_0.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_1.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_2.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_3.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_4.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_5.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_6.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_7.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_8.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_9.png"),
-            IronsSpellbooks.id("textures/entity/fireball/swirl_10.png")
+        IronsSpellbooks.id("textures/entity/fireball/swirl_0.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_1.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_2.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_3.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_4.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_5.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_6.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_7.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_8.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_9.png"),
+        IronsSpellbooks.id("textures/entity/fireball/swirl_10.png")
     };
 
     private final ModelPart orb;
@@ -44,13 +45,25 @@ public class MagmaBallRenderer extends EntityRenderer<FireBomb> {
     }
 
     @Override
-    public void render(FireBomb entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            FireBomb entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBoundingBox().getYsize() * .5f, 0);
 
         Vec3 motion = entity.getDeltaMovement();
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
 
@@ -61,16 +74,18 @@ public class MagmaBallRenderer extends EntityRenderer<FireBomb> {
         poseStack.mulPose(Axis.XP.rotationDegrees(swirlX));
         poseStack.mulPose(Axis.YP.rotationDegrees(swirlY));
         poseStack.mulPose(Axis.ZP.rotationDegrees(swirlZ));
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
+        VertexConsumer consumer =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
         this.orb.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
         poseStack.mulPose(Axis.XP.rotationDegrees(swirlX));
         poseStack.mulPose(Axis.YP.rotationDegrees(swirlY));
         poseStack.mulPose(Axis.ZP.rotationDegrees(swirlZ));
-        consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getSwirlTextureLocation(entity)));
+        consumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(getSwirlTextureLocation(entity)));
         poseStack.scale(1.15f, 1.15f, 1.15f);
         this.swirl.render(poseStack, consumer, light, OverlayTexture.NO_OVERLAY);
-
 
         poseStack.popPose();
 

@@ -13,14 +13,16 @@ import java.util.List;
 
 @Mixin(Particle.class)
 public class ParticleMixin {
-    @Shadow
-    private AABB bb;
+    @Shadow private AABB bb;
 
     @ModifyArg(
             method = "move",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;collideBoundingBox(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;"),
-            index = 4
-    )
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lnet/minecraft/world/entity/Entity;collideBoundingBox(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;"),
+            index = 4)
     private List<VoxelShape> mixin(List<VoxelShape> in) {
         return ClientShieldHelper.getShieldsFor(bb.inflate(0.25));
     }

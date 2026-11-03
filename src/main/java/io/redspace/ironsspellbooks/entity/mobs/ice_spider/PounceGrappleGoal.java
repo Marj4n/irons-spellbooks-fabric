@@ -11,9 +11,13 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-
 public class PounceGrappleGoal extends AnimatedActionGoal<IceSpiderEntity> {
-    private static final AttributeModifier TELEGRAPH_SPEED_MODIFIER = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("pouncing")), "pouncing", -0.20, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier TELEGRAPH_SPEED_MODIFIER =
+            new AttributeModifier(
+                    AttributeHelper.uuidFromId(IronsSpellbooks.id("pouncing")),
+                    "pouncing",
+                    -0.20,
+                    AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     private static final int DAMAGER_START = 30;
     private static final int DAMAGER_END = 35;
@@ -24,7 +28,10 @@ public class PounceGrappleGoal extends AnimatedActionGoal<IceSpiderEntity> {
 
     @Override
     protected boolean canStartAction() {
-        return !mob.isCrouching() && mob.isAggressive() && mob.getTarget() != null && (Utils.random.nextFloat() < 0.05 || mob.distanceToSqr(mob.getTarget()) > 5 * 5);
+        return !mob.isCrouching()
+                && mob.isAggressive()
+                && mob.getTarget() != null
+                && (Utils.random.nextFloat() < 0.05 || mob.distanceToSqr(mob.getTarget()) > 5 * 5);
     }
 
     @Override
@@ -61,8 +68,13 @@ public class PounceGrappleGoal extends AnimatedActionGoal<IceSpiderEntity> {
             mob.playSound(SoundRegistry.ICE_SPIDER_BITE.get());
         }
         if (abilityTimer >= DAMAGER_START && abilityTimer <= DAMAGER_END) {
-            double meleeRange = mob.getAttributeValue(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH) * mob.getScale();
-            if (target.distanceToSqr(mob) <= meleeRange * meleeRange && Utils.hasLineOfSight(mob.level(), mob, target, true)) {
+            double meleeRange =
+                    mob.getAttributeValue(
+                                    io.github.fabricators_of_create.porting_lib.attributes
+                                            .PortingLibAttributes.ENTITY_REACH)
+                            * mob.getScale();
+            if (target.distanceToSqr(mob) <= meleeRange * meleeRange
+                    && Utils.hasLineOfSight(mob.level(), mob, target, true)) {
                 if (this.mob.doHurtTarget(target)) {
                     if (target.isBlocking() && target instanceof Player player) {
                         player.disableShield(true);
@@ -78,7 +90,8 @@ public class PounceGrappleGoal extends AnimatedActionGoal<IceSpiderEntity> {
 
     @Override
     public boolean isInterruptable() {
-        // we are messing with attributes, so it is required that the full extent of logic plays out to correctly manage the state tracking
+        // we are messing with attributes, so it is required that the full extent of logic plays out
+        // to correctly manage the state tracking
         return false;
     }
 
@@ -90,12 +103,31 @@ public class PounceGrappleGoal extends AnimatedActionGoal<IceSpiderEntity> {
         if (target == null) {
             return;
         }
-        Vec3 power = Utils.lerp(Mth.clamp(mob.distanceTo(target) / 18f, 0, 1), new Vec3(0.125, 0.25, 0.125), new Vec3(3, 1.2, 3));
-        Vec3 lunge = leapVector.multiply(power.x, power.y, power.z).yRot(-Utils.getAngle(mob.getX(), mob.getZ(), target.getX(), target.getZ()) - Mth.HALF_PI);
+        Vec3 power =
+                Utils.lerp(
+                        Mth.clamp(mob.distanceTo(target) / 18f, 0, 1),
+                        new Vec3(0.125, 0.25, 0.125),
+                        new Vec3(3, 1.2, 3));
+        Vec3 lunge =
+                leapVector
+                        .multiply(power.x, power.y, power.z)
+                        .yRot(
+                                -Utils.getAngle(
+                                                mob.getX(),
+                                                mob.getZ(),
+                                                target.getX(),
+                                                target.getZ())
+                                        - Mth.HALF_PI);
         mob.setDeltaMovement(mob.getDeltaMovement().add(lunge));
         mob.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(TELEGRAPH_SPEED_MODIFIER);
-        mob.playSound(SoundRegistry.ICE_SPIDER_SWING.get(), 3, Utils.random.nextIntBetweenInclusive(13, 16) * .1f);
-        mob.playSound(SoundRegistry.ICE_SPIDER_AMBIENT.get(), 3, Utils.random.nextIntBetweenInclusive(14, 20) * .1f);
+        mob.playSound(
+                SoundRegistry.ICE_SPIDER_SWING.get(),
+                3,
+                Utils.random.nextIntBetweenInclusive(13, 16) * .1f);
+        mob.playSound(
+                SoundRegistry.ICE_SPIDER_AMBIENT.get(),
+                3,
+                Utils.random.nextIntBetweenInclusive(14, 20) * .1f);
     }
 
     @Override

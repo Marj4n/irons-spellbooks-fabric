@@ -14,8 +14,6 @@ public class FallDamageImmunityEffect extends MobEffect {
         livingEntity.resetFallDistance();
     }
 
-
-
     @Override
     public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
         return true;

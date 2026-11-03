@@ -18,8 +18,7 @@ public class PortalData implements ICastDataSerializable {
     public int ticksToLive;
     public boolean isBlock;
 
-    public PortalData() {
-    }
+    public PortalData() {}
 
     public void setPortalDuration(int ticksToLive) {
         this.ticksToLive = ticksToLive;
@@ -77,7 +76,7 @@ public class PortalData implements ICastDataSerializable {
         buffer.writeBoolean(isBlock);
     }
 
-    //TODO: make buffer utils class?
+    // TODO: make buffer utils class?
     private void writePortalPosToBuffer(FriendlyByteBuf buffer, PortalPos pos) {
         buffer.writeResourceKey(pos.dimension());
         Vec3 vec3 = pos.pos();
@@ -88,7 +87,10 @@ public class PortalData implements ICastDataSerializable {
     }
 
     private PortalPos readPortalPosFromBuffer(FriendlyByteBuf buffer) {
-        return PortalPos.of(buffer.readResourceKey(Registries.DIMENSION), new Vec3(buffer.readInt() / 10.0, buffer.readInt() / 10.0, buffer.readInt() / 10.0), buffer.readFloat());
+        return PortalPos.of(
+                buffer.readResourceKey(Registries.DIMENSION),
+                new Vec3(buffer.readInt() / 10.0, buffer.readInt() / 10.0, buffer.readInt() / 10.0),
+                buffer.readFloat());
     }
 
     @Override
@@ -108,7 +110,7 @@ public class PortalData implements ICastDataSerializable {
 
     @Override
     public void reset() {
-        //nothing to clean up for Portal
+        // nothing to clean up for Portal
     }
 
     @Override
@@ -149,6 +151,8 @@ public class PortalData implements ICastDataSerializable {
 
     @Override
     public String toString() {
-        return String.format("PortalData[pos1:%s pos2:%s id1:%s id2:%s]", this.globalPos1, this.globalPos2, this.portalEntityId1, this.portalEntityId2);
+        return String.format(
+                "PortalData[pos1:%s pos2:%s id1:%s id2:%s]",
+                this.globalPos1, this.globalPos2, this.portalEntityId1, this.portalEntityId2);
     }
 }

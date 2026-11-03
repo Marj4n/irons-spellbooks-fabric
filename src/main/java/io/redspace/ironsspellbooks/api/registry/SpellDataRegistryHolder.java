@@ -6,7 +6,6 @@ import org.marj4n.irons_spellbooks.registry.RegistryEntry;
 
 import java.util.function.Supplier;
 
-
 public class SpellDataRegistryHolder {
 
     Supplier<AbstractSpell> registrySpell;

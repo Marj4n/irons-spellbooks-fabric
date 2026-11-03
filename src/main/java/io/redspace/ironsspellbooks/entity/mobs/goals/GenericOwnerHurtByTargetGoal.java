@@ -34,10 +34,12 @@ public class GenericOwnerHurtByTargetGoal extends TargetGoal {
             return false;
         } else {
             this.ownerLastHurtBy = owner.getLastHurtByMob();
-            if (ownerLastHurtBy == null || ownerLastHurtBy.isAlliedTo(mob))
-                return false;
+            if (ownerLastHurtBy == null || ownerLastHurtBy.isAlliedTo(mob)) return false;
             int i = owner.getLastHurtByMobTimestamp();
-            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT) && !(this.ownerLastHurtBy instanceof IMagicSummon summon && summon.getSummoner() == owner);
+            return i != this.timestamp
+                    && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT)
+                    && !(this.ownerLastHurtBy instanceof IMagicSummon summon
+                            && summon.getSummoner() == owner);
         }
     }
 
@@ -46,7 +48,9 @@ public class GenericOwnerHurtByTargetGoal extends TargetGoal {
      */
     public void start() {
         this.mob.setTarget(this.ownerLastHurtBy);
-        this.mob.getBrain().setMemoryWithExpiry(MemoryModuleType.ATTACK_TARGET, this.ownerLastHurtBy, 200L);
+        this.mob
+                .getBrain()
+                .setMemoryWithExpiry(MemoryModuleType.ATTACK_TARGET, this.ownerLastHurtBy, 200L);
         Entity owner = this.owner.get();
         if (owner instanceof LivingEntity livingOwner) {
             this.timestamp = livingOwner.getLastHurtByMobTimestamp();
@@ -54,5 +58,4 @@ public class GenericOwnerHurtByTargetGoal extends TargetGoal {
 
         super.start();
     }
-
 }

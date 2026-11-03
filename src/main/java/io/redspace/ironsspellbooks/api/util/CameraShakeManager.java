@@ -58,23 +58,29 @@ public class CameraShakeManager {
     }
 
     public static void doSync(ServerPlayer serverPlayer) {
-        PacketDistributor.sendToPlayer(serverPlayer, new SyncAllCameraShakesPacket(cameraShakeData));
+        PacketDistributor.sendToPlayer(
+                serverPlayer, new SyncAllCameraShakesPacket(cameraShakeData));
     }
 
     private static final int fadeoutDuration = 20;
     private static final float fadeoutMultiplier = 1f / fadeoutDuration;
 
     @Environment(EnvType.CLIENT)
-    public static void handleCameraShake(io.github.fabricators_of_create.porting_lib.event.client.CameraSetupCallback.CameraInfo event) {
+    public static void handleCameraShake(
+            io.github.fabricators_of_create.porting_lib.event.client.CameraSetupCallback.CameraInfo
+                    event) {
         if (clientCameraShakeData.isEmpty()) {
             return;
         }
 
         var player = event.camera.getEntity();
-        List<CameraShakeData> sortedActiveCameraShakes = clientCameraShakeData.stream()
-                .filter(data -> data.dimension.equals(player.level().dimension()))
-                .sorted(Comparator.comparingDouble(o -> o.origin.distanceToSqr(player.position())))
-                .toList();
+        List<CameraShakeData> sortedActiveCameraShakes =
+                clientCameraShakeData.stream()
+                        .filter(data -> data.dimension.equals(player.level().dimension()))
+                        .sorted(
+                                Comparator.comparingDouble(
+                                        o -> o.origin.distanceToSqr(player.position())))
+                        .toList();
         if (sortedActiveCameraShakes.isEmpty()) {
             return;
         }
@@ -82,10 +88,19 @@ public class CameraShakeManager {
         var closestPos = cameraShake.origin;
 
         float distanceMultiplier = 1 / (cameraShake.radius * cameraShake.radius);
-        float fadeout = (cameraShake.duration - cameraShake.tickCount) >= fadeoutDuration ? 1f
-                : ((cameraShake.duration - cameraShake.tickCount) * fadeoutMultiplier);
+        float fadeout =
+                (cameraShake.duration - cameraShake.tickCount) >= fadeoutDuration
+                        ? 1f
+                        : ((cameraShake.duration - cameraShake.tickCount) * fadeoutMultiplier);
         fadeout = Mth.clamp(fadeout, 0, 1); // additional safeguard against negative values
-        float intensity = (float) Mth.clampedLerp(1, 0, closestPos.distanceToSqr(player.position()) * distanceMultiplier) * fadeout;
+        float intensity =
+                (float)
+                                Mth.clampedLerp(
+                                        1,
+                                        0,
+                                        closestPos.distanceToSqr(player.position())
+                                                * distanceMultiplier)
+                        * fadeout;
 
         float f = (float) (player.tickCount + event.partialTicks);
         float yaw = Mth.cos(f * 1.5f) * intensity * .5f;

@@ -15,14 +15,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(NoiseChunk.class)
 public class NoiseChunkMixin implements IExtendedNoiseChunk {
-    @Unique
-    AquifierNuke irons_spellbooks$aquifierNuke = null;
+    @Unique AquifierNuke irons_spellbooks$aquifierNuke = null;
 
-    @Unique
-    BlockState irons_spellbooks$defaultBlockState;
+    @Unique BlockState irons_spellbooks$defaultBlockState;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void irons_spellbooks$captureDefaultBlockstate(int cellCountXZ, RandomState random, int firstNoiseX, int firstNoiseZ, NoiseSettings noiseSettings, DensityFunctions.BeardifierOrMarker beardifier, NoiseGeneratorSettings noiseGeneratorSettings, Aquifer.FluidPicker fluidPicker, Blender blendifier, CallbackInfo ci) {
+    private void irons_spellbooks$captureDefaultBlockstate(
+            int cellCountXZ,
+            RandomState random,
+            int firstNoiseX,
+            int firstNoiseZ,
+            NoiseSettings noiseSettings,
+            DensityFunctions.BeardifierOrMarker beardifier,
+            NoiseGeneratorSettings noiseGeneratorSettings,
+            Aquifer.FluidPicker fluidPicker,
+            Blender blendifier,
+            CallbackInfo ci) {
         this.irons_spellbooks$defaultBlockState = noiseGeneratorSettings.defaultBlock();
     }
 
@@ -43,7 +51,7 @@ public class NoiseChunkMixin implements IExtendedNoiseChunk {
             var y = chunk.blockY();
             var z = chunk.blockZ();
             for (BoundingBox box : nuke.boundingBoxes()) {
-                //todo: it is likely most bb's aren't even in the chunk. can do prelimiary checks
+                // todo: it is likely most bb's aren't even in the chunk. can do prelimiary checks
                 int dx = 0;
                 if (x < box.minX()) {
                     dx = box.minX() - x;

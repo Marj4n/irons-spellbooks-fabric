@@ -9,7 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class WispRenderer extends GeoEntityRenderer<WispEntity> {
-    public static final ResourceLocation textureLocation = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/wisp/wisp.png");
+    public static final ResourceLocation textureLocation =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/wisp/wisp.png");
 
     public WispRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new WispModel());
@@ -22,7 +23,11 @@ public class WispRenderer extends GeoEntityRenderer<WispEntity> {
     }
 
     @Override
-    public RenderType getRenderType(WispEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+    public RenderType getRenderType(
+            WispEntity animatable,
+            ResourceLocation texture,
+            @Nullable MultiBufferSource bufferSource,
+            float partialTick) {
         return RenderType.energySwirl(texture, 0, 0);
     }
 }

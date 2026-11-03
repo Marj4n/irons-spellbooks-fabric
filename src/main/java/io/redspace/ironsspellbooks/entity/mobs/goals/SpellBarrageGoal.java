@@ -24,13 +24,23 @@ public class SpellBarrageGoal extends Goal {
     protected final int minSpellLevel;
     protected final int maxSpellLevel;
 
-    public SpellBarrageGoal(IMagicEntity abstractSpellCastingMob, AbstractSpell spell, int minLevel, int maxLevel, int pAttackIntervalMin, int pAttackIntervalMax, int projectileCount) {
+    public SpellBarrageGoal(
+            IMagicEntity abstractSpellCastingMob,
+            AbstractSpell spell,
+            int minLevel,
+            int maxLevel,
+            int pAttackIntervalMin,
+            int pAttackIntervalMax,
+            int projectileCount) {
         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK, Flag.TARGET));
         this.spellCastingMob = abstractSpellCastingMob;
         if (abstractSpellCastingMob instanceof PathfinderMob m) {
             this.mob = m;
         } else
-            throw new IllegalStateException("Unable to add " + this.getClass().getSimpleName() + "to entity, must extend PathfinderMob.");
+            throw new IllegalStateException(
+                    "Unable to add "
+                            + this.getClass().getSimpleName()
+                            + "to entity, must extend PathfinderMob.");
         this.attackIntervalMin = pAttackIntervalMin;
         this.attackIntervalMax = pAttackIntervalMax;
         this.attackRadius = 20;
@@ -48,15 +58,16 @@ public class SpellBarrageGoal extends Goal {
      */
     public boolean canUse() {
         target = this.mob.getTarget();
-        if (target == null || spellCastingMob.isCasting())
-            return false;
+        if (target == null || spellCastingMob.isCasting()) return false;
 
         if (attackTime <= -interval * (projectileCount - 1)) {
-            //IronsSpellbooks.LOGGER.debug("SpellBarrageGoal.canUse resetAttackTimer");
+            // IronsSpellbooks.LOGGER.debug("SpellBarrageGoal.canUse resetAttackTimer");
             resetAttackTimer();
         }
         attackTime--;
-        //IronsSpellbooks.LOGGER.debug("SpellBarrageGoal.canUse: spell:{}, attackTime:{}, interval:{}, a%i:{}, result:{}", spell, attackTime, interval, attackTime % interval, attackTime <= 0 && attackTime % interval == 0);
+        // IronsSpellbooks.LOGGER.debug("SpellBarrageGoal.canUse: spell:{}, attackTime:{},
+        // interval:{}, a%i:{}, result:{}", spell, attackTime, interval, attackTime % interval,
+        // attackTime <= 0 && attackTime % interval == 0);
         return attackTime <= 0 && attackTime % interval == 0;
     }
 
@@ -71,10 +82,9 @@ public class SpellBarrageGoal extends Goal {
      * Reset the task's internal state. Called when this task is interrupted by another one
      */
     public void stop() {
-        //IronsSpellbooks.LOGGER.debug("SpellBarrageGoal.stop");
+        // IronsSpellbooks.LOGGER.debug("SpellBarrageGoal.stop");
         this.target = null;
-        if (attackTime > 0)
-            this.attackTime = -projectileCount * interval - 1;
+        if (attackTime > 0) this.attackTime = -projectileCount * interval - 1;
     }
 
     public boolean requiresUpdateEveryTick() {
@@ -85,24 +95,28 @@ public class SpellBarrageGoal extends Goal {
      * Keep ticking a continuous task that has already been started
      */
     public void tick() {
-        //IronsSpellbooks.LOGGER.debug("SpellBarrageGoal.tick: spell:{}, attackTime:{}, interval:{}, a%i:{}, result:{}", spell, attackTime, interval, attackTime % interval, attackTime <= 0 && attackTime % interval == 0);
+        // IronsSpellbooks.LOGGER.debug("SpellBarrageGoal.tick: spell:{}, attackTime:{},
+        // interval:{}, a%i:{}, result:{}", spell, attackTime, interval, attackTime % interval,
+        // attackTime <= 0 && attackTime % interval == 0);
 
         if (target == null) {
             return;
         }
 
-        double distanceSquared = this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
+        double distanceSquared =
+                this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
         if (distanceSquared < attackRadiusSqr) {
-            //IronsSpellbooks.LOGGER.debug("SpellBarrageGoal ({}) initiate cast on tick {}", this.hashCode(), attackTime);
+            // IronsSpellbooks.LOGGER.debug("SpellBarrageGoal ({}) initiate cast on tick {}",
+            // this.hashCode(), attackTime);
             this.mob.getLookControl().setLookAt(this.target, 45, 45);
-            spellCastingMob.initiateCastSpell(spell, mob.getRandom().nextIntBetweenInclusive(minSpellLevel, maxSpellLevel));
+            spellCastingMob.initiateCastSpell(
+                    spell, mob.getRandom().nextIntBetweenInclusive(minSpellLevel, maxSpellLevel));
             stop();
         }
-
-
     }
 
     protected void resetAttackTimer() {
-        this.attackTime = mob.getRandom().nextIntBetweenInclusive(attackIntervalMin, attackIntervalMax);
+        this.attackTime =
+                mob.getRandom().nextIntBetweenInclusive(attackIntervalMin, attackIntervalMax);
     }
 }

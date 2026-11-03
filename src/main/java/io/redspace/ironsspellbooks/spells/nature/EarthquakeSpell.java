@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.spells.nature;
 
-
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
@@ -28,23 +27,30 @@ import java.util.List;
 import java.util.Optional;
 
 public class EarthquakeSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "earthquake");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "earthquake");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.slowness_effect", getSlownessAmplifier(spellLevel, caster) + 1),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.aoe_damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.slowness_effect",
+                        getSlownessAmplifier(spellLevel, caster) + 1),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(16)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(16)
+                    .build();
 
     public EarthquakeSpell() {
         this.manaCostPerLevel = 10;
@@ -80,30 +86,37 @@ public class EarthquakeSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .15f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 spawn = null;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             var target = castTargetingData.getTarget((ServerLevel) world);
-            if (target != null)
-                spawn = target.position();
+            if (target != null) spawn = target.position();
         }
         if (spawn == null) {
-            spawn = RaycastBuilder.begin(world, entity)
-                    .range(32)
-                    .checkForBlocks(true)
-                    .bbInflation(.15f)
-                    .build()
-                    .getLocation();
+            spawn =
+                    RaycastBuilder.begin(world, entity)
+                            .range(32)
+                            .checkForBlocks(true)
+                            .bbInflation(.15f)
+                            .build()
+                            .getLocation();
             spawn = Utils.moveToRelativeGroundLevel(world, spawn, 6);
         }
 
-        int duration = 20 * 12;//getDuration(spellLevel, entity);
+        int duration = 20 * 12; // getDuration(spellLevel, entity);
         float radius = getRadius(spellLevel, entity);
 
         EarthquakeAoe aoeEntity = new EarthquakeAoe(world);
@@ -130,5 +143,4 @@ public class EarthquakeSpell extends AbstractSpell {
     private int getSlownessAmplifier(int spellLevel, LivingEntity caster) {
         return Mth.clamp((int) getDamage(spellLevel, caster) - 2, 0, 2);
     }
-
 }

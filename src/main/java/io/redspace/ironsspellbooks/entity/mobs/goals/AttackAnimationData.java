@@ -9,17 +9,20 @@ import java.util.Optional;
  * Deprecated wrapper class for 1.20.1 compat. Used {@link io.redspace.ironsspellbooks.entity.mobs.goals.melee.AttackAnimationData} instead
  */
 @Deprecated(forRemoval = true)
-public class AttackAnimationData extends io.redspace.ironsspellbooks.entity.mobs.goals.melee.AttackAnimationData {
+public class AttackAnimationData
+        extends io.redspace.ironsspellbooks.entity.mobs.goals.melee.AttackAnimationData {
     /**
      * API Bridge. These values are meaningless!!!!
      */
     @Deprecated(forRemoval = true)
     public final int[] attackTimestamps;
+
     /**
      * API Bridge. These values are meaningless!!!!
      */
     @Deprecated(forRemoval = true)
     public final int lengthInTicks;
+
     /**
      * API Bridge. These values are meaningless!!!!
      */
@@ -33,14 +36,25 @@ public class AttackAnimationData extends io.redspace.ironsspellbooks.entity.mobs
         this.lengthInTicks = lengthInTicks;
     }
 
-    public AttackAnimationData(String animationId, int lengthInTicks, boolean canCancel, Optional<Float> areaAttackThreshold, Int2ObjectOpenHashMap<AttackKeyframe> attacks) {
+    public AttackAnimationData(
+            String animationId,
+            int lengthInTicks,
+            boolean canCancel,
+            Optional<Float> areaAttackThreshold,
+            Int2ObjectOpenHashMap<AttackKeyframe> attacks) {
         super(animationId, lengthInTicks, canCancel, areaAttackThreshold, attacks);
         this.attackTimestamps = attacks.keySet().toArray(new int[0]);
         this.animationId = animationId;
         this.lengthInTicks = lengthInTicks;
     }
 
-    public AttackAnimationData(String animationId, int lengthInTicks, boolean canCancel, Optional<Float> areaAttackThreshold, Int2ObjectOpenHashMap<AttackKeyframe> attacks, float rangeMultiplier) {
+    public AttackAnimationData(
+            String animationId,
+            int lengthInTicks,
+            boolean canCancel,
+            Optional<Float> areaAttackThreshold,
+            Int2ObjectOpenHashMap<AttackKeyframe> attacks,
+            float rangeMultiplier) {
         super(animationId, lengthInTicks, canCancel, areaAttackThreshold, attacks, rangeMultiplier);
         this.attackTimestamps = attacks.keySet().toArray(new int[0]);
         this.animationId = animationId;

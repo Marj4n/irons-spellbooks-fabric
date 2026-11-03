@@ -23,14 +23,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-//https://github.com/TobyNguyen710/kyomod/blob/56d3a9dc6b45f7bc5ecdb0d6de9d201cea2603f5/Mod/build/tmp/expandedArchives/forge-1.19.2-43.1.7_mapped_official_1.19.2-sources.jar_b6309abf8a7e6a853ce50598293fb2e7/net/minecraft/world/entity/projectile/ShulkerBullet.java
-//https://github.com/maximumpower55/Aura/blob/1.18/src/main/java/me/maximumpower55/aura/entity/SpellProjectileEntity.java
-//https://github.com/CammiePone/Arcanus/blob/1.18-dev/src/main/java/dev/cammiescorner/arcanus/common/entities/MagicMissileEntity.java#L51
-//https://github.com/maximumpower55/Aura
+// https://github.com/TobyNguyen710/kyomod/blob/56d3a9dc6b45f7bc5ecdb0d6de9d201cea2603f5/Mod/build/tmp/expandedArchives/forge-1.19.2-43.1.7_mapped_official_1.19.2-sources.jar_b6309abf8a7e6a853ce50598293fb2e7/net/minecraft/world/entity/projectile/ShulkerBullet.java
+// https://github.com/maximumpower55/Aura/blob/1.18/src/main/java/me/maximumpower55/aura/entity/SpellProjectileEntity.java
+// https://github.com/CammiePone/Arcanus/blob/1.18-dev/src/main/java/dev/cammiescorner/arcanus/common/entities/MagicMissileEntity.java#L51
+// https://github.com/maximumpower55/Aura
 
 public class BloodNeedle extends AbstractMagicProjectile {
-    private static final EntityDataAccessor<Float> DATA_Z_ROT = SynchedEntityData.defineId(BloodNeedle.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(BloodNeedle.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_Z_ROT =
+            SynchedEntityData.defineId(BloodNeedle.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_SCALE =
+            SynchedEntityData.defineId(BloodNeedle.class, EntityDataSerializers.FLOAT);
 
     public BloodNeedle(EntityType<? extends BloodNeedle> entityType, Level level) {
         super(entityType, level);
@@ -43,13 +45,11 @@ public class BloodNeedle extends AbstractMagicProjectile {
     }
 
     public void setZRot(float zRot) {
-        if (!level().isClientSide)
-            entityData.set(DATA_Z_ROT, zRot);
+        if (!level().isClientSide) entityData.set(DATA_Z_ROT, zRot);
     }
 
     public void setScale(float scale) {
-        if (!level().isClientSide)
-            entityData.set(DATA_SCALE, scale);
+        if (!level().isClientSide) entityData.set(DATA_SCALE, scale);
     }
 
     @Override
@@ -71,22 +71,23 @@ public class BloodNeedle extends AbstractMagicProjectile {
     protected void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putFloat("zRot", getZRot());
-        if (getScale() != 1)
-            tag.putFloat("Scale", getScale());
+        if (getScale() != 1) tag.putFloat("Scale", getScale());
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         setZRot(tag.getFloat("zRot"));
-        if (tag.contains("Scale"))
-            setScale(tag.getFloat("Scale"));
+        if (tag.contains("Scale")) setScale(tag.getFloat("Scale"));
     }
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
-        DamageSources.applyDamage(entityHitResult.getEntity(), getDamage(), SpellRegistry.BLOOD_NEEDLES_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                entityHitResult.getEntity(),
+                getDamage(),
+                SpellRegistry.BLOOD_NEEDLES_SPELL.get().getDamageSource(this, getOwner()));
     }
 
     @Override
@@ -112,13 +113,21 @@ public class BloodNeedle extends AbstractMagicProjectile {
             double dx = Utils.random.nextDouble() * 2 * speed - speed;
             double dy = Utils.random.nextDouble() * 2 * speed - speed;
             double dz = Utils.random.nextDouble() * 2 * speed - speed;
-            level().addParticle(ParticleHelper.BLOOD, this.getX() + dx, this.getY() + dy, this.getZ() + dz, dx, dy, dz);
+            level().addParticle(
+                            ParticleHelper.BLOOD,
+                            this.getX() + dx,
+                            this.getY() + dy,
+                            this.getZ() + dz,
+                            dx,
+                            dy,
+                            dz);
         }
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.BLOOD, x, y, z, 15, .1, .1, .1, .18, true);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.BLOOD, x, y, z, 15, .1, .1, .1, .18, true);
     }
 
     @Override

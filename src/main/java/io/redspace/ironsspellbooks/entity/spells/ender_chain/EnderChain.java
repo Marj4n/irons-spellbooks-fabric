@@ -22,29 +22,28 @@ import net.minecraft.world.phys.Vec3;
 import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 
-
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class EnderChain extends Entity implements AntiMagicSusceptible, IEntityAdditionalSpawnData, io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity {
+public class EnderChain extends Entity
+        implements AntiMagicSusceptible,
+                IEntityAdditionalSpawnData,
+                io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
 
     private static final int SEGMENT_COUNT = 8;
     private static final float SEGMENT_SIZE = 0.5f;
     public static final int VISUAL_WARMUP_TIME = 3;
 
-    @Nullable
-    private UUID ownerUUID;
-    @Nullable
-    private Entity cachedOwner;
+    @Nullable private UUID ownerUUID;
+    @Nullable private Entity cachedOwner;
 
-    @Nullable
-    private UUID victimUUID;
-    @Nullable
-    private Entity cachedVictim;
+    @Nullable private UUID victimUUID;
+    @Nullable private Entity cachedVictim;
 
     private float health = 10f;
     private int lifetime = 200;
@@ -160,7 +159,11 @@ public class EnderChain extends Entity implements AntiMagicSusceptible, IEntityA
         }
         if (!level().isClientSide) {
             Entity victim = getVictim();
-            if (victim == null || victim.isRemoved() || victim.distanceToSqr(this) > 12 * 12 || tickCount > lifetime || health <= 0) {
+            if (victim == null
+                    || victim.isRemoved()
+                    || victim.distanceToSqr(this) > 12 * 12
+                    || tickCount > lifetime
+                    || health <= 0) {
                 breakChain();
                 return;
             }
@@ -178,7 +181,14 @@ public class EnderChain extends Entity implements AntiMagicSusceptible, IEntityA
     private void chainParticlesAround(Vec3 pos, int count) {
         for (int i = 0; i < count; i++) {
             Vec3 random = Utils.getRandomVec3(0.05);
-            level().addParticle(ParticleHelper.UNSTABLE_ENDER, pos.x + random.x, pos.y + random.y, pos.z + random.z, random.x, random.y, random.z);
+            level().addParticle(
+                            ParticleHelper.UNSTABLE_ENDER,
+                            pos.x + random.x,
+                            pos.y + random.y,
+                            pos.z + random.z,
+                            random.x,
+                            random.y,
+                            random.z);
         }
     }
 
@@ -199,7 +209,10 @@ public class EnderChain extends Entity implements AntiMagicSusceptible, IEntityA
     private void repositionParts() {
         Entity victim = getVictim();
         Vec3 start = position();
-        Vec3 end = victim != null ? victim.position().add(0, victim.getBbHeight() * 0.5, 0) : start.add(0, 1, 0);
+        Vec3 end =
+                victim != null
+                        ? victim.position().add(0, victim.getBbHeight() * 0.5, 0)
+                        : start.add(0, 1, 0);
         int totalLinks = parts.length + 1;
 
         for (int i = 0; i < parts.length; i++) {
@@ -250,7 +263,18 @@ public class EnderChain extends Entity implements AntiMagicSusceptible, IEntityA
                 Vec3 end = parts[parts.length - 1].position();
                 for (int i = 0; i < count; i++) {
                     Vec3 vec3 = pos.lerp(end, i / (float) count);
-                    MagicManager.spawnParticles(level(), ParticleHelper.ENDER_SPARKS, vec3.x, vec3.y, vec3.z, 1, 0.05, 0.05, 0.05, 0.1, false);
+                    MagicManager.spawnParticles(
+                            level(),
+                            ParticleHelper.ENDER_SPARKS,
+                            vec3.x,
+                            vec3.y,
+                            vec3.z,
+                            1,
+                            0.05,
+                            0.05,
+                            0.05,
+                            0.1,
+                            false);
                 }
             }
             this.discard();
@@ -263,8 +287,7 @@ public class EnderChain extends Entity implements AntiMagicSusceptible, IEntityA
     }
 
     @Override
-    protected void defineSynchedData() {
-    }
+    protected void defineSynchedData() {}
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {

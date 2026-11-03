@@ -10,11 +10,19 @@ import net.fabricmc.api.Environment;
 public class BloodParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
 
-    public BloodParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public BloodParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
 
-        //this.friction = 1.0f;
+        // this.friction = 1.0f;
         this.xd = xd;
         this.yd = yd;
         this.zd = zd;
@@ -35,7 +43,8 @@ public class BloodParticle extends TextureSheetParticle {
         super.tick();
         this.setSpriteFromAge(this.sprites);
         if (this.onGround) {
-            this.level.addParticle(ParticleHelper.BLOOD_GROUND, this.x, this.y, this.z, 0.0D, 0.0D, 0.0D);
+            this.level.addParticle(
+                    ParticleHelper.BLOOD_GROUND, this.x, this.y, this.z, 0.0D, 0.0D, 0.0D);
             this.remove();
         }
     }
@@ -53,9 +62,15 @@ public class BloodParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new BloodParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }

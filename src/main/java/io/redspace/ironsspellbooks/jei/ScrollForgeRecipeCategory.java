@@ -17,7 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Arrays;
 
 public class ScrollForgeRecipeCategory implements IRecipeCategory<ScrollForgeRecipe> {
-    public static final RecipeType<ScrollForgeRecipe> SCROLL_FORGE_RECIPE_RECIPE_TYPE = RecipeType.create(IronsSpellbooks.MODID, "scroll_forge", ScrollForgeRecipe.class);
+    public static final RecipeType<ScrollForgeRecipe> SCROLL_FORGE_RECIPE_RECIPE_TYPE =
+            RecipeType.create(IronsSpellbooks.MODID, "scroll_forge", ScrollForgeRecipe.class);
     private final IDrawable background;
     private final IDrawable icon;
     private final String inkSlotName = "inkSlot";
@@ -27,10 +28,11 @@ public class ScrollForgeRecipeCategory implements IRecipeCategory<ScrollForgeRec
 
     public ScrollForgeRecipeCategory(IGuiHelper guiHelper) {
         ResourceLocation location = JeiPlugin.SCROLL_FORGE_GUI;
-        background = guiHelper.drawableBuilder(location, 11, 16, 64, 49)
-                .addPadding(0, 0, 0, 0)
-                .build();
-        icon = guiHelper.createDrawableItemStack(new ItemStack(BlockRegistry.SCROLL_FORGE_BLOCK.get()));
+        background =
+                guiHelper.drawableBuilder(location, 11, 16, 64, 49).addPadding(0, 0, 0, 0).build();
+        icon =
+                guiHelper.createDrawableItemStack(
+                        new ItemStack(BlockRegistry.SCROLL_FORGE_BLOCK.get()));
     }
 
     @Override
@@ -54,27 +56,32 @@ public class ScrollForgeRecipeCategory implements IRecipeCategory<ScrollForgeRec
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, ScrollForgeRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(
+            IRecipeLayoutBuilder builder, ScrollForgeRecipe recipe, IFocusGroup focuses) {
         var inkInputs = recipe.inkInputs();
         var paperInput = recipe.paperInput();
         var focusInput = recipe.focusInput();
         var outputs = recipe.scrollOutputs();
 
-        IRecipeSlotBuilder inkInputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                .addItemStacks(inkInputs)
-                .setSlotName(inkSlotName);
+        IRecipeSlotBuilder inkInputSlot =
+                builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+                        .addItemStacks(inkInputs)
+                        .setSlotName(inkSlotName);
 
-        IRecipeSlotBuilder paperInputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 24, 1)
-                .addItemStacks(Arrays.asList(paperInput.getItems()))
-                .setSlotName(paperSlotName);
+        IRecipeSlotBuilder paperInputSlot =
+                builder.addSlot(RecipeIngredientRole.INPUT, 24, 1)
+                        .addItemStacks(Arrays.asList(paperInput.getItems()))
+                        .setSlotName(paperSlotName);
 
-        IRecipeSlotBuilder focusInputSlot = builder.addSlot(RecipeIngredientRole.INPUT, 47, 1)
-                .addItemStacks(Arrays.asList(focusInput.getItems()))
-                .setSlotName(focusSlotName);
+        IRecipeSlotBuilder focusInputSlot =
+                builder.addSlot(RecipeIngredientRole.INPUT, 47, 1)
+                        .addItemStacks(Arrays.asList(focusInput.getItems()))
+                        .setSlotName(focusSlotName);
 
-        IRecipeSlotBuilder outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 24, 31)
-                .addItemStacks(outputs)
-                .setSlotName(outputSlotName);
+        IRecipeSlotBuilder outputSlot =
+                builder.addSlot(RecipeIngredientRole.OUTPUT, 24, 31)
+                        .addItemStacks(outputs)
+                        .setSlotName(outputSlotName);
 
         if (inkInputs.size() == outputs.size()) {
             builder.createFocusLink(inkInputSlot, outputSlot);

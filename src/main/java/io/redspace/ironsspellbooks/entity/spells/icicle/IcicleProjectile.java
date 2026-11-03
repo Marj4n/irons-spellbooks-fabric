@@ -42,7 +42,10 @@ public class IcicleProjectile extends AbstractMagicProjectile {
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
-        DamageSources.applyDamage(entityHitResult.getEntity(), getDamage(), SpellRegistry.ICICLE_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                entityHitResult.getEntity(),
+                getDamage(),
+                SpellRegistry.ICICLE_SPELL.get().getDamageSource(this, getOwner()));
         consumeEntityImpact(entityHitResult, true);
     }
 
@@ -53,13 +56,23 @@ public class IcicleProjectile extends AbstractMagicProjectile {
             double dx = Utils.random.nextDouble() * 2 * speed - speed;
             double dy = Utils.random.nextDouble() * 2 * speed - speed;
             double dz = Utils.random.nextDouble() * 2 * speed - speed;
-            level().addParticle(Utils.random.nextDouble() < .3 ? ParticleHelper.SNOWFLAKE : ParticleTypes.SNOWFLAKE, this.getX() + dx, this.getY() + dy, this.getZ() + dz, dx, dy, dz);
+            level().addParticle(
+                            Utils.random.nextDouble() < .3
+                                    ? ParticleHelper.SNOWFLAKE
+                                    : ParticleTypes.SNOWFLAKE,
+                            this.getX() + dx,
+                            this.getY() + dy,
+                            this.getZ() + dz,
+                            dx,
+                            dy,
+                            dz);
         }
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.SNOWFLAKE, x, y, z, 15, .1, .1, .1, .1, true);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.SNOWFLAKE, x, y, z, 15, .1, .1, .1, .1, true);
     }
 
     @Override

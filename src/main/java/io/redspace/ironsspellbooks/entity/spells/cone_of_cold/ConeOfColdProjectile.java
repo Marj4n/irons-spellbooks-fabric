@@ -12,14 +12,14 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class ConeOfColdProjectile extends AbstractConeProjectile {
-    public ConeOfColdProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level) {
+    public ConeOfColdProjectile(
+            EntityType<? extends AbstractConeProjectile> entityType, Level level) {
         super(entityType, level);
     }
 
     public ConeOfColdProjectile(Level level, LivingEntity entity) {
         super(EntityRegistry.CONE_OF_COLD_PROJECTILE.get(), level, entity);
     }
-
 
     @Override
     public void spawnParticles() {
@@ -42,22 +42,39 @@ public class ConeOfColdProjectile extends AbstractConeProjectile {
             double oz = Math.random() * 2 * offset - offset;
 
             double angularness = .8;
-            Vec3 randomVec = new Vec3(Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness).normalize();
+            Vec3 randomVec =
+                    new Vec3(
+                                    Math.random() * 2 * angularness - angularness,
+                                    Math.random() * 2 * angularness - angularness,
+                                    Math.random() * 2 * angularness - angularness)
+                            .normalize();
             Vec3 result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
-            level().addParticle(Math.random() > .15 ? ParticleHelper.SNOW_DUST : ParticleHelper.SNOWFLAKE, x + ox, y + oy, z + oz, result.x, result.y, result.z);
-
+            level().addParticle(
+                            Math.random() > .15
+                                    ? ParticleHelper.SNOW_DUST
+                                    : ParticleHelper.SNOWFLAKE,
+                            x + ox,
+                            y + oy,
+                            z + oz,
+                            result.x,
+                            result.y,
+                            result.z);
         }
-//        if (tickCount % 12 == 0) {
-//            var forward = rotation.scale(.5f);
-//            level.addParticle(ParticleRegistry.RING_SMOKE_PARTICLE.get(), x, y, z, forward.x, forward.y, forward.z);
-//        }
+        //        if (tickCount % 12 == 0) {
+        //            var forward = rotation.scale(.5f);
+        //            level.addParticle(ParticleRegistry.RING_SMOKE_PARTICLE.get(), x, y, z,
+        // forward.x, forward.y, forward.z);
+        //        }
     }
 
     @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
-        //irons_spellbooks.LOGGER.debug("ConeOfColdProjectile.onHitEntity: {}", entityHitResult.getEntity().getName().getString());
+        // irons_spellbooks.LOGGER.debug("ConeOfColdProjectile.onHitEntity: {}",
+        // entityHitResult.getEntity().getName().getString());
         var entity = entityHitResult.getEntity();
-        DamageSources.applyDamage(entity, damage, SpellRegistry.CONE_OF_COLD_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                entity,
+                damage,
+                SpellRegistry.CONE_OF_COLD_SPELL.get().getDamageSource(this, getOwner()));
     }
-
 }

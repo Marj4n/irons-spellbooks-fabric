@@ -27,7 +27,9 @@ public class SimpleDescriptiveCurio extends CurioBaseItem {
     @Override
     public List<Component> getSlotsTooltip(List<Component> tooltips, ItemStack stack) {
         if (slotIdentifier != null) {
-            var title = Component.translatable("curios.modifiers." + this.slotIdentifier).withStyle(ChatFormatting.GOLD);
+            var title =
+                    Component.translatable("curios.modifiers." + this.slotIdentifier)
+                            .withStyle(ChatFormatting.GOLD);
             if (showHeader) {
                 tooltips.add(Component.empty());
                 tooltips.add(title);
@@ -43,6 +45,8 @@ public class SimpleDescriptiveCurio extends CurioBaseItem {
     }
 
     public Component getDescription(ItemStack stack) {
-        return Component.literal(" ").append(Component.translatable(this.getDescriptionId() + ".desc")).withStyle(descriptionStyle);
+        return Component.literal(" ")
+                .append(Component.translatable(this.getDescriptionId() + ".desc"))
+                .withStyle(descriptionStyle);
     }
 }

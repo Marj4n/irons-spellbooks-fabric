@@ -7,7 +7,8 @@ import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
-public abstract class AnimatedActionGoal<T extends Mob & IMagicEntity & IAnimatedAttacker> extends Goal {
+public abstract class AnimatedActionGoal<T extends Mob & IMagicEntity & IAnimatedAttacker>
+        extends Goal {
     protected int abilityTimer;
     protected int delay;
     protected boolean isUsing;
@@ -23,7 +24,6 @@ public abstract class AnimatedActionGoal<T extends Mob & IMagicEntity & IAnimate
     public final boolean canUse() {
         return delay-- <= 0 && canStartAction();
     }
-
 
     @Override
     public boolean canContinueToUse() {

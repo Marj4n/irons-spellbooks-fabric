@@ -19,9 +19,18 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.phys.Vec3;
 
 public class FireBossAttackGoal extends GenericAnimatedWarlockAttackGoal<FireBossEntity> {
-    private static final AttributeModifier MODIFIER_FIRE_BALLER = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("fireballer")), "fireballer", 0.50, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier MODIFIER_FIRE_BALLER =
+            new AttributeModifier(
+                    AttributeHelper.uuidFromId(IronsSpellbooks.id("fireballer")),
+                    "fireballer",
+                    0.50,
+                    AttributeModifier.Operation.ADDITION);
 
-    public FireBossAttackGoal(FireBossEntity abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval) {
+    public FireBossAttackGoal(
+            FireBossEntity abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval) {
         super(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
     }
 
@@ -52,11 +61,14 @@ public class FireBossAttackGoal extends GenericAnimatedWarlockAttackGoal<FireBos
                 strafeForward *= -1.15f;
             }
             int strafeDir = strafingClockwise ? 1 : -1;
-            mob.getMoveControl().strafe(strafeForward * strafeMultiplier, (float) speed * strafeDir * strafeMultiplier);
+            mob.getMoveControl()
+                    .strafe(
+                            strafeForward * strafeMultiplier,
+                            (float) speed * strafeDir * strafeMultiplier);
         } else {
             // no los or we are completely out of range, path towards target
             if (mob.tickCount % 5 == 0) {
-                this.mob.setXxa(0); //manually cancel strafe
+                this.mob.setXxa(0); // manually cancel strafe
                 this.mob.getNavigation().moveTo(this.target, speedModifier);
             }
         }
@@ -78,9 +90,28 @@ public class FireBossAttackGoal extends GenericAnimatedWarlockAttackGoal<FireBos
                 boolean vertical = fireKeyframe.swingData.vertical();
                 Vec3 forward = mob.getForward();
                 float reach = 2 * mob.getScale();
-                Vec3 hitLocation = mob.getBoundingBox().getCenter().add(mob.getForward().multiply(reach, 0.5, reach));
-                MagicManager.spawnParticles(mob.level(),
-                        new FlameStrikeParticleOptions((float) forward.x, (float) forward.y, (float) forward.z, mirrored, vertical, mob.getScale()), hitLocation.x, hitLocation.y, hitLocation.z, 1, 0, 0, 0, 0, true);
+                Vec3 hitLocation =
+                        mob.getBoundingBox()
+                                .getCenter()
+                                .add(mob.getForward().multiply(reach, 0.5, reach));
+                MagicManager.spawnParticles(
+                        mob.level(),
+                        new FlameStrikeParticleOptions(
+                                (float) forward.x,
+                                (float) forward.y,
+                                (float) forward.z,
+                                mirrored,
+                                vertical,
+                                mob.getScale()),
+                        hitLocation.x,
+                        hitLocation.y,
+                        hitLocation.z,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        true);
             }
         }
     }
@@ -88,7 +119,8 @@ public class FireBossAttackGoal extends GenericAnimatedWarlockAttackGoal<FireBos
     @Override
     public void stop() {
         super.stop();
-        mob.getAttribute(AttributeRegistry.CAST_TIME_REDUCTION.get()).removeModifier(MODIFIER_FIRE_BALLER);
+        mob.getAttribute(AttributeRegistry.CAST_TIME_REDUCTION.get())
+                .removeModifier(MODIFIER_FIRE_BALLER);
     }
 
     public int fireballcooldown;
@@ -99,7 +131,8 @@ public class FireBossAttackGoal extends GenericAnimatedWarlockAttackGoal<FireBos
         if (fireballcooldown > 0) {
             // poor man's way to clean up the fireball attribute
             if (fireballcooldown == 20 * 10 - 20) {
-                mob.getAttribute(AttributeRegistry.CAST_TIME_REDUCTION.get()).removeModifier(MODIFIER_FIRE_BALLER);
+                mob.getAttribute(AttributeRegistry.CAST_TIME_REDUCTION.get())
+                        .removeModifier(MODIFIER_FIRE_BALLER);
             }
             fireballcooldown--;
         } else {
@@ -107,33 +140,41 @@ public class FireBossAttackGoal extends GenericAnimatedWarlockAttackGoal<FireBos
             if (!mob.onGround() && distanceSquared > meleeRange * meleeRange * 2 * 2) {
                 if (!isActing()) {
                     // insta-cast that fireball
-                    mob.getAttribute(AttributeRegistry.CAST_TIME_REDUCTION.get()).removeModifier(MODIFIER_FIRE_BALLER);
-                    mob.getAttribute(AttributeRegistry.CAST_TIME_REDUCTION.get()).addTransientModifier(MODIFIER_FIRE_BALLER);
-                    mob.initiateCastSpell(SpellRegistry.FIREBALL_SPELL.get(), mob.isSoulMode() ? 6 : 5);
+                    mob.getAttribute(AttributeRegistry.CAST_TIME_REDUCTION.get())
+                            .removeModifier(MODIFIER_FIRE_BALLER);
+                    mob.getAttribute(AttributeRegistry.CAST_TIME_REDUCTION.get())
+                            .addTransientModifier(MODIFIER_FIRE_BALLER);
+                    mob.initiateCastSpell(
+                            SpellRegistry.FIREBALL_SPELL.get(), mob.isSoulMode() ? 6 : 5);
                     fireballcooldown = 20 * 10;
                     return;
                 }
             }
         }
         if (meleeAnimTimer > 0 && currentAttack != null) {
-            // in order to make more seamless animation -> action transitions, we cut our ai pause short if we have encountered our last frame
+            // in order to make more seamless animation -> action transitions, we cut our ai pause
+            // short if we have encountered our last frame
             // the animation still plays out, creating a smoother overall transition
             int shortcut = 5;
             if (meleeAnimTimer < shortcut) {
-                if (currentAttack.attacks.keySet().intStream().noneMatch(i -> i > currentAttack.lengthInTicks - shortcut)) {
+                if (currentAttack
+                        .attacks
+                        .keySet()
+                        .intStream()
+                        .noneMatch(i -> i > currentAttack.lengthInTicks - shortcut)) {
                     meleeAnimTimer = 0;
                 }
             }
         }
         // delay attacking while the dagger is active (primarily to let parries play out)
         // or sometimes if we are midair (reduce, but not remove, ariel attacks)
-        boolean delayNextAttack = mob.spectralDaggerActive() || (!mob.onGround() && mob.getRandom().nextBoolean());
+        boolean delayNextAttack =
+                mob.spectralDaggerActive() || (!mob.onGround() && mob.getRandom().nextBoolean());
         if (delayNextAttack) {
             meleeAttackDelay++;
         }
         super.handleAttackLogic(distanceSquared);
     }
-
 
     @Override
     protected void doMeleeAction() {
@@ -141,9 +182,12 @@ public class FireBossAttackGoal extends GenericAnimatedWarlockAttackGoal<FireBos
         if (currentAttack != null) {
             float r = meleeRange();
             if (mob.distanceToSqr(target) > .75 * .75 * r * r) {
-                //only proc charge if we are farther than 75% of melee range
+                // only proc charge if we are farther than 75% of melee range
                 int i = currentAttack.attacks.keySet().intStream().sorted().findFirst().orElse(0);
-                mob.getMoveControl().triggerCustomMovement(i + 5, f -> new Vec3(0, 0, 0.5 * (1 + currentAttack.rangeMultiplier)));
+                mob.getMoveControl()
+                        .triggerCustomMovement(
+                                i + 5,
+                                f -> new Vec3(0, 0, 0.5 * (1 + currentAttack.rangeMultiplier)));
             }
         }
     }
@@ -165,7 +209,10 @@ public class FireBossAttackGoal extends GenericAnimatedWarlockAttackGoal<FireBos
 
     @Override
     public void playSwingSound() {
-        mob.playSound(SoundRegistry.HELLRAZOR_SWING.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 9, 11) * .1f);
+        mob.playSound(
+                SoundRegistry.HELLRAZOR_SWING.get(),
+                1,
+                Mth.randomBetweenInclusive(mob.getRandom(), 9, 11) * .1f);
     }
 
     @Override

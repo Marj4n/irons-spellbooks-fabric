@@ -24,7 +24,15 @@ public class SoulfireRayParticle extends TextureSheetParticle {
     Vec3 destination;
     boolean firsttick = false;
 
-    SoulfireRayParticle(ClientLevel pLevel, double pX, double pY, double pZ, double xd, double yd, double zd, SoulfireRayParticleOptions options) {
+    SoulfireRayParticle(
+            ClientLevel pLevel,
+            double pX,
+            double pY,
+            double pZ,
+            double xd,
+            double yd,
+            double zd,
+            SoulfireRayParticleOptions options) {
         super(pLevel, pX, pY, pZ, 0, 0, 0);
         this.setSize(1, 1);
         this.quadSize = 1f;
@@ -39,10 +47,17 @@ public class SoulfireRayParticle extends TextureSheetParticle {
     public void tick() {
         if (!firsttick) {
             firsttick = true;
-            var particle = ParticleTypes.SOUL_FIRE_FLAME; //ParticleHelper.FIRE;
+            var particle = ParticleTypes.SOUL_FIRE_FLAME; // ParticleHelper.FIRE;
             for (int i = 0; i < 25; i++) {
                 Vec3 random = Utils.getRandomVec3(0.6);
-                level.addParticle(particle, destination.x, destination.y, destination.z, random.x, random.y, random.z);
+                level.addParticle(
+                        particle,
+                        destination.x,
+                        destination.y,
+                        destination.z,
+                        random.x,
+                        random.y,
+                        random.z);
             }
             Vec3 delta = destination.subtract(new Vec3(this.x, this.y, this.z));
             double length = delta.length();
@@ -50,7 +65,14 @@ public class SoulfireRayParticle extends TextureSheetParticle {
             delta = delta.normalize();
             for (float i = 0; i < length; i += volume) {
                 Vec3 random = Utils.getRandomVec3(0.03);
-                level.addParticle(particle, this.x + delta.x * i, this.y + delta.y * i, this.z + delta.z * i, random.x, random.y, random.z);
+                level.addParticle(
+                        particle,
+                        this.x + delta.x * i,
+                        this.y + delta.y * i,
+                        this.z + delta.z * i,
+                        random.x,
+                        random.y,
+                        random.z);
             }
         }
         if (this.age++ >= this.lifetime) {
@@ -71,7 +93,11 @@ public class SoulfireRayParticle extends TextureSheetParticle {
         float hullLength = 3 * baseWidth;
         double distance = rayVector.length();
         int hulls = (int) (distance / hullLength);
-        double zmargin = distance / (hulls * hullLength); // make up marginal differences caused by truncation of hull unit length
+        double zmargin =
+                distance
+                        / (hulls
+                                * hullLength); // make up marginal differences caused by truncation
+                                               // of hull unit length
         rayVector = rayVector.normalize();
         Vec2 rotation = Utils.rotationFromDirection(rayVector);
         poseStack.mulPose(Axis.YP.rotation(rotation.y));
@@ -84,21 +110,45 @@ public class SoulfireRayParticle extends TextureSheetParticle {
 
         for (int i = 0; i < hulls; i++) {
             drawHull(Vec3.ZERO, new Vec3(0, 0, hullLength), width, width, poseStack, consumer);
-            drawHull(Vec3.ZERO, new Vec3(0, 0, hullLength), width * .5f, width * .5f, poseStack, consumer);
+            drawHull(
+                    Vec3.ZERO,
+                    new Vec3(0, 0, hullLength),
+                    width * .5f,
+                    width * .5f,
+                    poseStack,
+                    consumer);
             poseStack.translate(0, 0, hullLength);
         }
     }
 
-    public void drawHull(Vec3 from, Vec3 to, float width, float height, PoseStack poseStack, VertexConsumer consumer) {
+    public void drawHull(
+            Vec3 from,
+            Vec3 to,
+            float width,
+            float height,
+            PoseStack poseStack,
+            VertexConsumer consumer) {
         poseStack.pushPose();
         for (int i = 0; i < 4; i++) {
-            drawQuad(from.subtract(0, height * .5f, 0), to.subtract(0, height * .5f, 0), width, 0, poseStack.last(), consumer);
+            drawQuad(
+                    from.subtract(0, height * .5f, 0),
+                    to.subtract(0, height * .5f, 0),
+                    width,
+                    0,
+                    poseStack.last(),
+                    consumer);
             poseStack.mulPose(Axis.ZP.rotation(Mth.HALF_PI));
         }
         poseStack.popPose();
     }
 
-    public void drawQuad(Vec3 from, Vec3 to, float width, float height, PoseStack.Pose pose, VertexConsumer consumer) {
+    public void drawQuad(
+            Vec3 from,
+            Vec3 to,
+            float width,
+            float height,
+            PoseStack.Pose pose,
+            VertexConsumer consumer) {
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
         float halfWidth = width * .5f;
@@ -108,15 +158,95 @@ public class SoulfireRayParticle extends TextureSheetParticle {
         int g = (int) (this.gCol * 255);
         int b = (int) (this.bCol * 255);
         int a = (int) (this.alpha * 255);
-        consumer.vertex(poseMatrix, (float) from.x - halfWidth, (float) from.y - halfHeight, (float) from.z).color(r, g, b, a).uv(getU0(), getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, (float) from.x + halfWidth, (float) from.y + halfHeight, (float) from.z).color(r, g, b, a).uv(getU1(), getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, (float) to.x + halfWidth, (float) to.y + halfHeight, (float) to.z).color(r, g, b, a).uv(getU1(), getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, (float) to.x - halfWidth, (float) to.y - halfHeight, (float) to.z).color(r, g, b, a).uv(getU0(), getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-        //backface
-        consumer.vertex(poseMatrix, (float) to.x - halfWidth, (float) to.y - halfHeight, (float) to.z).color(r, g, b, a).uv(getU0(), getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, (float) to.x + halfWidth, (float) to.y + halfHeight, (float) to.z).color(r, g, b, a).uv(getU1(), getV1()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, (float) from.x + halfWidth, (float) from.y + halfHeight, (float) from.z).color(r, g, b, a).uv(getU1(), getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, (float) from.x - halfWidth, (float) from.y - halfHeight, (float) from.z).color(r, g, b, a).uv(getU0(), getV0()).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(normalMatrix, 0f, 1f, 0f).endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) from.x - halfWidth,
+                        (float) from.y - halfHeight,
+                        (float) from.z)
+                .color(r, g, b, a)
+                .uv(getU0(), getV0())
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) from.x + halfWidth,
+                        (float) from.y + halfHeight,
+                        (float) from.z)
+                .color(r, g, b, a)
+                .uv(getU1(), getV0())
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) to.x + halfWidth,
+                        (float) to.y + halfHeight,
+                        (float) to.z)
+                .color(r, g, b, a)
+                .uv(getU1(), getV1())
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) to.x - halfWidth,
+                        (float) to.y - halfHeight,
+                        (float) to.z)
+                .color(r, g, b, a)
+                .uv(getU0(), getV1())
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, 1f, 0f)
+                .endVertex();
+        // backface
+        consumer.vertex(
+                        poseMatrix,
+                        (float) to.x - halfWidth,
+                        (float) to.y - halfHeight,
+                        (float) to.z)
+                .color(r, g, b, a)
+                .uv(getU0(), getV1())
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) to.x + halfWidth,
+                        (float) to.y + halfHeight,
+                        (float) to.z)
+                .color(r, g, b, a)
+                .uv(getU1(), getV1())
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) from.x + halfWidth,
+                        (float) from.y + halfHeight,
+                        (float) from.z)
+                .color(r, g, b, a)
+                .uv(getU1(), getV0())
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) from.x - halfWidth,
+                        (float) from.y - halfHeight,
+                        (float) from.z)
+                .color(r, g, b, a)
+                .uv(getU0(), getV0())
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
+                .normal(normalMatrix, 0f, 1f, 0f)
+                .endVertex();
     }
 
     @NotNull
@@ -124,7 +254,6 @@ public class SoulfireRayParticle extends TextureSheetParticle {
     public ParticleRenderType getRenderType() {
         return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
-
 
     @Override
     protected int getLightColor(float pPartialTick) {
@@ -139,12 +268,20 @@ public class SoulfireRayParticle extends TextureSheetParticle {
             this.sprite = pSprite;
         }
 
-        public Particle createParticle(@NotNull SoulfireRayParticleOptions options, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            var particle = new SoulfireRayParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, options);
+        public Particle createParticle(
+                @NotNull SoulfireRayParticleOptions options,
+                @NotNull ClientLevel pLevel,
+                double pX,
+                double pY,
+                double pZ,
+                double pXSpeed,
+                double pYSpeed,
+                double pZSpeed) {
+            var particle =
+                    new SoulfireRayParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, options);
             particle.pickSprite(this.sprite);
             particle.setAlpha(1.0F);
             return particle;
         }
     }
-
 }

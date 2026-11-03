@@ -1,26 +1,27 @@
-//package io.redspace.ironsspellbooks.registries;
+// package io.redspace.ironsspellbooks.registries;
 //
-//import io.redspace.ironsspellbooks.IronsSpellbooks;
-//import io.redspace.ironsspellbooks.util.ModTags;
-//import net.minecraft.Util;
-//import net.minecraft.core.Holder;
-//import net.minecraft.core.registries.Registries;
-//import net.minecraft.sounds.SoundEvent;
-//import net.minecraft.sounds.SoundEvents;
-//import net.minecraft.world.item.ArmorItem;
-//import net.minecraft.world.item.ArmorMaterial;
-//import net.minecraft.world.item.Items;
-//import net.minecraft.world.item.crafting.Ingredient;
-//import io.github.fabricators_of_create.porting_lib.tags.Tags;
-//import net.minecraftforge.eventbus.api.IEventBus;
-//import org.marj4n.irons_spellbooks.registry.DeferredRegistry;
+// import io.redspace.ironsspellbooks.IronsSpellbooks;
+// import io.redspace.ironsspellbooks.util.ModTags;
+// import net.minecraft.Util;
+// import net.minecraft.core.Holder;
+// import net.minecraft.core.registries.Registries;
+// import net.minecraft.sounds.SoundEvent;
+// import net.minecraft.sounds.SoundEvents;
+// import net.minecraft.world.item.ArmorItem;
+// import net.minecraft.world.item.ArmorMaterial;
+// import net.minecraft.world.item.Items;
+// import net.minecraft.world.item.crafting.Ingredient;
+// import io.github.fabricators_of_create.porting_lib.tags.Tags;
+// import net.minecraftforge.eventbus.api.IEventBus;
+// import org.marj4n.irons_spellbooks.registry.DeferredRegistry;
 //
-//import java.util.EnumMap;
-//import java.util.List;
-//import java.util.function.Supplier;
+// import java.util.EnumMap;
+// import java.util.List;
+// import java.util.function.Supplier;
 //
-//public class ExtendedArmorMaterials {
-////    private static final DeferredRegistry<ArmorMaterial> ARMOR_MATERIALS = DeferredRegistry.create(Registries.ARMOR_MATERIAL, IronsSpellbooks.MODID);
+// public class ExtendedArmorMaterials {
+////    private static final DeferredRegistry<ArmorMaterial> ARMOR_MATERIALS =
+// DeferredRegistry.create(Registries.ARMOR_MATERIAL, IronsSpellbooks.MODID);
 //
 ////    public static void register(IEventBus eventBus) {
 ////        ARMOR_MATERIALS.register(eventBus);
@@ -107,11 +108,14 @@
 //            float toughness,
 //            float knockbackResistance
 //    ) {
-//        List<ArmorMaterial.Layer> list = List.of(new ArmorMaterial.Layer(IronsSpellbooks.id(name)));
-//        return ARMOR_MATERIALS.register(name, ()-> new ArmorMaterial(defense, enchantmentValue, equipSound, repairIngredient, list, toughness, knockbackResistance));
+//        List<ArmorMaterial.Layer> list = List.of(new
+// ArmorMaterial.Layer(IronsSpellbooks.id(name)));
+//        return ARMOR_MATERIALS.register(name, ()-> new ArmorMaterial(defense, enchantmentValue,
+// equipSound, repairIngredient, list, toughness, knockbackResistance));
 //    }
 //
-//    static public EnumMap<ArmorItem.Type, Integer> makeArmorMap(int helmet, int chestplate, int leggings, int boots) {
+//    static public EnumMap<ArmorItem.Type, Integer> makeArmorMap(int helmet, int chestplate, int
+// leggings, int boots) {
 //        return Util.make(new EnumMap<>(ArmorItem.Type.class), (p_266655_) -> {
 //            p_266655_.put(ArmorItem.Type.BOOTS, boots);
 //            p_266655_.put(ArmorItem.Type.LEGGINGS, leggings);
@@ -123,4 +127,4 @@
 //    static public EnumMap<ArmorItem.Type, Integer> schoolArmorMap() {
 //        return makeArmorMap(3, 8, 6, 3);
 //    }
-//}
+// }

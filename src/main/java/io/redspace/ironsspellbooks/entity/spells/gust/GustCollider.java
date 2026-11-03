@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.spells.gust;
 
-
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.entity.spells.AbstractConeProjectile;
@@ -49,9 +48,21 @@ public class GustCollider extends AbstractConeProjectile {
             double oy = Math.random() * 2 * offset - offset;
             double oz = Math.random() * 2 * offset - offset;
             double angularness = .8;
-            Vec3 randomVec = new Vec3(Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness).normalize();
+            Vec3 randomVec =
+                    new Vec3(
+                                    Math.random() * 2 * angularness - angularness,
+                                    Math.random() * 2 * angularness - angularness,
+                                    Math.random() * 2 * angularness - angularness)
+                            .normalize();
             Vec3 result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
-            level().addParticle(ParticleTypes.POOF, x + ox, y + oy, z + oz, result.x, result.y, result.z);
+            level().addParticle(
+                            ParticleTypes.POOF,
+                            x + ox,
+                            y + oy,
+                            z + oz,
+                            result.x,
+                            result.y,
+                            result.z);
         }
     }
 
@@ -59,12 +70,21 @@ public class GustCollider extends AbstractConeProjectile {
     protected void onHitEntity(EntityHitResult entityHitResult) {
         var entity = getOwner();
         var resultEntity = entityHitResult.getEntity();
-        if (entity != null && resultEntity instanceof LivingEntity target && target.distanceToSqr(entity) < range * range) {
+        if (entity != null
+                && resultEntity instanceof LivingEntity target
+                && target.distanceToSqr(entity) < range * range) {
             if (!DamageSources.isFriendlyFireBetween(entity, target)) {
-                var knockback = new Vec3(entity.getX() - target.getX(), entity.getY() - target.getY(), entity.getZ() - target.getZ()).normalize().scale(-strength);
+                var knockback =
+                        new Vec3(
+                                        entity.getX() - target.getX(),
+                                        entity.getY() - target.getY(),
+                                        entity.getZ() - target.getZ())
+                                .normalize()
+                                .scale(-strength);
                 target.setDeltaMovement(target.getDeltaMovement().add(knockback));
                 target.hurtMarked = true;
-                target.addEffect(new MobEffectInstance(MobEffectRegistry.AIRBORNE.get(), 60, amplifier));
+                target.addEffect(
+                        new MobEffectInstance(MobEffectRegistry.AIRBORNE.get(), 60, amplifier));
             }
         }
     }
@@ -74,18 +94,15 @@ public class GustCollider extends AbstractConeProjectile {
         double x = getX();
         double y = getY();
         double z = getZ();
-        if (tickCount > 8)
-            discard();
-        else
-            super.tick();
+        if (tickCount > 8) discard();
+        else super.tick();
         setPosRaw(x, y, z);
     }
 
     @Nullable
     @Override
     public Entity getOwner() {
-        if (tickCount >= 1)
-            return null;
+        if (tickCount >= 1) return null;
         return super.getOwner();
     }
 

@@ -37,17 +37,25 @@ public class HasteSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.hastened", Utils.stringTruncation(HastenedEffect.getPercentForAmplifier(getAmplifier(spellLevel, caster), caster) * 100, 1)),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.hastened",
+                        Utils.stringTruncation(
+                                HastenedEffect.getPercentForAmplifier(
+                                                getAmplifier(spellLevel, caster), caster)
+                                        * 100,
+                                1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getDuration(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.EPIC)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(4)
-            .setCooldownSeconds(80)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.EPIC)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(4)
+                    .setCooldownSeconds(80)
+                    .build();
 
     public HasteSpell() {
         this.manaCostPerLevel = 10;
@@ -78,23 +86,61 @@ public class HasteSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (!Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f, false, target -> Utils.shouldHealEntity(entity, (Entity) target))) {
-            //If we did not target a creature, target ourself
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        if (!Utils.preCastTargetHelper(
+                level,
+                entity,
+                playerMagicData,
+                this,
+                32,
+                .35f,
+                false,
+                target -> Utils.shouldHealEntity(entity, (Entity) target))) {
+            // If we did not target a creature, target ourself
             playerMagicData.setAdditionalCastData(new TargetEntityCastData(entity));
             if (entity instanceof ServerPlayer serverPlayer) {
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.spell_target_success_self", this.getDisplayName(serverPlayer)).withStyle(ChatFormatting.GREEN)));
+                serverPlayer.connection.send(
+                        new ClientboundSetActionBarTextPacket(
+                                Component.translatable(
+                                                "ui.irons_spellbooks.spell_target_success_self",
+                                                this.getDisplayName(serverPlayer))
+                                        .withStyle(ChatFormatting.GREEN)));
             }
         }
         return true;
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData targetData) {
-            if ((Entity) targetData.getTarget((ServerLevel) world) instanceof LivingEntity targetEntity) {
-                targetEntity.addEffect(new MobEffectInstance(MobEffectRegistry.HASTENED.get(), getDuration(spellLevel, entity), getAmplifier(spellLevel, entity), false, false, true));
-                MagicManager.spawnParticles(world, ParticleHelper.CLEANSE_PARTICLE, targetEntity.getX(), targetEntity.getY() + .25, targetEntity.getZ(), 15, targetEntity.getBbWidth() * 0.5, targetEntity.getBbWidth() * 0.5, targetEntity.getBbWidth() * 0.5, 0, false);
+            if ((Entity) targetData.getTarget((ServerLevel) world)
+                    instanceof LivingEntity targetEntity) {
+                targetEntity.addEffect(
+                        new MobEffectInstance(
+                                MobEffectRegistry.HASTENED.get(),
+                                getDuration(spellLevel, entity),
+                                getAmplifier(spellLevel, entity),
+                                false,
+                                false,
+                                true));
+                MagicManager.spawnParticles(
+                        world,
+                        ParticleHelper.CLEANSE_PARTICLE,
+                        targetEntity.getX(),
+                        targetEntity.getY() + .25,
+                        targetEntity.getZ(),
+                        15,
+                        targetEntity.getBbWidth() * 0.5,
+                        targetEntity.getBbWidth() * 0.5,
+                        targetEntity.getBbWidth() * 0.5,
+                        0,
+                        false);
             }
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);

@@ -17,11 +17,47 @@ public class FieryDaggerRenderer extends GeoEntityRenderer<FieryDaggerEntity> {
     }
 
     @Override
-    public void preRender(PoseStack poseStack, FieryDaggerEntity entity, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        super.preRender(poseStack, entity, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-        Vec3 motion = entity.deltaMovementOld.add(entity.getDeltaMovement().subtract(entity.deltaMovementOld).scale(partialTick));
-        float xRot = ((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) - 90.0F);
+    public void preRender(
+            PoseStack poseStack,
+            FieryDaggerEntity entity,
+            BakedGeoModel model,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            boolean isReRender,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        super.preRender(
+                poseStack,
+                entity,
+                model,
+                bufferSource,
+                buffer,
+                isReRender,
+                partialTick,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha);
+        Vec3 motion =
+                entity.deltaMovementOld.add(
+                        entity.getDeltaMovement()
+                                .subtract(entity.deltaMovementOld)
+                                .scale(partialTick));
+        float xRot =
+                ((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        - 90.0F);
         poseStack.translate(0, entity.getBbHeight() * .5f, 0);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));

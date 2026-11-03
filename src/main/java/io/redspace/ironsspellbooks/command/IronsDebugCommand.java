@@ -45,65 +45,206 @@ import java.util.Map;
 public class IronsDebugCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> pDispatcher) {
-        pDispatcher.register(Commands.literal("ironsDebug").requires((p_138819_) -> {
-                    return p_138819_.hasPermission(2);
-                }).then(Commands.argument("dataType", EnumArgument.enumArgument(IronsDebugCommandTypes.class)).executes((commandContext) -> {
-                    return getDataForType(commandContext.getSource(), commandContext.getArgument("dataType", IronsDebugCommandTypes.class));
-                })).then(Commands.literal("spellCount").executes((commandContext -> {
-                    int i = SpellRegistry.getEnabledSpells().size();
-                    commandContext.getSource().sendSuccess(() -> Component.literal(String.valueOf(i)), true);
-                    return i;
-                })))
-                .then(Commands.literal("items").executes((commandContext -> {
-                    if (commandContext.getSource().getPlayer() != null/*commandContext.getSource().getPlayer() instanceof ServerPlayer player*/) {
-                        var player = commandContext.getSource().getPlayer();
-                        player.getInventory().add(new ItemStack(ItemRegistry.DEV_CROWN.get()));
-                        player.getInventory().add(new ItemStack(ItemRegistry.NETHERITE_SPELL_BOOK.get()));
-                        player.getInventory().add(new ItemStack(ItemRegistry.INSCRIPTION_TABLE_BLOCK_ITEM.get()));
-                    }
-                    return 1;
-                })))
-                .then(Commands.literal("pocketDimension").then(Commands.literal("clearId").executes((commandContext -> {
-                    if (commandContext.getSource().getPlayer() != null/*commandContext.getSource().getPlayer() instanceof ServerPlayer player*/) {
-                        var player = commandContext.getSource().getPlayer();
-                        PocketDimensionManager.INSTANCE.remove(player.getUUID());
-                    }
-                    return 1;
-                }))))
-                .then(Commands.literal("rarityTest").executes((commandContext -> {
-                    SpellRarity.rarityTest();
-                    return 1;
-                })))
-                .then(Commands.literal("animation").then(Commands.argument("animation", StringArgumentType.string()).executes(IronsDebugCommand::playPlayerAnimation)))
-                .then(Commands.literal("generateCreateRecipeCompat").executes(CreateRecipeCompatGenerator::run))
-                .then(Commands.literal("clear_chronicle_cache").executes(cmd -> {
-                    ((ChronicleItem) ItemRegistry.THE_CHRONICLE.get()).clearCache();
-                    return 1;
-                }))
-                .then(Commands.literal("summons").then(Commands.literal("set_self_as_owner").then(
-                        Commands.argument("target", EntityArgument.entity())
-                                .executes(commandContext -> {
-                                    SummonManager.setOwner(EntityArgument.getEntity(commandContext, "target"), commandContext.getSource().getEntityOrException());
-                                    return 1;
+        pDispatcher.register(
+                Commands.literal("ironsDebug")
+                        .requires(
+                                (p_138819_) -> {
+                                    return p_138819_.hasPermission(2);
                                 })
-                )).then(Commands.literal("get_owner").then(
-                        Commands.argument("target", EntityArgument.entity())
-                                .executes(commandContext -> {
-                                    var entity = EntityArgument.getEntity(commandContext, "target");
-                                    var owner = SummonManager.getOwner(entity);
-                                    if (owner == null) {
-                                        commandContext.getSource().sendSystemMessage(
-                                                Component.literal(String.format("Entity %s has no owner", entity.getName().getString()))
-                                        );
-                                    } else {
-                                        commandContext.getSource().sendSystemMessage(
-                                                Component.literal(String.format("Entity %s has owner %s (%s)", entity.getName().getString(), owner.getName().getString(), owner.getUUID()))
-                                        );
-                                    }
-                                    return 1;
-                                })
-                )))
-                .then(Commands.literal("palettizer").then(Commands.argument("minecraft:textures/entity/player/wide/steve.png", ResourceLocationArgument.id()).then(Commands.argument("CSV-Hex", StringArgumentType.string()).executes(IronsDebugCommand::palettizeCommand)))));
+                        .then(
+                                Commands.argument(
+                                                "dataType",
+                                                EnumArgument.enumArgument(
+                                                        IronsDebugCommandTypes.class))
+                                        .executes(
+                                                (commandContext) -> {
+                                                    return getDataForType(
+                                                            commandContext.getSource(),
+                                                            commandContext.getArgument(
+                                                                    "dataType",
+                                                                    IronsDebugCommandTypes.class));
+                                                }))
+                        .then(
+                                Commands.literal("spellCount")
+                                        .executes(
+                                                (commandContext -> {
+                                                    int i = SpellRegistry.getEnabledSpells().size();
+                                                    commandContext
+                                                            .getSource()
+                                                            .sendSuccess(
+                                                                    () ->
+                                                                            Component.literal(
+                                                                                    String.valueOf(
+                                                                                            i)),
+                                                                    true);
+                                                    return i;
+                                                })))
+                        .then(
+                                Commands.literal("items")
+                                        .executes(
+                                                (commandContext -> {
+                                                    if (commandContext.getSource().getPlayer()
+                                                            != null /*commandContext.getSource().getPlayer() instanceof ServerPlayer player*/) {
+                                                        var player =
+                                                                commandContext
+                                                                        .getSource()
+                                                                        .getPlayer();
+                                                        player.getInventory()
+                                                                .add(
+                                                                        new ItemStack(
+                                                                                ItemRegistry
+                                                                                        .DEV_CROWN
+                                                                                        .get()));
+                                                        player.getInventory()
+                                                                .add(
+                                                                        new ItemStack(
+                                                                                ItemRegistry
+                                                                                        .NETHERITE_SPELL_BOOK
+                                                                                        .get()));
+                                                        player.getInventory()
+                                                                .add(
+                                                                        new ItemStack(
+                                                                                ItemRegistry
+                                                                                        .INSCRIPTION_TABLE_BLOCK_ITEM
+                                                                                        .get()));
+                                                    }
+                                                    return 1;
+                                                })))
+                        .then(
+                                Commands.literal("pocketDimension")
+                                        .then(
+                                                Commands.literal("clearId")
+                                                        .executes(
+                                                                (commandContext -> {
+                                                                    if (commandContext
+                                                                                    .getSource()
+                                                                                    .getPlayer()
+                                                                            != null /*commandContext.getSource().getPlayer() instanceof ServerPlayer player*/) {
+                                                                        var player =
+                                                                                commandContext
+                                                                                        .getSource()
+                                                                                        .getPlayer();
+                                                                        PocketDimensionManager
+                                                                                .INSTANCE
+                                                                                .remove(
+                                                                                        player
+                                                                                                .getUUID());
+                                                                    }
+                                                                    return 1;
+                                                                }))))
+                        .then(
+                                Commands.literal("rarityTest")
+                                        .executes(
+                                                (commandContext -> {
+                                                    SpellRarity.rarityTest();
+                                                    return 1;
+                                                })))
+                        .then(
+                                Commands.literal("animation")
+                                        .then(
+                                                Commands.argument(
+                                                                "animation",
+                                                                StringArgumentType.string())
+                                                        .executes(
+                                                                IronsDebugCommand
+                                                                        ::playPlayerAnimation)))
+                        .then(
+                                Commands.literal("generateCreateRecipeCompat")
+                                        .executes(CreateRecipeCompatGenerator::run))
+                        .then(
+                                Commands.literal("clear_chronicle_cache")
+                                        .executes(
+                                                cmd -> {
+                                                    ((ChronicleItem)
+                                                                    ItemRegistry.THE_CHRONICLE
+                                                                            .get())
+                                                            .clearCache();
+                                                    return 1;
+                                                }))
+                        .then(
+                                Commands.literal("summons")
+                                        .then(
+                                                Commands.literal("set_self_as_owner")
+                                                        .then(
+                                                                Commands.argument(
+                                                                                "target",
+                                                                                EntityArgument
+                                                                                        .entity())
+                                                                        .executes(
+                                                                                commandContext -> {
+                                                                                    SummonManager
+                                                                                            .setOwner(
+                                                                                                    EntityArgument
+                                                                                                            .getEntity(
+                                                                                                                    commandContext,
+                                                                                                                    "target"),
+                                                                                                    commandContext
+                                                                                                            .getSource()
+                                                                                                            .getEntityOrException());
+                                                                                    return 1;
+                                                                                })))
+                                        .then(
+                                                Commands.literal("get_owner")
+                                                        .then(
+                                                                Commands.argument(
+                                                                                "target",
+                                                                                EntityArgument
+                                                                                        .entity())
+                                                                        .executes(
+                                                                                commandContext -> {
+                                                                                    var entity =
+                                                                                            EntityArgument
+                                                                                                    .getEntity(
+                                                                                                            commandContext,
+                                                                                                            "target");
+                                                                                    var owner =
+                                                                                            SummonManager
+                                                                                                    .getOwner(
+                                                                                                            entity);
+                                                                                    if (owner
+                                                                                            == null) {
+                                                                                        commandContext
+                                                                                                .getSource()
+                                                                                                .sendSystemMessage(
+                                                                                                        Component
+                                                                                                                .literal(
+                                                                                                                        String
+                                                                                                                                .format(
+                                                                                                                                        "Entity %s has no owner",
+                                                                                                                                        entity.getName()
+                                                                                                                                                .getString())));
+                                                                                    } else {
+                                                                                        commandContext
+                                                                                                .getSource()
+                                                                                                .sendSystemMessage(
+                                                                                                        Component
+                                                                                                                .literal(
+                                                                                                                        String
+                                                                                                                                .format(
+                                                                                                                                        "Entity %s has owner %s (%s)",
+                                                                                                                                        entity.getName()
+                                                                                                                                                .getString(),
+                                                                                                                                        owner.getName()
+                                                                                                                                                .getString(),
+                                                                                                                                        owner
+                                                                                                                                                .getUUID())));
+                                                                                    }
+                                                                                    return 1;
+                                                                                }))))
+                        .then(
+                                Commands.literal("palettizer")
+                                        .then(
+                                                Commands.argument(
+                                                                "minecraft:textures/entity/player/wide/steve.png",
+                                                                ResourceLocationArgument.id())
+                                                        .then(
+                                                                Commands.argument(
+                                                                                "CSV-Hex",
+                                                                                StringArgumentType
+                                                                                        .string())
+                                                                        .executes(
+                                                                                IronsDebugCommand
+                                                                                        ::palettizeCommand)))));
     }
 
     private static int playPlayerAnimation(CommandContext<CommandSourceStack> context) {
@@ -119,7 +260,8 @@ public class IronsDebugCommand {
         }
         ResourceLocation animationId = new ResourceLocation(animation);
 
-        PacketDistributor.sendToPlayer(player, new PlayPlayerAnimationPacket(player.getUUID(), animationId));
+        PacketDistributor.sendToPlayer(
+                player, new PlayPlayerAnimationPacket(player.getUUID(), animationId));
         source.sendSuccess(() -> Component.literal("Playing animation: " + animationId), true);
         return 1;
     }
@@ -127,7 +269,9 @@ public class IronsDebugCommand {
     private static int palettizeCommand(CommandContext<CommandSourceStack> context) {
         try {
 
-            var resource = ResourceLocationArgument.getId(context, "minecraft:textures/entity/player/wide/steve.png");
+            var resource =
+                    ResourceLocationArgument.getId(
+                            context, "minecraft:textures/entity/player/wide/steve.png");
             if (!resource.getPath().endsWith(".png")) {
                 resource = resource.withSuffix(".png");
             }
@@ -136,31 +280,50 @@ public class IronsDebugCommand {
             }
             var colorListString = StringArgumentType.getString(context, "CSV-Hex");
             colorListString = colorListString.replace("#", "");
-            List<Integer> colors = Arrays.stream(colorListString.split(",")).map(i -> Integer.parseInt(i, 16) | 0xFF000000).toList();
-            var image = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(resource).get().open());
+            List<Integer> colors =
+                    Arrays.stream(colorListString.split(","))
+                            .map(i -> Integer.parseInt(i, 16) | 0xFF000000)
+                            .toList();
+            var image =
+                    NativeImage.read(
+                            Minecraft.getInstance()
+                                    .getResourceManager()
+                                    .getResource(resource)
+                                    .get()
+                                    .open());
             List<Integer> colorkey = new ArrayList<>();
-            Arrays.stream(image.getPixelsRGBA()).distinct().filter(c -> !new Color(c).empty()).forEach(colorkey::add);
+            Arrays.stream(image.getPixelsRGBA())
+                    .distinct()
+                    .filter(c -> !new Color(c).empty())
+                    .forEach(colorkey::add);
             colorkey.sort(Comparator.comparing(i -> new Color(i).luminance()));
             if (colors.size() != colorkey.size()) {
-                context.getSource().sendFailure(Component.literal(String.format("mismatch warning: image has %s colors, palette has %d", colorkey.size(), colors.size())));
+                context.getSource()
+                        .sendFailure(
+                                Component.literal(
+                                        String.format(
+                                                "mismatch warning: image has %s colors, palette has %d",
+                                                colorkey.size(), colors.size())));
             }
             Map<Integer, Integer> colorToIndex = new HashMap<>();
             for (int i = 0; i < colorkey.size(); i++) {
                 colorToIndex.put(colorkey.get(i), i);
             }
-            image = image.mappedCopy(c -> {
-                if (new Color(c).empty()) {
-                    return 0;
-                }
-                if (!colorToIndex.containsKey(c)) {
-                    return c;
-                }
-                int i = colorToIndex.get(c);
-                if (i >= colors.size()) {
-                    return c;
-                }
-                return new Color(colors.get(i)).toRgba();
-            });
+            image =
+                    image.mappedCopy(
+                            c -> {
+                                if (new Color(c).empty()) {
+                                    return 0;
+                                }
+                                if (!colorToIndex.containsKey(c)) {
+                                    return c;
+                                }
+                                int i = colorToIndex.get(c);
+                                if (i >= colors.size()) {
+                                    return c;
+                                }
+                                return new Color(colors.get(i)).toRgba();
+                            });
             String[] split = resource.getPath().split("/");
             String filename = split[split.length - 1];
             File file = export(filename, image);
@@ -168,9 +331,20 @@ public class IronsDebugCommand {
                 context.getSource().sendFailure(Component.literal("failure"));
                 return 0;
             } else {
-                context.getSource().sendSuccess(() -> Component.literal("success").withStyle(Style.EMPTY.withUnderlined(true).withClickEvent(
-                        new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())
-                )), true);
+                context.getSource()
+                        .sendSuccess(
+                                () ->
+                                        Component.literal("success")
+                                                .withStyle(
+                                                        Style.EMPTY
+                                                                .withUnderlined(true)
+                                                                .withClickEvent(
+                                                                        new ClickEvent(
+                                                                                ClickEvent.Action
+                                                                                        .OPEN_FILE,
+                                                                                file
+                                                                                        .getAbsolutePath()))),
+                                true);
                 return 1;
             }
         } catch (Exception e) {
@@ -200,7 +374,8 @@ public class IronsDebugCommand {
         }
     }
 
-    public static int getDataForType(CommandSourceStack source, IronsDebugCommandTypes ironsDebugCommandTypes) {
+    public static int getDataForType(
+            CommandSourceStack source, IronsDebugCommandTypes ironsDebugCommandTypes) {
         switch (ironsDebugCommandTypes) {
             case RECASTING -> {
                 getReacstingData(source);
@@ -223,10 +398,22 @@ public class IronsDebugCommand {
             writer.write(results);
             writer.close();
 
-            Component component = Component.literal(file.getName()).withStyle(ChatFormatting.UNDERLINE).withStyle((style) -> {
-                return style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
-            });
-            source.sendSuccess(() -> Component.translatable("commands.irons_spellbooks.irons_debug_command.success", component), true);
+            Component component =
+                    Component.literal(file.getName())
+                            .withStyle(ChatFormatting.UNDERLINE)
+                            .withStyle(
+                                    (style) -> {
+                                        return style.withClickEvent(
+                                                new ClickEvent(
+                                                        ClickEvent.Action.OPEN_FILE,
+                                                        file.getAbsolutePath()));
+                                    });
+            source.sendSuccess(
+                    () ->
+                            Component.translatable(
+                                    "commands.irons_spellbooks.irons_debug_command.success",
+                                    component),
+                    true);
         } catch (Exception ignored) {
         }
     }

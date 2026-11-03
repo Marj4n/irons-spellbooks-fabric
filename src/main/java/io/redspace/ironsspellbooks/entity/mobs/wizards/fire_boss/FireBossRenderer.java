@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.mobs.wizards.fire_boss;
 
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -35,14 +34,49 @@ public class FireBossRenderer extends AbstractSpellCastingMobRenderer {
     }
 
     @Override
-    public void preRender(PoseStack poseStack, AbstractSpellCastingMob animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-        float scale = animatable instanceof FireBossEntity fireBoss && fireBoss.isSoulMode() ? FireBossEntity.SOUL_MODE_SCALE : FireBossEntity.DEFAULT_SCALE;
+    public void preRender(
+            PoseStack poseStack,
+            AbstractSpellCastingMob animatable,
+            BakedGeoModel model,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            boolean isReRender,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        super.preRender(
+                poseStack,
+                animatable,
+                model,
+                bufferSource,
+                buffer,
+                isReRender,
+                partialTick,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha);
+        float scale =
+                animatable instanceof FireBossEntity fireBoss && fireBoss.isSoulMode()
+                        ? FireBossEntity.SOUL_MODE_SCALE
+                        : FireBossEntity.DEFAULT_SCALE;
         poseStack.scale(scale, scale, scale);
     }
 
     @Override
-    public void render(AbstractSpellCastingMob entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(
+            AbstractSpellCastingMob entity,
+            float entityYaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
         if (entity instanceof FireBossEntity fireBossEntity && fireBossEntity.isSpawning()) {
             float f = fireBossEntity.getSpawnWalkPercent(partialTick);
             if (f == 0) {
@@ -55,39 +89,71 @@ public class FireBossRenderer extends AbstractSpellCastingMobRenderer {
             shadowStrength = 1;
             shadowRadius = .65f;
         }
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, Mth.clamp(packedLight + 100, 0, LightTexture.FULL_BLOCK));
+        super.render(
+                entity,
+                entityYaw,
+                partialTick,
+                poseStack,
+                bufferSource,
+                Mth.clamp(packedLight + 100, 0, LightTexture.FULL_BLOCK));
     }
 
     @Override
-    public void applyRenderLayersForBone(PoseStack poseStack, AbstractSpellCastingMob animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        super.applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-        if (bone.getName().equals(DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT) && animatable instanceof FireBossEntity fireBoss && fireBoss.spectralDaggerActive()) {
+    public void applyRenderLayersForBone(
+            PoseStack poseStack,
+            AbstractSpellCastingMob animatable,
+            GeoBone bone,
+            RenderType renderType,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay) {
+        super.applyRenderLayersForBone(
+                poseStack,
+                animatable,
+                bone,
+                renderType,
+                bufferSource,
+                buffer,
+                partialTick,
+                packedLight,
+                packedOverlay);
+        if (bone.getName().equals(DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT)
+                && animatable instanceof FireBossEntity fireBoss
+                && fireBoss.spectralDaggerActive()) {
             poseStack.pushPose();
             poseStack.mulPose(Axis.XP.rotationDegrees(90));
-            //[-0.375,.1,-1]
+            // [-0.375,.1,-1]
             poseStack.translate(-0.375, .1, -1);
-            Minecraft.getInstance().getItemRenderer().render(
-                    ItemRegistry.HELLRAZOR.get().getDefaultInstance(),
-                    ItemDisplayContext.THIRD_PERSON_LEFT_HAND,
-                    true,
-                    poseStack,
-                    bufferSource, packedLight, packedOverlay,
-                    Minecraft.getInstance().getModelManager().getModel((IronsSpellbooks.id("item/fiery_dagger")))
-            );
+            Minecraft.getInstance()
+                    .getItemRenderer()
+                    .render(
+                            ItemRegistry.HELLRAZOR.get().getDefaultInstance(),
+                            ItemDisplayContext.THIRD_PERSON_LEFT_HAND,
+                            true,
+                            poseStack,
+                            bufferSource,
+                            packedLight,
+                            packedOverlay,
+                            Minecraft.getInstance()
+                                    .getModelManager()
+                                    .getModel((IronsSpellbooks.id("item/fiery_dagger"))));
             poseStack.popPose();
         }
     }
 
     @Override
     public int getPackedOverlay(AbstractSpellCastingMob animatable, float u, float partialTick) {
-        //disable hurt/death red flashing
+        // disable hurt/death red flashing
         return OverlayTexture.NO_OVERLAY;
     }
 
     static final int deathFadeTime = 120;
 
     @Override
-    public Color getRenderColor(AbstractSpellCastingMob animatable, float partialTick, int packedLight) {
+    public Color getRenderColor(
+            AbstractSpellCastingMob animatable, float partialTick, int packedLight) {
         Color color = super.getRenderColor(animatable, partialTick, packedLight);
         float f = 1f;
         if (animatable.deathTime > 160 - deathFadeTime) {
@@ -102,10 +168,15 @@ public class FireBossRenderer extends AbstractSpellCastingMobRenderer {
         return color;
     }
 
-
     @Override
-    public RenderType getRenderType(AbstractSpellCastingMob animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        if (animatable.isDeadOrDying() || animatable instanceof FireBossEntity fireBoss && (fireBoss.isSpawning() || fireBoss.isDespawning())) {
+    public RenderType getRenderType(
+            AbstractSpellCastingMob animatable,
+            ResourceLocation texture,
+            @Nullable MultiBufferSource bufferSource,
+            float partialTick) {
+        if (animatable.isDeadOrDying()
+                || animatable instanceof FireBossEntity fireBoss
+                        && (fireBoss.isSpawning() || fireBoss.isDespawning())) {
             return RenderType.entityTranslucent(texture);
         }
         return super.getRenderType(animatable, texture, bufferSource, partialTick);

@@ -15,11 +15,10 @@ import net.minecraft.world.entity.Entity;
 import org.marj4n.irons_spellbooks.network.FabricChannel.Direction;
 import org.marj4n.irons_spellbooks.network.FabricChannel;
 
-
 /**
  * mirrors native 1.21+ PacketDistributor, acts as in-stead replacement
  */
-//@Deprecated(forRemoval = true)
+// @Deprecated(forRemoval = true)
 public class PacketDistributor {
 
     private static FabricChannel INSTANCE;
@@ -32,7 +31,8 @@ public class PacketDistributor {
 
     public static void register() {
         if (INSTANCE != null) throw new IllegalStateException("Spell packets registered twice");
-        FabricChannel net = new FabricChannel(new ResourceLocation(IronsSpellbooks.MODID, "messages"));
+        FabricChannel net =
+                new FabricChannel(new ResourceLocation(IronsSpellbooks.MODID, "messages"));
 
         INSTANCE = net;
 
@@ -114,11 +114,11 @@ public class PacketDistributor {
                 .consumerMainThread(SyncCastingMobAimingDataPacket::handle)
                 .add();
 
-//        net.messageBuilder(InscribeSpellPacket.class, id(), Direction.PLAY_TO_SERVER)
-//                .decoder(InscribeSpellPacket::new)
-//                .encoder(InscribeSpellPacket::toBytes)
-//                .consumerMainThread(InscribeSpellPacket::handle)
-//                .add();
+        //        net.messageBuilder(InscribeSpellPacket.class, id(), Direction.PLAY_TO_SERVER)
+        //                .decoder(InscribeSpellPacket::new)
+        //                .encoder(InscribeSpellPacket::toBytes)
+        //                .consumerMainThread(InscribeSpellPacket::handle)
+        //                .add();
 
         net.messageBuilder(SyncCooldownPacket.class, id(), Direction.PLAY_TO_CLIENT)
                 .decoder(SyncCooldownPacket::new)
@@ -168,11 +168,12 @@ public class PacketDistributor {
                 .consumerMainThread(ScrollForgeSelectSpellPacket::handle)
                 .add();
 
-//        net.messageBuilder(InscriptionTableSelectSpellPacket.class, id(), Direction.PLAY_TO_SERVER)
-//                .decoder(InscriptionTableSelectSpellPacket::new)
-//                .encoder(InscriptionTableSelectSpellPacket::toBytes)
-//                .consumerMainThread(InscriptionTableSelectSpellPacket::handle)
-//                .add();
+        //        net.messageBuilder(InscriptionTableSelectSpellPacket.class, id(),
+        // Direction.PLAY_TO_SERVER)
+        //                .decoder(InscriptionTableSelectSpellPacket::new)
+        //                .encoder(InscriptionTableSelectSpellPacket::toBytes)
+        //                .consumerMainThread(InscriptionTableSelectSpellPacket::handle)
+        //                .add();
 
         net.messageBuilder(CancelCastPacket.class, id(), Direction.PLAY_TO_SERVER)
                 .decoder(CancelCastPacket::new)
@@ -306,13 +307,15 @@ public class PacketDistributor {
                 .consumerMainThread(EntityEventPacket::handle)
                 .add();
 
-        net.messageBuilder(GuidingBoltManagerStartTrackingPacket.class, id(), Direction.PLAY_TO_CLIENT)
+        net.messageBuilder(
+                        GuidingBoltManagerStartTrackingPacket.class, id(), Direction.PLAY_TO_CLIENT)
                 .decoder(GuidingBoltManagerStartTrackingPacket::new)
                 .encoder(GuidingBoltManagerStartTrackingPacket::toBytes)
                 .consumerMainThread(GuidingBoltManagerStartTrackingPacket::handle)
                 .add();
 
-        net.messageBuilder(GuidingBoltManagerStopTrackingPacket.class, id(), Direction.PLAY_TO_CLIENT)
+        net.messageBuilder(
+                        GuidingBoltManagerStopTrackingPacket.class, id(), Direction.PLAY_TO_CLIENT)
                 .decoder(GuidingBoltManagerStopTrackingPacket::new)
                 .encoder(GuidingBoltManagerStopTrackingPacket::toBytes)
                 .consumerMainThread(GuidingBoltManagerStopTrackingPacket::handle)
@@ -329,10 +332,14 @@ public class PacketDistributor {
                 .encoder(PlayPlayerAnimationPacket::toBytes)
                 .consumerMainThread(PlayPlayerAnimationPacket::handle)
                 .add();
-        net.messageBuilder(org.marj4n.irons_spellbooks.ironlib.SyncChroniclePacket.class, id(), Direction.PLAY_TO_CLIENT)
+        net.messageBuilder(
+                        org.marj4n.irons_spellbooks.ironlib.SyncChroniclePacket.class,
+                        id(),
+                        Direction.PLAY_TO_CLIENT)
                 .decoder(org.marj4n.irons_spellbooks.ironlib.SyncChroniclePacket::new)
                 .encoder(org.marj4n.irons_spellbooks.ironlib.SyncChroniclePacket::toBytes)
-                .consumerMainThread(org.marj4n.irons_spellbooks.ironlib.SyncChroniclePacket::handle).add();
+                .consumerMainThread(org.marj4n.irons_spellbooks.ironlib.SyncChroniclePacket::handle)
+                .add();
         net.registerServerReceiver();
     }
 

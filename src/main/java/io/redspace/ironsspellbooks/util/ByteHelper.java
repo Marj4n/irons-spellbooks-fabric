@@ -65,7 +65,8 @@ public class ByteHelper {
         return -1;
     }
 
-    public static int indexOf(DataInputStream dataInputStream, ParallelMatcher parallelMatcher) throws IOException {
+    public static int indexOf(DataInputStream dataInputStream, ParallelMatcher parallelMatcher)
+            throws IOException {
         if (dataInputStream == null || parallelMatcher == null) {
             return -1;
         }

@@ -18,8 +18,7 @@ public class DefaultConfig {
         build();
     }
 
-    public DefaultConfig() {
-    }
+    public DefaultConfig() {}
 
     public DefaultConfig setMaxLevel(int i) {
         this.maxLevel = i;
@@ -59,7 +58,9 @@ public class DefaultConfig {
     }
 
     private boolean validate() {
-        return minRarity != null && maxLevel >= 0 && schoolResource != null && cooldownInSeconds >= 0;
+        return minRarity != null
+                && maxLevel >= 0
+                && schoolResource != null
+                && cooldownInSeconds >= 0;
     }
 }
-

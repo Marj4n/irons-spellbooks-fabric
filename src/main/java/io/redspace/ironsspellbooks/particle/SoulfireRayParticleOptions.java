@@ -13,33 +13,55 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class SoulfireRayParticleOptions implements ParticleOptions {
-    public static final MapCodec<SoulfireRayParticleOptions> MAP_CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(
-                    Codec.DOUBLE.fieldOf("x").forGetter(option -> option.destination.x),
-                    Codec.DOUBLE.fieldOf("y").forGetter(option -> option.destination.y),
-                    Codec.DOUBLE.fieldOf("z").forGetter(option -> option.destination.z)
-            ).apply(instance, SoulfireRayParticleOptions::new)
-    );
+    public static final MapCodec<SoulfireRayParticleOptions> MAP_CODEC =
+            RecordCodecBuilder.mapCodec(
+                    instance ->
+                            instance.group(
+                                            Codec.DOUBLE
+                                                    .fieldOf("x")
+                                                    .forGetter(option -> option.destination.x),
+                                            Codec.DOUBLE
+                                                    .fieldOf("y")
+                                                    .forGetter(option -> option.destination.y),
+                                            Codec.DOUBLE
+                                                    .fieldOf("z")
+                                                    .forGetter(option -> option.destination.z))
+                                    .apply(instance, SoulfireRayParticleOptions::new));
 
-    public static final Codec<SoulfireRayParticleOptions> CODEC = RecordCodecBuilder.create(
-            instance -> instance.group(
-                    Codec.DOUBLE.fieldOf("x").forGetter(option -> option.destination.x),
-                    Codec.DOUBLE.fieldOf("y").forGetter(option -> option.destination.y),
-                    Codec.DOUBLE.fieldOf("z").forGetter(option -> option.destination.z)
-            ).apply(instance, SoulfireRayParticleOptions::new)
-    );
+    public static final Codec<SoulfireRayParticleOptions> CODEC =
+            RecordCodecBuilder.create(
+                    instance ->
+                            instance.group(
+                                            Codec.DOUBLE
+                                                    .fieldOf("x")
+                                                    .forGetter(option -> option.destination.x),
+                                            Codec.DOUBLE
+                                                    .fieldOf("y")
+                                                    .forGetter(option -> option.destination.y),
+                                            Codec.DOUBLE
+                                                    .fieldOf("z")
+                                                    .forGetter(option -> option.destination.z))
+                                    .apply(instance, SoulfireRayParticleOptions::new));
 
-    public static final ParticleOptions.Deserializer<SoulfireRayParticleOptions> DESERIALIZER = new ParticleOptions.Deserializer<>() {
-        @Override
-        public @NotNull SoulfireRayParticleOptions fromCommand(@NotNull ParticleType<SoulfireRayParticleOptions> type, @NotNull StringReader reader) throws CommandSyntaxException {
-            return new SoulfireRayParticleOptions(reader.readDouble(), reader.readDouble(), reader.readDouble());
-        }
+    public static final ParticleOptions.Deserializer<SoulfireRayParticleOptions> DESERIALIZER =
+            new ParticleOptions.Deserializer<>() {
+                @Override
+                public @NotNull SoulfireRayParticleOptions fromCommand(
+                        @NotNull ParticleType<SoulfireRayParticleOptions> type,
+                        @NotNull StringReader reader)
+                        throws CommandSyntaxException {
+                    return new SoulfireRayParticleOptions(
+                            reader.readDouble(), reader.readDouble(), reader.readDouble());
+                }
 
-        @Override
-        public @NotNull SoulfireRayParticleOptions fromNetwork(@NotNull ParticleType<SoulfireRayParticleOptions> type, @NotNull FriendlyByteBuf buf) {
-            return new SoulfireRayParticleOptions(buf.readDouble(), buf.readDouble(), buf.readDouble());
-        }
-    };
+                @Override
+                public @NotNull SoulfireRayParticleOptions fromNetwork(
+                        @NotNull ParticleType<SoulfireRayParticleOptions> type,
+                        @NotNull FriendlyByteBuf buf) {
+                    return new SoulfireRayParticleOptions(
+                            buf.readDouble(), buf.readDouble(), buf.readDouble());
+                }
+            };
 
     private final Vec3 destination;
 

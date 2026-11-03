@@ -11,14 +11,17 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class ShrivingStoneItem extends Item {
-    private static final Component description = Component.translatable("item.irons_spellbooks.shriving_stone_desc").withStyle(ChatFormatting.GRAY);
+    private static final Component description =
+            Component.translatable("item.irons_spellbooks.shriving_stone_desc")
+                    .withStyle(ChatFormatting.GRAY);
 
     public ShrivingStoneItem(Item.Properties properties) {
         super(properties);
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Level context, List<Component> lines, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack, Level context, List<Component> lines, TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, context, lines, pIsAdvanced);
         lines.add(description);
     }

@@ -5,4 +5,3 @@ public class Curios {
     public static String NECKLACE_SLOT = "necklace";
     public static String RING_SLOT = "ring";
 }
-

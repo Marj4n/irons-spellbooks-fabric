@@ -25,21 +25,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-
 public class BurningDashSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "burning_dash");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "burning_dash");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", getDamage(spellLevel, caster)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage", getDamage(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(10)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(10)
+                    .build();
 
     public BurningDashSpell() {
         this.manaCostPerLevel = 2;
@@ -80,38 +83,49 @@ public class BurningDashSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         entity.hasImpulse = true;
         float multiplier = (15 + getSpellPower(spellLevel, entity)) / 12f;
 
-        //Direction for Mobs to cast in
+        // Direction for Mobs to cast in
         Vec3 forward = entity.getLookAngle();
-        if (playerMagicData.getAdditionalCastData() instanceof BurningDashDirectionOverrideCastData) {
-            if (Utils.random.nextBoolean())
-                forward = forward.yRot(90);
-            else
-                forward = forward.yRot(-90);
+        if (playerMagicData.getAdditionalCastData()
+                instanceof BurningDashDirectionOverrideCastData) {
+            if (Utils.random.nextBoolean()) forward = forward.yRot(90);
+            else forward = forward.yRot(-90);
         }
 
-        //Create Dashing Movement Impulse
+        // Create Dashing Movement Impulse
         var vec = forward.multiply(3, 1, 3).normalize().add(0, .25, 0).scale(multiplier);
-        //Start Spin Attack
+        // Start Spin Attack
         if (entity.onGround()) {
             entity.setPos(entity.position().add(0, 1.5, 0));
             vec.add(0, 0.25, 0);
         }
-        playerMagicData.setAdditionalCastData(new ImpulseCastData((float) vec.x, (float) vec.y, (float) vec.z, true));
-        //entity.setDeltaMovement(entity.getDeltaMovement().add(vec));
-        entity.setDeltaMovement(new Vec3(
-                Mth.lerp(.75f, entity.getDeltaMovement().x, vec.x),
-                Mth.lerp(.75f, entity.getDeltaMovement().y, vec.y),
-                Mth.lerp(.75f, entity.getDeltaMovement().z, vec.z)
-        ));
+        playerMagicData.setAdditionalCastData(
+                new ImpulseCastData((float) vec.x, (float) vec.y, (float) vec.z, true));
+        // entity.setDeltaMovement(entity.getDeltaMovement().add(vec));
+        entity.setDeltaMovement(
+                new Vec3(
+                        Mth.lerp(.75f, entity.getDeltaMovement().x, vec.x),
+                        Mth.lerp(.75f, entity.getDeltaMovement().y, vec.y),
+                        Mth.lerp(.75f, entity.getDeltaMovement().z, vec.z)));
 
-
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.BURNING_DASH.get(), 15, getDamage(spellLevel, entity), false, false, false));
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.BURNING_DASH.get(),
+                        15,
+                        getDamage(spellLevel, entity),
+                        false,
+                        false,
+                        false));
         entity.invulnerableTime = 20;
-        //startSpinAttack(entity, 10);
+        // startSpinAttack(entity, 10);
         playerMagicData.getSyncedData().setSpinAttackType(SpinAttackType.FIRE);
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
@@ -124,28 +138,41 @@ public class BurningDashSpell extends AbstractSpell {
     private int getDamage(int spellLevel, LivingEntity caster) {
         return (int) (5 + getSpellPower(spellLevel, caster));
     }
-//
-//    @Override
-//    public AnimationHolder getCastStartAnimation() {
-//        return AnimationHolder.none();
-//    }
+
+    //
+    //    @Override
+    //    public AnimationHolder getCastStartAnimation() {
+    //        return AnimationHolder.none();
+    //    }
 
     public static void ambientParticles(ClientLevel level, LivingEntity entity) {
-        //Vec3 motion = entity.getDeltaMovement().normalize().scale(-.25);
+        // Vec3 motion = entity.getDeltaMovement().normalize().scale(-.25);
         for (int i = 0; i < 2; i++) {
             Vec3 random = Utils.getRandomVec3(.2);
-            level.addParticle(ParticleHelper.FIRE, entity.getRandomX(0.75), entity.getY() + Utils.getRandomScaled(0.75), entity.getRandomZ(0.75), random.x, random.y, random.z);
+            level.addParticle(
+                    ParticleHelper.FIRE,
+                    entity.getRandomX(0.75),
+                    entity.getY() + Utils.getRandomScaled(0.75),
+                    entity.getRandomZ(0.75),
+                    random.x,
+                    random.y,
+                    random.z);
         }
         for (int i = 0; i < 6; i++) {
             Vec3 random = Utils.getRandomVec3(.2);
-            level.addParticle(ParticleHelper.EMBERS, entity.getRandomX(0.75), entity.getY() + Utils.getRandomScaled(0.75), entity.getRandomZ(0.75), random.x, random.y, random.z);
+            level.addParticle(
+                    ParticleHelper.EMBERS,
+                    entity.getRandomX(0.75),
+                    entity.getY() + Utils.getRandomScaled(0.75),
+                    entity.getRandomZ(0.75),
+                    random.x,
+                    random.y,
+                    random.z);
         }
     }
 
     public static class BurningDashDirectionOverrideCastData implements ICastData {
         @Override
-        public void reset() {
-
-        }
+        public void reset() {}
     }
 }

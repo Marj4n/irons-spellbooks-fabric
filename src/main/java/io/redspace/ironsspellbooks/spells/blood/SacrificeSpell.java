@@ -41,21 +41,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class SacrificeSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "sacrifice");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "sacrifice");
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(1)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(1)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.base_damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.radius", 3)
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.base_damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable("ui.irons_spellbooks.radius", 3));
     }
 
     public SacrificeSpell() {
@@ -87,33 +90,64 @@ public class SacrificeSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         float aimAssist = .25f;
         float range = 25f;
         Vec3 start = entity.getEyePosition();
         Vec3 end = entity.getLookAngle().normalize().scale(range).add(start);
-        var target = Utils.raycastForEntity(entity.level(), entity, start, end, true, aimAssist, (e) -> e instanceof IMagicSummon summon && summon.getSummoner() == entity);
-        if (target instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        var target =
+                Utils.raycastForEntity(
+                        entity.level(),
+                        entity,
+                        start,
+                        end,
+                        true,
+                        aimAssist,
+                        (e) -> e instanceof IMagicSummon summon && summon.getSummoner() == entity);
+        if (target instanceof EntityHitResult entityHit
+                && entityHit.getEntity() instanceof LivingEntity livingTarget) {
             playerMagicData.setAdditionalCastData(new TargetEntityCastData(livingTarget));
             if (entity instanceof ServerPlayer serverPlayer) {
-                PacketDistributor.sendToPlayer(serverPlayer, new SyncTargetingDataPacket(livingTarget, this));
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.spell_target_success", livingTarget.getDisplayName().getString(), this.getDisplayName(serverPlayer)).withStyle(ChatFormatting.GREEN)));
+                PacketDistributor.sendToPlayer(
+                        serverPlayer, new SyncTargetingDataPacket(livingTarget, this));
+                serverPlayer.connection.send(
+                        new ClientboundSetActionBarTextPacket(
+                                Component.translatable(
+                                                "ui.irons_spellbooks.spell_target_success",
+                                                livingTarget.getDisplayName().getString(),
+                                                this.getDisplayName(serverPlayer))
+                                        .withStyle(ChatFormatting.GREEN)));
             }
             return true;
         } else if (entity instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.sacrifice_target_failure").withStyle(ChatFormatting.RED)));
+            serverPlayer.connection.send(
+                    new ClientboundSetActionBarTextPacket(
+                            Component.translatable("ui.irons_spellbooks.sacrifice_target_failure")
+                                    .withStyle(ChatFormatting.RED)));
         }
         return false;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData targetData) {
             var targetEntity = targetData.getTarget((ServerLevel) level);
-            if (targetEntity instanceof IMagicSummon summon && summon.getSummoner().getUUID().equals(entity.getUUID())) {
+            if (targetEntity instanceof IMagicSummon summon
+                    && summon.getSummoner().getUUID().equals(entity.getUUID())) {
                 float damage = getDamage(spellLevel, entity) + targetEntity.getHealth() * .5f;
                 float explosionRadius = getRadius(targetEntity);
-                doSacrificeExplosion(level, getDamageSource(targetEntity, entity), damage, explosionRadius, targetEntity.getBoundingBox().getCenter());
+                doSacrificeExplosion(
+                        level,
+                        getDamageSource(targetEntity, entity),
+                        damage,
+                        explosionRadius,
+                        targetEntity.getBoundingBox().getCenter());
                 targetEntity.remove(Entity.RemovalReason.KILLED);
             }
         }
@@ -121,26 +155,54 @@ public class SacrificeSpell extends AbstractSpell {
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
-    public static void doSacrificeExplosion(Level level, DamageSource damageSource, float damage, float explosionRadius, Vec3 pos) {
-        MagicManager.spawnParticles(level, ParticleHelper.BLOOD, pos.x, pos.y, pos.z, 100, .03, .4, .03, .4, true);
-        MagicManager.spawnParticles(level, ParticleHelper.BLOOD, pos.x, pos.y, pos.z, 100, .03, .4, .03, .4, false);
-        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(SchoolRegistry.BLOOD.get().getTargetingColor(), explosionRadius), pos.x, pos.y, pos.z, 1, 0, 0, 0, 0, true);
-        var entities = level.getEntities(null, AABB.ofSize(pos, explosionRadius, explosionRadius, explosionRadius));
+    public static void doSacrificeExplosion(
+            Level level, DamageSource damageSource, float damage, float explosionRadius, Vec3 pos) {
+        MagicManager.spawnParticles(
+                level, ParticleHelper.BLOOD, pos.x, pos.y, pos.z, 100, .03, .4, .03, .4, true);
+        MagicManager.spawnParticles(
+                level, ParticleHelper.BLOOD, pos.x, pos.y, pos.z, 100, .03, .4, .03, .4, false);
+        MagicManager.spawnParticles(
+                level,
+                new BlastwaveParticleOptions(
+                        SchoolRegistry.BLOOD.get().getTargetingColor(), explosionRadius),
+                pos.x,
+                pos.y,
+                pos.z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        var entities =
+                level.getEntities(
+                        null, AABB.ofSize(pos, explosionRadius, explosionRadius, explosionRadius));
         for (Entity victim : entities) {
             double distanceSqr = victim.distanceToSqr(pos);
-            if (victim.canBeHitByProjectile() && distanceSqr < explosionRadius * explosionRadius && Utils.hasLineOfSight(level, pos, victim.getBoundingBox().getCenter(), true)) {
+            if (victim.canBeHitByProjectile()
+                    && distanceSqr < explosionRadius * explosionRadius
+                    && Utils.hasLineOfSight(
+                            level, pos, victim.getBoundingBox().getCenter(), true)) {
                 float p = (float) (distanceSqr / (explosionRadius * explosionRadius));
                 p = 1 - p * p * p;
                 DamageSources.applyDamage(victim, damage * p, damageSource);
             }
         }
         CameraShakeManager.addCameraShake(new CameraShakeData(level, 10, pos, 20));
-        level.playSound(null, BlockPos.containing(pos), SoundRegistry.BLOOD_EXPLOSION.get(), SoundSource.PLAYERS, 3, Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
+        level.playSound(
+                null,
+                BlockPos.containing(pos),
+                SoundRegistry.BLOOD_EXPLOSION.get(),
+                SoundSource.PLAYERS,
+                3,
+                Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
     }
 
     public float getDamage(int spellLevel, @Nullable LivingEntity caster) {
-        return (10 + getSpellPower(spellLevel, caster)) *
-               (caster == null ? 1f : (float) caster.getAttributeValue(AttributeRegistry.SUMMON_DAMAGE.get()));
+        return (10 + getSpellPower(spellLevel, caster))
+                * (caster == null
+                        ? 1f
+                        : (float) caster.getAttributeValue(AttributeRegistry.SUMMON_DAMAGE.get()));
     }
 
     public float getRadius(LivingEntity target) {

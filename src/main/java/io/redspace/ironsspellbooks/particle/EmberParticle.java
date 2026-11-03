@@ -11,10 +11,17 @@ public class EmberParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
     private final boolean mirrored;
 
-    public EmberParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public EmberParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
-
 
         this.xd = xd;
         this.yd = yd;
@@ -25,7 +32,6 @@ public class EmberParticle extends TextureSheetParticle {
         this.setSpriteFromAge(spriteSet);
         this.gravity = -0.1F;
         this.mirrored = this.random.nextBoolean();
-
     }
 
     @Override
@@ -61,9 +67,15 @@ public class EmberParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new EmberParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }
@@ -73,13 +85,13 @@ public class EmberParticle extends TextureSheetParticle {
         return LightTexture.FULL_BRIGHT;
     }
 
-//
-//    @Override
-//    public float getQuadSize(float p_107567_) {
-//        float f = ((float) this.age + p_107567_) / (float) this.lifetime;
-//        f = 1.0F - f;
-//        f *= f;
-//        f = 1.0F - f;
-//        return this.quadSize * f;
-//    }
+    //
+    //    @Override
+    //    public float getQuadSize(float p_107567_) {
+    //        float f = ((float) this.age + p_107567_) / (float) this.lifetime;
+    //        f = 1.0F - f;
+    //        f *= f;
+    //        f = 1.0F - f;
+    //        return this.quadSize * f;
+    //    }
 }

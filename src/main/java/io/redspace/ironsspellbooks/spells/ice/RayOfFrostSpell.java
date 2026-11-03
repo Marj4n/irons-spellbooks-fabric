@@ -29,21 +29,28 @@ import java.util.List;
 import java.util.Optional;
 
 public class RayOfFrostSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "ray_of_frost");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(15)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "ray_of_frost");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(15)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.freeze_time", Utils.timeFromTicks(getFreezeTime(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.freeze_time",
+                        Utils.timeFromTicks(getFreezeTime(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getRange(spellLevel, caster), 1)));
     }
 
     public RayOfFrostSpell() {
@@ -80,22 +87,70 @@ public class RayOfFrostSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        var hitResult = RaycastBuilder.begin(level, entity)
-                .range(getRange(spellLevel, entity))
-                .checkForBlocks(true)
-                .bbInflation(.15f)
-                .build();
-        level.addFreshEntity(new RayOfFrostVisualEntity(level, entity.getEyePosition(), hitResult.getLocation(), entity));
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        var hitResult =
+                RaycastBuilder.begin(level, entity)
+                        .range(getRange(spellLevel, entity))
+                        .checkForBlocks(true)
+                        .bbInflation(.15f)
+                        .build();
+        level.addFreshEntity(
+                new RayOfFrostVisualEntity(
+                        level, entity.getEyePosition(), hitResult.getLocation(), entity));
         if (hitResult.getType() == HitResult.Type.ENTITY) {
             Entity target = ((EntityHitResult) hitResult).getEntity();
-            //Set freeze time right here because it scales off of level and power
-            DamageSources.applyDamage(target, getDamage(spellLevel, entity), getDamageSource(entity).indirect().setFreezeTicks(target.getTicksRequiredToFreeze() + getFreezeTime(spellLevel, entity)));
-            MagicManager.spawnParticles(level, ParticleHelper.ICY_FOG, hitResult.getLocation().x, target.getY(), hitResult.getLocation().z, 4, 0, 0, 0, .3, true);
+            // Set freeze time right here because it scales off of level and power
+            DamageSources.applyDamage(
+                    target,
+                    getDamage(spellLevel, entity),
+                    getDamageSource(entity)
+                            .indirect()
+                            .setFreezeTicks(
+                                    target.getTicksRequiredToFreeze()
+                                            + getFreezeTime(spellLevel, entity)));
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleHelper.ICY_FOG,
+                    hitResult.getLocation().x,
+                    target.getY(),
+                    hitResult.getLocation().z,
+                    4,
+                    0,
+                    0,
+                    0,
+                    .3,
+                    true);
         } else if (hitResult.getType() == HitResult.Type.BLOCK) {
-            MagicManager.spawnParticles(level, ParticleHelper.ICY_FOG, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, 4, 0, 0, 0, .3, true);
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleHelper.ICY_FOG,
+                    hitResult.getLocation().x,
+                    hitResult.getLocation().y,
+                    hitResult.getLocation().z,
+                    4,
+                    0,
+                    0,
+                    0,
+                    .3,
+                    true);
         }
-        MagicManager.spawnParticles(level, ParticleHelper.SNOWFLAKE, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, 50, 0, 0, 0, .3, false);
+        MagicManager.spawnParticles(
+                level,
+                ParticleHelper.SNOWFLAKE,
+                hitResult.getLocation().x,
+                hitResult.getLocation().y,
+                hitResult.getLocation().z,
+                50,
+                0,
+                0,
+                0,
+                .3,
+                false);
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 

@@ -16,23 +16,56 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import java.util.function.Supplier;
 
 public class SummonedSwordRenderer extends GeoEntityRenderer<SummonedWeaponEntity> {
-    public SummonedSwordRenderer(EntityRendererProvider.Context renderManager, Supplier<GeoModel<SummonedWeaponEntity>> model) {
+    public SummonedSwordRenderer(
+            EntityRendererProvider.Context renderManager,
+            Supplier<GeoModel<SummonedWeaponEntity>> model) {
         super(renderManager, model.get());
     }
 
     @Override
-    public void preRender(PoseStack poseStack, SummonedWeaponEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+    public void preRender(
+            PoseStack poseStack,
+            SummonedWeaponEntity animatable,
+            BakedGeoModel model,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            boolean isReRender,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        super.preRender(
+                poseStack,
+                animatable,
+                model,
+                bufferSource,
+                buffer,
+                isReRender,
+                partialTick,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha);
         poseStack.translate(0, animatable.getBbHeight() * .5f, 0);
     }
 
     @Override
-    public @Nullable RenderType getRenderType(SummonedWeaponEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+    public @Nullable RenderType getRenderType(
+            SummonedWeaponEntity animatable,
+            ResourceLocation texture,
+            @Nullable MultiBufferSource bufferSource,
+            float partialTick) {
         return RenderHelper.CustomerRenderType.magic(texture);
     }
 
     @Override
-    public Color getRenderColor(SummonedWeaponEntity animatable, float partialTick, int packedLight) {
+    public Color getRenderColor(
+            SummonedWeaponEntity animatable, float partialTick, int packedLight) {
         return Color.LIGHT_GRAY;
     }
 }

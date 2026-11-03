@@ -24,16 +24,18 @@ public class HealSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.healing",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(30)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(30)
+                    .build();
 
     public HealSpell() {
         this.manaCostPerLevel = 15;
@@ -59,9 +61,15 @@ public class HealSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float healAmount = getSpellPower(spellLevel, entity);
-        org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellHealEvent(entity, entity, healAmount, getSchoolType()));
+        org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                new SpellHealEvent(entity, entity, healAmount, getSchoolType()));
         entity.heal(healAmount);
         int count = 16;
         float radius = 1.25f;
@@ -70,7 +78,18 @@ public class HealSpell extends AbstractSpell {
             double theta = Math.toRadians(360 / count) * i;
             x = Math.cos(theta) * radius;
             z = Math.sin(theta) * radius;
-            MagicManager.spawnParticles(world, ParticleTypes.HEART, entity.position().x + x, entity.position().y, entity.position().z + z, 1, 0, 0, 0, 0.1, false);
+            MagicManager.spawnParticles(
+                    world,
+                    ParticleTypes.HEART,
+                    entity.position().x + x,
+                    entity.position().y,
+                    entity.position().z + z,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0.1,
+                    false);
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }

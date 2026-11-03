@@ -25,10 +25,11 @@ public class RemoveRecastPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientMagicData.getRecasts().removeRecast(spellId);
-            ClientMagicData.cacheClientSummons();
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientMagicData.getRecasts().removeRecast(spellId);
+                    ClientMagicData.cacheClientSummons();
+                });
         return true;
     }
 }

@@ -26,14 +26,25 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
 
 public class ChargeSpellLayer {
-    public static class Vanilla<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
+    public static class Vanilla<T extends LivingEntity, M extends HumanoidModel<T>>
+            extends RenderLayer<T, M> {
 
         public Vanilla(RenderLayerParent<T, M> pRenderer) {
             super(pRenderer);
         }
 
         @Override
-        public void render(PoseStack poseStack, MultiBufferSource bufferSource, int pPackedLight, T entity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+        public void render(
+                PoseStack poseStack,
+                MultiBufferSource bufferSource,
+                int pPackedLight,
+                T entity,
+                float pLimbSwing,
+                float pLimbSwingAmount,
+                float pPartialTick,
+                float pAgeInTicks,
+                float pNetHeadYaw,
+                float pHeadPitch) {
             var syncedSpellData = ClientMagicData.getSyncedSpellData(entity);
             if (!syncedSpellData.isCasting()) {
                 return;
@@ -46,7 +57,13 @@ public class ChargeSpellLayer {
         }
     }
 
-    private static <T extends LivingEntity> void handleRender(PoseStack poseStack, MultiBufferSource bufferSource, int pPackedLight, T entity, String spellId, boolean offhand) {
+    private static <T extends LivingEntity> void handleRender(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int pPackedLight,
+            T entity,
+            String spellId,
+            boolean offhand) {
         if (spellId.equals(SpellRegistry.LIGHTNING_LANCE_SPELL.get().getSpellId())) {
             poseStack.translate((double) ((float) (offhand ? -1 : 1) / 32.0F) - .125, .5, 0);
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
@@ -75,7 +92,16 @@ public class ChargeSpellLayer {
         }
 
         @Override
-        public void render(PoseStack poseStack, AbstractSpellCastingMob entity, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+        public void render(
+                PoseStack poseStack,
+                AbstractSpellCastingMob entity,
+                BakedGeoModel bakedModel,
+                RenderType renderType,
+                MultiBufferSource bufferSource,
+                VertexConsumer buffer,
+                float partialTick,
+                int packedLight,
+                int packedOverlay) {
             var syncedSpellData = ClientMagicData.getSyncedSpellData(entity);
             var spellId = syncedSpellData.getCastingSpellId();
             var hand = bakedModel.getBone(DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT).get();
@@ -85,33 +111,43 @@ public class ChargeSpellLayer {
             RenderUtils.rotateMatrixAroundBone(poseStack, arm);
             RenderUtils.translateAwayFromPivotPoint(poseStack, arm);
 
-//            RenderUtils.translateToPivotPoint(poseStack, hand);
-//            RenderUtils.rotateMatrixAroundBone(poseStack, hand);
-//            RenderUtils.translateAwayFromPivotPoint(poseStack, hand);
-            poseStack.translate(-(arm.getPivotX() - hand.getPivotX()) / 16f, (arm.getPivotY() - hand.getPivotY()) / 16f, (arm.getPivotZ() - hand.getPivotZ()) / 16f);
+            //            RenderUtils.translateToPivotPoint(poseStack, hand);
+            //            RenderUtils.rotateMatrixAroundBone(poseStack, hand);
+            //            RenderUtils.translateAwayFromPivotPoint(poseStack, hand);
+            poseStack.translate(
+                    -(arm.getPivotX() - hand.getPivotX()) / 16f,
+                    (arm.getPivotY() - hand.getPivotY()) / 16f,
+                    (arm.getPivotZ() - hand.getPivotZ()) / 16f);
 
             handleRender(poseStack, bufferSource, packedLight, entity, spellId, false);
 
             poseStack.popPose();
         }
 
-//        @Override
-//        public void render(PoseStack poseStack, AbstractSpellCastingMob entity, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-//            var syncedSpellData = ClientMagicData.getSyncedSpellData(entity);
-//            var spellId = syncedSpellData.getCastingSpellId();
-//            var boneOpt = bakedModel.getBone(DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT);
-//            if (boneOpt.isPresent()) {
-//                var bone = boneOpt.get();
-//                poseStack.pushPose();
-////                RenderUtil.translateMatrixToBone(poseStack, bone);
-////                RenderUtil.rotateMatrixAroundBone(poseStack, bone);
-//                if (bone.getRotX() != 0.0F || bone.getRotY() != 0.0F || bone.getRotZ() != 0.0F) {
-//                    poseStack.mulPose(new Quaternionf().rotationZYX(bone.getRotZ(), bone.getRotY(), bone.getRotX()));
-//                }
-//                poseStack.translate(bone.getPivotX() / 16.0F, bone.getPivotY() / 16.0F, bone.getPivotZ() / 16.0F);
-//                handleRender(poseStack, bufferSource, packedLight, entity, spellId, false);
-//                poseStack.popPose();
-//            }
-//        }
+        //        @Override
+        //        public void render(PoseStack poseStack, AbstractSpellCastingMob entity,
+        // BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource,
+        // VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+        //            var syncedSpellData = ClientMagicData.getSyncedSpellData(entity);
+        //            var spellId = syncedSpellData.getCastingSpellId();
+        //            var boneOpt =
+        // bakedModel.getBone(DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT);
+        //            if (boneOpt.isPresent()) {
+        //                var bone = boneOpt.get();
+        //                poseStack.pushPose();
+        ////                RenderUtil.translateMatrixToBone(poseStack, bone);
+        ////                RenderUtil.rotateMatrixAroundBone(poseStack, bone);
+        //                if (bone.getRotX() != 0.0F || bone.getRotY() != 0.0F || bone.getRotZ() !=
+        // 0.0F) {
+        //                    poseStack.mulPose(new Quaternionf().rotationZYX(bone.getRotZ(),
+        // bone.getRotY(), bone.getRotX()));
+        //                }
+        //                poseStack.translate(bone.getPivotX() / 16.0F, bone.getPivotY() / 16.0F,
+        // bone.getPivotZ() / 16.0F);
+        //                handleRender(poseStack, bufferSource, packedLight, entity, spellId,
+        // false);
+        //                poseStack.popPose();
+        //            }
+        //        }
     }
 }

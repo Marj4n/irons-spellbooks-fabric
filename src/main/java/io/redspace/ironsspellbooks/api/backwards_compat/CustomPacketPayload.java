@@ -6,6 +6,5 @@ import net.minecraft.resources.ResourceLocation;
  * Abstract layer for potential forward porting
  */
 public interface CustomPacketPayload extends PacketHelper {
-    public static record Type<T extends CustomPacketPayload>(ResourceLocation id) {
-    }
+    public static record Type<T extends CustomPacketPayload>(ResourceLocation id) {}
 }

@@ -23,12 +23,13 @@ public class ArchevokerArmorModel extends DefaultedItemGeoModel<ArchevokerArmorI
 
     @Override
     public ResourceLocation getAnimationResource(ArchevokerArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
-//    public static String listOfBonesToString(List<IBone> list){
-//        String s = "";
-//        for (IBone o:list)
-//            s += o.getName()+", ";
-//        return s;
-//    }
+    //    public static String listOfBonesToString(List<IBone> list){
+    //        String s = "";
+    //        for (IBone o:list)
+    //            s += o.getName()+", ";
+    //        return s;
+    //    }
 }

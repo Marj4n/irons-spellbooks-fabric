@@ -14,20 +14,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GenericArmorModel<T extends ExtendedArmorItem> extends DefaultedItemGeoModel<T> {
-    record ModelVariantResult(ResourceLocation location, boolean validated) {
-    }
+    record ModelVariantResult(ResourceLocation location, boolean validated) {}
 
-    private final ResourceLocation model; //(IronsSpellbooks.MODID, "geo/shadowwalker_armor.geo.json");
+    private final ResourceLocation
+            model; // (IronsSpellbooks.MODID, "geo/shadowwalker_armor.geo.json");
 
-    private final ResourceLocation texture; //(IronsSpellbooks.MODID, "textures/models/armor/shadowwalker.png");
+    private final ResourceLocation
+            texture; // (IronsSpellbooks.MODID, "textures/models/armor/shadowwalker.png");
 
-    private static final ResourceLocation ANIMATION = new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     private final Map<String, ModelVariantResult> modelVariants;
 
     public GenericArmorModel(String modid, String name) {
         super(new ResourceLocation(IronsSpellbooks.MODID, ""));
         this.model = new ResourceLocation(modid, String.format("geo/%s_armor.geo.json", name));
-        this.texture = new ResourceLocation(modid, String.format("textures/models/armor/%s.png", name));
+        this.texture =
+                new ResourceLocation(modid, String.format("textures/models/armor/%s.png", name));
         this.modelVariants = new HashMap<>();
     }
 
@@ -36,14 +39,18 @@ public class GenericArmorModel<T extends ExtendedArmorItem> extends DefaultedIte
     }
 
     public GenericArmorModel<T> variants(Map<String, ResourceLocation> modelVariants) {
-        modelVariants.forEach((string, location) -> this.modelVariants.put(string, new ModelVariantResult(location, false)));
+        modelVariants.forEach(
+                (string, location) ->
+                        this.modelVariants.put(string, new ModelVariantResult(location, false)));
         return this;
     }
 
     @Override
     public ResourceLocation getModelResource(T animatable, @Nullable GeoRenderer<T> renderer) {
-        if (renderer instanceof GeoArmorRenderer<?> armorRenderer && armorRenderer.getCurrentStack() != null) {
-            String transmogVariant = ClothingVariantHelper.getClothingVariant(armorRenderer.getCurrentStack());
+        if (renderer instanceof GeoArmorRenderer<?> armorRenderer
+                && armorRenderer.getCurrentStack() != null) {
+            String transmogVariant =
+                    ClothingVariantHelper.getClothingVariant(armorRenderer.getCurrentStack());
             if (transmogVariant != null) {
                 var result = modelVariants.get(transmogVariant);
                 if (result != null) {
@@ -65,7 +72,9 @@ public class GenericArmorModel<T extends ExtendedArmorItem> extends DefaultedIte
                 return true;
             } else {
                 modelVariants.remove(transmogVariant);
-                IronsSpellbooks.LOGGER.error("Could not find model variant location \"{}\", ignoring for the future!", result.location);
+                IronsSpellbooks.LOGGER.error(
+                        "Could not find model variant location \"{}\", ignoring for the future!",
+                        result.location);
             }
         }
         return false;

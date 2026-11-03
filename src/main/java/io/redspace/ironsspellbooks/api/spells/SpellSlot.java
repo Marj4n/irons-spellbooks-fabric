@@ -27,7 +27,10 @@ public record SpellSlot(SpellData spellData, int index) {
 
     @Override
     public boolean equals(Object obj) {
-        return obj == this || (obj instanceof SpellSlot o && o.spellData.equals(this.spellData) && o.index == this.index);
+        return obj == this
+                || (obj instanceof SpellSlot o
+                        && o.spellData.equals(this.spellData)
+                        && o.index == this.index);
     }
 
     @Override

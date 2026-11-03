@@ -33,18 +33,30 @@ public class ArmorPileBlock extends Block implements SimpleWaterloggedBlock {
     private static final VoxelShape BASE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 4.0D, 14.0D);
 
     public ArmorPileBlock() {
-        super(BlockBehaviour.Properties.of().strength(5f, 8f).noOcclusion().sound(SoundType.CHAIN).mapColor(MapColor.COLOR_BLACK));
+        super(
+                BlockBehaviour.Properties.of()
+                        .strength(5f, 8f)
+                        .noOcclusion()
+                        .sound(SoundType.CHAIN)
+                        .mapColor(MapColor.COLOR_BLACK));
         this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return BASE;
     }
 
     @Override
-    public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos) {
+    public BlockState updateShape(
+            BlockState pState,
+            Direction pDirection,
+            BlockState pNeighborState,
+            LevelAccessor pLevel,
+            BlockPos pPos,
+            BlockPos pNeighborPos) {
         if (pState.getValue(WATERLOGGED)) {
             pLevel.scheduleTick(pPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
         }
@@ -53,13 +65,20 @@ public class ArmorPileBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     public FluidState getFluidState(BlockState pState) {
-        return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(pState);
+        return pState.getValue(WATERLOGGED)
+                ? Fluids.WATER.getSource(false)
+                : super.getFluidState(pState);
     }
 
     /* FACING */
 
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, pContext.getLevel().getFluidState(pContext.getClickedPos()).getType() == Fluids.WATER);
+        return this.defaultBlockState()
+                .setValue(FACING, pContext.getHorizontalDirection().getOpposite())
+                .setValue(
+                        WATERLOGGED,
+                        pContext.getLevel().getFluidState(pContext.getClickedPos()).getType()
+                                == Fluids.WATER);
     }
 
     @Override
@@ -69,13 +88,30 @@ public class ArmorPileBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     @SuppressWarnings("deprecation")
-    public void spawnAfterBreak(BlockState pState, ServerLevel level, BlockPos pos, ItemStack pStack, boolean pDropExperience) {
+    public void spawnAfterBreak(
+            BlockState pState,
+            ServerLevel level,
+            BlockPos pos,
+            ItemStack pStack,
+            boolean pDropExperience) {
         super.spawnAfterBreak(pState, level, pos, pStack, pDropExperience);
         KeeperEntity keeper = new KeeperEntity(level);
         keeper.moveTo(Vec3.atCenterOf(pos));
-        keeper.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null,null);
+        keeper.finalizeSpawn(
+                level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null, null);
         level.addFreshEntity(keeper);
-        MagicManager.spawnParticles(level, ParticleTypes.SOUL, pos.getX(), pos.getY(), pos.getZ(), 20, .1, .1, .1, .05, false);
+        MagicManager.spawnParticles(
+                level,
+                ParticleTypes.SOUL,
+                pos.getX(),
+                pos.getY(),
+                pos.getZ(),
+                20,
+                .1,
+                .1,
+                .1,
+                .05,
+                false);
         level.playSound(null, pos, SoundEvents.SOUL_ESCAPE, SoundSource.BLOCKS, 1f, 1f);
     }
 

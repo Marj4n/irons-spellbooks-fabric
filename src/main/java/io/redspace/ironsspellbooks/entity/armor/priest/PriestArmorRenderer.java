@@ -9,8 +9,6 @@ import software.bernie.geckolib.model.GeoModel;
 public class PriestArmorRenderer extends GenericCustomArmorRenderer<PriestArmorItem> {
     public PriestArmorRenderer(GeoModel<PriestArmorItem> model) {
         super(model);
-        asyncBones.add(
-                new AsyncBone("altArmorHood", EquipmentSlot.HEAD, m -> m.head, Vec3.ZERO)
-        );
+        asyncBones.add(new AsyncBone("altArmorHood", EquipmentSlot.HEAD, m -> m.head, Vec3.ZERO));
     }
 }

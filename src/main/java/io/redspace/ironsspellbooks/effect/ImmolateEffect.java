@@ -33,6 +33,7 @@ public class ImmolateEffect extends MagicMobEffect implements ISyncedMobEffect {
      * Weak map tracking Afflicted to Afflictor in order to maintain explosion killcredit
      */
     private static final Map<LivingEntity, Entity> EFFECT_CREDIT = new WeakHashMap<>();
+
     /**
      * Weak map tracking specific instances of the effect that should explode at a delay. Maps instance to timestamp
      */
@@ -42,13 +43,23 @@ public class ImmolateEffect extends MagicMobEffect implements ISyncedMobEffect {
         super(mobEffectCategory, color);
     }
 
-    public static MobEffectInstance addImmolateStack(LivingEntity entity, @Nullable Entity afflicter) {
+    public static MobEffectInstance addImmolateStack(
+            LivingEntity entity, @Nullable Entity afflicter) {
         MobEffectInstance previous = entity.getEffect(MobEffectRegistry.IMMOLATE.get());
         MobEffectInstance inst;
         if (previous != null) {
-            inst = new MobEffectInstance(MobEffectRegistry.IMMOLATE.get(), 20 * 15, previous.getAmplifier() + 1, previous.isAmbient(), previous.isVisible(), previous.showIcon());
+            inst =
+                    new MobEffectInstance(
+                            MobEffectRegistry.IMMOLATE.get(),
+                            20 * 15,
+                            previous.getAmplifier() + 1,
+                            previous.isAmbient(),
+                            previous.isVisible(),
+                            previous.showIcon());
         } else {
-            inst = new MobEffectInstance(MobEffectRegistry.IMMOLATE.get(), 20 * 15, 0, false, false, true);
+            inst =
+                    new MobEffectInstance(
+                            MobEffectRegistry.IMMOLATE.get(), 20 * 15, 0, false, false, true);
         }
         if (afflicter != null) {
             EFFECT_CREDIT.put(entity, afflicter);
@@ -66,13 +77,22 @@ public class ImmolateEffect extends MagicMobEffect implements ISyncedMobEffect {
         }
         var random = livingEntity.getRandom();
         for (int i = 0; i < 2; i++) {
-            Vec3 motion = new Vec3(
-                    random.nextFloat() * 2 - 1,
-                    random.nextFloat() * 2 - 1,
-                    random.nextFloat() * 2 - 1
-            );
+            Vec3 motion =
+                    new Vec3(
+                            random.nextFloat() * 2 - 1,
+                            random.nextFloat() * 2 - 1,
+                            random.nextFloat() * 2 - 1);
             motion = motion.scale(.04f);
-            livingEntity.level().addParticle(particle, livingEntity.getRandomX(.4f), livingEntity.getRandomY(), livingEntity.getRandomZ(.4f), motion.x, motion.y, motion.z);
+            livingEntity
+                    .level()
+                    .addParticle(
+                            particle,
+                            livingEntity.getRandomX(.4f),
+                            livingEntity.getRandomY(),
+                            livingEntity.getRandomZ(.4f),
+                            motion.x,
+                            motion.y,
+                            motion.z);
         }
     }
 
@@ -90,31 +110,62 @@ public class ImmolateEffect extends MagicMobEffect implements ISyncedMobEffect {
         @Nullable Entity attacker = EFFECT_CREDIT.remove(livingEntity);
         double baseDamage = damageFor(attacker);
 
-        var source = new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(ISSDamageTypes.FIRE_MAGIC), attacker);
+        var source =
+                new DamageSource(
+                        level.registryAccess()
+                                .registryOrThrow(Registries.DAMAGE_TYPE)
+                                .getHolderOrThrow(ISSDamageTypes.FIRE_MAGIC),
+                        attacker);
         var explosionRadiusSqr = explosionRadius * explosionRadius;
-        var entities = level.getEntities(null, livingEntity.getBoundingBox().inflate(explosionRadius));
-        Vec3 losPoint = Utils.raycastForBlock(level, livingEntity.position(), livingEntity.position().add(0, 1, 0), ClipContext.Fluid.NONE).getLocation();
+        var entities =
+                level.getEntities(null, livingEntity.getBoundingBox().inflate(explosionRadius));
+        Vec3 losPoint =
+                Utils.raycastForBlock(
+                                level,
+                                livingEntity.position(),
+                                livingEntity.position().add(0, 1, 0),
+                                ClipContext.Fluid.NONE)
+                        .getLocation();
         for (Entity entity : entities) {
             double distanceSqr = entity.distanceToSqr(livingEntity.position());
-            if (distanceSqr < explosionRadiusSqr && entity.canBeHitByProjectile() && !DamageSources.isFriendlyFireBetween(attacker, entity) && Utils.hasLineOfSight(level, losPoint, entity.getBoundingBox().getCenter(), true)) {
+            if (distanceSqr < explosionRadiusSqr
+                    && entity.canBeHitByProjectile()
+                    && !DamageSources.isFriendlyFireBetween(attacker, entity)
+                    && Utils.hasLineOfSight(
+                            level, losPoint, entity.getBoundingBox().getCenter(), true)) {
                 double p = (1 - distanceSqr / explosionRadiusSqr);
                 float damage = (float) (baseDamage * p);
-                entity.invulnerableTime = 0; // ensure explosion can hit after the damage that procs it
+                entity.invulnerableTime =
+                        0; // ensure explosion can hit after the damage that procs it
                 if (entity.hurt(source, damage) && entity instanceof LivingEntity livingVictim) {
                     var inst = addImmolateStack(livingVictim, attacker);
                     DELAYED_INSTANCES.put(inst, inst.getDuration());
                 }
             }
         }
-        PacketDistributor.sendToPlayersTrackingEntity(livingEntity, new FieryExplosionParticlesPacket(livingEntity.getBoundingBox().getCenter(), 1.5f));
-        level.playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), SoundEvents.GENERIC_EXPLODE, livingEntity.getSoundSource(), 4.0F, (1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.2F) * 0.7F);
+        PacketDistributor.sendToPlayersTrackingEntity(
+                livingEntity,
+                new FieryExplosionParticlesPacket(livingEntity.getBoundingBox().getCenter(), 1.5f));
+        level.playSound(
+                null,
+                livingEntity.getX(),
+                livingEntity.getY(),
+                livingEntity.getZ(),
+                SoundEvents.GENERIC_EXPLODE,
+                livingEntity.getSoundSource(),
+                4.0F,
+                (1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.2F) * 0.7F);
         livingEntity.removeEffect(this);
     }
 
     public static double damageFor(@Nullable Entity entity) {
         double baseDamage = 10.0;
         if (entity instanceof LivingEntity livingAttacker) {
-            baseDamage = baseDamage * livingAttacker.getAttributeValue(AttributeRegistry.SPELL_POWER.get()) * livingAttacker.getAttributeValue(AttributeRegistry.FIRE_SPELL_POWER.get());
+            baseDamage =
+                    baseDamage
+                            * livingAttacker.getAttributeValue(AttributeRegistry.SPELL_POWER.get())
+                            * livingAttacker.getAttributeValue(
+                                    AttributeRegistry.FIRE_SPELL_POWER.get());
         }
         return baseDamage;
     }

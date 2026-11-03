@@ -15,17 +15,16 @@ public class IronsDataStorage extends SavedData {
 
     public static void init(DimensionDataStorage dimensionDataStorage) {
         if (dimensionDataStorage != null) {
-            IronsDataStorage.INSTANCE = dimensionDataStorage.computeIfAbsent(
-                    IronsDataStorage::load,
-                    IronsDataStorage::new,
-                    "irons_spellbooks_data");
+            IronsDataStorage.INSTANCE =
+                    dimensionDataStorage.computeIfAbsent(
+                            IronsDataStorage::load, IronsDataStorage::new, "irons_spellbooks_data");
         }
     }
 
     @Override
     public @NotNull CompoundTag save(@NotNull CompoundTag pCompoundTag) {
         var tag = new CompoundTag();
-        //TODO: make annotation for this?
+        // TODO: make annotation for this?
         tag.put("GuidingBoltManager", GuidingBoltManager.INSTANCE.serializeNBT());
         tag.put("PortalManager", PortalManager.INSTANCE.serializeNBT());
         tag.put("PocketDimensionIdManager", PocketDimensionManager.INSTANCE.serializeNBT());
@@ -34,7 +33,7 @@ public class IronsDataStorage extends SavedData {
     }
 
     public static IronsDataStorage load(CompoundTag tag) {
-        //TODO: make annotation for this?
+        // TODO: make annotation for this?
         if (tag.contains("GuidingBoltManager", Tag.TAG_COMPOUND)) {
             GuidingBoltManager.INSTANCE.deserializeNBT(tag.getCompound("GuidingBoltManager"));
         }
@@ -42,7 +41,8 @@ public class IronsDataStorage extends SavedData {
             PortalManager.INSTANCE.deserializeNBT(tag.getCompound("PortalManager"));
         }
         if (tag.contains("PocketDimensionIdManager", Tag.TAG_COMPOUND)) {
-            PocketDimensionManager.INSTANCE.deserializeNBT(tag.getCompound("PocketDimensionIdManager"));
+            PocketDimensionManager.INSTANCE.deserializeNBT(
+                    tag.getCompound("PocketDimensionIdManager"));
         }
         if (tag.contains("SummonManager", Tag.TAG_COMPOUND)) {
             SummonManager.INSTANCE.deserializeNBT(tag.getCompound("SummonManager"));
@@ -50,5 +50,4 @@ public class IronsDataStorage extends SavedData {
 
         return new IronsDataStorage();
     }
-
 }

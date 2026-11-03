@@ -24,25 +24,54 @@ public class InfernalSorcererArmorItem extends ImbuableChestplateArmorItem {
     public static final int COOLDOWN_TICKS = 1 * 20;
 
     public InfernalSorcererArmorItem(Type type, Properties settings) {
-        super(ExtendedArmorMaterials.INFERNAL_SORCERER, type, settings,
-                new AttributeContainer(AttributeRegistry.MAX_MANA, 150, AttributeModifier.Operation.ADDITION),
-                new AttributeContainer(AttributeRegistry.SPELL_POWER, 0.10, AttributeModifier.Operation.MULTIPLY_BASE)
-        );
+        super(
+                ExtendedArmorMaterials.INFERNAL_SORCERER,
+                type,
+                settings,
+                new AttributeContainer(
+                        AttributeRegistry.MAX_MANA, 150, AttributeModifier.Operation.ADDITION),
+                new AttributeContainer(
+                        AttributeRegistry.SPELL_POWER,
+                        0.10,
+                        AttributeModifier.Operation.MULTIPLY_BASE));
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> tooltipComponents, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack,
+            @Nullable Level pLevel,
+            List<Component> tooltipComponents,
+            TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, pLevel, tooltipComponents, pIsAdvanced);
         tooltipComponents.add(
                 Component.translatable(
-                        "tooltip.irons_spellbooks.passive_ability_no_cooldown",
-                        Component.literal(Utils.timeFromTicks(Utils.applyCooldownReduction(COOLDOWN_TICKS, MinecraftInstanceHelper.getPlayer()), 1)).withStyle(ChatFormatting.AQUA)
-                ).withStyle(ChatFormatting.DARK_PURPLE)
-        );
-        tooltipComponents.add(Component.literal(" ").append(Component.translatable(this.getDescriptionId() + ".desc")).withStyle(ChatFormatting.LIGHT_PURPLE));
-        tooltipComponents.add(Component.literal(" ").append(Component.translatable(this.getDescriptionId() + ".immolate.desc",
-                Component.literal(Utils.stringTruncation(ImmolateEffect.damageFor(MinecraftInstanceHelper.getPlayer()), 1)).withStyle(ChatFormatting.RED))
-        ).withStyle(ChatFormatting.LIGHT_PURPLE));
+                                "tooltip.irons_spellbooks.passive_ability_no_cooldown",
+                                Component.literal(
+                                                Utils.timeFromTicks(
+                                                        Utils.applyCooldownReduction(
+                                                                COOLDOWN_TICKS,
+                                                                MinecraftInstanceHelper
+                                                                        .getPlayer()),
+                                                        1))
+                                        .withStyle(ChatFormatting.AQUA))
+                        .withStyle(ChatFormatting.DARK_PURPLE));
+        tooltipComponents.add(
+                Component.literal(" ")
+                        .append(Component.translatable(this.getDescriptionId() + ".desc"))
+                        .withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipComponents.add(
+                Component.literal(" ")
+                        .append(
+                                Component.translatable(
+                                        this.getDescriptionId() + ".immolate.desc",
+                                        Component.literal(
+                                                        Utils.stringTruncation(
+                                                                ImmolateEffect.damageFor(
+                                                                        MinecraftInstanceHelper
+                                                                                .getPlayer()),
+                                                                1))
+                                                .withStyle(ChatFormatting.RED)))
+                        .withStyle(ChatFormatting.LIGHT_PURPLE));
     }
 
     @Override
@@ -50,5 +79,4 @@ public class InfernalSorcererArmorItem extends ImbuableChestplateArmorItem {
     public GeoArmorRenderer<?> supplyRenderer() {
         return new GenericCustomArmorRenderer<>(new InfernalSorcererArmorModel());
     }
-
 }

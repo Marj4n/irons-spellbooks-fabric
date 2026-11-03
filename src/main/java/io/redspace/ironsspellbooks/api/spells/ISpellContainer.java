@@ -10,12 +10,13 @@ import org.marj4n.irons_spellbooks.equipment.EquipmentItem;
 import java.util.List;
 
 public interface ISpellContainer {
-    @NotNull SpellSlot[] getAllSpells();
+    @NotNull
+    SpellSlot[] getAllSpells();
 
-    @NotNull List<SpellSlot> getActiveSpells();
+    @NotNull
+    List<SpellSlot> getActiveSpells();
 
     int getMaxSpellCount();
-
 
     int getActiveSpellCount();
 
@@ -27,7 +28,8 @@ public interface ISpellContainer {
 
     boolean isSpellWheel();
 
-    @NotNull SpellData getSpellAtIndex(int index);
+    @NotNull
+    SpellData getSpellAtIndex(int index);
 
     int getIndexForSpell(AbstractSpell spell);
 
@@ -39,14 +41,17 @@ public interface ISpellContainer {
      * Static Helpers
      */
     static boolean isSpellContainer(ItemStack itemStack) {
-        return itemStack != null && !itemStack.isEmpty() && CodecHelper.hasWithLegacy(itemStack, NBT, LEGACY_NBT);
+        return itemStack != null
+                && !itemStack.isEmpty()
+                && CodecHelper.hasWithLegacy(itemStack, NBT, LEGACY_NBT);
     }
 
     static ISpellContainer create(int maxSpells, boolean addsToSpellWheel, boolean mustBeEquipped) {
         return new SpellContainer(maxSpells, addsToSpellWheel, mustBeEquipped);
     }
 
-    static ISpellContainer createScrollContainer(AbstractSpell spell, int spellLevel, ItemStack itemStack) {
+    static ISpellContainer createScrollContainer(
+            AbstractSpell spell, int spellLevel, ItemStack itemStack) {
         var spellContainer = create(1, false, false).mutableCopy();
         spellContainer.addSpellAtIndex(spell, spellLevel, 0, true);
         var i = spellContainer.toImmutable();
@@ -54,8 +59,15 @@ public interface ISpellContainer {
         return i;
     }
 
-    static ISpellContainer createImbuedContainer(AbstractSpell spell, int spellLevel, ItemStack itemStack) {
-        var spellContainer = create(1, true, (itemStack.getItem() instanceof ArmorItem || itemStack.getItem() instanceof EquipmentItem)).mutableCopy();
+    static ISpellContainer createImbuedContainer(
+            AbstractSpell spell, int spellLevel, ItemStack itemStack) {
+        var spellContainer =
+                create(
+                                1,
+                                true,
+                                (itemStack.getItem() instanceof ArmorItem
+                                        || itemStack.getItem() instanceof EquipmentItem))
+                        .mutableCopy();
         spellContainer.addSpellAtIndex(spell, spellLevel, 0, true);
         var i = spellContainer.toImmutable();
         ISpellContainer.set(itemStack, i);
@@ -63,7 +75,13 @@ public interface ISpellContainer {
     }
 
     static ISpellContainer get(ItemStack itemStack) {
-        return CodecHelper.getOrElseWithLegacy(itemStack, NBT, SpellContainer.CODEC, null, LEGACY_NBT, SpellContainer.LEGACY_CODEC);
+        return CodecHelper.getOrElseWithLegacy(
+                itemStack,
+                NBT,
+                SpellContainer.CODEC,
+                null,
+                LEGACY_NBT,
+                SpellContainer.LEGACY_CODEC);
     }
 
     static ISpellContainer getOrCreate(ItemStack itemStack) {
@@ -75,7 +93,7 @@ public interface ISpellContainer {
     }
 
     static void set(ItemStack stack, ISpellContainer container) {
-//        stack.set(ComponentRegistry.SPELL_CONTAINER, container);
+        //        stack.set(ComponentRegistry.SPELL_CONTAINER, container);
         CodecHelper.set(stack, NBT, SpellContainer.CODEC, container);
     }
 
@@ -97,5 +115,4 @@ public interface ISpellContainer {
      */
     @Deprecated(forRemoval = true)
     void save(ItemStack stack);
-
 }

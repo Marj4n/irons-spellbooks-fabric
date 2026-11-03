@@ -45,12 +45,19 @@ public class CookedIceSpiderEggBlock extends Block {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(
+            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    public InteractionResult use(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hitResult) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (level.isClientSide) {
             if (eat(level, pos, state, player).consumesAction()) {
@@ -63,17 +70,33 @@ public class CookedIceSpiderEggBlock extends Block {
         return eat(level, pos, state, player);
     }
 
-    protected static InteractionResult eat(LevelAccessor level, BlockPos pos, BlockState state, Player player) {
+    protected static InteractionResult eat(
+            LevelAccessor level, BlockPos pos, BlockState state, Player player) {
         if (!player.canEat(false)) {
             return InteractionResult.PASS;
         }
         player.getFoodData().eat(4, 1F);
         if (!level.isClientSide()) {
-            MobEffectInstance mobEffectInstance = player.getEffect(MobEffectRegistry.FROSTBITTEN_STRIKES.get());
+            MobEffectInstance mobEffectInstance =
+                    player.getEffect(MobEffectRegistry.FROSTBITTEN_STRIKES.get());
             if (mobEffectInstance == null) {
-                mobEffectInstance = new MobEffectInstance(MobEffectRegistry.FROSTBITTEN_STRIKES.get(), FROSTBITE_DURATION, FROSTBITE_AMPLIFIER, false, false, true);
+                mobEffectInstance =
+                        new MobEffectInstance(
+                                MobEffectRegistry.FROSTBITTEN_STRIKES.get(),
+                                FROSTBITE_DURATION,
+                                FROSTBITE_AMPLIFIER,
+                                false,
+                                false,
+                                true);
             } else {
-                mobEffectInstance = new MobEffectInstance(MobEffectRegistry.FROSTBITTEN_STRIKES.get(), mobEffectInstance.getDuration() + FROSTBITE_DURATION, FROSTBITE_AMPLIFIER, false, false, true);
+                mobEffectInstance =
+                        new MobEffectInstance(
+                                MobEffectRegistry.FROSTBITTEN_STRIKES.get(),
+                                mobEffectInstance.getDuration() + FROSTBITE_DURATION,
+                                FROSTBITE_AMPLIFIER,
+                                false,
+                                false,
+                                true);
             }
             player.addEffect(mobEffectInstance);
             level.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -85,11 +108,14 @@ public class CookedIceSpiderEggBlock extends Block {
             double d1 = (double) (color >> 8 & 255) / 255.0D;
             double d2 = (double) (color & 255) / 255.0D;
             for (int i = 0; i < 5; i++) {
-                particleLevel.addParticle(ParticleTypes.ENTITY_EFFECT,
+                particleLevel.addParticle(
+                        ParticleTypes.ENTITY_EFFECT,
                         pos.getX() + (2 + particleLevel.getRandom().nextFloat() * 10) / 16f,
                         pos.getY() + 15 / 16f,
                         pos.getZ() + (2 + particleLevel.getRandom().nextFloat() * 14) / 16f,
-                        d0, d1, d2);
+                        d0,
+                        d1,
+                        d2);
             }
         }
         int bites = state.getValue(BITES);
@@ -99,13 +125,20 @@ public class CookedIceSpiderEggBlock extends Block {
         } else {
             level.destroyBlock(pos, false);
             level.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
-            level.playSound(null, pos, SoundEvents.SNIFFER_EGG_HATCH, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(
+                    null, pos, SoundEvents.SNIFFER_EGG_HATCH, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState facingState,
+            LevelAccessor level,
+            BlockPos currentPos,
+            BlockPos facingPos) {
         return facing == Direction.DOWN && !state.canSurvive(level, currentPos)
                 ? Blocks.AIR.defaultBlockState()
                 : super.updateShape(state, facing, facingState, level, currentPos, facingPos);
@@ -132,7 +165,11 @@ public class CookedIceSpiderEggBlock extends Block {
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType pathComputationType) {
+    public boolean isPathfindable(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos,
+            PathComputationType pathComputationType) {
         return false;
     }
 }

@@ -21,8 +21,7 @@ public class CleanseParticle extends TextureSheetParticle {
             double pYSpeed,
             double pZSpeed,
             float pSizeMultiplier,
-            SpriteSet pSprites
-    ) {
+            SpriteSet pSprites) {
         super(pLevel, pX, pY, pZ, 0.0, 0.0, 0.0);
         this.sprites = pSprites;
         this.friction = 0.96F;
@@ -51,10 +50,10 @@ public class CleanseParticle extends TextureSheetParticle {
         return 240;
     }
 
-//    @Override
-//    public FacingCameraMode getFacingCameraMode() {
-//        return FacingCameraMode.LOOKAT_Y;
-//    }
+    //    @Override
+    //    public FacingCameraMode getFacingCameraMode() {
+    //        return FacingCameraMode.LOOKAT_Y;
+    //    }
 
     @Override
     public void tick() {
@@ -64,7 +63,11 @@ public class CleanseParticle extends TextureSheetParticle {
 
     @Override
     public float getQuadSize(float pScaleFactor) {
-        return this.quadSize * Mth.clamp(((float) this.age + pScaleFactor) / (float) this.lifetime * 32.0F, 0.0F, 1.0F);
+        return this.quadSize
+                * Mth.clamp(
+                        ((float) this.age + pScaleFactor) / (float) this.lifetime * 32.0F,
+                        0.0F,
+                        1.0F);
     }
 
     @Environment(EnvType.CLIENT)
@@ -83,9 +86,9 @@ public class CleanseParticle extends TextureSheetParticle {
                 double pZ,
                 double pXSpeed,
                 double pYSpeed,
-                double pZSpeed
-        ) {
-            return new CleanseParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, 1.5F, this.sprites);
+                double pZSpeed) {
+            return new CleanseParticle(
+                    pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, 1.5F, this.sprites);
         }
     }
 }

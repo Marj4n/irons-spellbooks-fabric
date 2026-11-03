@@ -15,7 +15,8 @@ public class MomentHurtByTargetGoal extends HurtByTargetGoal {
     @Override
     public void tick() {
         super.tick();
-        // if we continue to take damage while we are processing this goal, decide whether we should stop processing this goal, or double down
+        // if we continue to take damage while we are processing this goal, decide whether we should
+        // stop processing this goal, or double down
         if (this.timestamp != this.mob.getLastHurtByMobTimestamp()) {
             this.timestamp = this.mob.getLastHurtByMobTimestamp();
             if (mob.getLastHurtByMob() != null && mob.getLastHurtByMob() != targetMob) {
@@ -35,7 +36,8 @@ public class MomentHurtByTargetGoal extends HurtByTargetGoal {
     @Override
     public void start() {
         super.start();
-        this.forcedAggroTime = 40 + this.mob.getRandom().nextInt(80) + this.mob.getRandom().nextInt(80);
+        this.forcedAggroTime =
+                40 + this.mob.getRandom().nextInt(80) + this.mob.getRandom().nextInt(80);
         intensity = 1f;
         isOutnumbered = false;
     }

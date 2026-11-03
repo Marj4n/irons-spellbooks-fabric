@@ -6,9 +6,14 @@ import io.redspace.ironsspellbooks.item.weapons.AttributeContainer;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ImbuableChestplateArmorItem extends ExtendedArmorItem implements IPresetSpellContainer {
+public abstract class ImbuableChestplateArmorItem extends ExtendedArmorItem
+        implements IPresetSpellContainer {
 
-    public ImbuableChestplateArmorItem(IronsExtendedArmorMaterial pMaterial, Type pType, Properties pProperties, AttributeContainer... attributes) {
+    public ImbuableChestplateArmorItem(
+            IronsExtendedArmorMaterial pMaterial,
+            Type pType,
+            Properties pProperties,
+            AttributeContainer... attributes) {
         super(pMaterial, pType, pProperties, attributes);
     }
 
@@ -18,7 +23,8 @@ public abstract class ImbuableChestplateArmorItem extends ExtendedArmorItem impl
             return;
         }
 
-        if (itemStack.getItem() instanceof ArmorItem armorItem && armorItem.getType() == Type.CHESTPLATE) {
+        if (itemStack.getItem() instanceof ArmorItem armorItem
+                && armorItem.getType() == Type.CHESTPLATE) {
             if (!ISpellContainer.isSpellContainer(itemStack)) {
                 var spellContainer = ISpellContainer.create(1, true, true);
                 ISpellContainer.set(itemStack, spellContainer);

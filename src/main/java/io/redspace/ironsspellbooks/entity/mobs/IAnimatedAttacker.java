@@ -8,6 +8,7 @@ public interface IAnimatedAttacker {
     void playAnimation(String animationId);
 
     default <T extends Entity & IAnimatedAttacker> void serverTriggerAnimation(String animationId) {
-        PacketDistributor.sendToPlayersTrackingEntity((T) this, new SyncAnimationPacket<>(animationId, (T) this));
+        PacketDistributor.sendToPlayersTrackingEntity(
+                (T) this, new SyncAnimationPacket<>(animationId, (T) this));
     }
 }

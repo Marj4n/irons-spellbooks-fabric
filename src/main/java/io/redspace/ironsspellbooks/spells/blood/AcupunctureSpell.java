@@ -23,19 +23,25 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class AcupunctureSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "acupuncture");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "acupuncture");
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(20)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(20)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
     }
 
     public AcupunctureSpell() {
@@ -62,12 +68,18 @@ public class AcupunctureSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .15f);
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData targetData) {
             var targetEntity = targetData.getTarget((ServerLevel) world);
             if (targetEntity != null) {
@@ -76,7 +88,11 @@ public class AcupunctureSpell extends AbstractSpell {
                 Vec3 center = targetEntity.position().add(0, targetEntity.getEyeHeight() / 2, 0);
                 float degreesPerNeedle = 360f / count;
                 for (int i = 0; i < count; i++) {
-                    Vec3 offset = new Vec3(0, Math.random(), .55).normalize().scale(targetEntity.getBbWidth() + 2.75f).yRot(degreesPerNeedle * i * Mth.DEG_TO_RAD);
+                    Vec3 offset =
+                            new Vec3(0, Math.random(), .55)
+                                    .normalize()
+                                    .scale(targetEntity.getBbWidth() + 2.75f)
+                                    .yRot(degreesPerNeedle * i * Mth.DEG_TO_RAD);
                     Vec3 spawn = center.add(offset);
                     Vec3 motion = center.subtract(spawn).normalize();
 
@@ -92,7 +108,6 @@ public class AcupunctureSpell extends AbstractSpell {
 
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
-
 
     private int getCount(int spellLevel, LivingEntity caster) {
         return (int) ((4 + spellLevel) * getSpellPower(spellLevel, caster));

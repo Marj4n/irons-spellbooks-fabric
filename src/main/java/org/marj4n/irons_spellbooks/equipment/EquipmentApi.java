@@ -20,10 +20,14 @@ public final class EquipmentApi {
         return TrinketsApi.getTrinketComponent(entity).map(Inventory::new);
     }
 
-    public static EquipmentApi getCuriosHelper() { return new EquipmentApi(); }
+    public static EquipmentApi getCuriosHelper() {
+        return new EquipmentApi();
+    }
 
     public java.util.Set<String> getCurioTags(Item item) {
-        return net.minecraft.core.registries.BuiltInRegistries.ITEM.wrapAsHolder(item).tags()
+        return net.minecraft.core.registries.BuiltInRegistries.ITEM
+                .wrapAsHolder(item)
+                .tags()
                 .map(net.minecraft.tags.TagKey::location)
                 .filter(id -> id.getNamespace().equals("curios"))
                 .map(net.minecraft.resources.ResourceLocation::getPath)
@@ -36,14 +40,24 @@ public final class EquipmentApi {
 
     public static final class Inventory {
         private final TrinketComponent component;
-        private Inventory(TrinketComponent component) { this.component = component; }
+
+        private Inventory(TrinketComponent component) {
+            this.component = component;
+        }
 
         public List<EquippedSlot> findCurios(Predicate<ItemStack> predicate) {
             return component.getEquipped(predicate).stream()
-                    .map(pair -> new EquippedSlot(EquipmentSlotContext.of(pair.getA(),
-                            component.getEntity()), pair.getB()))
-                    .sorted(Comparator.comparing((EquippedSlot slot) -> slot.slotContext().identifier())
-                            .thenComparingInt(slot -> slot.slotContext().index())).toList();
+                    .map(
+                            pair ->
+                                    new EquippedSlot(
+                                            EquipmentSlotContext.of(
+                                                    pair.getA(), component.getEntity()),
+                                            pair.getB()))
+                    .sorted(
+                            Comparator.comparing(
+                                            (EquippedSlot slot) -> slot.slotContext().identifier())
+                                    .thenComparingInt(slot -> slot.slotContext().index()))
+                    .toList();
         }
 
         public List<EquippedSlot> findCurios(Item item) {
@@ -55,23 +69,38 @@ public final class EquipmentApi {
         }
 
         private List<TrinketInventory> inventories(String name) {
-            return component.getInventory().entrySet().stream().sorted(java.util.Map.Entry.comparingByKey())
-                    .map(group -> group.getValue().get(name)).filter(java.util.Objects::nonNull).toList();
+            return component.getInventory().entrySet().stream()
+                    .sorted(java.util.Map.Entry.comparingByKey())
+                    .map(group -> group.getValue().get(name))
+                    .filter(java.util.Objects::nonNull)
+                    .toList();
         }
+
         public Optional<EquippedSlot> findSlot(String name, int index) {
-            if(index < 0) return Optional.empty(); int offset=0;
-            for(var inv:inventories(name)) {
-                if(index < offset+inv.getContainerSize()) return Optional.of(new EquippedSlot(
-                        new EquipmentSlotContext(name,component.getEntity(),index,false,true),inv.getItem(index-offset)));
-                offset+=inv.getContainerSize();
+            if (index < 0) return Optional.empty();
+            int offset = 0;
+            for (var inv : inventories(name)) {
+                if (index < offset + inv.getContainerSize())
+                    return Optional.of(
+                            new EquippedSlot(
+                                    new EquipmentSlotContext(
+                                            name, component.getEntity(), index, false, true),
+                                    inv.getItem(index - offset)));
+                offset += inv.getContainerSize();
             }
             return Optional.empty();
         }
-        public void setEquippedCurio(String name,int index,ItemStack stack) {
-            if(index<0)return; int offset=0;
-            for(var inv:inventories(name)) {
-                if(index<offset+inv.getContainerSize()) { inv.setItem(index-offset,stack); inv.setChanged(); return; }
-                offset+=inv.getContainerSize();
+
+        public void setEquippedCurio(String name, int index, ItemStack stack) {
+            if (index < 0) return;
+            int offset = 0;
+            for (var inv : inventories(name)) {
+                if (index < offset + inv.getContainerSize()) {
+                    inv.setItem(index - offset, stack);
+                    inv.setChanged();
+                    return;
+                }
+                offset += inv.getContainerSize();
             }
         }
     }

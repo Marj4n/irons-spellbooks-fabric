@@ -20,21 +20,21 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class GreaterHealSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "greater_heal");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "greater_heal");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
-                Component.translatable("ui.irons_spellbooks.greater_healing")
-        );
+        return List.of(Component.translatable("ui.irons_spellbooks.greater_healing"));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(1)
-            .setCooldownSeconds(45)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(1)
+                    .setCooldownSeconds(45)
+                    .build();
 
     public GreaterHealSpell() {
         this.manaCostPerLevel = 0;
@@ -60,11 +60,18 @@ public class GreaterHealSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float healAmount = entity.getMaxHealth();
-        org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellHealEvent(entity, entity, healAmount, getSchoolType()));
+        org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                new SpellHealEvent(entity, entity, healAmount, getSchoolType()));
         entity.heal(healAmount);
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new HealParticlesPacket(entity.position()));
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                entity, new HealParticlesPacket(entity.position()));
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
 }

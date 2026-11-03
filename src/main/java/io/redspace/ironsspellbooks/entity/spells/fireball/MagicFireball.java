@@ -45,20 +45,27 @@ public class MagicFireball extends AbstractMagicProjectile {
         double d2 = this.getZ() - vec3.z;
         var count = Mth.clamp((int) (vec3.lengthSqr() * 2), 1, 4);
         for (int i = 0; i < count; i++) {
-//            Vec3 motion = Utils.getRandomVec3(0.7).add(vec3.normalize()).scale(0.25);
+            //            Vec3 motion = Utils.getRandomVec3(0.7).add(vec3.normalize()).scale(0.25);
             Vec3 random = Utils.getRandomVec3(getBbHeight() * .2f);
             var f = i / ((float) count);
             var x = Mth.lerp(f, d0, this.getX() + vec3.x);
             var y = Mth.lerp(f, d1, this.getY() + vec3.y);
             var z = Mth.lerp(f, d2, this.getZ() + vec3.z);
-            this.level().addParticle(ParticleHelper.FIERY_SMOKE, true, x - random.x, y + getBbHeight() * .5f - random.y, z - random.z, 0, 0, 0/*motion.x * .5f, motion.y * .5f, motion.z * .5f*/);
+            this.level()
+                    .addParticle(
+                            ParticleHelper.FIERY_SMOKE,
+                            true,
+                            x - random.x,
+                            y + getBbHeight() * .5f - random.y,
+                            z - random.z,
+                            0,
+                            0,
+                            0 /*motion.x * .5f, motion.y * .5f, motion.z * .5f*/);
         }
     }
 
-
     @Override
-    public void impactParticles(double x, double y, double z) {
-    }
+    public void impactParticles(double x, double y, double z) {}
 
     @Override
     public float getSpeed() {
@@ -76,25 +83,64 @@ public class MagicFireball extends AbstractMagicProjectile {
             impactParticles(xOld, yOld, zOld);
             float explosionRadius = getExplosionRadius();
             var explosionRadiusSqr = explosionRadius * explosionRadius;
-            var entities = level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
-            Vec3 losPoint = Utils.raycastForBlock(level(), this.position(), this.position().add(0, 2, 0), ClipContext.Fluid.NONE).getLocation();
+            var entities =
+                    level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            Vec3 losPoint =
+                    Utils.raycastForBlock(
+                                    level(),
+                                    this.position(),
+                                    this.position().add(0, 2, 0),
+                                    ClipContext.Fluid.NONE)
+                            .getLocation();
             for (Entity entity : entities) {
                 double distanceSqr = entity.distanceToSqr(hitResult.getLocation());
-                if (distanceSqr < explosionRadiusSqr && canHitEntity(entity) && Utils.hasLineOfSight(level(), losPoint, entity.getBoundingBox().getCenter(), true)) {
+                if (distanceSqr < explosionRadiusSqr
+                        && canHitEntity(entity)
+                        && Utils.hasLineOfSight(
+                                level(), losPoint, entity.getBoundingBox().getCenter(), true)) {
                     double p = (1 - distanceSqr / explosionRadiusSqr);
                     float damage = (float) (this.damage * p);
-                    DamageSources.applyDamage(entity, damage, SpellRegistry.FIREBALL_SPELL.get().getDamageSource(this, getOwner()));
+                    DamageSources.applyDamage(
+                            entity,
+                            damage,
+                            SpellRegistry.FIREBALL_SPELL.get().getDamageSource(this, getOwner()));
                 }
             }
             if (ServerConfigs.SPELL_GREIFING.get()) {
-                Explosion explosion = new Explosion(level(), null, SpellRegistry.FIREBALL_SPELL.get().getDamageSource(this, getOwner()), null, this.getX(), this.getY(), this.getZ(), this.getExplosionRadius() / 2, true, Explosion.BlockInteraction.DESTROY);
-                if (!io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents.START.invoker().onExplosionStart(level(), explosion)) {
+                Explosion explosion =
+                        new Explosion(
+                                level(),
+                                null,
+                                SpellRegistry.FIREBALL_SPELL
+                                        .get()
+                                        .getDamageSource(this, getOwner()),
+                                null,
+                                this.getX(),
+                                this.getY(),
+                                this.getZ(),
+                                this.getExplosionRadius() / 2,
+                                true,
+                                Explosion.BlockInteraction.DESTROY);
+                if (!io.github.fabricators_of_create.porting_lib.event.common.ExplosionEvents.START
+                        .invoker()
+                        .onExplosionStart(level(), explosion)) {
                     explosion.explode();
                     explosion.finalizeExplosion(false);
                 }
             }
-            PacketDistributor.sendToPlayersTrackingEntity(this, new FieryExplosionParticlesPacket(hitResult.getLocation().subtract(getDeltaMovement().scale(0.5)), getExplosionRadius()));
-            playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
+            PacketDistributor.sendToPlayersTrackingEntity(
+                    this,
+                    new FieryExplosionParticlesPacket(
+                            hitResult.getLocation().subtract(getDeltaMovement().scale(0.5)),
+                            getExplosionRadius()));
+            playSound(
+                    SoundEvents.GENERIC_EXPLODE,
+                    4.0F,
+                    (1.0F
+                                    + (this.level().random.nextFloat()
+                                                    - this.level().random.nextFloat())
+                                            * 0.2F)
+                            * 0.7F);
             this.discardHelper(hitResult);
         }
     }

@@ -18,7 +18,10 @@ public class OminousFieryDaggerLeapGoal extends AnimatedActionGoal<FireBossEntit
 
     @Override
     protected boolean canStartAction() {
-        return mob.isOminous() && mob.onGround() && mob.getTarget() != null && mob.distanceToSqr(mob.getTarget()) > 3 * 3;
+        return mob.isOminous()
+                && mob.onGround()
+                && mob.getTarget() != null
+                && mob.distanceToSqr(mob.getTarget()) > 3 * 3;
     }
 
     @Override
@@ -54,9 +57,19 @@ public class OminousFieryDaggerLeapGoal extends AnimatedActionGoal<FireBossEntit
         if (this.abilityTimer == JUMP_TIMESTAMP) {
             mob.setDeltaMovement(0, 0.75, 0);
             mob.playSound(SoundRegistry.HELLRAZOR_SWING.get(), 3f, 0.5f);
-            MagicManager.spawnParticles(mob.level(), new BlastwaveParticleOptions(1, .6f, 0.3f, 8), mob.getX(), mob.getY() + .1, mob.getZ(), 0, 0, 0, 0, 0, true);
+            MagicManager.spawnParticles(
+                    mob.level(),
+                    new BlastwaveParticleOptions(1, .6f, 0.3f, 8),
+                    mob.getX(),
+                    mob.getY() + .1,
+                    mob.getZ(),
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    true);
             mob.procSpectralDagger(getActionTimestamp() - JUMP_TIMESTAMP);
-
         }
     }
 
@@ -74,7 +87,10 @@ public class OminousFieryDaggerLeapGoal extends AnimatedActionGoal<FireBossEntit
             Vec3 start = mob.getEyePosition();
             int radius = Math.max(4, 7 - (targets.size() - 1));
             for (Entity target : targets) {
-                mob.playSound(SoundRegistry.FIERY_DAGGER_THROW.get(), 2f, Utils.random.nextIntBetweenInclusive(80, 110) * .01f);
+                mob.playSound(
+                        SoundRegistry.FIERY_DAGGER_THROW.get(),
+                        2f,
+                        Utils.random.nextIntBetweenInclusive(80, 110) * .01f);
 
                 Vec3 targetPos = target.position();
                 Vec3 deltaAim = targetPos.subtract(start);
@@ -98,16 +114,17 @@ public class OminousFieryDaggerLeapGoal extends AnimatedActionGoal<FireBossEntit
                 double y1 = aim.y - start.y;
                 double g = 0.05;
                 double verticalSpeed = (y1 + 0.5 * g * ticks * ticks) / ticks;
-                Vec3 trajectory = horizontal.normalize().scale(horizontalSpeed).add(0, verticalSpeed, 0);
+                Vec3 trajectory =
+                        horizontal.normalize().scale(horizontalSpeed).add(0, verticalSpeed, 0);
                 dagger.setDeltaMovement(trajectory);
                 mob.level().addFreshEntity(dagger);
             }
         }
     }
 
-//    @Override
-//    public void stop() {
-//        super.stop();
-//        mob.attackGoal.setTarget(null);
-//    }
+    //    @Override
+    //    public void stop() {
+    //        super.stop();
+    //        mob.attackGoal.setTarget(null);
+    //    }
 }

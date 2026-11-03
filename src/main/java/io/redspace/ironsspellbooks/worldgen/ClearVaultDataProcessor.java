@@ -13,28 +13,27 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.jetbrains.annotations.NotNull;
 
 public class ClearVaultDataProcessor extends StructureProcessor {
-    public static final Codec<ClearVaultDataProcessor> CODEC = Codec.unit(ClearVaultDataProcessor::new);
+    public static final Codec<ClearVaultDataProcessor> CODEC =
+            Codec.unit(ClearVaultDataProcessor::new);
 
-
-    public ClearVaultDataProcessor() {
-    }
+    public ClearVaultDataProcessor() {}
 
     @Override
-    public StructureTemplate.StructureBlockInfo processBlock(@NotNull LevelReader levelReader,
-                                                             @NotNull BlockPos jigsawPiecePos,
-                                                             @NotNull BlockPos jigsawPieceBottomCenterPos,
-                                                             StructureTemplate.@NotNull StructureBlockInfo blockInfoLocal,
-                                                             StructureTemplate.StructureBlockInfo blockInfoGlobal,
-                                                             StructurePlaceSettings structurePlacementData) {
+    public StructureTemplate.StructureBlockInfo processBlock(
+            @NotNull LevelReader levelReader,
+            @NotNull BlockPos jigsawPiecePos,
+            @NotNull BlockPos jigsawPieceBottomCenterPos,
+            StructureTemplate.@NotNull StructureBlockInfo blockInfoLocal,
+            StructureTemplate.StructureBlockInfo blockInfoGlobal,
+            StructurePlaceSettings structurePlacementData) {
         if (blockInfoGlobal.state().getBlock() instanceof VaultBlock) {
             CompoundTag nbt = blockInfoGlobal.nbt();
             if (nbt != null) {
                 nbt.remove("server_data");
                 nbt.remove("shared_data");
-                blockInfoGlobal = new StructureTemplate.StructureBlockInfo(
-                        blockInfoGlobal.pos(),
-                        blockInfoGlobal.state(),
-                        nbt);
+                blockInfoGlobal =
+                        new StructureTemplate.StructureBlockInfo(
+                                blockInfoGlobal.pos(), blockInfoGlobal.state(), nbt);
             }
         }
         return blockInfoGlobal;

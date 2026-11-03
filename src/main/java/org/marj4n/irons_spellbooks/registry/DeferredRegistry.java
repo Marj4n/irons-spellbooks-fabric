@@ -27,7 +27,8 @@ public final class DeferredRegistry<T> {
         this.namespace = Objects.requireNonNull(namespace);
     }
 
-    public static <T> DeferredRegistry<T> create(ResourceKey<? extends Registry<T>> key, String namespace) {
+    public static <T> DeferredRegistry<T> create(
+            ResourceKey<? extends Registry<T>> key, String namespace) {
         return new DeferredRegistry<>(key, namespace);
     }
 
@@ -38,22 +39,28 @@ public final class DeferredRegistry<T> {
     }
 
     public <R extends T> RegistryEntry<R> register(String path, Supplier<? extends R> factory) {
-        if (registered) throw new IllegalStateException("Registry already populated: " + key.location());
+        if (registered)
+            throw new IllegalStateException("Registry already populated: " + key.location());
         ResourceLocation id = new ResourceLocation(namespace, path);
         @SuppressWarnings("unchecked")
-        ResourceKey<? extends Registry<R>> entryKey = (ResourceKey<? extends Registry<R>>) (ResourceKey<?>) key;
+        ResourceKey<? extends Registry<R>> entryKey =
+                (ResourceKey<? extends Registry<R>>) (ResourceKey<?>) key;
         RegistryEntry<R> entry = new RegistryEntry<>(id, entryKey, factory);
-        if (entries.putIfAbsent(id, entry) != null) throw new IllegalArgumentException("Duplicate content: " + id);
+        if (entries.putIfAbsent(id, entry) != null)
+            throw new IllegalArgumentException("Duplicate content: " + id);
         return entry;
     }
 
     public Supplier<Registry<T>> makeRegistry(Class<T> valueType) {
-        if (registry != null) throw new IllegalStateException("Registry already resolved: " + key.location());
+        if (registry != null)
+            throw new IllegalStateException("Registry already resolved: " + key.location());
         if (BuiltInRegistries.REGISTRY.containsKey(key.location())) {
             throw new IllegalStateException("Registry already exists: " + key.location());
         }
-        registry = FabricRegistryBuilder.createSimple(valueType, key.location())
-                .attribute(RegistryAttribute.SYNCED).buildAndRegister();
+        registry =
+                FabricRegistryBuilder.createSimple(valueType, key.location())
+                        .attribute(RegistryAttribute.SYNCED)
+                        .buildAndRegister();
         return () -> registry;
     }
 
@@ -61,16 +68,19 @@ public final class DeferredRegistry<T> {
     private Registry<T> registry() {
         if (registry == null) {
             registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(key.location());
-            if (registry == null) throw new IllegalStateException("Registry not available: " + key.location());
+            if (registry == null)
+                throw new IllegalStateException("Registry not available: " + key.location());
         }
         return registry;
     }
 
     public void register() {
-        if (registered) throw new IllegalStateException("Registry registered twice: " + key.location());
+        if (registered)
+            throw new IllegalStateException("Registry registered twice: " + key.location());
         Registry<T> target = registry();
         for (RegistryEntry<? extends T> entry : entries.values()) {
-            if (target.containsKey(entry.getId())) throw new IllegalStateException("Content already exists: " + entry.getId());
+            if (target.containsKey(entry.getId()))
+                throw new IllegalStateException("Content already exists: " + entry.getId());
             Registry.register(target, entry.getId(), entry.get());
         }
         registered = true;

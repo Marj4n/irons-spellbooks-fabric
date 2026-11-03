@@ -21,23 +21,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class AutoloaderCrossbow extends CrossbowItem implements io.github.fabricators_of_create.porting_lib.item.EntityTickListenerItem {
-    //NBT flag used for if we are currently in the process of loading a new projectile
+public class AutoloaderCrossbow extends CrossbowItem
+        implements io.github.fabricators_of_create.porting_lib.item.EntityTickListenerItem {
+    // NBT flag used for if we are currently in the process of loading a new projectile
     public static final String LOADING = "Loading";
-    //NBT flag used for keeping track of the server tick when we will be finished loading
+    // NBT flag used for keeping track of the server tick when we will be finished loading
     public static final String LOADING_TIMESTAMP = "LoadingTimestamp";
 
     public AutoloaderCrossbow(Properties pProperties) {
         super(pProperties);
     }
 
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player player, InteractionHand pHand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level pLevel, Player player, InteractionHand pHand) {
         ItemStack itemstack = player.getItemInHand(pHand);
-        //If we are charged, shoot.
+        // If we are charged, shoot.
         if (isCharged(itemstack)) {
             performShooting(pLevel, player, pHand, itemstack, getShootingPower(itemstack), 1.0F);
             setCharged(itemstack, false);
-            //If we have an additional ammo item, begin autoloading. If not, play a sound cue. (We do not save or reserve this item, so even though we begin loading, it could still fail)
+            // If we have an additional ammo item, begin autoloading. If not, play a sound cue. (We
+            // do not save or reserve this item, so even though we begin loading, it could still
+            // fail)
             if (!player.getProjectile(itemstack).isEmpty()) {
                 startLoading(player, itemstack);
             } else {
@@ -64,7 +68,8 @@ public class AutoloaderCrossbow extends CrossbowItem implements io.github.fabric
     }
 
     @Override
-    public void inventoryTick(ItemStack itemstack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
+    public void inventoryTick(
+            ItemStack itemstack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
         handleTicking(itemstack, pLevel, pEntity);
         super.inventoryTick(itemstack, pLevel, pEntity, pSlotId, pIsSelected);
     }
@@ -74,7 +79,9 @@ public class AutoloaderCrossbow extends CrossbowItem implements io.github.fabric
         int i = getLoadingTicks(stack);
         handleTicking(stack, entity.level(), entity);
         if (i != getLoadingTicks(stack)) {
-            //Force item entity to re-sync to client. a bit of a brute force, but the alternative would be making access transforms on synced entity data's dirty handling. this should be fine.
+            // Force item entity to re-sync to client. a bit of a brute force, but the alternative
+            // would be making access transforms on synced entity data's dirty handling. this should
+            // be fine.
             ItemStack cloneStack = stack.copy();
             entity.setItem(cloneStack);
         }
@@ -87,14 +94,33 @@ public class AutoloaderCrossbow extends CrossbowItem implements io.github.fabric
                 int i = getLoadingTicks(itemStack);
                 if (i > getChargeDuration(itemStack)) {
                     setLoading(itemStack, false);
-                    if (entity instanceof LivingEntity livingEntity && !isCharged(itemStack) && tryLoadProjectiles(livingEntity, itemStack)) {
+                    if (entity instanceof LivingEntity livingEntity
+                            && !isCharged(itemStack)
+                            && tryLoadProjectiles(livingEntity, itemStack)) {
                         setCharged(itemStack, true);
                     }
-                    SoundSource soundsource = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.BLOCKS;
+                    SoundSource soundsource =
+                            entity instanceof Player ? SoundSource.PLAYERS : SoundSource.BLOCKS;
                     if (isCharged(itemStack)) {
-                        level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CROSSBOW_LOADING_END, soundsource, 1.0F, 1.0F / (level.getRandom().nextFloat() * 0.5F + 1.0F) + 0.2F);
+                        level.playSound(
+                                null,
+                                entity.getX(),
+                                entity.getY(),
+                                entity.getZ(),
+                                SoundEvents.CROSSBOW_LOADING_END,
+                                soundsource,
+                                1.0F,
+                                1.0F / (level.getRandom().nextFloat() * 0.5F + 1.0F) + 0.2F);
                     } else {
-                        level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_BREAK, soundsource, 1.0F, 1.5F + 0.2F);
+                        level.playSound(
+                                null,
+                                entity.getX(),
+                                entity.getY(),
+                                entity.getZ(),
+                                SoundEvents.ITEM_BREAK,
+                                soundsource,
+                                1.0F,
+                                1.5F + 0.2F);
                     }
                 }
                 i++;
@@ -126,9 +152,13 @@ public class AutoloaderCrossbow extends CrossbowItem implements io.github.fabric
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        TooltipsUtils.addShiftTooltip(pTooltip, List.of(
-                Component.translatable("item.irons_spellbooks.autoloader_crossbow.desc").withStyle(ChatFormatting.YELLOW)));
+    public void appendHoverText(
+            ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        TooltipsUtils.addShiftTooltip(
+                pTooltip,
+                List.of(
+                        Component.translatable("item.irons_spellbooks.autoloader_crossbow.desc")
+                                .withStyle(ChatFormatting.YELLOW)));
         super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
     }
 }

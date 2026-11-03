@@ -18,18 +18,49 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import java.util.function.Supplier;
 
 public class MagicSwordRenderer<T extends Entity & GeoEntity> extends GeoEntityRenderer<T> {
-    public MagicSwordRenderer(EntityRendererProvider.Context renderManager, Supplier<GeoModel<T>> model) {
+    public MagicSwordRenderer(
+            EntityRendererProvider.Context renderManager, Supplier<GeoModel<T>> model) {
         super(renderManager, model.get());
     }
 
     @Override
-    public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+    public void preRender(
+            PoseStack poseStack,
+            T animatable,
+            BakedGeoModel model,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            boolean isReRender,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        super.preRender(
+                poseStack,
+                animatable,
+                model,
+                bufferSource,
+                buffer,
+                isReRender,
+                partialTick,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha);
         poseStack.translate(0, animatable.getBbHeight() * .5f, 0);
     }
 
     @Override
-    public @Nullable RenderType getRenderType(T animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+    public @Nullable RenderType getRenderType(
+            T animatable,
+            ResourceLocation texture,
+            @Nullable MultiBufferSource bufferSource,
+            float partialTick) {
         return RenderHelper.CustomerRenderType.magic(texture);
     }
 

@@ -19,14 +19,20 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class NetherwardTinctureItem extends DrinkableItem {
-    private static final Component DESCRIPTION = Component.translatable("item.irons_spellbooks.netherward_tincture.desc").withStyle(ChatFormatting.GRAY);
+    private static final Component DESCRIPTION =
+            Component.translatable("item.irons_spellbooks.netherward_tincture.desc")
+                    .withStyle(ChatFormatting.GRAY);
 
     public NetherwardTinctureItem(Properties properties) {
         super(properties, NetherwardTinctureItem::applyEffect, null, false);
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Level context, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack,
+            Level context,
+            List<Component> pTooltipComponents,
+            TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, context, pTooltipComponents, pIsAdvanced);
         pTooltipComponents.add(DESCRIPTION);
     }
@@ -48,7 +54,11 @@ public class NetherwardTinctureItem extends DrinkableItem {
     }
 
     @Override
-    public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
+    public InteractionResult interactLivingEntity(
+            ItemStack pStack,
+            Player pPlayer,
+            LivingEntity pInteractionTarget,
+            InteractionHand pUsedHand) {
         if (pInteractionTarget instanceof AbstractPiglin || pInteractionTarget instanceof Hoglin) {
             applyEffect(pStack, pInteractionTarget);
             if (!pPlayer.getAbilities().instabuild) {

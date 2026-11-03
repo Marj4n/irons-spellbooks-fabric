@@ -29,14 +29,10 @@ public class ArcaneAnvilJeiRecipe {
     }
 
     @NotNull Type type;
-    @Nullable
-    Item leftItem;
-    @Nullable
-    Item rightItem;
-    @Nullable
-    AbstractSpell spell;
-    @Nullable
-    int level;
+    @Nullable Item leftItem;
+    @Nullable Item rightItem;
+    @Nullable AbstractSpell spell;
+    @Nullable int level;
 
     public ArcaneAnvilJeiRecipe(Item leftItem, Item rightItem) {
         this.leftItem = leftItem;
@@ -72,56 +68,90 @@ public class ArcaneAnvilJeiRecipe {
                 yield new Tuple<>(List.of(scroll1), List.of(ink), List.of(scroll2));
             }
             case Imbue -> {
-                var tuple = new Tuple<List<ItemStack>, List<ItemStack>, List<ItemStack>>(new ArrayList<ItemStack>(), new ArrayList<ItemStack>(), new ArrayList<ItemStack>());
+                var tuple =
+                        new Tuple<List<ItemStack>, List<ItemStack>, List<ItemStack>>(
+                                new ArrayList<ItemStack>(),
+                                new ArrayList<ItemStack>(),
+                                new ArrayList<ItemStack>());
                 tuple.a.add(new ItemStack(leftItem));
-                SpellRegistry.getEnabledSpells().forEach(spell -> {
-                    IntStream.rangeClosed(spell.getMinLevel(), spell.getMaxLevel()).forEach(i -> {
-                        var scroll = new ItemStack(ItemRegistry.SCROLL.get());
-                        ISpellContainer.createScrollContainer(spell, i, scroll);
-                        var result = new ItemStack(leftItem);
-                        ISpellContainer.createScrollContainer(spell, i, result);
-                        tuple.b.add(scroll);
-                        tuple.c.add(result);
-                    });
-                });
+                SpellRegistry.getEnabledSpells()
+                        .forEach(
+                                spell -> {
+                                    IntStream.rangeClosed(spell.getMinLevel(), spell.getMaxLevel())
+                                            .forEach(
+                                                    i -> {
+                                                        var scroll =
+                                                                new ItemStack(
+                                                                        ItemRegistry.SCROLL.get());
+                                                        ISpellContainer.createScrollContainer(
+                                                                spell, i, scroll);
+                                                        var result = new ItemStack(leftItem);
+                                                        ISpellContainer.createScrollContainer(
+                                                                spell, i, result);
+                                                        tuple.b.add(scroll);
+                                                        tuple.c.add(result);
+                                                    });
+                                });
 
                 yield tuple;
             }
             case Item_Upgrade -> {
-                var tuple = new Tuple<List<ItemStack>, List<ItemStack>, List<ItemStack>>(new ArrayList<ItemStack>(), new ArrayList<ItemStack>(), new ArrayList<ItemStack>());
+                var tuple =
+                        new Tuple<List<ItemStack>, List<ItemStack>, List<ItemStack>>(
+                                new ArrayList<ItemStack>(),
+                                new ArrayList<ItemStack>(),
+                                new ArrayList<ItemStack>());
                 tuple.a.add(new ItemStack(leftItem));
                 var upgradeStack = new ItemStack(rightItem);
                 var result = new ItemStack(leftItem);
-                UpgradeData.set(result, UpgradeData.NONE.addUpgrade(result, Minecraft.getInstance().level.registryAccess().asGetterLookup().lookup(UpgradeOrbTypeRegistry.UPGRADE_ORB_REGISTRY_KEY).get().getOrThrow(UpgradeOrbTypeData.get(upgradeStack).type())
-//                        upgradeStack.get(ComponentRegistry.UPGRADE_ORB_TYPE))
-                , UpgradeUtils.getRelevantEquipmentSlot(result)));
+                UpgradeData.set(
+                        result,
+                        UpgradeData.NONE.addUpgrade(
+                                result,
+                                Minecraft.getInstance()
+                                        .level
+                                        .registryAccess()
+                                        .asGetterLookup()
+                                        .lookup(UpgradeOrbTypeRegistry.UPGRADE_ORB_REGISTRY_KEY)
+                                        .get()
+                                        .getOrThrow(UpgradeOrbTypeData.get(upgradeStack).type())
+                                //
+                                // upgradeStack.get(ComponentRegistry.UPGRADE_ORB_TYPE))
+                                ,
+                                UpgradeUtils.getRelevantEquipmentSlot(result)));
                 tuple.b.add(upgradeStack);
                 tuple.c.add(result);
                 yield tuple;
             }
             case Affinity_Ring_Attune -> {
-                var tuple = new Tuple<List<ItemStack>, List<ItemStack>, List<ItemStack>>(new ArrayList<ItemStack>(), new ArrayList<ItemStack>(), new ArrayList<ItemStack>());
+                var tuple =
+                        new Tuple<List<ItemStack>, List<ItemStack>, List<ItemStack>>(
+                                new ArrayList<ItemStack>(),
+                                new ArrayList<ItemStack>(),
+                                new ArrayList<ItemStack>());
                 var result = new ItemStack(ItemRegistry.AFFINITY_RING.get());
                 AffinityData.set(result, new AffinityData(this.spell));
-                SpellRegistry.getEnabledSpells().forEach(randomSpell -> {
-                    var baseRing = new ItemStack(ItemRegistry.AFFINITY_RING.get());
-                    AffinityData.set(baseRing, new AffinityData(randomSpell));
-                    tuple.a.add(baseRing);
-                });
-                IntStream.rangeClosed(this.spell.getMinLevel(), this.spell.getMaxLevel()).forEach(i -> {
-                    var scroll = new ItemStack(ItemRegistry.SCROLL.get());
-                    ISpellContainer.createScrollContainer(this.spell, i, scroll);
+                SpellRegistry.getEnabledSpells()
+                        .forEach(
+                                randomSpell -> {
+                                    var baseRing = new ItemStack(ItemRegistry.AFFINITY_RING.get());
+                                    AffinityData.set(baseRing, new AffinityData(randomSpell));
+                                    tuple.a.add(baseRing);
+                                });
+                IntStream.rangeClosed(this.spell.getMinLevel(), this.spell.getMaxLevel())
+                        .forEach(
+                                i -> {
+                                    var scroll = new ItemStack(ItemRegistry.SCROLL.get());
+                                    ISpellContainer.createScrollContainer(this.spell, i, scroll);
 
-                    tuple.b.add(scroll);
-                    //tuple.c.add(result);
-                });
+                                    tuple.b.add(scroll);
+                                    // tuple.c.add(result);
+                                });
                 tuple.c.add(result);
                 yield tuple;
             }
         };
     }
 
-    public record Tuple<A, B, C>(A a, B b, C c) {
-
-    }
+    public record Tuple<A, B, C>(A a, B b, C c) {}
 }

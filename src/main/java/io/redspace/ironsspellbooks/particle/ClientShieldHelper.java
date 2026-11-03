@@ -34,7 +34,8 @@ public class ClientShieldHelper {
         } else {
             List<VoxelShape> shieldCollisions = new ArrayList<>();
             for (var s : trackedEntities) {
-                if (boundingBox.intersects(s.getBoundingBox().inflate(1))) shieldCollisions.addAll(s.getVoxels());
+                if (boundingBox.intersects(s.getBoundingBox().inflate(1)))
+                    shieldCollisions.addAll(s.getVoxels());
             }
             return shieldCollisions;
         }

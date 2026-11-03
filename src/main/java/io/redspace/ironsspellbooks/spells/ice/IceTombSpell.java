@@ -18,22 +18,27 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class IceTombSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "ice_tomb");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "ice_tomb");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getHealing(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.duration", Utils.timeFromTicks(getDuration(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.healing",
+                        Utils.stringTruncation(getHealing(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.duration",
+                        Utils.timeFromTicks(getDuration(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(30)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(30)
+                    .build();
 
     public IceTombSpell() {
         this.manaCostPerLevel = 15;
@@ -59,7 +64,12 @@ public class IceTombSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         IceTombEntity iceTombEntity = new IceTombEntity(world, entity);
         iceTombEntity.moveTo(entity.position());
         iceTombEntity.setDeltaMovement(entity.getDeltaMovement());

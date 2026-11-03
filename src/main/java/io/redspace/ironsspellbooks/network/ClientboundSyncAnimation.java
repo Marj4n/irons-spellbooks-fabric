@@ -8,7 +8,8 @@ import net.minecraft.world.entity.Entity;
  * Deprecated wrapper-class for 1.20.1 API compat. Use {@link SyncAnimationPacket} instead
  */
 @Deprecated(forRemoval = true)
-public class ClientboundSyncAnimation<T extends Entity & IAnimatedAttacker>  extends SyncAnimationPacket<T> {
+public class ClientboundSyncAnimation<T extends Entity & IAnimatedAttacker>
+        extends SyncAnimationPacket<T> {
 
     public ClientboundSyncAnimation(String animationId, T entity) {
         super(animationId, entity);

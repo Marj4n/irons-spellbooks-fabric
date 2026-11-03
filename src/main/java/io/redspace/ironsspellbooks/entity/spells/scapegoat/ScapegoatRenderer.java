@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.spells.scapegoat;
 
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.redspace.ironsspellbooks.render.GeoLivingEntityRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -15,7 +14,14 @@ public class ScapegoatRenderer extends GeoLivingEntityRenderer<ScapegoatEntity> 
     }
 
     @Override
-    public void render(ScapegoatEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, LightTexture.FULL_BRIGHT);
+    public void render(
+            ScapegoatEntity entity,
+            float entityYaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
+        super.render(
+                entity, entityYaw, partialTick, poseStack, bufferSource, LightTexture.FULL_BRIGHT);
     }
 }

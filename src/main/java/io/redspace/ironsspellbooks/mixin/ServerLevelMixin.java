@@ -14,7 +14,9 @@ public class ServerLevelMixin {
     IceSpiderPatrolSpawner irons_spellbooks$spiderPatrolSpawner = new IceSpiderPatrolSpawner();
 
     @Inject(method = "tickCustomSpawners", at = @At("HEAD"))
-    private void tickCustomSpawners(boolean pSpawnEnemies, boolean pSpawnFriendlies, CallbackInfo ci) {
-        irons_spellbooks$spiderPatrolSpawner.tick((ServerLevel) (Object) this, pSpawnEnemies, pSpawnFriendlies);
+    private void tickCustomSpawners(
+            boolean pSpawnEnemies, boolean pSpawnFriendlies, CallbackInfo ci) {
+        irons_spellbooks$spiderPatrolSpawner.tick(
+                (ServerLevel) (Object) this, pSpawnEnemies, pSpawnFriendlies);
     }
 }

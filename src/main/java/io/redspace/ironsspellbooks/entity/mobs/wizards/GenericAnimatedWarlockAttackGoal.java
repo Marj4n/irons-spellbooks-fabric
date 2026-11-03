@@ -19,11 +19,17 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimatedAttacker & IMagicEntity> extends WarlockAttackGoal {
-    public GenericAnimatedWarlockAttackGoal(T abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval) {
+public class GenericAnimatedWarlockAttackGoal<
+                T extends PathfinderMob & IAnimatedAttacker & IMagicEntity>
+        extends WarlockAttackGoal {
+    public GenericAnimatedWarlockAttackGoal(
+            T abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval) {
         super(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
         this.wantsToMelee = true;
-        this.mob = abstractSpellCastingMob; //shadows super.mob
+        this.mob = abstractSpellCastingMob; // shadows super.mob
     }
 
     protected List<AttackAnimationData> moveList = new ArrayList<>();
@@ -32,6 +38,7 @@ public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimate
     public @Nullable AttackAnimationData currentAttack;
     public @Nullable AttackAnimationData nextAttack;
     public @Nullable AttackAnimationData queueCombo;
+
     /**
      * chance that, on a successful hit, we skip our attack delay and immediately attack again. chance is doubled against blocking targets
      */
@@ -56,24 +63,36 @@ public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimate
     protected void handleAttackLogic(double distanceSquared) {
         var meleeRange = meleeRange();
         float rangeMultiplier = nextAttack == null ? 1f : nextAttack.rangeMultiplier;
-        float procRangeSqr = meleeRange * meleeRange * rangeMultiplier * rangeMultiplier * 1.2f * 1.2f;
-        if (meleeAnimTimer < 0 && (!wantsToMelee || distanceSquared > procRangeSqr || mob.isCasting())) {
+        float procRangeSqr =
+                meleeRange * meleeRange * rangeMultiplier * rangeMultiplier * 1.2f * 1.2f;
+        if (meleeAnimTimer < 0
+                && (!wantsToMelee || distanceSquared > procRangeSqr || mob.isCasting())) {
             super.handleAttackLogic(distanceSquared);
             return;
         }
-        //Handling Animation hit frames
+        // Handling Animation hit frames
         mob.getLookControl().setLookAt(target);
         if (meleeAnimTimer > 0 && currentAttack != null) {
-            //We are currently attacking and are in a melee animation
+            // We are currently attacking and are in a melee animation
             forceFaceTarget();
             meleeAnimTimer--;
             if (currentAttack.isHitFrame(meleeAnimTimer)) {
                 AttackKeyframe attackData = currentAttack.getHitFrame(meleeAnimTimer);
                 onHitFrame(attackData, meleeRange);
             }
-            if (currentAttack.canCancel && (currentAttack.isSingleHit() || currentAttack.lengthInTicks - meleeAnimTimer > currentAttack.attacks.keySet().intStream().sorted().findFirst().orElse(0))) {
+            if (currentAttack.canCancel
+                    && (currentAttack.isSingleHit()
+                            || currentAttack.lengthInTicks - meleeAnimTimer
+                                    > currentAttack
+                                            .attacks
+                                            .keySet()
+                                            .intStream()
+                                            .sorted()
+                                            .findFirst()
+                                            .orElse(0))) {
                 Vec3 delta = mob.position().subtract(target.position());
-                var modifiedDistanceSquared = delta.x * delta.x + delta.y * delta.y * .5 * .5 + delta.z * delta.z;
+                var modifiedDistanceSquared =
+                        delta.x * delta.x + delta.y * delta.y * .5 * .5 + delta.z * delta.z;
                 if (modifiedDistanceSquared > meleeRange * meleeRange * 1.5 * 1.5) {
                     stopMeleeAction();
                 }
@@ -83,12 +102,12 @@ public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimate
             queueCombo = null;
             doMeleeAction();
         } else if (meleeAnimTimer == 0) {
-            //Reset animations/attack
+            // Reset animations/attack
             nextAttack = getNextAttack((float) distanceSquared);
             resetMeleeAttackInterval(distanceSquared);
             meleeAnimTimer = -1;
         } else {
-            //Handling attack delay
+            // Handling attack delay
             if (distanceSquared < procRangeSqr) {
                 if (hasLineOfSight && --this.meleeAttackDelay == 0) {
                     doMeleeAction();
@@ -101,19 +120,31 @@ public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimate
 
     protected void onHitFrame(AttackKeyframe attackKeyframe, float meleeRange) {
         playSwingSound();
-        float f = -Utils.getAngle(mob.getX(), mob.getZ(), target.getX(), target.getZ()) - Mth.HALF_PI;
+        float f =
+                -Utils.getAngle(mob.getX(), mob.getZ(), target.getX(), target.getZ()) - Mth.HALF_PI;
         Vec3 lunge = attackKeyframe.lungeVector().yRot(f);
         doLunge(lunge, meleeRange);
 
         var forward = mob.getForward();
-        // if this is an area attack, collect all nearby like-entities, and evaluate a dot product to determine if our area cone can hit them
-        var targets = currentAttack.areaAttackThreshold.isEmpty() ?
-                List.of(target) :
-                mob.level().getEntitiesOfClass(target.getClass(), mob.getBoundingBox().inflate(spellcastingRange),
-                        (entity -> forward.dot(entity.position().subtract(mob.position()).normalize()) >= currentAttack.areaAttackThreshold.get())
-                );
+        // if this is an area attack, collect all nearby like-entities, and evaluate a dot product
+        // to determine if our area cone can hit them
+        var targets =
+                currentAttack.areaAttackThreshold.isEmpty()
+                        ? List.of(target)
+                        : mob.level()
+                                .getEntitiesOfClass(
+                                        target.getClass(),
+                                        mob.getBoundingBox().inflate(spellcastingRange),
+                                        (entity ->
+                                                forward.dot(
+                                                                entity.position()
+                                                                        .subtract(mob.position())
+                                                                        .normalize())
+                                                        >= currentAttack.areaAttackThreshold
+                                                                .get()));
         for (LivingEntity target : targets) {
-            if (target.distanceToSqr(mob) <= meleeRange * meleeRange && Utils.hasLineOfSight(mob.level(), mob, target, true)) {
+            if (target.distanceToSqr(mob) <= meleeRange * meleeRange
+                    && Utils.hasLineOfSight(mob.level(), mob, target, true)) {
                 handleDamaging(target, attackKeyframe);
             }
         }
@@ -126,14 +157,18 @@ public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimate
     protected boolean handleDamaging(LivingEntity target, AttackKeyframe attackData) {
         boolean flag = this.mob.doHurtTarget(target);
         target.invulnerableTime = 0;
-        float f = -Utils.getAngle(mob.getX(), mob.getZ(), target.getX(), target.getZ()) - Mth.HALF_PI;
+        float f =
+                -Utils.getAngle(mob.getX(), mob.getZ(), target.getX(), target.getZ()) - Mth.HALF_PI;
         if (flag) {
             playImpactSound();
             if (attackData.extraKnockback() != Vec3.ZERO) {
-                target.setDeltaMovement(target.getDeltaMovement().add(attackData.extraKnockback().yRot(f)));
+                target.setDeltaMovement(
+                        target.getDeltaMovement().add(attackData.extraKnockback().yRot(f)));
             }
-            if (currentAttack.isSingleHit() && ((mob.getRandom().nextFloat() < (comboChance * (target.isBlocking() ? 2 : 1))))) {
-                //Attack again! combos!
+            if (currentAttack.isSingleHit()
+                    && ((mob.getRandom().nextFloat()
+                            < (comboChance * (target.isBlocking() ? 2 : 1))))) {
+                // Attack again! combos!
                 queueCombo = getNextAttack(0);
             }
         }
@@ -141,7 +176,7 @@ public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimate
     }
 
     protected AttackAnimationData getNextAttack(float distanceSquared) {
-        //TODO: IAttackAnimationProvider?
+        // TODO: IAttackAnimationProvider?
         if (this.moveList.isEmpty()) {
             return null;
         } else {
@@ -167,12 +202,13 @@ public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimate
 
     @Override
     protected void doMeleeAction() {
-        //anim duration
+        // anim duration
         currentAttack = nextAttack;
         if (currentAttack != null) {
             this.mob.swing(InteractionHand.MAIN_HAND);
             meleeAnimTimer = currentAttack.lengthInTicks;
-            PacketDistributor.sendToPlayersTrackingEntity(mob, new SyncAnimationPacket<>(currentAttack.animationId, mob));
+            PacketDistributor.sendToPlayersTrackingEntity(
+                    mob, new SyncAnimationPacket<>(currentAttack.animationId, mob));
         }
     }
 
@@ -189,11 +225,15 @@ public class GenericAnimatedWarlockAttackGoal<T extends PathfinderMob & IAnimate
     }
 
     public void playSwingSound() {
-        mob.playSound(SoundRegistry.GENERIC_BLADE_SWING.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 12, 18) * .1f);
+        mob.playSound(
+                SoundRegistry.GENERIC_BLADE_SWING.get(),
+                1,
+                Mth.randomBetweenInclusive(mob.getRandom(), 12, 18) * .1f);
     }
 
     public void playImpactSound() {
-//        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        //        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1,
+        // Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
 
     public GenericAnimatedWarlockAttackGoal<T> setMoveset(List<AttackAnimationData> moveset) {

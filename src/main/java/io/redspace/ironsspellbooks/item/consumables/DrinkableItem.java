@@ -17,7 +17,11 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 public class DrinkableItem extends Item {
-    public DrinkableItem(Properties pProperties, BiConsumer<ItemStack, LivingEntity> drinkAction, @Nullable Item returnItem, boolean showDescription) {
+    public DrinkableItem(
+            Properties pProperties,
+            BiConsumer<ItemStack, LivingEntity> drinkAction,
+            @Nullable Item returnItem,
+            boolean showDescription) {
         super(pProperties);
         this.drinkAction = drinkAction;
         this.returnItem = returnItem;
@@ -72,17 +76,26 @@ public class DrinkableItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level pLevel, Player pPlayer, InteractionHand pHand) {
         return ItemUtils.startUsingInstantly(pLevel, pPlayer, pHand);
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Level level, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack,
+            Level level,
+            List<Component> pTooltipComponents,
+            TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, level, pTooltipComponents, pIsAdvanced);
         if (showDesc) {
             pTooltipComponents.add(Component.empty());
-            pTooltipComponents.add(Component.translatable("potion.whenDrank").withStyle(ChatFormatting.DARK_PURPLE));
-            pTooltipComponents.add(Component.translatable(this.getDescriptionId() + ".desc").withStyle(ChatFormatting.BLUE));
+            pTooltipComponents.add(
+                    Component.translatable("potion.whenDrank")
+                            .withStyle(ChatFormatting.DARK_PURPLE));
+            pTooltipComponents.add(
+                    Component.translatable(this.getDescriptionId() + ".desc")
+                            .withStyle(ChatFormatting.BLUE));
         }
     }
 }

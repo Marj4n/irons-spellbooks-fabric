@@ -13,7 +13,15 @@ public class SparkParticle extends TextureSheetParticle {
     float targetR, targetG, targetB;
     int colorTime;
 
-    public SparkParticle(SparkParticleOptions options, ClientLevel level, double xCoord, double yCoord, double zCoord, double xd, double yd, double zd) {
+    public SparkParticle(
+            SparkParticleOptions options,
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            double xd,
+            double yd,
+            double zd) {
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
         this.scale(this.random.nextFloat() * .65f + .4f);
         this.lifetime = 20 + (int) (Math.random() * 45);
@@ -37,7 +45,7 @@ public class SparkParticle extends TextureSheetParticle {
     @Override
     public void tick() {
         if (!touchedGround && lifetime < 30) {
-            //try to let sparks bounce at least once
+            // try to let sparks bounce at least once
             lifetime++;
         }
         float f = Mth.clamp(this.age / (float) this.colorTime, 0, 1);
@@ -69,9 +77,15 @@ public class SparkParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(@NotNull SparkParticleOptions options, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                @NotNull SparkParticleOptions options,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             var particle = new SparkParticle(options, level, x, y, z, dx, dy, dz);
             particle.pickSprite(this.sprites);
             return particle;

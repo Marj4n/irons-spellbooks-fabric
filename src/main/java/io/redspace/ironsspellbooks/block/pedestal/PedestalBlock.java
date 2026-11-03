@@ -40,22 +40,29 @@ public class PedestalBlock extends BaseEntityBlock implements SimpleWaterloggedB
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        //return Shapes.or(LEG_NE,LEG_NW,LEG_SE,LEG_SW,TABLE_TOP);
+    public VoxelShape getShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        // return Shapes.or(LEG_NE,LEG_NW,LEG_SE,LEG_SW,TABLE_TOP);
         return SHAPE;
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level pLevel, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult use(
+            BlockState state,
+            Level pLevel,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit) {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pos);
-            //Ironsspellbooks.logger.debug("PedestalBlock.use");
+            // Ironsspellbooks.logger.debug("PedestalBlock.use");
             if (entity instanceof PedestalTile pedestalTile) {
 
                 ItemStack currentPedestalItem = pedestalTile.getHeldItem();
                 ItemStack handItem = player.getItemInHand(hand);
 
-                //Drop Current Item
+                // Drop Current Item
                 ItemStack playerItem = currentPedestalItem.copy();
                 if (handItem.isEmpty() || handItem.getCount() == 1) {
                     player.setItemInHand(hand, playerItem);
@@ -64,24 +71,22 @@ public class PedestalBlock extends BaseEntityBlock implements SimpleWaterloggedB
                 }
                 pedestalTile.setHeldItem(ItemStack.EMPTY);
 
-
-                //Place a singular new Item
+                // Place a singular new Item
                 currentPedestalItem = handItem.copy();
                 if (!currentPedestalItem.isEmpty()) {
                     currentPedestalItem.setCount(1);
                     pedestalTile.setHeldItem(currentPedestalItem);
                     handItem.shrink(1);
                 }
-                //Let clients know to update rendered item
+                // Let clients know to update rendered item
                 pLevel.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
-                //handItem.setCount(1);
-                //player.setItemInHand(hand,currentPedestalItem);
+                // handItem.setCount(1);
+                // player.setItemInHand(hand,currentPedestalItem);
             }
         }
 
         return InteractionResult.sidedSuccess(pLevel.isClientSide());
     }
-
 
     private void dropItem(ItemStack itemstack, Player owner) {
         if (owner instanceof ServerPlayer serverplayer) {
@@ -94,7 +99,12 @@ public class PedestalBlock extends BaseEntityBlock implements SimpleWaterloggedB
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+    public void onRemove(
+            BlockState pState,
+            Level pLevel,
+            BlockPos pPos,
+            BlockState pNewState,
+            boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof PedestalTile) {
@@ -105,7 +115,13 @@ public class PedestalBlock extends BaseEntityBlock implements SimpleWaterloggedB
     }
 
     @Override
-    public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos) {
+    public BlockState updateShape(
+            BlockState pState,
+            Direction pDirection,
+            BlockState pNeighborState,
+            LevelAccessor pLevel,
+            BlockPos pPos,
+            BlockPos pNeighborPos) {
         if (pState.getValue(WATERLOGGED)) {
             pLevel.scheduleTick(pPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
         }
@@ -115,12 +131,18 @@ public class PedestalBlock extends BaseEntityBlock implements SimpleWaterloggedB
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(WATERLOGGED, pContext.getLevel().getFluidState(pContext.getClickedPos()).getType() == Fluids.WATER);
+        return this.defaultBlockState()
+                .setValue(
+                        WATERLOGGED,
+                        pContext.getLevel().getFluidState(pContext.getClickedPos()).getType()
+                                == Fluids.WATER);
     }
 
     @Override
     public FluidState getFluidState(BlockState pState) {
-        return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(pState);
+        return pState.getValue(WATERLOGGED)
+                ? Fluids.WATER.getSource(false)
+                : super.getFluidState(pState);
     }
 
     @Override
@@ -133,12 +155,14 @@ public class PedestalBlock extends BaseEntityBlock implements SimpleWaterloggedB
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new PedestalTile(pos, state);
     }
-//    public static final MapCodec<PedestalBlock> CODEC = simpleCodec((t) -> new PedestalBlock());
-//
-//    @Override
-//    protected MapCodec<? extends BaseEntityBlock> codec() {
-//        return CODEC;
-//    }
+
+    //    public static final MapCodec<PedestalBlock> CODEC = simpleCodec((t) -> new
+    // PedestalBlock());
+    //
+    //    @Override
+    //    protected MapCodec<? extends BaseEntityBlock> codec() {
+    //        return CODEC;
+    //    }
 
     @Override
     public RenderShape getRenderShape(BlockState blockState) {

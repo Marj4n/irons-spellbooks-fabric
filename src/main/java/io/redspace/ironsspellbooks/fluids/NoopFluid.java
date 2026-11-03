@@ -32,5 +32,4 @@ public class NoopFluid extends BaseFlowingFluid {
     public int getAmount(FluidState p_207192_1_) {
         return 0;
     }
-
 }

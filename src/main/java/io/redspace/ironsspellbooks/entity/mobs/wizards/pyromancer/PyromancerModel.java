@@ -6,11 +6,11 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import net.minecraft.resources.ResourceLocation;
 
 public class PyromancerModel extends AbstractSpellCastingMobModel {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/pyromancer.png");
+    public static final ResourceLocation TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/pyromancer.png");
 
     @Override
     public ResourceLocation getTextureResource(AbstractSpellCastingMob object) {
         return TEXTURE;
     }
-
 }

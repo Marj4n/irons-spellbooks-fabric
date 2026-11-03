@@ -16,7 +16,6 @@ public class GenericCopyOwnerTargetGoal extends TargetGoal {
     public GenericCopyOwnerTargetGoal(PathfinderMob pMob, Supplier<Entity> ownerGetter) {
         super(pMob, false);
         this.ownerGetter = ownerGetter;
-
     }
 
     /**
@@ -31,7 +30,8 @@ public class GenericCopyOwnerTargetGoal extends TargetGoal {
         if (target == null) {
             return false;
         }
-        return canAttack(target, TargetingConditions.DEFAULT) && !(target instanceof IMagicSummon summon && summon.getSummoner() == owner);
+        return canAttack(target, TargetingConditions.DEFAULT)
+                && !(target instanceof IMagicSummon summon && summon.getSummoner() == owner);
     }
 
     /**

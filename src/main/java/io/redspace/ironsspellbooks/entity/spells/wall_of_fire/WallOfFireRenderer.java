@@ -19,13 +19,20 @@ public class WallOfFireRenderer extends EntityRenderer<WallOfFireEntity> {
 
     private static ResourceLocation TEXTURE = new ResourceLocation("textures/block/fire_0.png");
 
-    //private static ResourceLocation TEXTURE = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
+    // private static ResourceLocation TEXTURE = new
+    // ResourceLocation("textures/entity/creeper/creeper_armor.png");
     public WallOfFireRenderer(Context context) {
         super(context);
     }
 
     @Override
-    public void render(WallOfFireEntity entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            WallOfFireEntity entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
         Pose pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
@@ -42,21 +49,60 @@ public class WallOfFireRenderer extends EntityRenderer<WallOfFireEntity> {
             float uvPerFrame = (1 / (float) frameCount);
             float uvY = frame * uvPerFrame;
             poseStack.pushPose();
-            consumer.vertex(poseMatrix, (float) start.x, (float) start.y, (float) start.z).color(255, 255, 255, 255).uv(0f, uvY + uvPerFrame).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f);
-            consumer.vertex(poseMatrix, (float) start.x, (float) start.y + height, (float) start.z).color(255, 255, 255, 255).uv(0f, uvY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f);
-            consumer.vertex(poseMatrix, (float) end.x, (float) end.y + height, (float) end.z).color(255, 255, 255, 255).uv(1f, uvY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f);
-            consumer.vertex(poseMatrix, (float) end.x, (float) end.y, (float) end.z).color(255, 255, 255, 255).uv(1f, uvY + uvPerFrame).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f);
+            consumer.vertex(poseMatrix, (float) start.x, (float) start.y, (float) start.z)
+                    .color(255, 255, 255, 255)
+                    .uv(0f, uvY + uvPerFrame)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(0f, 1f, 0f);
+            consumer.vertex(poseMatrix, (float) start.x, (float) start.y + height, (float) start.z)
+                    .color(255, 255, 255, 255)
+                    .uv(0f, uvY)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(0f, 1f, 0f);
+            consumer.vertex(poseMatrix, (float) end.x, (float) end.y + height, (float) end.z)
+                    .color(255, 255, 255, 255)
+                    .uv(1f, uvY)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(0f, 1f, 0f);
+            consumer.vertex(poseMatrix, (float) end.x, (float) end.y, (float) end.z)
+                    .color(255, 255, 255, 255)
+                    .uv(1f, uvY + uvPerFrame)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(0f, 1f, 0f);
             poseStack.mulPose(Axis.ZP.rotationDegrees(180));
-            consumer.vertex(poseMatrix, (float) start.x, (float) start.y, (float) start.z).color(255, 255, 255, 255).uv(0f, uvY + uvPerFrame).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f);
-            consumer.vertex(poseMatrix, (float) start.x, (float) start.y + height, (float) start.z).color(255, 255, 255, 255).uv(0f, uvY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f);
-            consumer.vertex(poseMatrix, (float) end.x, (float) end.y + height, (float) end.z).color(255, 255, 255, 255).uv(1f, uvY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f);
-            consumer.vertex(poseMatrix, (float) end.x, (float) end.y, (float) end.z).color(255, 255, 255, 255).uv(1f, uvY + uvPerFrame).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f);
+            consumer.vertex(poseMatrix, (float) start.x, (float) start.y, (float) start.z)
+                    .color(255, 255, 255, 255)
+                    .uv(0f, uvY + uvPerFrame)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(0f, 1f, 0f);
+            consumer.vertex(poseMatrix, (float) start.x, (float) start.y + height, (float) start.z)
+                    .color(255, 255, 255, 255)
+                    .uv(0f, uvY)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(0f, 1f, 0f);
+            consumer.vertex(poseMatrix, (float) end.x, (float) end.y + height, (float) end.z)
+                    .color(255, 255, 255, 255)
+                    .uv(1f, uvY)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(0f, 1f, 0f);
+            consumer.vertex(poseMatrix, (float) end.x, (float) end.y, (float) end.z)
+                    .color(255, 255, 255, 255)
+                    .uv(1f, uvY + uvPerFrame)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .normal(0f, 1f, 0f);
 
             poseStack.popPose();
         }
         super.render(entity, yaw, partialTicks, poseStack, bufferSource, light);
     }
-
 
     @Override
     public ResourceLocation getTextureLocation(WallOfFireEntity entity) {

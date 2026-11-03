@@ -33,7 +33,9 @@ public interface IMagicSummon extends AntiMagicSusceptible {
     }
 
     default boolean shouldIgnoreDamage(DamageSource damageSource) {
-        if (!damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !ServerConfigs.CAN_ATTACK_OWN_SUMMONS.get() && damageSource.getEntity() != null) {
+        if (!damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
+                && !ServerConfigs.CAN_ATTACK_OWN_SUMMONS.get()
+                && damageSource.getEntity() != null) {
             return DamageSources.isFriendlyFireBetween(damageSource.getEntity(), (Entity) this);
         }
         return false;
@@ -59,7 +61,9 @@ public interface IMagicSummon extends AntiMagicSusceptible {
             Level level = entity.level();
             var deathMessage = entity.getCombatTracker().getDeathMessage();
 
-            if (!level.isClientSide && level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && getSummoner() instanceof ServerPlayer player) {
+            if (!level.isClientSide
+                    && level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES)
+                    && getSummoner() instanceof ServerPlayer player) {
                 player.sendSystemMessage(deathMessage);
             }
         }
@@ -71,13 +75,18 @@ public interface IMagicSummon extends AntiMagicSusceptible {
         }
         var reason = entity.getRemovalReason();
         if (reason == null || reason == Entity.RemovalReason.UNLOADED_TO_CHUNK) {
-            // seems to cause undefined behavior, not entirely sure why. disabling for now, as im not sure what this was accomplishing anyways - summons are not persistent by default
+            // seems to cause undefined behavior, not entirely sure why. disabling for now, as im
+            // not sure what this was accomplishing anyways - summons are not persistent by default
             // Force unloaded summons to die
-//            ((EntityAccessor) entity).setRemovalReason(Entity.RemovalReason.DISCARDED);
+            //            ((EntityAccessor)
+            // entity).setRemovalReason(Entity.RemovalReason.DISCARDED);
         }
         if (reason == Entity.RemovalReason.DISCARDED) {
             if (this.getSummoner() instanceof ServerPlayer player) {
-                player.sendSystemMessage(Component.translatable("ui.irons_spellbooks.summon_despawn_message", ((Entity) this).getDisplayName()));
+                player.sendSystemMessage(
+                        Component.translatable(
+                                "ui.irons_spellbooks.summon_despawn_message",
+                                ((Entity) this).getDisplayName()));
             }
         }
         if (reason != null && reason.shouldDestroy()) {
@@ -95,13 +104,23 @@ public interface IMagicSummon extends AntiMagicSusceptible {
         Decreases player's summon timer amplifier to keep track of how many of their summons remain.
         */
         var reason = entity.getRemovalReason();
-        if (reason != null && getSummoner() instanceof ServerPlayer player && reason.shouldDestroy()) {
+        if (reason != null
+                && getSummoner() instanceof ServerPlayer player
+                && reason.shouldDestroy()) {
             var effect = player.getEffect(holder.get());
             if (effect != null) {
-                var decrement = new MobEffectInstance(holder.get(), effect.getDuration(), effect.getAmplifier() - 1, false, false, true);
+                var decrement =
+                        new MobEffectInstance(
+                                holder.get(),
+                                effect.getDuration(),
+                                effect.getAmplifier() - 1,
+                                false,
+                                false,
+                                true);
                 if (decrement.getAmplifier() >= 0) {
                     player.getActiveEffectsMap().put(holder.get(), decrement);
-                    player.connection.send(new ClientboundUpdateMobEffectPacket(player.getId(), decrement));
+                    player.connection.send(
+                            new ClientboundUpdateMobEffectPacket(player.getId(), decrement));
                 } else {
                     player.removeEffect(holder.get());
                 }
@@ -109,5 +128,4 @@ public interface IMagicSummon extends AntiMagicSusceptible {
         }
         onRemovedHelper(entity);
     }
-
 }

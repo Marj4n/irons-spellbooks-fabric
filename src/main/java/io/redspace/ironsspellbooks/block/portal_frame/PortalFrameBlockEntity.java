@@ -31,10 +31,12 @@ import java.util.function.Function;
 public class PortalFrameBlockEntity extends BlockEntity {
     private PortalId portalId;
     private int color = -1;
+
     /**
      * not shared between portals, as the block could have been placed by different players
      */
     private @Nullable UUID ownerUUID = null;
+
     boolean clientIsConnected;
 
     public PortalFrameBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
@@ -64,16 +66,29 @@ public class PortalFrameBlockEntity extends BlockEntity {
 
     private void ifNeighborPresent(Consumer<PortalFrameBlockEntity> consumer) {
         if (level != null) {
-            var e = level.getBlockEntity(this.getBlockPos().relative(directionToOther(this.getBlockState().getValue(PortalFrameBlock.HALF))));
+            var e =
+                    level.getBlockEntity(
+                            this.getBlockPos()
+                                    .relative(
+                                            directionToOther(
+                                                    this.getBlockState()
+                                                            .getValue(PortalFrameBlock.HALF))));
             if (e instanceof PortalFrameBlockEntity portalFrameBlockEntity) {
                 consumer.accept(portalFrameBlockEntity);
             }
         }
     }
 
-    private <T> T ifNeighborPresentExecute(Function<PortalFrameBlockEntity, T> function, T defaultValue) {
+    private <T> T ifNeighborPresentExecute(
+            Function<PortalFrameBlockEntity, T> function, T defaultValue) {
         if (level != null) {
-            var e = level.getBlockEntity(this.getBlockPos().relative(directionToOther(this.getBlockState().getValue(PortalFrameBlock.HALF))));
+            var e =
+                    level.getBlockEntity(
+                            this.getBlockPos()
+                                    .relative(
+                                            directionToOther(
+                                                    this.getBlockState()
+                                                            .getValue(PortalFrameBlock.HALF))));
             if (e instanceof PortalFrameBlockEntity portalFrameBlockEntity) {
                 return function.apply(portalFrameBlockEntity);
             }
@@ -90,7 +105,8 @@ public class PortalFrameBlockEntity extends BlockEntity {
             var dimension = server.getLevel(otherPos.dimension());
             var otherBlockPos = BlockPos.containing(otherPos.pos());
             if (dimension != null) {
-                if (dimension.getBlockEntity(otherBlockPos) instanceof PortalFrameBlockEntity portalFrame) {
+                if (dimension.getBlockEntity(otherBlockPos)
+                        instanceof PortalFrameBlockEntity portalFrame) {
                     consumer.accept(portalFrame);
                 }
             }
@@ -148,21 +164,50 @@ public class PortalFrameBlockEntity extends BlockEntity {
             if (PortalManager.INSTANCE.canUsePortal(uuid, entity)) {
                 var portalData = PortalManager.INSTANCE.getPortalData(uuid);
                 PortalManager.INSTANCE.addPortalCooldown(entity, uuid);
-                //PortalManager.INSTANCE.addPortalCooldown(entity, portalData.portalEntityId2);
-                portalData.getConnectedPortalPos(uuid).ifPresent(portalPos -> {
-                    Vec3 destination = portalPos.pos();
-                    serverLevel.playSound(null, this.getBlockPos(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 1f, 1f);
-                    if (serverLevel.dimension().equals(portalPos.dimension())) {
-                        entity.teleportTo(serverLevel, destination.x, destination.y, destination.z, RelativeMovement.ROTATION, portalPos.rotation(), entity.getXRot());
-                    } else {
-                        var server = serverLevel.getServer();
-                        var dim = server.getLevel(portalPos.dimension());
-                        if (dim != null) {
-                            if (io.redspace.ironsspellbooks.player.ServerPlayerEvents.onChangeDimensions(entity)) entity.changeDimension(dim, new PortalTeleporter(destination, portalPos.rotation()));
-                            dim.playSound(null, destination.x, destination.y, destination.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 1f, 1f);
-                        }
-                    }
-                });
+                // PortalManager.INSTANCE.addPortalCooldown(entity, portalData.portalEntityId2);
+                portalData
+                        .getConnectedPortalPos(uuid)
+                        .ifPresent(
+                                portalPos -> {
+                                    Vec3 destination = portalPos.pos();
+                                    serverLevel.playSound(
+                                            null,
+                                            this.getBlockPos(),
+                                            SoundEvents.ENDERMAN_TELEPORT,
+                                            SoundSource.BLOCKS,
+                                            1f,
+                                            1f);
+                                    if (serverLevel.dimension().equals(portalPos.dimension())) {
+                                        entity.teleportTo(
+                                                serverLevel,
+                                                destination.x,
+                                                destination.y,
+                                                destination.z,
+                                                RelativeMovement.ROTATION,
+                                                portalPos.rotation(),
+                                                entity.getXRot());
+                                    } else {
+                                        var server = serverLevel.getServer();
+                                        var dim = server.getLevel(portalPos.dimension());
+                                        if (dim != null) {
+                                            if (io.redspace.ironsspellbooks.player
+                                                    .ServerPlayerEvents.onChangeDimensions(entity))
+                                                entity.changeDimension(
+                                                        dim,
+                                                        new PortalTeleporter(
+                                                                destination, portalPos.rotation()));
+                                            dim.playSound(
+                                                    null,
+                                                    destination.x,
+                                                    destination.y,
+                                                    destination.z,
+                                                    SoundEvents.ENDERMAN_TELEPORT,
+                                                    SoundSource.BLOCKS,
+                                                    1f,
+                                                    1f);
+                                        }
+                                    }
+                                });
             }
         }
     }
@@ -217,16 +262,13 @@ public class PortalFrameBlockEntity extends BlockEntity {
         return packet;
     }
 
-
-
-
-
     @Override
     public void setChanged() {
         super.setChanged();
         if (isPrimary(this.getBlockState())) {
             if (level != null) {
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+                level.sendBlockUpdated(
+                        worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             }
         } else {
             ifNeighborPresent(PortalFrameBlockEntity::setChanged);
@@ -236,13 +278,21 @@ public class PortalFrameBlockEntity extends BlockEntity {
     private boolean active;
     private int activeCooldown;
 
-    public static void serverTick(Level level, BlockPos pos, BlockState blockState, PortalFrameBlockEntity portalFrameBlockEntity) {
+    public static void serverTick(
+            Level level,
+            BlockPos pos,
+            BlockState blockState,
+            PortalFrameBlockEntity portalFrameBlockEntity) {
         if (level.getGameTime() % 5 == 0) {
             PortalManager.INSTANCE.processCooldownTick(portalFrameBlockEntity.getUUID(), -5);
         }
         if (portalFrameBlockEntity.active) {
             portalFrameBlockEntity.active = --portalFrameBlockEntity.activeCooldown > 0;
-            level.getEntities((Entity) null, blockState.getShape(level, pos).bounds().move(pos), ((PortalFrameBlock) blockState.getBlock())::canTeleport).forEach(portalFrameBlockEntity::teleport);
+            level.getEntities(
+                            (Entity) null,
+                            blockState.getShape(level, pos).bounds().move(pos),
+                            ((PortalFrameBlock) blockState.getBlock())::canTeleport)
+                    .forEach(portalFrameBlockEntity::teleport);
         }
     }
 
@@ -281,7 +331,13 @@ public class PortalFrameBlockEntity extends BlockEntity {
     record PortalId(Optional<UUID> _uuid) {
         UUID uuid(PortalFrameBlockEntity portalFrameBlockEntity) {
             return _uuid.orElse(
-                    portalFrameBlockEntity.level.isLoaded(portalFrameBlockEntity.getBlockPos().below()) && portalFrameBlockEntity.level.getBlockEntity(portalFrameBlockEntity.getBlockPos().below()) instanceof PortalFrameBlockEntity be ? be.getUUID() : null);
+                    portalFrameBlockEntity.level.isLoaded(
+                                            portalFrameBlockEntity.getBlockPos().below())
+                                    && portalFrameBlockEntity.level.getBlockEntity(
+                                                    portalFrameBlockEntity.getBlockPos().below())
+                                            instanceof PortalFrameBlockEntity be
+                            ? be.getUUID()
+                            : null);
         }
     }
 }

@@ -24,17 +24,25 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
         this.model = new DevourJawModel(pContext.bakeLayer(ModelLayers.EVOKER_FANGS));
     }
 
-    public void render(DevourJaw entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
-        if (entity.tickCount < entity.waitTime)
-            return;
+    public void render(
+            DevourJaw entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource,
+            int light) {
+        if (entity.tickCount < entity.waitTime) return;
         float f = entity.tickCount + partialTicks;
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot()));
         poseStack.scale(-1, -1, 1);
         poseStack.scale(1.85f, 1.85f, 1.85f);
         this.model.setupAnim(entity, f, 0.0F, 0.0F, entity.getYRot(), entity.getXRot());
-        VertexConsumer vertexconsumer = multiBufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
-        this.model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1f,1f,1f,1f);
+        VertexConsumer vertexconsumer =
+                multiBufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(getTextureLocation(entity)));
+        this.model.renderToBuffer(
+                poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
         poseStack.popPose();
         super.render(entity, yaw, partialTicks, poseStack, multiBufferSource, light);
     }
@@ -59,7 +67,13 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
         }
 
         @Override
-        public void setupAnim(DevourJaw entity, float time, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+        public void setupAnim(
+                DevourJaw entity,
+                float time,
+                float pLimbSwingAmount,
+                float pAgeInTicks,
+                float pNetHeadYaw,
+                float pHeadPitch) {
             time -= entity.waitTime;
             float interval = entity.warmupTime - entity.waitTime;
 

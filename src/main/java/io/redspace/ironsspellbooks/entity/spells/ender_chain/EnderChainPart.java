@@ -32,7 +32,18 @@ public class EnderChainPart extends PartEntity<EnderChain> implements AntiMagicS
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
         if (!level().isClientSide) {
-            MagicManager.spawnParticles(level(), ParticleHelper.ENDER_SPARKS, getBoundingBox().getCenter().x, getBoundingBox().getCenter().y, getBoundingBox().getCenter().z, 3, 0, 0, 0, 0.15, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleHelper.ENDER_SPARKS,
+                    getBoundingBox().getCenter().x,
+                    getBoundingBox().getCenter().y,
+                    getBoundingBox().getCenter().z,
+                    3,
+                    0,
+                    0,
+                    0,
+                    0.15,
+                    false);
         }
         return parentChain.hurt(source, amount);
     }
@@ -48,16 +59,13 @@ public class EnderChainPart extends PartEntity<EnderChain> implements AntiMagicS
     }
 
     @Override
-    protected void defineSynchedData() {
-    }
+    protected void defineSynchedData() {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag tag) {
-    }
+    protected void readAdditionalSaveData(CompoundTag tag) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag tag) {
-    }
+    protected void addAdditionalSaveData(CompoundTag tag) {}
 
     @Override
     public boolean isAlliedTo(Entity entity) {

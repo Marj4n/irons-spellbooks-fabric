@@ -18,7 +18,13 @@ public class ArcaneShackleRenderer extends EntityRenderer<ArcaneShackleProjectil
     }
 
     @Override
-    public void render(ArcaneShackleProjectile entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(
+            ArcaneShackleProjectile entity,
+            float entityYaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
         poseStack.pushPose();
         for (int i = 0; i < 3; i++) {
             poseStack.mulPose(Axis.YP.rotationDegrees((entity.tickCount + partialTick) * 8));
@@ -35,10 +41,18 @@ public class ArcaneShackleRenderer extends EntityRenderer<ArcaneShackleProjectil
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
-    public static void renderChainRing(PoseStack poseStack, MultiBufferSource bufferSource, float radius) {
-        Vec3[] corners = new Vec3[]{new Vec3(1, 0, 1), new Vec3(-1, 0, 1), new Vec3(-1, 0, -1), new Vec3(1, 0, -1)};
+    public static void renderChainRing(
+            PoseStack poseStack, MultiBufferSource bufferSource, float radius) {
+        Vec3[] corners =
+                new Vec3[] {
+                    new Vec3(1, 0, 1), new Vec3(-1, 0, 1), new Vec3(-1, 0, -1), new Vec3(1, 0, -1)
+                };
         for (int i = 0; i < 4; i++) {
-            EnderChainRenderer.renderChainBetween(corners[i].scale(radius), corners[(i + 1) % 4].scale(radius), poseStack, bufferSource);
+            EnderChainRenderer.renderChainBetween(
+                    corners[i].scale(radius),
+                    corners[(i + 1) % 4].scale(radius),
+                    poseStack,
+                    bufferSource);
         }
     }
 
@@ -46,6 +60,4 @@ public class ArcaneShackleRenderer extends EntityRenderer<ArcaneShackleProjectil
     public ResourceLocation getTextureLocation(ArcaneShackleProjectile entity) {
         return EnderChainRenderer.CHAIN_TEXTURE;
     }
-
-
 }

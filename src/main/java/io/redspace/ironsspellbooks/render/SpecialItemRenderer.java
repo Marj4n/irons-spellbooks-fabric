@@ -25,28 +25,63 @@ public class SpecialItemRenderer extends BlockEntityWithoutLevelRenderer {
     public final BakedModel guiModel;
     public final BakedModel normalModel;
 
-    public SpecialItemRenderer(ItemRenderer renderDispatcher, EntityModelSet modelSet, String name) {
+    public SpecialItemRenderer(
+            ItemRenderer renderDispatcher, EntityModelSet modelSet, String name) {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), modelSet);
         this.renderer = renderDispatcher;
-        this.guiModel = renderer.getItemModelShaper().getModelManager().getModel(new ResourceLocation(IronsSpellbooks.MODID, "item/" + name + "_gui"));
-        this.normalModel = renderer.getItemModelShaper().getModelManager().getModel(new ResourceLocation(IronsSpellbooks.MODID, "item/" + name + "_normal"));
+        this.guiModel =
+                renderer.getItemModelShaper()
+                        .getModelManager()
+                        .getModel(
+                                new ResourceLocation(
+                                        IronsSpellbooks.MODID, "item/" + name + "_gui"));
+        this.normalModel =
+                renderer.getItemModelShaper()
+                        .getModelManager()
+                        .getModel(
+                                new ResourceLocation(
+                                        IronsSpellbooks.MODID, "item/" + name + "_normal"));
     }
 
     @Override
-    public void renderByItem(ItemStack itemStack, ItemDisplayContext transformType, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLightIn, int combinedOverlayIn) {
+    public void renderByItem(
+            ItemStack itemStack,
+            ItemDisplayContext transformType,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int combinedLightIn,
+            int combinedOverlayIn) {
         poseStack.pushPose();
         poseStack.translate(0.5f, 0.5f, 0.5f);
         BakedModel model;
         if (transformType == ItemDisplayContext.GUI) {
             Lighting.setupForFlatItems();
             model = this.guiModel;
-            renderer.render(itemStack, transformType, false, poseStack, bufferSource, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, model);
+            renderer.render(
+                    itemStack,
+                    transformType,
+                    false,
+                    poseStack,
+                    bufferSource,
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    model);
             Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
             Lighting.setupFor3DItems();
         } else {
             model = this.normalModel;
-            boolean leftHand = transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || transformType == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
-            renderer.render(itemStack, transformType, leftHand, poseStack, bufferSource, combinedLightIn, combinedOverlayIn, model);
+            boolean leftHand =
+                    transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                            || transformType == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+            renderer.render(
+                    itemStack,
+                    transformType,
+                    leftHand,
+                    poseStack,
+                    bufferSource,
+                    combinedLightIn,
+                    combinedOverlayIn,
+                    model);
         }
         poseStack.popPose();
     }

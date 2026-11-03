@@ -31,8 +31,10 @@ public class LightningLanceProjectile extends AbstractMagicProjectile {
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.ELECTRICITY, x, y, z, 75, .1, .1, .1, 2, true);
-        MagicManager.spawnParticles(level(), ParticleHelper.ELECTRICITY, x, y, z, 75, .1, .1, .1, .5, false);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.ELECTRICITY, x, y, z, 75, .1, .1, .1, 2, true);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.ELECTRICITY, x, y, z, 75, .1, .1, .1, .5, false);
     }
 
     @Override
@@ -56,33 +58,36 @@ public class LightningLanceProjectile extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
-
-    }
+    protected void onHitBlock(BlockHitResult pResult) {}
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
-        DamageSources.applyDamage(entityHitResult.getEntity(), damage, SpellRegistry.LIGHTNING_LANCE_SPELL.get().getDamageSource(this, getOwner()));
-
+        DamageSources.applyDamage(
+                entityHitResult.getEntity(),
+                damage,
+                SpellRegistry.LIGHTNING_LANCE_SPELL.get().getDamageSource(this, getOwner()));
     }
 
     @Override
     protected void onHit(@NotNull HitResult pResult) {
-        //irons_spellbooks.LOGGER.debug("Boom");
+        // irons_spellbooks.LOGGER.debug("Boom");
 
         if (!level().isClientSide) {
             this.playSound(SoundEvents.TRIDENT_THUNDER, 6, .65f);
-//            irons_spellbooks.LOGGER.debug("{}",pos);
-//            //Beam
-//            for (int i = 0; i < 40; i++) {
-//                Vec3 randomVec = new Vec3(
-//                        Utils.random.nextDouble() * .25 - .125,
-//                        Utils.random.nextDouble() * .25 - .125,
-//                        Utils.random.nextDouble() * .25 - .125
-//                );
-//                //level.addParticle(ParticleHelper.ELECTRICITY, pos.x + randomVec.x, pos.y + randomVec.y + i * .25, pos.z + randomVec.z, randomVec.x * .2, randomVec.y * .2, randomVec.z * .2);
-//                level.addParticle(ParticleHelper.ELECTRICITY, pos.x, pos.y, pos.z, 0,0,0);
-//            }
+            //            irons_spellbooks.LOGGER.debug("{}",pos);
+            //            //Beam
+            //            for (int i = 0; i < 40; i++) {
+            //                Vec3 randomVec = new Vec3(
+            //                        Utils.random.nextDouble() * .25 - .125,
+            //                        Utils.random.nextDouble() * .25 - .125,
+            //                        Utils.random.nextDouble() * .25 - .125
+            //                );
+            //                //level.addParticle(ParticleHelper.ELECTRICITY, pos.x + randomVec.x,
+            // pos.y + randomVec.y + i * .25, pos.z + randomVec.z, randomVec.x * .2, randomVec.y *
+            // .2, randomVec.z * .2);
+            //                level.addParticle(ParticleHelper.ELECTRICITY, pos.x, pos.y, pos.z,
+            // 0,0,0);
+            //            }
         }
         super.onHit(pResult);
         this.discardHelper(pResult);

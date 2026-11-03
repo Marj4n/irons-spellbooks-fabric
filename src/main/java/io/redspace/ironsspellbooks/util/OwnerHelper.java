@@ -9,7 +9,8 @@ import java.util.UUID;
 
 public class OwnerHelper {
 
-    public static LivingEntity getAndCacheOwner(Level level, LivingEntity cachedOwner, UUID summonerUUID) {
+    public static LivingEntity getAndCacheOwner(
+            Level level, LivingEntity cachedOwner, UUID summonerUUID) {
         if (cachedOwner != null && cachedOwner.isAlive()) {
             return cachedOwner;
         } else if (summonerUUID != null && level instanceof ServerLevel serverLevel) {
@@ -33,5 +34,4 @@ public class OwnerHelper {
         }
         return null;
     }
-
 }

@@ -24,8 +24,7 @@ import java.util.Optional;
 
 public class SunbeamEntity extends AoeEntity implements AntiMagicSusceptible {
 
-    @Nullable
-    LivingEntity target;
+    @Nullable LivingEntity target;
 
     public SunbeamEntity(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -37,25 +36,52 @@ public class SunbeamEntity extends AoeEntity implements AntiMagicSusceptible {
         this(EntityRegistry.SUNBEAM.get(), level);
     }
 
-
     public static final int WARMUP_TIME = 15;
 
     @Override
     public void tick() {
         this.setOldPosAndRot();
-//        if (tickCount < WARMUP_TIME) {
-//            if (target != null) {
-//                Vec3 delta = target.position().subtract(this.position());
-//                delta = delta.normalize().scale(0.06f);
-//                this.setPos(this.position().add(delta));
-//            }
-//        }
+        //        if (tickCount < WARMUP_TIME) {
+        //            if (target != null) {
+        //                Vec3 delta = target.position().subtract(this.position());
+        //                delta = delta.normalize().scale(0.06f);
+        //                this.setPos(this.position().add(delta));
+        //            }
+        //        }
         if (tickCount == WARMUP_TIME) {
             if (!level().isClientSide) {
                 checkHits();
-                MagicManager.spawnParticles(level(), ParticleHelper.EMBERS, getX(), getY() + 0.06, getZ(), 50, getRadius() * .7f, .2f, getRadius() * .7f, 0.6f, true);
-                MagicManager.spawnParticles(level(), new BlastwaveParticleOptions(1f, 0.85f, 0.4f, 7f), getX(), getY() + 0.06, getZ(), 1, 0, 0, 0, 0, true);
-                level().playSound(null, this.blockPosition(), SoundRegistry.SUNBEAM_IMPACT.get(), SoundSource.NEUTRAL, 4.5f, Utils.random.nextIntBetweenInclusive(9, 11) * .1f);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleHelper.EMBERS,
+                        getX(),
+                        getY() + 0.06,
+                        getZ(),
+                        50,
+                        getRadius() * .7f,
+                        .2f,
+                        getRadius() * .7f,
+                        0.6f,
+                        true);
+                MagicManager.spawnParticles(
+                        level(),
+                        new BlastwaveParticleOptions(1f, 0.85f, 0.4f, 7f),
+                        getX(),
+                        getY() + 0.06,
+                        getZ(),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        true);
+                level().playSound(
+                                null,
+                                this.blockPosition(),
+                                SoundRegistry.SUNBEAM_IMPACT.get(),
+                                SoundSource.NEUTRAL,
+                                4.5f,
+                                Utils.random.nextIntBetweenInclusive(9, 11) * .1f);
             }
         }
 
@@ -75,7 +101,10 @@ public class SunbeamEntity extends AoeEntity implements AntiMagicSusceptible {
 
     @Override
     public void applyEffect(LivingEntity target) {
-        DamageSources.applyDamage(target, getDamage(), SpellRegistry.SUNBEAM_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                target,
+                getDamage(),
+                SpellRegistry.SUNBEAM_SPELL.get().getDamageSource(this, getOwner()));
     }
 
     @Override

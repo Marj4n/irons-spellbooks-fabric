@@ -15,7 +15,15 @@ public class FallingSparkleParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
     private final float rotSpeed;
 
-    public FallingSparkleParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public FallingSparkleParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
         this.xd = xd;
         this.yd = yd;
@@ -49,7 +57,7 @@ public class FallingSparkleParticle extends TextureSheetParticle {
             this.yd *= (friction + 1) / 2;
             this.zd *= friction;
             this.setSpriteFromAge(this.sprites);
-//            this.scale(1.023f);
+            //            this.scale(1.023f);
         }
     }
 
@@ -66,9 +74,15 @@ public class FallingSparkleParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new FallingSparkleParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }

@@ -21,10 +21,11 @@ import java.util.stream.Stream;
  **/
 public final class ArcaneAnvilRecipeMaker {
     private ArcaneAnvilRecipeMaker() {
-        //private constructor prevents anyone from instantiating this class
+        // private constructor prevents anyone from instantiating this class
     }
 
-    static List<ArcaneAnvilJeiRecipe> getRecipes(IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
+    static List<ArcaneAnvilJeiRecipe> getRecipes(
+            IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
         return Stream.of(
                         getScrollRecipes(itemFinder),
                         getImbueRecipes(itemFinder),
@@ -38,46 +39,55 @@ public final class ArcaneAnvilRecipeMaker {
         if (!ServerConfigs.SPEC.isLoaded() || ServerConfigs.SCROLL_MERGING.get()) {
             return SpellRegistry.getEnabledSpells().stream()
                     .sorted(Comparator.comparing(AbstractSpell::getSpellId))
-                    .flatMap(spell -> IntStream.rangeClosed(spell.getMinLevel(), spell.getMaxLevel() - 1).mapToObj(i -> new ArcaneAnvilJeiRecipe(spell, i)));
+                    .flatMap(
+                            spell ->
+                                    IntStream.rangeClosed(
+                                                    spell.getMinLevel(), spell.getMaxLevel() - 1)
+                                            .mapToObj(i -> new ArcaneAnvilJeiRecipe(spell, i)));
         } else {
             return Stream.empty();
         }
     }
 
     private static Stream<ArcaneAnvilJeiRecipe> getImbueRecipes(JeiPlugin.ItemFinder itemFinder) {
-        return itemFinder.imbueable.stream().map(item -> new ArcaneAnvilJeiRecipe(item, (AbstractSpell) null));
+        return itemFinder.imbueable.stream()
+                .map(item -> new ArcaneAnvilJeiRecipe(item, (AbstractSpell) null));
     }
 
     private static Stream<ArcaneAnvilJeiRecipe> getUpgradeRecipes(JeiPlugin.ItemFinder itemFinder) {
         return BuiltInRegistries.ITEM.stream()
-//                .filter(item -> item.components().has(ComponentRegistry.UPGRADE_ORB_TYPE.get()))
+                //                .filter(item ->
+                // item.components().has(ComponentRegistry.UPGRADE_ORB_TYPE.get()))
                 .filter(item -> UpgradeOrbTypeData.has(item.getDefaultInstance()))
-                .flatMap(upgradeOrb -> itemFinder.upgradeable.stream()
-                        .map(item -> new ArcaneAnvilJeiRecipe(item, upgradeOrb)));
+                .flatMap(
+                        upgradeOrb ->
+                                itemFinder.upgradeable.stream()
+                                        .map(item -> new ArcaneAnvilJeiRecipe(item, upgradeOrb)));
     }
 
-    private static Stream<ArcaneAnvilJeiRecipe> getAffinityAttuneRecipes(JeiPlugin.ItemFinder itemFinder) {
+    private static Stream<ArcaneAnvilJeiRecipe> getAffinityAttuneRecipes(
+            JeiPlugin.ItemFinder itemFinder) {
         return SpellRegistry.getEnabledSpells().stream()
                 .sorted(Comparator.comparing(AbstractSpell::getSpellId))
                 .map(ArcaneAnvilJeiRecipe::new);
     }
 
     //    private static ArcaneAnvilRecipe enumerateScrollCombinations(AbstractSpell spell) {
-//        var scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
-//
-//        var leftInputs = new ArrayList<ItemStack>();
-//        var rightInputs = new ArrayList<ItemStack>();
-//        var outputs = new ArrayList<ItemStack>();
-//
-//        IntStream.range(spell.getMinLevel(), spell.getMaxLevel())
-//                .forEach((spellLevel) -> {
-//                    leftInputs.add(getScrollStack(scrollStack, spell, spellLevel));
-//                    rightInputs.add(getScrollStack(scrollStack, spell, spellLevel));
-//                    outputs.add(getScrollStack(scrollStack, spell, spellLevel + 1));
-//                });
-//
-//        return new ArcaneAnvilRecipe(leftInputs, rightInputs, outputs);
-//    }
+    //        var scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
+    //
+    //        var leftInputs = new ArrayList<ItemStack>();
+    //        var rightInputs = new ArrayList<ItemStack>();
+    //        var outputs = new ArrayList<ItemStack>();
+    //
+    //        IntStream.range(spell.getMinLevel(), spell.getMaxLevel())
+    //                .forEach((spellLevel) -> {
+    //                    leftInputs.add(getScrollStack(scrollStack, spell, spellLevel));
+    //                    rightInputs.add(getScrollStack(scrollStack, spell, spellLevel));
+    //                    outputs.add(getScrollStack(scrollStack, spell, spellLevel + 1));
+    //                });
+    //
+    //        return new ArcaneAnvilRecipe(leftInputs, rightInputs, outputs);
+    //    }
 
     private static ItemStack getScrollStack(ItemStack stack, AbstractSpell spell, int spellLevel) {
         var scrollStack = stack.copy();

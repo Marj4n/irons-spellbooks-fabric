@@ -8,7 +8,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class FieryExplosionParticlesPacket implements CustomPacketPayload {
     private final Vec3 pos1;
     private final float radius;
@@ -43,9 +42,10 @@ public class FieryExplosionParticlesPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientSpellCastHelper.handleClientboundFieryExplosion(pos1, radius);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientSpellCastHelper.handleClientboundFieryExplosion(pos1, radius);
+                });
         return true;
     }
 }

@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.effect;
 
-
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,23 +18,42 @@ public class TrueInvisibilityEffect extends MagicMobEffect implements ISyncedMob
     public void onEffectAdded(LivingEntity livingEntity, int pAmplifier) {
         super.onEffectAdded(livingEntity, pAmplifier);
 
-        var targetingCondition = TargetingConditions.forCombat().ignoreLineOfSight().selector(e -> {
-            //IronsSpellbooks.LOGGER.debug("InvisibilitySpell TargetingConditions:{}", e);
-            return (((Mob) e).getTarget() == livingEntity);
-        });
+        var targetingCondition =
+                TargetingConditions.forCombat()
+                        .ignoreLineOfSight()
+                        .selector(
+                                e -> {
+                                    // IronsSpellbooks.LOGGER.debug("InvisibilitySpell
+                                    // TargetingConditions:{}", e);
+                                    return (((Mob) e).getTarget() == livingEntity);
+                                });
 
-        //remove aggro from anything targeting us
-        livingEntity.level().getNearbyEntities(Mob.class, targetingCondition, livingEntity, livingEntity.getBoundingBox().inflate(40D))
-                .forEach(entityTargetingCaster -> {
-                    //IronsSpellbooks.LOGGER.debug("InvisibilitySpell Clear Target From:{}", entityTargetingCaster);
-                    entityTargetingCaster.setTarget(null);
-                    entityTargetingCaster.targetSelector.getAvailableGoals().forEach(WrappedGoal::stop);
-                    entityTargetingCaster.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
-                });
+        // remove aggro from anything targeting us
+        livingEntity
+                .level()
+                .getNearbyEntities(
+                        Mob.class,
+                        targetingCondition,
+                        livingEntity,
+                        livingEntity.getBoundingBox().inflate(40D))
+                .forEach(
+                        entityTargetingCaster -> {
+                            // IronsSpellbooks.LOGGER.debug("InvisibilitySpell Clear Target
+                            // From:{}", entityTargetingCaster);
+                            entityTargetingCaster.setTarget(null);
+                            entityTargetingCaster
+                                    .targetSelector
+                                    .getAvailableGoals()
+                                    .forEach(WrappedGoal::stop);
+                            entityTargetingCaster
+                                    .getBrain()
+                                    .eraseMemory(MemoryModuleType.ATTACK_TARGET);
+                        });
     }
 
     public static void onDealDamage(LivingHurtEvent event) {
-        if (event.getSource().getEntity() instanceof LivingEntity livingAttacker && livingAttacker.hasEffect(MobEffectRegistry.TRUE_INVISIBILITY.get())) {
+        if (event.getSource().getEntity() instanceof LivingEntity livingAttacker
+                && livingAttacker.hasEffect(MobEffectRegistry.TRUE_INVISIBILITY.get())) {
             livingAttacker.removeEffect(MobEffectRegistry.TRUE_INVISIBILITY.get());
         }
     }

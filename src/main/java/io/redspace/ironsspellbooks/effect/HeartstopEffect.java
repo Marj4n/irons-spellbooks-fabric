@@ -11,7 +11,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
-
 public class HeartstopEffect extends MagicMobEffect implements ISyncedMobEffect {
     private int duration;
 
@@ -23,13 +22,16 @@ public class HeartstopEffect extends MagicMobEffect implements ISyncedMobEffect 
     public void onEffectRemoved(LivingEntity pLivingEntity, int pAmplifier) {
         super.onEffectRemoved(pLivingEntity, pAmplifier);
         var playerMagicData = MagicData.getPlayerMagicData(pLivingEntity);
-        //Whether or not player has spawn immunity (we want to damage them regardless)
+        // Whether or not player has spawn immunity (we want to damage them regardless)
         if (pLivingEntity.tickCount > 60) {
-            pLivingEntity.hurt(DamageSources.get(pLivingEntity.level(), ISSDamageTypes.HEARTSTOP), playerMagicData.getSyncedData().getHeartstopAccumulatedDamage());
-            //irons_spellbooks.LOGGER.debug("{} had no spawn immunity", pLivingEntity.getName().getString());
+            pLivingEntity.hurt(
+                    DamageSources.get(pLivingEntity.level(), ISSDamageTypes.HEARTSTOP),
+                    playerMagicData.getSyncedData().getHeartstopAccumulatedDamage());
+            // irons_spellbooks.LOGGER.debug("{} had no spawn immunity",
+            // pLivingEntity.getName().getString());
 
         } else {
-            //TODO: find a better way to apply damage
+            // TODO: find a better way to apply damage
             pLivingEntity.kill();
         }
         playerMagicData.getSyncedData().setHeartstopAccumulatedDamage(0);
@@ -37,15 +39,19 @@ public class HeartstopEffect extends MagicMobEffect implements ISyncedMobEffect 
 
     @Override
     public void applyEffectTick(@NotNull LivingEntity pLivingEntity, int pAmplifier) {
-        //irons_spellbooks.LOGGER.debug("{} ticks existed: {}", pLivingEntity.getName().getString(), pLivingEntity.tickCount);
+        // irons_spellbooks.LOGGER.debug("{} ticks existed: {}",
+        // pLivingEntity.getName().getString(), pLivingEntity.tickCount);
 
-        //Heart beats once every 2 seconds at 0% damage, and 2 times per second at 100% damage (relative to health)
+        // Heart beats once every 2 seconds at 0% damage, and 2 times per second at 100% damage
+        // (relative to health)
         if (pLivingEntity.level().isClientSide) {
             if (pLivingEntity instanceof Player player) {
-                float damage = ClientMagicData.getSyncedSpellData(player).getHeartstopAccumulatedDamage();
+                float damage =
+                        ClientMagicData.getSyncedSpellData(player).getHeartstopAccumulatedDamage();
                 float f = 1 - Mth.clamp(damage / player.getHealth(), 0, 1);
                 int i = (int) (10 + (40 - 10) * f);
-                //Ironsspellbooks.logger.debug("{} ({}/{} = {})", i, damage, player.getHealth(), f);
+                // Ironsspellbooks.logger.debug("{} ({}/{} = {})", i, damage, player.getHealth(),
+                // f);
                 if (this.duration % Math.max(i, 1) == 0) {
                     player.playSound(SoundEvents.WARDEN_HEARTBEAT, 1, 0.85f);
                 }

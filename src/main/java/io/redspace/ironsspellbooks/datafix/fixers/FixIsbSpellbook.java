@@ -1,14 +1,14 @@
-//package io.redspace.ironsspellbooks.datafix.fixers;
+// package io.redspace.ironsspellbooks.datafix.fixers;
 //
-//import io.redspace.ironsspellbooks.datafix.DataFixerElement;
-//import io.redspace.ironsspellbooks.datafix.DataFixerHelpers;
-//import net.minecraft.nbt.CompoundTag;
-//import net.minecraft.nbt.ListTag;
+// import io.redspace.ironsspellbooks.datafix.DataFixerElement;
+// import io.redspace.ironsspellbooks.datafix.DataFixerHelpers;
+// import net.minecraft.nbt.CompoundTag;
+// import net.minecraft.nbt.ListTag;
 //
-//import java.util.List;
-//import java.util.concurrent.atomic.AtomicBoolean;
+// import java.util.List;
+// import java.util.concurrent.atomic.AtomicBoolean;
 //
-//public class FixIsbSpellbook extends DataFixerElement {
+// public class FixIsbSpellbook extends DataFixerElement {
 //    @Override
 //    public List<String> preScanValuesToMatch() {
 //        return List.of(LegacySpellBookData.ISB_SPELLBOOK);
@@ -22,7 +22,8 @@
 //                ListTag listTagSpells = (ListTag) spellBookTag.get(LegacySpellBookData.SPELLS);
 //                if (listTagSpells != null && !listTagSpells.isEmpty()) {
 //                    boolean fixed = false;
-//                    if (((CompoundTag) listTagSpells.get(0)).contains(LegacySpellBookData.LEGACY_ID)) {
+//                    if (((CompoundTag)
+// listTagSpells.get(0)).contains(LegacySpellBookData.LEGACY_ID)) {
 //                        fixSpellbookData(listTagSpells);
 //                        fixed = true;
 //                    }
@@ -40,7 +41,8 @@
 //        listTag.forEach(tag -> {
 //            CompoundTag t = (CompoundTag) tag;
 //            int legacySpellId = t.getInt(LegacySpellBookData.LEGACY_ID);
-//            t.putString(LegacySpellBookData.ID, DataFixerHelpers.LEGACY_SPELL_MAPPING.getOrDefault(legacySpellId, "irons_spellbooks:none"));
+//            t.putString(LegacySpellBookData.ID,
+// DataFixerHelpers.LEGACY_SPELL_MAPPING.getOrDefault(legacySpellId, "irons_spellbooks:none"));
 //            t.remove(LegacySpellBookData.LEGACY_ID);
 //        });
 //    }
@@ -51,7 +53,8 @@
 //        listTagSpells.forEach(tag -> {
 //            CompoundTag spellTag = (CompoundTag) tag;
 //            if (spellTag.contains(LegacySpellBookData.ID)) {
-//                String newName = DataFixerHelpers.NEW_SPELL_IDS.get(spellTag.get(LegacySpellBookData.ID).getAsString());
+//                String newName =
+// DataFixerHelpers.NEW_SPELL_IDS.get(spellTag.get(LegacySpellBookData.ID).getAsString());
 //                if (newName != null) {
 //                    spellTag.putString(LegacySpellBookData.ID, newName);
 //                    fixed.set(true);
@@ -60,4 +63,4 @@
 //        });
 //        return fixed.get();
 //    }
-//}
+// }

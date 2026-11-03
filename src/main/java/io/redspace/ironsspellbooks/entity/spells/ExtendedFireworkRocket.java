@@ -15,7 +15,15 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class ExtendedFireworkRocket extends FireworkRocketEntity implements AntiMagicSusceptible {
-    public ExtendedFireworkRocket(Level pLevel, ItemStack pStack, Entity pShooter, double pX, double pY, double pZ, boolean pShotAtAngle, float damage) {
+    public ExtendedFireworkRocket(
+            Level pLevel,
+            ItemStack pStack,
+            Entity pShooter,
+            double pX,
+            double pY,
+            double pZ,
+            boolean pShotAtAngle,
+            float damage) {
         super(pLevel, pStack, pShooter, pX, pY, pZ, pShotAtAngle);
         this.damage = damage;
     }
@@ -27,8 +35,7 @@ public class ExtendedFireworkRocket extends FireworkRocketEntity implements Anti
     }
 
     @Override
-    public void tick() {
-    }
+    public void tick() {}
 
     @Override
     public void shoot(double pX, double pY, double pZ, float pVelocity, float pInaccuracy) {
@@ -36,7 +43,7 @@ public class ExtendedFireworkRocket extends FireworkRocketEntity implements Anti
     }
 
     private void explode() {
-        //Copied from private FireworkRocketEntity explode
+        // Copied from private FireworkRocketEntity explode
         this.level().broadcastEntityEvent(this, (byte) 17);
         this.gameEvent(GameEvent.EXPLODE, this.getOwner());
         this.dealExplosionDamage();
@@ -46,9 +53,24 @@ public class ExtendedFireworkRocket extends FireworkRocketEntity implements Anti
     private void dealExplosionDamage() {
         Vec3 hitPos = this.position();
         double explosionRadius = 2;
-        for (LivingEntity livingentity : level().getEntitiesOfClass(LivingEntity.class, new AABB(hitPos.subtract(explosionRadius, explosionRadius, explosionRadius), hitPos.add(explosionRadius, explosionRadius, explosionRadius)))) {
-            if (livingentity.isAlive() && livingentity.isPickable() && Utils.hasLineOfSight(level(), hitPos, livingentity.getBoundingBox().getCenter(), true)) {
-                DamageSources.applyDamage(livingentity, this.getDamage(), SpellRegistry.FIRECRACKER_SPELL.get().getDamageSource(this, getOwner()));
+        for (LivingEntity livingentity :
+                level().getEntitiesOfClass(
+                                LivingEntity.class,
+                                new AABB(
+                                        hitPos.subtract(
+                                                explosionRadius, explosionRadius, explosionRadius),
+                                        hitPos.add(
+                                                explosionRadius,
+                                                explosionRadius,
+                                                explosionRadius)))) {
+            if (livingentity.isAlive()
+                    && livingentity.isPickable()
+                    && Utils.hasLineOfSight(
+                            level(), hitPos, livingentity.getBoundingBox().getCenter(), true)) {
+                DamageSources.applyDamage(
+                        livingentity,
+                        this.getDamage(),
+                        SpellRegistry.FIRECRACKER_SPELL.get().getDamageSource(this, getOwner()));
             }
         }
     }

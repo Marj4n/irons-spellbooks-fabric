@@ -1,12 +1,12 @@
-//package io.redspace.ironsspellbooks.datafix.fixers;
+// package io.redspace.ironsspellbooks.datafix.fixers;
 //
-//import io.redspace.ironsspellbooks.datafix.DataFixerElement;
-//import net.minecraft.nbt.CompoundTag;
-//import net.minecraft.nbt.StringTag;
+// import io.redspace.ironsspellbooks.datafix.DataFixerElement;
+// import net.minecraft.nbt.CompoundTag;
+// import net.minecraft.nbt.StringTag;
 //
-//import java.util.List;
+// import java.util.List;
 //
-//public class FixTetra extends DataFixerElement {
+// public class FixTetra extends DataFixerElement {
 //
 //    private final String key = "sword/socket_material";
 //
@@ -33,4 +33,4 @@
 //        }
 //        return false;
 //    }
-//}
+// }

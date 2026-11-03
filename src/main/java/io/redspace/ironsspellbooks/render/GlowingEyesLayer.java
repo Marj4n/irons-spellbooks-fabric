@@ -20,10 +20,12 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 public class GlowingEyesLayer {
-    public static final ResourceLocation EYE_TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/purple_eyes.png");
+    public static final ResourceLocation EYE_TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/purple_eyes.png");
     public static final RenderType EYES = RenderType.eyes(EYE_TEXTURE);
 
-    public static class Vanilla<T extends LivingEntity, M extends HumanoidModel<T>> extends EyesLayer<T, M> {
+    public static class Vanilla<T extends LivingEntity, M extends HumanoidModel<T>>
+            extends EyesLayer<T, M> {
 
         public Vanilla(RenderLayerParent pRenderer) {
             super(pRenderer);
@@ -35,15 +37,34 @@ public class GlowingEyesLayer {
         }
 
         @Override
-        public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int pPackedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+        public void render(
+                PoseStack poseStack,
+                MultiBufferSource multiBufferSource,
+                int pPackedLight,
+                T livingEntity,
+                float limbSwing,
+                float limbSwingAmount,
+                float partialTicks,
+                float ageInTicks,
+                float netHeadYaw,
+                float headPitch) {
             var eye = getEyeType(livingEntity);
             if (eye != EyeType.None) {
                 VertexConsumer vertexconsumer = multiBufferSource.getBuffer(this.renderType());
 
-                //pMatrixStack.translate(0, -eye.yOffset, -eye.forwardOffset);
+                // pMatrixStack.translate(0, -eye.yOffset, -eye.forwardOffset);
                 float scale = getEyeScale(livingEntity);
                 poseStack.scale(scale, scale, scale);
-                this.getParentModel().renderToBuffer(poseStack, vertexconsumer, 15728640, OverlayTexture.NO_OVERLAY, eye.r, eye.g, eye.b, 1f);
+                this.getParentModel()
+                        .renderToBuffer(
+                                poseStack,
+                                vertexconsumer,
+                                15728640,
+                                OverlayTexture.NO_OVERLAY,
+                                eye.r,
+                                eye.g,
+                                eye.b,
+                                1f);
             }
         }
     }
@@ -54,36 +75,61 @@ public class GlowingEyesLayer {
         }
 
         @Override
-        public void render(PoseStack poseStack, AbstractSpellCastingMob animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+        public void render(
+                PoseStack poseStack,
+                AbstractSpellCastingMob animatable,
+                BakedGeoModel bakedModel,
+                RenderType renderType,
+                MultiBufferSource bufferSource,
+                VertexConsumer buffer,
+                float partialTick,
+                int packedLight,
+                int packedOverlay) {
             var eye = getEyeType(animatable);
             if (eye != EyeType.None) {
-                bakedModel.getBone("head").ifPresent((headBone) -> {
-                    var scale = getEyeScale(animatable);
-                    headBone.updateScale(scale, scale, scale);
+                bakedModel
+                        .getBone("head")
+                        .ifPresent(
+                                (headBone) -> {
+                                    var scale = getEyeScale(animatable);
+                                    headBone.updateScale(scale, scale, scale);
 
-                    this.getRenderer().renderChildBones(poseStack, animatable, headBone, EYES, bufferSource, buffer, true, partialTick, packedLight, packedOverlay, eye.r, eye.g, eye.b, 1f);
-                });
+                                    this.getRenderer()
+                                            .renderChildBones(
+                                                    poseStack,
+                                                    animatable,
+                                                    headBone,
+                                                    EYES,
+                                                    bufferSource,
+                                                    buffer,
+                                                    true,
+                                                    partialTick,
+                                                    packedLight,
+                                                    packedOverlay,
+                                                    eye.r,
+                                                    eye.g,
+                                                    eye.b,
+                                                    1f);
+                                });
             }
         }
     }
 
     public static EyeType getEyeType(LivingEntity entity) {
-        //Sorted by most prioritized color
-        if (entity.hasEffect(MobEffectRegistry.ABYSSAL_SHROUD.get()))
-            return EyeType.Abyssal;
-        if (entity.hasEffect(MobEffectRegistry.PLANAR_SIGHT.get()))
-            return EyeType.Planar_Sight;
-//        else if (entity.getItemBySlot(EquipmentSlot.HEAD).is(ItemRegistry.SHADOWWALKER_HELMET.get()))
-//            return EyeType.Ender_Armor;
+        // Sorted by most prioritized color
+        if (entity.hasEffect(MobEffectRegistry.ABYSSAL_SHROUD.get())) return EyeType.Abyssal;
+        if (entity.hasEffect(MobEffectRegistry.PLANAR_SIGHT.get())) return EyeType.Planar_Sight;
+        //        else if
+        // (entity.getItemBySlot(EquipmentSlot.HEAD).is(ItemRegistry.SHADOWWALKER_HELMET.get()))
+        //            return EyeType.Ender_Armor;
         else return EyeType.None;
     }
 
     public static float getEyeScale(LivingEntity entity) {
-        //Sorted by most prioritized scale (highest to lowest)
+        // Sorted by most prioritized scale (highest to lowest)
         if (entity.getItemBySlot(EquipmentSlot.HEAD).is(ItemRegistry.SHADOWWALKER_HELMET.get()))
             return EyeType.Ender_Armor.scale;
-        if (entity.hasEffect(MobEffectRegistry.ABYSSAL_SHROUD.get()))
-            return EyeType.Abyssal.scale;
+        if (entity.hasEffect(MobEffectRegistry.ABYSSAL_SHROUD.get())) return EyeType.Abyssal.scale;
         if (entity.hasEffect(MobEffectRegistry.PLANAR_SIGHT.get()))
             return EyeType.Planar_Sight.scale;
         else return EyeType.None.scale;
@@ -94,7 +140,6 @@ public class GlowingEyesLayer {
         Abyssal(1f, 1f, 1f, 1f),
         Planar_Sight(.42f, .258f, .96f, 1f),
         Ender_Armor(.816f, 0f, 1f, 1.15f);
-
         public final float r, g, b, scale;
 
         EyeType(float r, float g, float b, float scale) {
@@ -105,4 +150,3 @@ public class GlowingEyesLayer {
         }
     }
 }
-

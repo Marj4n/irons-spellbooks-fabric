@@ -36,13 +36,14 @@ import io.redspace.ironsspellbooks.setup.PacketDistributor;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class OminousFireOrbEntity extends Entity implements AntiMagicSusceptible, ICritablePartEntity {
-    private static final EntityDataAccessor<Integer> DATA_FUSE = SynchedEntityData.defineId(OminousFireOrbEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_CHARGE_TIME = SynchedEntityData.defineId(OminousFireOrbEntity.class, EntityDataSerializers.INT);
-    @javax.annotation.Nullable
-    private UUID ownerUUID;
-    @Nullable
-    private Entity cachedOwner;
+public class OminousFireOrbEntity extends Entity
+        implements AntiMagicSusceptible, ICritablePartEntity {
+    private static final EntityDataAccessor<Integer> DATA_FUSE =
+            SynchedEntityData.defineId(OminousFireOrbEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_CHARGE_TIME =
+            SynchedEntityData.defineId(OminousFireOrbEntity.class, EntityDataSerializers.INT);
+    @javax.annotation.Nullable private UUID ownerUUID;
+    @Nullable private Entity cachedOwner;
     float health = 100;
 
     public float getRadius() {
@@ -106,18 +107,18 @@ public class OminousFireOrbEntity extends Entity implements AntiMagicSusceptible
         }
     }
 
-//    @Override
-//    public boolean isCurrentlyGlowing() {
-//        return true;
-//    }
-//
-//    @Override
-//    public int getTeamColor() {
-//        if (getTeam() == null) {
-//            return 0xf2552e; // cinderous rarity color
-//        }
-//        return super.getTeamColor();
-//    }
+    //    @Override
+    //    public boolean isCurrentlyGlowing() {
+    //        return true;
+    //    }
+    //
+    //    @Override
+    //    public int getTeamColor() {
+    //        if (getTeam() == null) {
+    //            return 0xf2552e; // cinderous rarity color
+    //        }
+    //        return super.getTeamColor();
+    //    }
 
     @Nullable
     public Entity getOwner() {
@@ -130,6 +131,7 @@ public class OminousFireOrbEntity extends Entity implements AntiMagicSusceptible
             return null;
         }
     }
+
     //    float maxHealth;
 
     public OminousFireOrbEntity(EntityType<?> entityType, Level level) {
@@ -154,7 +156,14 @@ public class OminousFireOrbEntity extends Entity implements AntiMagicSusceptible
         if (level().isClientSide) {
             Vec3 motion = Utils.getRandomVec3(0.08);
             Vec3 movement = getDeltaMovement();
-            level().addParticle(ParticleHelper.SOUL_FIRE, getX() - movement.x, getY() + 2 - movement.y, getZ() - movement.z, motion.x, motion.y, motion.z);
+            level().addParticle(
+                            ParticleHelper.SOUL_FIRE,
+                            getX() - movement.x,
+                            getY() + 2 - movement.y,
+                            getZ() - movement.z,
+                            motion.x,
+                            motion.y,
+                            motion.z);
         }
         if (getFuse() >= 0) {
             int fuse = getFuse();
@@ -174,14 +183,28 @@ public class OminousFireOrbEntity extends Entity implements AntiMagicSusceptible
 
     private void doExplosion() {
         Entity owner = getOwner();
-        var source = new DamageSource(DamageSources.getHolderFromResource(this, ISSDamageTypes.FIRE_MAGIC), owner);
+        var source =
+                new DamageSource(
+                        DamageSources.getHolderFromResource(this, ISSDamageTypes.FIRE_MAGIC),
+                        owner);
         var explosionRadiusSqr = radius * radius;
         var entities = level().getEntities(this, this.getBoundingBox().inflate(radius));
-        Vec3 losPoint = Utils.raycastForBlock(level(), this.position(), this.position().add(0, 1, 0), ClipContext.Fluid.NONE).getLocation();
+        Vec3 losPoint =
+                Utils.raycastForBlock(
+                                level(),
+                                this.position(),
+                                this.position().add(0, 1, 0),
+                                ClipContext.Fluid.NONE)
+                        .getLocation();
         float baseDamage = this.damage;
         for (Entity entity : entities) {
             double distanceSqr = entity.distanceToSqr(this.position());
-            if (!(entity instanceof OminousFireOrbEntity) && distanceSqr < explosionRadiusSqr && entity.canBeHitByProjectile() && !DamageSources.isFriendlyFireBetween(owner, entity) && Utils.hasLineOfSight(level(), losPoint, entity.getBoundingBox().getCenter(), true)) {
+            if (!(entity instanceof OminousFireOrbEntity)
+                    && distanceSqr < explosionRadiusSqr
+                    && entity.canBeHitByProjectile()
+                    && !DamageSources.isFriendlyFireBetween(owner, entity)
+                    && Utils.hasLineOfSight(
+                            level(), losPoint, entity.getBoundingBox().getCenter(), true)) {
                 double p = (1 - distanceSqr / explosionRadiusSqr);
                 float damage = (float) (baseDamage * p);
                 if (entity.hurt(source, damage) && entity instanceof LivingEntity livingVictim) {
@@ -189,9 +212,21 @@ public class OminousFireOrbEntity extends Entity implements AntiMagicSusceptible
                 }
             }
         }
-        PacketDistributor.sendToPlayersTrackingEntity(this, new FieryExplosionParticlesPacket(this.getBoundingBox().getCenter(), radius));
-        CameraShakeManager.addCameraShake(new CameraShakeData(level(),20 + (int) radius / 3, this.position(), this.radius + 15));
-        level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, this.getSoundSource(), 4.0F, (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
+        PacketDistributor.sendToPlayersTrackingEntity(
+                this, new FieryExplosionParticlesPacket(this.getBoundingBox().getCenter(), radius));
+        CameraShakeManager.addCameraShake(
+                new CameraShakeData(
+                        level(), 20 + (int) radius / 3, this.position(), this.radius + 15));
+        level().playSound(
+                        null,
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        SoundEvents.GENERIC_EXPLODE,
+                        this.getSoundSource(),
+                        4.0F,
+                        (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F)
+                                * 0.7F);
         discard();
     }
 
@@ -218,17 +253,42 @@ public class OminousFireOrbEntity extends Entity implements AntiMagicSusceptible
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (level().isClientSide || getFuseProgressTicks() == 0 || this.isInvulnerableTo(source) || DamageSources.isFriendlyFireBetween(source.getEntity(), this)) {
+        if (level().isClientSide
+                || getFuseProgressTicks() == 0
+                || this.isInvulnerableTo(source)
+                || DamageSources.isFriendlyFireBetween(source.getEntity(), this)) {
             return false;
         } else {
             this.markHurt();
             this.health -= amount;
-            MagicManager.spawnParticles(level(), ParticleHelper.SOULFIRE_SPARKS, this.getX(), this.getY() + 2, this.getZ(), (int) amount, 0.1, 0.1, 0.1, 0.5, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleHelper.SOULFIRE_SPARKS,
+                    this.getX(),
+                    this.getY() + 2,
+                    this.getZ(),
+                    (int) amount,
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.5,
+                    false);
             playSound(SoundRegistry.KEEPER_HURT.get(), 1.5f, 1.7f);
             if (health <= 0) {
-                //todo:death sound
+                // todo:death sound
                 discard();
-                MagicManager.spawnParticles(level(), ParticleHelper.SOULFIRE_SPARKS, getX(), getY() + 2, getZ(), 25, 0, 0, 0, 0.5, true);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleHelper.SOULFIRE_SPARKS,
+                        getX(),
+                        getY() + 2,
+                        getZ(),
+                        25,
+                        0,
+                        0,
+                        0,
+                        0.5,
+                        true);
             }
             return true;
         }

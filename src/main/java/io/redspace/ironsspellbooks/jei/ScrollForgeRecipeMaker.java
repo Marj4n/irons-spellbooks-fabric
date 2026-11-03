@@ -29,33 +29,44 @@ public final class ScrollForgeRecipeMaker {
     }
 
     private ScrollForgeRecipeMaker() {
-        //private constructor prevents anyone from instantiating this class
+        // private constructor prevents anyone from instantiating this class
     }
 
-    public static List<ScrollForgeRecipe> getRecipes(IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
+    public static List<ScrollForgeRecipe> getRecipes(
+            IVanillaRecipeFactory vanillaRecipeFactory, JeiPlugin.ItemFinder itemFinder) {
         var inkItems = itemFinder.inkItems;
-        var recipes = SchoolRegistry.REGISTRY.get().stream().toList().stream().map(
-                school -> {
-                    var paperInput = Ingredient.of(Items.PAPER);
-                    var focusInput = Ingredient.of(school.getFocus());
-                    var spells = SpellRegistry.getSpellsForSchool(school);
-                    var scrollOutputs = new ArrayList<ItemStack>();
-                    var inkOutputs = new ArrayList<ItemStack>();
+        var recipes =
+                SchoolRegistry.REGISTRY.get().stream().toList().stream()
+                        .map(
+                                school -> {
+                                    var paperInput = Ingredient.of(Items.PAPER);
+                                    var focusInput = Ingredient.of(school.getFocus());
+                                    var spells = SpellRegistry.getSpellsForSchool(school);
+                                    var scrollOutputs = new ArrayList<ItemStack>();
+                                    var inkOutputs = new ArrayList<ItemStack>();
 
-                    inkItems.forEach(ink -> {
-                        for (AbstractSpell spell : spells) {
-                            if (spell.isEnabled() && spell.allowCrafting()) {
-                                var spellLevel = spell.getMinLevelForRarity(ink.getRarity());
-                                if (spellLevel > 0 && spell != SpellRegistry.none()) {
-                                    inkOutputs.add(new ItemStack(ink));
-                                    scrollOutputs.add(getScrollStack(spell, spellLevel));
-                                }
-                            }
-                        }
-                    });
+                                    inkItems.forEach(
+                                            ink -> {
+                                                for (AbstractSpell spell : spells) {
+                                                    if (spell.isEnabled()
+                                                            && spell.allowCrafting()) {
+                                                        var spellLevel =
+                                                                spell.getMinLevelForRarity(
+                                                                        ink.getRarity());
+                                                        if (spellLevel > 0
+                                                                && spell != SpellRegistry.none()) {
+                                                            inkOutputs.add(new ItemStack(ink));
+                                                            scrollOutputs.add(
+                                                                    getScrollStack(
+                                                                            spell, spellLevel));
+                                                        }
+                                                    }
+                                                }
+                                            });
 
-                    return new ScrollForgeRecipe(inkOutputs, paperInput, focusInput, scrollOutputs);
-                });
+                                    return new ScrollForgeRecipe(
+                                            inkOutputs, paperInput, focusInput, scrollOutputs);
+                                });
 
         return recipes.toList();
     }

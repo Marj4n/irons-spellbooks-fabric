@@ -25,18 +25,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class BloodNeedlesSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "blood_needles");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(10)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "blood_needles");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(10)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.projectile_count", getCount(spellLevel)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.projectile_count", getCount(spellLevel)));
     }
 
     public BloodNeedlesSpell() {
@@ -63,20 +69,28 @@ public class BloodNeedlesSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         int count = getCount(spellLevel);
         float damage = getDamage(spellLevel, entity);
         int degreesPerNeedle = 360 / count;
-        var raycast = RaycastBuilder.begin(world, entity)
-                .range(32)
-                .checkForBlocks(true)
-                .build();
+        var raycast = RaycastBuilder.begin(world, entity).range(32).checkForBlocks(true).build();
         for (int i = 0; i < count; i++) {
             BloodNeedle needle = new BloodNeedle(world, entity);
             int rotation = degreesPerNeedle * i - (degreesPerNeedle / 2);
             needle.setDamage(damage);
             needle.setZRot(rotation);
-            Vec3 spawn = entity.getEyePosition().add(new Vec3(0, 1.5, 0).zRot(rotation * Mth.DEG_TO_RAD).xRot(-entity.getXRot() * Mth.DEG_TO_RAD).yRot(-entity.getYRot() * Mth.DEG_TO_RAD));
+            Vec3 spawn =
+                    entity.getEyePosition()
+                            .add(
+                                    new Vec3(0, 1.5, 0)
+                                            .zRot(rotation * Mth.DEG_TO_RAD)
+                                            .xRot(-entity.getXRot() * Mth.DEG_TO_RAD)
+                                            .yRot(-entity.getYRot() * Mth.DEG_TO_RAD));
             needle.moveTo(spawn);
             needle.shoot(raycast.getLocation().subtract(spawn).normalize());
             world.addFreshEntity(needle);

@@ -29,16 +29,18 @@ public class ShieldSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.hp", Utils.stringTruncation(getShieldHP(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.hp",
+                        Utils.stringTruncation(getShieldHP(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(8)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(8)
+                    .build();
 
     public ShieldSpell() {
         this.manaCostPerLevel = 5;
@@ -74,13 +76,19 @@ public class ShieldSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         ShieldEntity shield = new ShieldEntity(level, getShieldHP(spellLevel, entity));
-        Vec3 spawn = RaycastBuilder.begin(level, entity)
-                .range(3)
-                .checkForBlocks(true)
-                .build()
-                .getLocation();
+        Vec3 spawn =
+                RaycastBuilder.begin(level, entity)
+                        .range(3)
+                        .checkForBlocks(true)
+                        .build()
+                        .getLocation();
         shield.setPos(spawn);
         shield.setRotation(entity.getXRot(), entity.getYRot());
         level.addFreshEntity(shield);
@@ -92,7 +100,8 @@ public class ShieldSpell extends AbstractSpell {
     }
 
     //    @Override
-//    public MutableComponent getUniqueInfo() {
-//        return Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(null), 1));
-//    }
+    //    public MutableComponent getUniqueInfo() {
+    //        return Component.translatable("ui.irons_spellbooks.distance",
+    // Utils.stringTruncation(getDistance(null), 1));
+    //    }
 }

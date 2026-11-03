@@ -29,7 +29,10 @@ public class OakskinEffect extends CustomDescriptionMobEffect {
     @Override
     public Component getDescriptionLine(MobEffectInstance instance) {
         float reductionAmount = getReductionAmount(instance.getAmplifier(), null);
-        return Component.translatable("tooltip.irons_spellbooks.oakskin_description", (int) (reductionAmount * 100)).withStyle(ChatFormatting.BLUE);
+        return Component.translatable(
+                        "tooltip.irons_spellbooks.oakskin_description",
+                        (int) (reductionAmount * 100))
+                .withStyle(ChatFormatting.BLUE);
     }
 
     public static void reduceDamage(LivingHurtEvent event) {
@@ -39,9 +42,34 @@ public class OakskinEffect extends CustomDescriptionMobEffect {
             float before = event.getAmount();
             float multiplier = 1 - getReductionAmount(effect.getAmplifier(), entity);
             event.setAmount(event.getAmount() * multiplier);
-//            IronsSpellbooks.LOGGER.debug("OakskinEffect.reduceDamage {}%: {}->{}", (int) (getReductionAmount(effect.getAmplifier(), entity) * 100), before, event.getAmount());
-            MagicManager.spawnParticles(entity.level(), new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OAK_LOG.defaultBlockState()), entity.getRandomX(entity.getBbWidth() * 0.45), entity.getRandomY(), entity.getRandomZ(entity.getBbWidth() * 0.45), 5, 0, 0, 0, 0.25, false);
-            MagicManager.spawnParticles(entity.level(), ParticleHelper.FIREFLY, entity.getRandomX(entity.getBbWidth() * 0.45), entity.getRandomY() + 0.25, entity.getRandomZ(entity.getBbWidth() * 0.45), 1, 0, 0, 0, 0.25, false);
+            //            IronsSpellbooks.LOGGER.debug("OakskinEffect.reduceDamage {}%: {}->{}",
+            // (int) (getReductionAmount(effect.getAmplifier(), entity) * 100), before,
+            // event.getAmount());
+            MagicManager.spawnParticles(
+                    entity.level(),
+                    new BlockParticleOption(
+                            ParticleTypes.BLOCK, Blocks.OAK_LOG.defaultBlockState()),
+                    entity.getRandomX(entity.getBbWidth() * 0.45),
+                    entity.getRandomY(),
+                    entity.getRandomZ(entity.getBbWidth() * 0.45),
+                    5,
+                    0,
+                    0,
+                    0,
+                    0.25,
+                    false);
+            MagicManager.spawnParticles(
+                    entity.level(),
+                    ParticleHelper.FIREFLY,
+                    entity.getRandomX(entity.getBbWidth() * 0.45),
+                    entity.getRandomY() + 0.25,
+                    entity.getRandomZ(entity.getBbWidth() * 0.45),
+                    1,
+                    0,
+                    0,
+                    0,
+                    0.25,
+                    false);
         }
     }
 

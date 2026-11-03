@@ -22,19 +22,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class FireboltSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "firebolt");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "firebolt");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(1)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(1)
+                    .build();
 
     public FireboltSpell() {
         this.manaCostPerLevel = 2;
@@ -60,9 +65,19 @@ public class FireboltSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         FireboltProjectile firebolt = new FireboltProjectile(world, entity);
-        firebolt.setPos(entity.position().add(0, entity.getEyeHeight() - firebolt.getBoundingBox().getYsize() * .5f, 0));
+        firebolt.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight() - firebolt.getBoundingBox().getYsize() * .5f,
+                                0));
         firebolt.shoot(entity.getLookAngle());
         firebolt.setDamage(getDamage(spellLevel, entity));
         world.addFreshEntity(firebolt);
@@ -77,6 +92,4 @@ public class FireboltSpell extends AbstractSpell {
     private float getDamage(int spellLevel, LivingEntity entity) {
         return getSpellPower(spellLevel, entity) * .5f;
     }
-
-
 }

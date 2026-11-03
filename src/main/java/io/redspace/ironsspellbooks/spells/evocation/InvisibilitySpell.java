@@ -27,19 +27,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class InvisibilitySpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "invisibility");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "invisibility");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(6)
-            .setCooldownSeconds(45)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(6)
+                    .setCooldownSeconds(45)
+                    .build();
 
     public InvisibilitySpell() {
         this.manaCostPerLevel = 8;
@@ -70,13 +75,39 @@ public class InvisibilitySpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.TRUE_INVISIBILITY.get(), getDuration(spellLevel, entity), 0, false, false, true));
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.TRUE_INVISIBILITY.get(),
+                        getDuration(spellLevel, entity),
+                        0,
+                        false,
+                        false,
+                        true));
         int i = 0;
         for (var armor : entity.getArmorSlots()) {
             i++;
-            var particle = armor.isEmpty() ? new SparkParticleOptions(0.5f, 0.5f, 0.5f) : new ItemParticleOption(ParticleTypes.ITEM, armor);
-            MagicManager.spawnParticles(world, particle, entity.getX(), entity.getY(i / 4f), entity.getZ(), 10, .1, 0, .1, 0.1, false);
+            var particle =
+                    armor.isEmpty()
+                            ? new SparkParticleOptions(0.5f, 0.5f, 0.5f)
+                            : new ItemParticleOption(ParticleTypes.ITEM, armor);
+            MagicManager.spawnParticles(
+                    world,
+                    particle,
+                    entity.getX(),
+                    entity.getY(i / 4f),
+                    entity.getZ(),
+                    10,
+                    .1,
+                    0,
+                    .1,
+                    0.1,
+                    false);
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
@@ -84,5 +115,4 @@ public class InvisibilitySpell extends AbstractSpell {
     private int getDuration(int spellLevel, LivingEntity source) {
         return (int) (getSpellPower(spellLevel, source) * 20);
     }
-
 }

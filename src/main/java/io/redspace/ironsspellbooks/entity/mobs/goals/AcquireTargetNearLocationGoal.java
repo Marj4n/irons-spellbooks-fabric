@@ -18,19 +18,29 @@ public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends Targe
     private Vec3 targetSearchPos;
     protected final Class<T> targetType;
     protected final int randomInterval;
-    @Nullable
-    protected LivingEntity target;
+    @Nullable protected LivingEntity target;
+
     /**
      * This filter is applied to the Entity search. Only matching entities will be targeted.
      */
     protected TargetingConditions targetConditions;
 
-    public AcquireTargetNearLocationGoal(Mob pMob, Class<T> pTargetType, int pRandomInterval, boolean pMustSee, boolean pMustReach, Vec3 targetSearchPos, @Nullable Predicate<LivingEntity> pTargetPredicate) {
+    public AcquireTargetNearLocationGoal(
+            Mob pMob,
+            Class<T> pTargetType,
+            int pRandomInterval,
+            boolean pMustSee,
+            boolean pMustReach,
+            Vec3 targetSearchPos,
+            @Nullable Predicate<LivingEntity> pTargetPredicate) {
         super(pMob, pMustSee, pMustReach);
         this.targetType = pTargetType;
         this.randomInterval = reducedTickDelay(pRandomInterval);
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
-        this.targetConditions = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(pTargetPredicate);
+        this.targetConditions =
+                TargetingConditions.forCombat()
+                        .range(this.getFollowDistance())
+                        .selector(pTargetPredicate);
         this.targetSearchPos = targetSearchPos;
     }
 
@@ -40,11 +50,12 @@ public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends Targe
      */
     public boolean canUse() {
         if (this.randomInterval > 0 && this.mob.getRandom().nextInt(this.randomInterval) != 0) {
-            //irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.canUse: false");
+            // irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.canUse: false");
             return false;
         } else {
             this.findTarget();
-            //irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.canUse: {}", this.target);
+            // irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.canUse: {}",
+            // this.target);
             return this.target != null;
         }
     }
@@ -56,15 +67,39 @@ public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends Targe
     protected void findTarget() {
         if (this.targetType != Player.class && this.targetType != ServerPlayer.class) {
             var targetSearchArea = this.getTargetSearchArea(this.getFollowDistance());
-            //irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.1 {}", targetSearchArea);
-            var entitiesOfClass = this.mob.level().getEntitiesOfClass(this.targetType, targetSearchArea, (potentialTarget) -> {
-                //irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.2 {}", potentialTarget.getName().getString());
-                return true;
-            });
-            this.target = this.mob.level().getNearestEntity(entitiesOfClass, this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
+            // irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.1 {}",
+            // targetSearchArea);
+            var entitiesOfClass =
+                    this.mob
+                            .level()
+                            .getEntitiesOfClass(
+                                    this.targetType,
+                                    targetSearchArea,
+                                    (potentialTarget) -> {
+                                        // irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.2 {}", potentialTarget.getName().getString());
+                                        return true;
+                                    });
+            this.target =
+                    this.mob
+                            .level()
+                            .getNearestEntity(
+                                    entitiesOfClass,
+                                    this.targetConditions,
+                                    this.mob,
+                                    this.mob.getX(),
+                                    this.mob.getEyeY(),
+                                    this.mob.getZ());
         } else {
-            //irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.6");
-            this.target = this.mob.level().getNearestPlayer(this.targetConditions, this.mob, this.mob.getX(), this.mob.getEyeY(), this.mob.getZ());
+            // irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.6");
+            this.target =
+                    this.mob
+                            .level()
+                            .getNearestPlayer(
+                                    this.targetConditions,
+                                    this.mob,
+                                    this.mob.getX(),
+                                    this.mob.getEyeY(),
+                                    this.mob.getZ());
         }
     }
 

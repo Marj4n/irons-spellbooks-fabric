@@ -21,22 +21,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class SnowballSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "snowball");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "snowball");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.duration", Utils.timeFromTicks(getDuration(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.duration",
+                        Utils.timeFromTicks(getDuration(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(12)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(12)
+                    .build();
 
     public SnowballSpell() {
         this.manaCostPerLevel = 2;
@@ -67,9 +72,17 @@ public class SnowballSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Snowball orb = new Snowball(level, entity);
-        orb.setPos(entity.position().add(0, entity.getEyeHeight() - orb.getBoundingBox().getYsize() * .5f, 0).add(entity.getForward()));
+        orb.setPos(
+                entity.position()
+                        .add(0, entity.getEyeHeight() - orb.getBoundingBox().getYsize() * .5f, 0)
+                        .add(entity.getForward()));
         orb.shoot(entity.getLookAngle());
         orb.setDeltaMovement(orb.getDeltaMovement().add(0, 0.2, 0));
         orb.setExplosionRadius(getRadius(spellLevel, entity));

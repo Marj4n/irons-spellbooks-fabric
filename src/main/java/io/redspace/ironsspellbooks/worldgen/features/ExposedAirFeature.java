@@ -31,7 +31,8 @@ public class ExposedAirFeature extends Feature<StructureFeatureConfiguration> {
     @Override
     public boolean place(FeaturePlaceContext<StructureFeatureConfiguration> context) {
         // Blocks that cannot be replaced by the feature (e.g., water, bedrock, etc.)
-        Predicate<BlockState> cannotReplacePredicate = Feature.isReplaceable(BlockTags.FEATURES_CANNOT_REPLACE);
+        Predicate<BlockState> cannotReplacePredicate =
+                Feature.isReplaceable(BlockTags.FEATURES_CANNOT_REPLACE);
 
         BlockPos origin = context.origin(); // Starting point for placement
         WorldGenLevel level = context.level();
@@ -77,11 +78,14 @@ public class ExposedAirFeature extends Feature<StructureFeatureConfiguration> {
         if (sideOpenings < perimeter * .25 /*|| sideOpenings > 5*/) return false;
 
         var structureTemplateManager = level.getServer().getStructureManager();
-        var structureTemplate = structureTemplateManager.getOrCreate(context.config().structureTemplateLocation());
-        var placementSettings = (new StructurePlaceSettings()).setMirror(Mirror.NONE).setRotation(Rotation.NONE);
+        var structureTemplate =
+                structureTemplateManager.getOrCreate(context.config().structureTemplateLocation());
+        var placementSettings =
+                (new StructurePlaceSettings()).setMirror(Mirror.NONE).setRotation(Rotation.NONE);
         var configuredOffset = context.config().offset();
         var structurePos = origin.offset(minX, -1, minZ).offset(configuredOffset);
-        structureTemplate.placeInWorld(level, structurePos, structurePos, placementSettings, level.getRandom(), 2);
+        structureTemplate.placeInWorld(
+                level, structurePos, structurePos, placementSettings, level.getRandom(), 2);
 
         return true;
     }

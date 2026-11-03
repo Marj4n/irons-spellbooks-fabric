@@ -19,15 +19,18 @@ import java.util.function.Function;
 
 public class GenericCustomArmorRenderer<T extends Item & GeoItem> extends GeoArmorRenderer<T> {
     public class AsyncBone {
-        @Nullable
-        private GeoBone actualBone;
+        @Nullable private GeoBone actualBone;
         private final String boneName;
         private final EquipmentSlot itemSlot;
         private final Function<HumanoidModel<?>, ModelPart> partToFollow;
         private final Vec3 partOffset;
 
         // Primary constructor
-        public AsyncBone(String boneName, EquipmentSlot itemSlot, Function<HumanoidModel<?>, ModelPart> partToFollow, Vec3 partOffset) {
+        public AsyncBone(
+                String boneName,
+                EquipmentSlot itemSlot,
+                Function<HumanoidModel<?>, ModelPart> partToFollow,
+                Vec3 partOffset) {
             this.actualBone = null;
             this.boneName = boneName;
             this.itemSlot = itemSlot;
@@ -67,14 +70,20 @@ public class GenericCustomArmorRenderer<T extends Item & GeoItem> extends GeoArm
         super(model);
         this.asyncBones = new ArrayList<>();
         asyncBones.add(
-                new AsyncBone("armorLeggingTorsoLayer", EquipmentSlot.LEGS, m -> m.body, Vec3.ZERO)
-        );
+                new AsyncBone(
+                        "armorLeggingTorsoLayer", EquipmentSlot.LEGS, m -> m.body, Vec3.ZERO));
         asyncBones.add(
-                new AsyncBone("armorTorsoExtensionRightLeg", EquipmentSlot.CHEST, m -> m.rightLeg, new Vec3(2, 12, 0))
-        );
+                new AsyncBone(
+                        "armorTorsoExtensionRightLeg",
+                        EquipmentSlot.CHEST,
+                        m -> m.rightLeg,
+                        new Vec3(2, 12, 0)));
         asyncBones.add(
-                new AsyncBone("armorTorsoExtensionLeftLeg", EquipmentSlot.CHEST, m -> m.leftLeg, new Vec3(-2, 12, 0))
-        );
+                new AsyncBone(
+                        "armorTorsoExtensionLeftLeg",
+                        EquipmentSlot.CHEST,
+                        m -> m.leftLeg,
+                        new Vec3(-2, 12, 0)));
     }
 
     @Override
@@ -85,7 +94,6 @@ public class GenericCustomArmorRenderer<T extends Item & GeoItem> extends GeoArm
         super.grabRelevantBones(bakedModel);
     }
 
-
     @Override
     protected void applyBoneVisibilityBySlot(EquipmentSlot currentSlot) {
         super.applyBoneVisibilityBySlot(currentSlot);
@@ -93,7 +101,8 @@ public class GenericCustomArmorRenderer<T extends Item & GeoItem> extends GeoArm
     }
 
     @Override
-    public void applyBoneVisibilityByPart(EquipmentSlot currentSlot, ModelPart currentPart, HumanoidModel<?> model) {
+    public void applyBoneVisibilityByPart(
+            EquipmentSlot currentSlot, ModelPart currentPart, HumanoidModel<?> model) {
         super.applyBoneVisibilityByPart(currentSlot, currentPart, model);
         asyncBones.forEach(bone -> bone.applyVisibilityByPart(model, currentPart));
     }
@@ -101,13 +110,17 @@ public class GenericCustomArmorRenderer<T extends Item & GeoItem> extends GeoArm
     @Override
     protected void applyBaseTransformations(HumanoidModel<?> baseModel) {
         super.applyBaseTransformations(baseModel);
-        asyncBones.forEach(bone -> {
-            if (bone.actualBone != null) {
-                var bodyPart = bone.partToFollow.apply(baseModel);
-                RenderUtils.matchModelPartRot(bodyPart, bone.actualBone);
-                bone.actualBone.updatePosition((float) bone.partOffset.x + bodyPart.x, (float) bone.partOffset.y + -bodyPart.y, (float) bone.partOffset.z + bodyPart.z);
-            }
-        });
+        asyncBones.forEach(
+                bone -> {
+                    if (bone.actualBone != null) {
+                        var bodyPart = bone.partToFollow.apply(baseModel);
+                        RenderUtils.matchModelPartRot(bodyPart, bone.actualBone);
+                        bone.actualBone.updatePosition(
+                                (float) bone.partOffset.x + bodyPart.x,
+                                (float) bone.partOffset.y + -bodyPart.y,
+                                (float) bone.partOffset.z + bodyPart.z);
+                    }
+                });
     }
 
     @Override
@@ -115,5 +128,4 @@ public class GenericCustomArmorRenderer<T extends Item & GeoItem> extends GeoArm
         super.setAllVisible(pVisible);
         asyncBones.forEach(bone -> setBoneVisible(bone.actualBone, pVisible));
     }
-
 }

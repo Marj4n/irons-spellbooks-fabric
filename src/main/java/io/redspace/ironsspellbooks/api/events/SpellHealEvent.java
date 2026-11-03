@@ -1,17 +1,19 @@
 package io.redspace.ironsspellbooks.api.events;
 
-
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import net.minecraft.world.entity.LivingEntity;
 import org.marj4n.irons_spellbooks.events.SpellLivingEvent;
-
 
 public class SpellHealEvent extends SpellLivingEvent {
     private final LivingEntity targetEntity;
     private final float healAmount;
     private SchoolType schoolType;
 
-    public SpellHealEvent(LivingEntity castingEntity, LivingEntity targetEntity, float healAmount, SchoolType schoolType) {
+    public SpellHealEvent(
+            LivingEntity castingEntity,
+            LivingEntity targetEntity,
+            float healAmount,
+            SchoolType schoolType) {
         super(castingEntity);
         this.targetEntity = targetEntity;
         this.healAmount = healAmount;

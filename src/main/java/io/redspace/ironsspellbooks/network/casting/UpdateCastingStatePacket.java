@@ -8,7 +8,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class UpdateCastingStatePacket implements CustomPacketPayload {
 
     private final String spellId;
@@ -18,7 +17,12 @@ public class UpdateCastingStatePacket implements CustomPacketPayload {
 
     private final String castingEquipmentSlot;
 
-    public UpdateCastingStatePacket(String spellId, int spellLevel, int castTime, CastSource castSource, String castingEquipmentSlot) {
+    public UpdateCastingStatePacket(
+            String spellId,
+            int spellLevel,
+            int castTime,
+            CastSource castSource,
+            String castingEquipmentSlot) {
         this.spellId = spellId;
         this.spellLevel = spellLevel;
         this.castTime = castTime;
@@ -44,7 +48,10 @@ public class UpdateCastingStatePacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> ClientMagicData.setClientCastState(spellId, spellLevel, castTime, castSource, castingEquipmentSlot));
+        ctx.enqueueWork(
+                () ->
+                        ClientMagicData.setClientCastState(
+                                spellId, spellLevel, castTime, castSource, castingEquipmentSlot));
         return true;
     }
 }

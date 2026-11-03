@@ -28,24 +28,29 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class SpectralHammerSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "spectral_hammer");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "spectral_hammer");
 
     private static final int distance = 16;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.dimensions", 1 + getRadius(spellLevel, caster) * 2, 1 + getRadius(spellLevel, caster) * 2, getDepth(spellLevel, caster) + 1),
-                Component.translatable("ui.irons_spellbooks.distance", distance)
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.dimensions",
+                        1 + getRadius(spellLevel, caster) * 2,
+                        1 + getRadius(spellLevel, caster) * 2,
+                        getDepth(spellLevel, caster) + 1),
+                Component.translatable("ui.irons_spellbooks.distance", distance));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(2)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(2)
+                    .build();
 
     public SpectralHammerSpell() {
         this.manaCostPerLevel = 5;
@@ -71,21 +76,37 @@ public class SpectralHammerSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (entity instanceof ServerPlayer serverPlayer && serverPlayer.gameMode.getGameModeForPlayer() == GameType.ADVENTURE) {
-            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.cast_error_adventure").withStyle(ChatFormatting.RED)));
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        if (entity instanceof ServerPlayer serverPlayer
+                && serverPlayer.gameMode.getGameModeForPlayer() == GameType.ADVENTURE) {
+            serverPlayer.connection.send(
+                    new ClientboundSetActionBarTextPacket(
+                            Component.translatable("ui.irons_spellbooks.cast_error_adventure")
+                                    .withStyle(ChatFormatting.RED)));
             return false;
         }
         var blockHitResult = Utils.getTargetBlock(level, entity, ClipContext.Fluid.NONE, distance);
-        boolean success = blockHitResult.getType() == HitResult.Type.BLOCK && level.getBlockState(blockHitResult.getBlockPos()).is(ModTags.SPECTRAL_HAMMER_MINEABLE);
+        boolean success =
+                blockHitResult.getType() == HitResult.Type.BLOCK
+                        && level.getBlockState(blockHitResult.getBlockPos())
+                                .is(ModTags.SPECTRAL_HAMMER_MINEABLE);
         if (!success && entity instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.cast_error_spectral_hammer").withStyle(ChatFormatting.RED)));
+            serverPlayer.connection.send(
+                    new ClientboundSetActionBarTextPacket(
+                            Component.translatable("ui.irons_spellbooks.cast_error_spectral_hammer")
+                                    .withStyle(ChatFormatting.RED)));
         }
         return success;
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         var blockPosition = Utils.getTargetBlock(world, entity, ClipContext.Fluid.NONE, distance);
         var face = blockPosition.getDirection();
 
@@ -96,14 +117,15 @@ public class SpectralHammerSpell extends AbstractSpell {
         Vec3 position = Vec3.atCenterOf(blockPosition.getBlockPos());
 
         if (!face.getAxis().isVertical()) {
-            position = position.subtract(0, 2, 0).subtract(entity.getForward().normalize().scale(1.5));
+            position =
+                    position.subtract(0, 2, 0).subtract(entity.getForward().normalize().scale(1.5));
         } else if (face == Direction.DOWN) {
             position = position.subtract(0, 3, 0);
         }
 
         spectralHammer.setPos(position.x, position.y, position.z);
         world.addFreshEntity(spectralHammer);
-        //IronsSpellbooks.LOGGER.debug("SpectralHammerSpell.onCast pos:{}", position);
+        // IronsSpellbooks.LOGGER.debug("SpectralHammerSpell.onCast pos:{}", position);
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
 

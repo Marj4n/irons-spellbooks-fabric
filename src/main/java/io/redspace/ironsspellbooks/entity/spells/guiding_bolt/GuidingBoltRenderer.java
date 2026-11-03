@@ -23,18 +23,20 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 
 public class GuidingBoltRenderer extends EntityRenderer<GuidingBoltProjectile> {
-    public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "guiding_bolt_model"), "main");
-    private static final ResourceLocation BASE_TEXTURE = IronsSpellbooks.id("textures/entity/guiding_bolt/guiding_bolt.png");
+    public static final ModelLayerLocation MODEL_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "guiding_bolt_model"), "main");
+    private static final ResourceLocation BASE_TEXTURE =
+            IronsSpellbooks.id("textures/entity/guiding_bolt/guiding_bolt.png");
     private static final ResourceLocation[] FIRE_TEXTURES = {
-            IronsSpellbooks.id("textures/entity/guiding_bolt/fire_1.png"),
-            IronsSpellbooks.id("textures/entity/guiding_bolt/fire_2.png"),
-            IronsSpellbooks.id("textures/entity/guiding_bolt/fire_3.png"),
-            IronsSpellbooks.id("textures/entity/guiding_bolt/fire_4.png"),
-            IronsSpellbooks.id("textures/entity/guiding_bolt/fire_5.png"),
-            IronsSpellbooks.id("textures/entity/guiding_bolt/fire_6.png"),
-            IronsSpellbooks.id("textures/entity/guiding_bolt/fire_7.png")
+        IronsSpellbooks.id("textures/entity/guiding_bolt/fire_1.png"),
+        IronsSpellbooks.id("textures/entity/guiding_bolt/fire_2.png"),
+        IronsSpellbooks.id("textures/entity/guiding_bolt/fire_3.png"),
+        IronsSpellbooks.id("textures/entity/guiding_bolt/fire_4.png"),
+        IronsSpellbooks.id("textures/entity/guiding_bolt/fire_5.png"),
+        IronsSpellbooks.id("textures/entity/guiding_bolt/fire_6.png"),
+        IronsSpellbooks.id("textures/entity/guiding_bolt/fire_7.png")
     };
-
 
     protected final ModelPart body;
     protected final ModelPart outline;
@@ -49,26 +51,51 @@ public class GuidingBoltRenderer extends EntityRenderer<GuidingBoltProjectile> {
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, -1.5F, -5.0F, 3.0F, 3.0F, 5.0F), PartPose.ZERO);
-        partdefinition.addOrReplaceChild("outline", CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 16.0F), PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "body",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-1.5F, -1.5F, -5.0F, 3.0F, 3.0F, 5.0F),
+                PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "outline",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 16.0F),
+                PartPose.ZERO);
         return LayerDefinition.create(meshdefinition, 48, 24);
     }
 
     @Override
-    public void render(GuidingBoltProjectile entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            GuidingBoltProjectile entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         Vec3 motion = entity.getDeltaMovement();
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity), 0, 0));
+        VertexConsumer consumer =
+                bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity), 0, 0));
         this.body.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
-        consumer = bufferSource.getBuffer(RenderType.energySwirl(getFireTextureLocation(entity), 0, 0));
+        consumer =
+                bufferSource.getBuffer(
+                        RenderType.energySwirl(getFireTextureLocation(entity), 0, 0));
         poseStack.scale(0.4f, 0.4f, 0.4f);
-        this.outline.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-
+        this.outline.render(
+                poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
         poseStack.popPose();
 

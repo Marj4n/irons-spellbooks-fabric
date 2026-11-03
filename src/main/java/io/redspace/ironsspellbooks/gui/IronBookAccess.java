@@ -21,6 +21,4 @@ public record IronBookAccess(List<Component> pages) implements BookViewScreen.Bo
     public FormattedText getPage(int page) {
         return page >= 0 && page < this.getPageCount() ? this.pages.get(page) : FormattedText.EMPTY;
     }
-
-
 }

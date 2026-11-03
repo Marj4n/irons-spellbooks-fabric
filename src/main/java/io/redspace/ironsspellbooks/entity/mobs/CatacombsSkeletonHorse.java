@@ -23,8 +23,10 @@ public class CatacombsSkeletonHorse extends SkeletonHorse {
         if (necromancer != null) {
             necromancer.setPersistenceRequired();
             necromancer.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
-            necromancer.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemRegistry.TARNISHED_CROWN.get()));
-            necromancer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 1));
+            necromancer.setItemSlot(
+                    EquipmentSlot.HEAD, new ItemStack(ItemRegistry.TARNISHED_CROWN.get()));
+            necromancer.addEffect(
+                    new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 1));
             necromancer.startRiding(this);
         }
     }

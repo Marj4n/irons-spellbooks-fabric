@@ -8,7 +8,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class HealParticlesPacket implements CustomPacketPayload {
 
     private Vec3 pos;
@@ -40,9 +39,10 @@ public class HealParticlesPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientSpellCastHelper.handleClientsideHealParticles(pos);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientSpellCastHelper.handleClientsideHealParticles(pos);
+                });
         return true;
     }
 }

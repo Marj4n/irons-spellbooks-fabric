@@ -23,9 +23,9 @@ public class FluidHelper {
         return stack;
     }
 
-//    public static boolean hasPotionContentions(FluidStack stack) {
-//        return
-//    }
+    //    public static boolean hasPotionContentions(FluidStack stack) {
+    //        return
+    //    }
 
     public static boolean hasPotionContents(ItemStack stack) {
         return stack.hasTag() && stack.getOrCreateTag().contains("Potion");
@@ -44,7 +44,8 @@ public class FluidHelper {
      * @param reagent Reagent is the acting brewing ingredient (ie nether wart)
      * @return Returns brewing result (without affecting input itemstacks) or ItemStack.EMPTY
      */
-    public static ItemStack getNonDestructiveBrewingResult(ItemStack base, ItemStack reagent, Level level) {
+    public static ItemStack getNonDestructiveBrewingResult(
+            ItemStack base, ItemStack reagent, Level level) {
         return PotionBrewing.mix(reagent, base);
     }
 
@@ -53,11 +54,14 @@ public class FluidHelper {
     }
 
     public static Potion getPotionContents(FluidStack stack) {
-        return hasPotionContents(stack) ? PotionUtils.getPotion(stack.getOrCreateTag()) : Potions.EMPTY;
+        return hasPotionContents(stack)
+                ? PotionUtils.getPotion(stack.getOrCreateTag())
+                : Potions.EMPTY;
     }
 
     public static void setPotionContents(FluidStack stack, Potion potion) {
-        stack.getOrCreateTag().putString("Potion", BuiltInRegistries.POTION.getKey(potion).toString());
+        stack.getOrCreateTag()
+                .putString("Potion", BuiltInRegistries.POTION.getKey(potion).toString());
     }
 
     public static ItemStack createItemStack(Item item, Holder<Potion> potion) {

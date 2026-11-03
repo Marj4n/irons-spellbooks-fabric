@@ -25,8 +25,11 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ThrownItemProjectile extends AbstractMagicProjectile {
-    private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ThrownItemProjectile.class, EntityDataSerializers.ITEM_STACK);
-    private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(ThrownItemProjectile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<ItemStack> DATA_ITEM =
+            SynchedEntityData.defineId(
+                    ThrownItemProjectile.class, EntityDataSerializers.ITEM_STACK);
+    private static final EntityDataAccessor<Float> DATA_SCALE =
+            SynchedEntityData.defineId(ThrownItemProjectile.class, EntityDataSerializers.FLOAT);
 
     public float getScale() {
         return entityData.get(DATA_SCALE);
@@ -65,7 +68,7 @@ public class ThrownItemProjectile extends AbstractMagicProjectile {
         super.addAdditionalSaveData(tag);
         var item = getThrownItem();
         if (!item.isEmpty()) {
-            tag.put("item", item.save(new CompoundTag()/*this.level.registryAccess()*/));
+            tag.put("item", item.save(new CompoundTag() /*this.level.registryAccess()*/));
         }
     }
 
@@ -73,20 +76,18 @@ public class ThrownItemProjectile extends AbstractMagicProjectile {
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (tag.contains("item")) {
-            this.setThrownItem(ItemStack.of(/*level.registryAccess(), */tag.getCompound("item")));
+            this.setThrownItem(ItemStack.of(/*level.registryAccess(), */ tag.getCompound("item")));
         }
     }
 
     @Override
-    public void trailParticles() {
+    public void trailParticles() {}
 
-    }
-
-//    @Nullable
-//    @Override
-//    public ItemStack getWeaponItem() {
-//        return getThrownItem();
-//    }
+    //    @Nullable
+    //    @Override
+    //    public ItemStack getWeaponItem() {
+    //        return getThrownItem();
+    //    }
 
     @Override
     protected void onHitEntity(EntityHitResult pResult) {
@@ -95,8 +96,11 @@ public class ThrownItemProjectile extends AbstractMagicProjectile {
         double damage = getDamage();
         var target = pResult.getEntity();
         var damageSource = SpellRegistry.THROW_SPELL.get().getDamageSource(this, getOwner());
-        if (DamageSources.applyDamage(target, (float) damage, damageSource) && !item.isEmpty() && level() instanceof ServerLevel serverLevel) {
-//            EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, target, damageSource, item);
+        if (DamageSources.applyDamage(target, (float) damage, damageSource)
+                && !item.isEmpty()
+                && level() instanceof ServerLevel serverLevel) {
+            //            EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, target,
+            // damageSource, item);
         }
         discard();
     }
@@ -104,13 +108,14 @@ public class ThrownItemProjectile extends AbstractMagicProjectile {
     @Override
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
-        //todo: stick into blocks?
+        // todo: stick into blocks?
         discard();
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleTypes.CRIT, x, y, z, 25, 0.1, 0.1, 0.1, 0.5, true);
+        MagicManager.spawnParticles(
+                level(), ParticleTypes.CRIT, x, y, z, 25, 0.1, 0.1, 0.1, 0.5, true);
     }
 
     @Override

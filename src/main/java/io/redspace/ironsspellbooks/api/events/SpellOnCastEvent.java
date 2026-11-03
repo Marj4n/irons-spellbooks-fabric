@@ -1,11 +1,9 @@
 package io.redspace.ironsspellbooks.api.events;
 
-
 import io.redspace.ironsspellbooks.api.spells.CastSource;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import net.minecraft.world.entity.player.Player;
 import org.marj4n.irons_spellbooks.events.SpellPlayerEvent;
-
 
 public class SpellOnCastEvent extends SpellPlayerEvent {
     private final String spellId;
@@ -16,7 +14,13 @@ public class SpellOnCastEvent extends SpellPlayerEvent {
     private final int manaCost;
     private int newManaCost;
 
-    public SpellOnCastEvent(Player player, String spellId, int spellLevel, int manaCost, SchoolType schoolType, CastSource castSource) {
+    public SpellOnCastEvent(
+            Player player,
+            String spellId,
+            int spellLevel,
+            int manaCost,
+            SchoolType schoolType,
+            CastSource castSource) {
         super(player);
         this.spellId = spellId;
         this.spellLevel = spellLevel;

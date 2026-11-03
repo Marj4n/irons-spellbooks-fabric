@@ -25,7 +25,6 @@ public class CastErrorPacket implements CustomPacketPayload {
     public CastErrorPacket(FriendlyByteBuf buf) {
         errorType = buf.readEnum(ErrorType.class);
         spellId = buf.readUtf();
-
     }
 
     public void toBytes(FriendlyByteBuf buf) {
@@ -35,9 +34,10 @@ public class CastErrorPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientSpellCastHelper.handleCastErrorMessage(this);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientSpellCastHelper.handleCastErrorMessage(this);
+                });
 
         return true;
     }

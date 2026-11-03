@@ -1,16 +1,16 @@
-//package io.redspace.ironsspellbooks.data;
+// package io.redspace.ironsspellbooks.data;
 //
-//import com.mojang.datafixers.DataFixerBuilder;
-//import io.redspace.ironsspellbooks.IronsSpellbooks;
-//import net.minecraft.nbt.CompoundTag;
-//import net.minecraft.world.level.Level;
-//import net.minecraft.world.level.saveddata.SavedData;
-//import net.minecraft.world.level.storage.DimensionDataStorage;
-//import net.minecraft.world.level.storage.LevelStorageSource;
-//import org.jetbrains.annotations.NotNull;
+// import com.mojang.datafixers.DataFixerBuilder;
+// import io.redspace.ironsspellbooks.IronsSpellbooks;
+// import net.minecraft.nbt.CompoundTag;
+// import net.minecraft.world.level.Level;
+// import net.minecraft.world.level.saveddata.SavedData;
+// import net.minecraft.world.level.storage.DimensionDataStorage;
+// import net.minecraft.world.level.storage.LevelStorageSource;
+// import org.jetbrains.annotations.NotNull;
 //
-//TODO: 1.21: clean out world upgrader
-//public class DataFixerStorage extends SavedData {
+// TODO: 1.21: clean out world upgrader
+// public class DataFixerStorage extends SavedData {
 //    public static DataFixerStorage INSTANCE;
 //    private DimensionDataStorage overworldDataStorage;
 //    private int dataVersion;
@@ -66,4 +66,4 @@
 //        int dataVersion = tag.getInt("dataVersion");
 //        return new DataFixerStorage(dataVersion);
 //    }
-//}
+// }

@@ -9,7 +9,6 @@ public class ShadowwalkerArmorModel extends GeoModel<ShadowwalkerArmorItem> {
 
     public ShadowwalkerArmorModel() {
         super();
-
     }
 
     @Override
@@ -19,11 +18,13 @@ public class ShadowwalkerArmorModel extends GeoModel<ShadowwalkerArmorItem> {
 
     @Override
     public ResourceLocation getTextureResource(ShadowwalkerArmorItem object) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "textures/models/armor/shadowwalker.png");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "textures/models/armor/shadowwalker.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(ShadowwalkerArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

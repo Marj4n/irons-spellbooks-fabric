@@ -26,13 +26,15 @@ import org.joml.Matrix4f;
 
 public class ThunderstepProjectileRenderer extends EntityRenderer<ThunderstepProjectile> {
 
-    public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "ball_lightning_model"), "main");
+    public static final ModelLayerLocation MODEL_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "ball_lightning_model"), "main");
     private static final ResourceLocation[] SWIRL_TEXTURES = {
-            IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_0.png"),
-            IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_1.png"),
-            IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_2.png"),
-            IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_3.png"),
-            IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_4.png")
+        IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_0.png"),
+        IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_1.png"),
+        IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_2.png"),
+        IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_3.png"),
+        IronsSpellbooks.id("textures/entity/ball_lightning/ball_lightning_4.png")
     };
 
     private final ModelPart orb;
@@ -46,19 +48,31 @@ public class ThunderstepProjectileRenderer extends EntityRenderer<ThunderstepPro
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        partdefinition.addOrReplaceChild("orb", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F), PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "orb",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
+                PartPose.ZERO);
         return LayerDefinition.create(meshdefinition, 8, 8);
     }
 
     @Override
-    public void render(ThunderstepProjectile entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            ThunderstepProjectile entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBoundingBox().getYsize() * .5f, 0);
 
         Pose pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
+        VertexConsumer consumer =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
         poseStack.scale(0.2f, 0.2f, 0.2f);
         for (int i = 0; i < 3; i++) {
             poseStack.pushPose();
@@ -76,10 +90,21 @@ public class ThunderstepProjectileRenderer extends EntityRenderer<ThunderstepPro
             poseStack.mulPose(Axis.XP.rotationDegrees(swirlX * (int) Math.pow(-1, i)));
             poseStack.mulPose(Axis.YP.rotationDegrees(swirlY * (int) Math.pow(-1, i)));
             poseStack.mulPose(Axis.ZP.rotationDegrees(swirlZ * (int) Math.pow(-1, i)));
-            consumer = bufferSource.getBuffer(RenderHelper.CustomerRenderType.magic(getSwirlTextureLocation(entity, i * i)));
+            consumer =
+                    bufferSource.getBuffer(
+                            RenderHelper.CustomerRenderType.magic(
+                                    getSwirlTextureLocation(entity, i * i)));
             float scale = 2f - i * scalePerLayer;
             poseStack.scale(scale, scale, scale);
-            this.orb.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, r, g, b, 1f);
+            this.orb.render(
+                    poseStack,
+                    consumer,
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    r,
+                    g,
+                    b,
+                    1f);
             poseStack.popPose();
         }
         poseStack.popPose();

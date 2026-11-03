@@ -18,7 +18,8 @@ import org.joml.Vector3f;
 
 @Environment(EnvType.CLIENT)
 public class EnderChainRenderer extends EntityRenderer<EnderChain> {
-    public static final ResourceLocation CHAIN_TEXTURE = IronsSpellbooks.id("textures/entity/ender_chain.png");
+    public static final ResourceLocation CHAIN_TEXTURE =
+            IronsSpellbooks.id("textures/entity/ender_chain.png");
 
     public EnderChainRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -26,29 +27,48 @@ public class EnderChainRenderer extends EntityRenderer<EnderChain> {
     }
 
     @Override
-    public void render(EnderChain entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(
+            EnderChain entity,
+            float entityYaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
         PartEntity<?>[] parts = entity.getParts();
         if (parts == null || parts.length == 0) {
             return;
         }
         PartEntity<?> last = parts[parts.length - 1];
-        Vec3 lastWorldpos = new Vec3(Mth.lerp(partialTick, last.xo, last.getX()), Mth.lerp(partialTick, last.yo, last.getY()), Mth.lerp(partialTick, last.zo, last.getZ()));
+        Vec3 lastWorldpos =
+                new Vec3(
+                        Mth.lerp(partialTick, last.xo, last.getX()),
+                        Mth.lerp(partialTick, last.yo, last.getY()),
+                        Mth.lerp(partialTick, last.zo, last.getZ()));
         Vec3 targetPos = lastWorldpos.subtract(entity.position());
-        float warmup = Mth.clamp((entity.warmup + partialTick) / EnderChain.VISUAL_WARMUP_TIME, 0, 1f);
+        float warmup =
+                Mth.clamp((entity.warmup + partialTick) / EnderChain.VISUAL_WARMUP_TIME, 0, 1f);
         renderChainBetween(Vec3.ZERO, targetPos, poseStack, bufferSource, warmup);
 
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
-    public static void renderChainBetween(Vec3 start, Vec3 to, PoseStack poseStack, MultiBufferSource multiBufferSource) {
+    public static void renderChainBetween(
+            Vec3 start, Vec3 to, PoseStack poseStack, MultiBufferSource multiBufferSource) {
         renderChainBetween(start, to, poseStack, multiBufferSource, 1f);
     }
 
-    public static void renderChainBetween(Vec3 start, Vec3 to, PoseStack poseStack, MultiBufferSource multiBufferSource, float warmupPercent) {
+    public static void renderChainBetween(
+            Vec3 start,
+            Vec3 to,
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource,
+            float warmupPercent) {
         poseStack.pushPose();
         poseStack.translate(start.x, start.y, start.z);
 
-        var consumer = multiBufferSource.getBuffer(RenderHelper.CustomerRenderType.magicNoCull(CHAIN_TEXTURE));
+        var consumer =
+                multiBufferSource.getBuffer(
+                        RenderHelper.CustomerRenderType.magicNoCull(CHAIN_TEXTURE));
         Vec3 delta = to.subtract(start);
         float distance = (float) delta.length();
         if (distance < 1.0E-4f) {
@@ -56,10 +76,14 @@ public class EnderChainRenderer extends EntityRenderer<EnderChain> {
             return;
         }
         Vec3 direction = delta.normalize();
-        Quaternionf rotation = new Quaternionf().rotationTo(
-                new Vector3f(0, 0, 1),
-                new Vector3f((float) direction.x, (float) direction.y, (float) direction.z)
-        );
+        Quaternionf rotation =
+                new Quaternionf()
+                        .rotationTo(
+                                new Vector3f(0, 0, 1),
+                                new Vector3f(
+                                        (float) direction.x,
+                                        (float) direction.y,
+                                        (float) direction.z));
         poseStack.mulPose(rotation);
 
         PoseStack.Pose pose = poseStack.last();
@@ -68,8 +92,10 @@ public class EnderChainRenderer extends EntityRenderer<EnderChain> {
         if (warmupPercent < 1) {
             origin = destination.scale(1 - warmupPercent);
         }
-        SpellRenderingHelper.drawQuad(origin, destination, 1, 0, pose, consumer, 255, 255, 255, 255, 0, distance);
-        SpellRenderingHelper.drawQuad(origin, destination, 0, 1, pose, consumer, 255, 255, 255, 255, 0, distance);
+        SpellRenderingHelper.drawQuad(
+                origin, destination, 1, 0, pose, consumer, 255, 255, 255, 255, 0, distance);
+        SpellRenderingHelper.drawQuad(
+                origin, destination, 0, 1, pose, consumer, 255, 255, 255, 255, 0, distance);
 
         poseStack.popPose();
     }
@@ -78,6 +104,4 @@ public class EnderChainRenderer extends EntityRenderer<EnderChain> {
     public ResourceLocation getTextureLocation(EnderChain entity) {
         return CHAIN_TEXTURE;
     }
-
-
 }

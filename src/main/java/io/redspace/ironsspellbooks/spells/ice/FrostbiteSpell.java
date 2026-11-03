@@ -27,22 +27,27 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class FrostbiteSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "frostbite");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "frostbite");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.shatter_damage", Utils.stringTruncation(getDamage(spellLevel, caster), 0)),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.shatter_damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 0)),
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.EPIC)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(60)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.EPIC)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(60)
+                    .build();
 
     public FrostbiteSpell() {
         this.manaCostPerLevel = 10;
@@ -68,11 +73,50 @@ public class FrostbiteSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.FROSTBITTEN_STRIKES.get(), (int) (getSpellPower(spellLevel, entity) * 20), getAmplifierForLevel(spellLevel), false, false, true));
-        MagicManager.spawnParticles(level, ParticleHelper.SNOW_DUST, entity.getX(), entity.getY() + 1, entity.getZ(), 50, 0.2, 0.2, 0.2, 0.1, false);
-        MagicManager.spawnParticles(level, new SwirlingParticleOptions(ParticleHelper.SNOWFLAKE, new Vec3(0, 1, 0), new Vec3(1, 0, 0),
-                new Vec3(0.75, 0.75, 12), new Vec3(0.025, 0.025, -.05)), entity.getX(), entity.getY() + 1, entity.getZ(), 35, 0, 0.5, 0, 0.01, false);        super.onCast(level, spellLevel, entity, castSource, playerMagicData);
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.FROSTBITTEN_STRIKES.get(),
+                        (int) (getSpellPower(spellLevel, entity) * 20),
+                        getAmplifierForLevel(spellLevel),
+                        false,
+                        false,
+                        true));
+        MagicManager.spawnParticles(
+                level,
+                ParticleHelper.SNOW_DUST,
+                entity.getX(),
+                entity.getY() + 1,
+                entity.getZ(),
+                50,
+                0.2,
+                0.2,
+                0.2,
+                0.1,
+                false);
+        MagicManager.spawnParticles(
+                level,
+                new SwirlingParticleOptions(
+                        ParticleHelper.SNOWFLAKE,
+                        new Vec3(0, 1, 0),
+                        new Vec3(1, 0, 0),
+                        new Vec3(0.75, 0.75, 12),
+                        new Vec3(0.025, 0.025, -.05)),
+                entity.getX(),
+                entity.getY() + 1,
+                entity.getZ(),
+                35,
+                0,
+                0.5,
+                0,
+                0.01,
+                false);
+        super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {

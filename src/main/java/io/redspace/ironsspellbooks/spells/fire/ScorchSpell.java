@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.spells.fire;
 
-
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
@@ -39,17 +38,21 @@ public class ScorchSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(12)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(12)
+                    .build();
 
     public ScorchSpell() {
         this.manaCostPerLevel = 5;
@@ -57,7 +60,6 @@ public class ScorchSpell extends AbstractSpell {
         this.spellPowerPerLevel = 1;
         this.castTime = 20;
         this.baseManaCost = 50;
-
     }
 
     @Override
@@ -81,45 +83,99 @@ public class ScorchSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         float radius = getRadius(entity);
-        var hitResult = RaycastBuilder.begin(level, entity)
-                .range(32)
-                .checkForBlocks(true)
-                .bbInflation(.2f)
-                .build();
+        var hitResult =
+                RaycastBuilder.begin(level, entity)
+                        .range(32)
+                        .checkForBlocks(true)
+                        .bbInflation(.2f)
+                        .build();
         Vec3 clip = Vec3.ZERO;
-        if(hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getDirection().getAxis().isHorizontal()){
-            // push hit result into the edge of next block to force it to pop up if targeting a ledge
+        if (hitResult instanceof BlockHitResult blockHitResult
+                && blockHitResult.getDirection().getAxis().isHorizontal()) {
+            // push hit result into the edge of next block to force it to pop up if targeting a
+            // ledge
             clip = entity.getForward().scale(0.5);
         }
-        Vec3 location = Utils.moveToRelativeGroundLevel(level, hitResult.getLocation().add(clip), 3, 6);
-        var area = TargetedAreaEntity.createTargetAreaEntity(level, location, radius, Utils.packRGB(this.getTargetingColor()));
+        Vec3 location =
+                Utils.moveToRelativeGroundLevel(level, hitResult.getLocation().add(clip), 3, 6);
+        var area =
+                TargetedAreaEntity.createTargetAreaEntity(
+                        level, location, radius, Utils.packRGB(this.getTargetingColor()));
         playerMagicData.setAdditionalCastData(new TargetAreaCastData(location, area));
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof TargetAreaCastData castData) {
             Vec3 targetArea = castData.getCenter();
-            MagicManager.spawnParticles(level, ParticleTypes.LAVA, targetArea.x, targetArea.y, targetArea.z, 25, 1, 1, 1, 1, true);
-            MagicManager.spawnParticles(level, ParticleTypes.LAVA, targetArea.x, targetArea.y + 1, targetArea.z, 25, .25, 1.5, .25, 1, false);
-            level.playSound(null, targetArea.x, targetArea.y, targetArea.z, SoundRegistry.FIERY_EXPLOSION.get(), SoundSource.PLAYERS, 2, Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleTypes.LAVA,
+                    targetArea.x,
+                    targetArea.y,
+                    targetArea.z,
+                    25,
+                    1,
+                    1,
+                    1,
+                    1,
+                    true);
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleTypes.LAVA,
+                    targetArea.x,
+                    targetArea.y + 1,
+                    targetArea.z,
+                    25,
+                    .25,
+                    1.5,
+                    .25,
+                    1,
+                    false);
+            level.playSound(
+                    null,
+                    targetArea.x,
+                    targetArea.y,
+                    targetArea.z,
+                    SoundRegistry.FIERY_EXPLOSION.get(),
+                    SoundSource.PLAYERS,
+                    2,
+                    Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
             var radius = castData.getCastingEntity().getRadius();
             var radiusSqr = radius * radius;
             var damage = getDamage(spellLevel, entity);
             var source = getDamageSource(entity);
-            level.getEntitiesOfClass(LivingEntity.class, new AABB(targetArea.subtract(radius, radius, radius), targetArea.add(radius, radius, radius)),
-                            livingEntity -> livingEntity != entity &&
-                                    horizontalDistanceSqr(livingEntity, targetArea) < radiusSqr &&
-                                    livingEntity.isPickable() &&
-                                    !DamageSources.isFriendlyFireBetween(livingEntity, entity) &&
-                                    Utils.hasLineOfSight(level, targetArea.add(0, 1.5, 0), livingEntity.getBoundingBox().getCenter(), true))
-                    .forEach(livingEntity -> {
-                        DamageSources.applyDamage(livingEntity, damage, source);
-                        DamageSources.ignoreNextKnockback(livingEntity);
-                    });
+            level.getEntitiesOfClass(
+                            LivingEntity.class,
+                            new AABB(
+                                    targetArea.subtract(radius, radius, radius),
+                                    targetArea.add(radius, radius, radius)),
+                            livingEntity ->
+                                    livingEntity != entity
+                                            && horizontalDistanceSqr(livingEntity, targetArea)
+                                                    < radiusSqr
+                                            && livingEntity.isPickable()
+                                            && !DamageSources.isFriendlyFireBetween(
+                                                    livingEntity, entity)
+                                            && Utils.hasLineOfSight(
+                                                    level,
+                                                    targetArea.add(0, 1.5, 0),
+                                                    livingEntity.getBoundingBox().getCenter(),
+                                                    true))
+                    .forEach(
+                            livingEntity -> {
+                                DamageSources.applyDamage(livingEntity, damage, source);
+                                DamageSources.ignoreNextKnockback(livingEntity);
+                            });
             FireField fire = new FireField(level);
             fire.setOwner(entity);
             fire.setDuration(200);
@@ -151,11 +207,12 @@ public class ScorchSpell extends AbstractSpell {
     private float getRadius(LivingEntity caster) {
         return 2.5f;
     }
-//
-//    @Override
-//    public Vector3f getTargetingColor() {
-//        return new Vector3f(.7f, .3f, .15f);
-//    }
+
+    //
+    //    @Override
+    //    public Vector3f getTargetingColor() {
+    //        return new Vector3f(.7f, .3f, .15f);
+    //    }
 
     @Override
     public AnimationHolder getCastStartAnimation() {

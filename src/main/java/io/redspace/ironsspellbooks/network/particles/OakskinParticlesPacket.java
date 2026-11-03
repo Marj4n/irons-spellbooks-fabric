@@ -8,7 +8,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class OakskinParticlesPacket implements CustomPacketPayload {
     private Vec3 pos;
 
@@ -39,9 +38,10 @@ public class OakskinParticlesPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientSpellCastHelper.handleClientboundOakskinParticles(pos);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientSpellCastHelper.handleClientboundOakskinParticles(pos);
+                });
         return true;
     }
 }

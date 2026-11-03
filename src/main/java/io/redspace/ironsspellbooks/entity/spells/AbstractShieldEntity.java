@@ -20,22 +20,25 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractShieldEntity extends Entity implements AntiMagicSusceptible, io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity {
-    private static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(AbstractShieldEntity.class, EntityDataSerializers.FLOAT);
+public abstract class AbstractShieldEntity extends Entity
+        implements AntiMagicSusceptible,
+                io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity {
+    private static final EntityDataAccessor<Float> DATA_HEALTH_ID =
+            SynchedEntityData.defineId(AbstractShieldEntity.class, EntityDataSerializers.FLOAT);
 
     public boolean hurtThisTick;
 
     public AbstractShieldEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-//        width = 3;
-//        height = 3;
-//        subEntities = new ShieldPart[width * height];
-//        subPositions = new Vec3[width * height];
-//        this.setHealth(100);
-//        //this.setXRot(45);
-//        //this.setYRot(45);
-//        LIFETIME = 20 * 20;
-//        createShield();
+        //        width = 3;
+        //        height = 3;
+        //        subEntities = new ShieldPart[width * height];
+        //        subPositions = new Vec3[width * height];
+        //        this.setHealth(100);
+        //        //this.setXRot(45);
+        //        //this.setYRot(45);
+        //        LIFETIME = 20 * 20;
+        //        createShield();
 
     }
 
@@ -46,12 +49,12 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
 
     protected abstract void createShield();
 
-//    public void setRotation(float x, float y) {
-//        this.setXRot(x);
-//        this.xRotO = x;
-//        this.setYRot(y);
-//        this.yRotO = y;
-//    }
+    //    public void setRotation(float x, float y) {
+    //        this.setXRot(x);
+    //        this.xRotO = x;
+    //        this.setYRot(y);
+    //        this.yRotO = y;
+    //    }
 
     public abstract void takeDamage(DamageSource source, float amount, @Nullable Vec3 location);
 
@@ -86,8 +89,10 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
     public void setId(int id) {
         super.setId(id);
         var subEntities = getParts();
-        for (int i = 0; i < subEntities.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
-            subEntities[i].setId(id + i + 1);
+        for (int i = 0;
+                i < subEntities.length;
+                i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
+        subEntities[i].setId(id + i + 1);
     }
 
     public float getHealth() {
@@ -123,7 +128,6 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
         pCompound.putFloat("Health", this.getHealth());
-
     }
 
     public List<VoxelShape> getVoxels() {

@@ -20,7 +20,8 @@ public class DamageTypeTagGenerator extends TagsProvider<DamageType> {
     }
 
     private static TagKey<DamageType> create(String name) {
-        return TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(IronsSpellbooks.MODID, name));
+        return TagKey.create(
+                Registries.DAMAGE_TYPE, new ResourceLocation(IronsSpellbooks.MODID, name));
     }
 
     public static final TagKey<DamageType> BYPASS_EVASION = create("bypass_evasion");
@@ -46,47 +47,47 @@ public class DamageTypeTagGenerator extends TagsProvider<DamageType> {
         tag(ELDRITCH_MAGIC).add(ISSDamageTypes.ELDRITCH_MAGIC);
         tag(NATURE_MAGIC).add(ISSDamageTypes.NATURE_MAGIC);
 
-        tag(BYPASS_EVASION).add(
-                DamageTypes.ON_FIRE,
-                DamageTypes.WITHER,
-                DamageTypes.FREEZE,
-                DamageTypes.STARVE,
-                DamageTypes.DROWN,
-                DamageTypes.STALAGMITE,
-                DamageTypes.OUTSIDE_BORDER,
-                DamageTypes.FELL_OUT_OF_WORLD,
-                DamageTypes.DRY_OUT,
-                DamageTypes.IN_WALL,
-                ISSDamageTypes.CAULDRON,
-                ISSDamageTypes.HEARTSTOP
-        );
-//        tag(BYPASS_EVASION).addOptional(
-//                NeoForgeMod.POISON_DAMAGE.location()
-//        );
+        tag(BYPASS_EVASION)
+                .add(
+                        DamageTypes.ON_FIRE,
+                        DamageTypes.WITHER,
+                        DamageTypes.FREEZE,
+                        DamageTypes.STARVE,
+                        DamageTypes.DROWN,
+                        DamageTypes.STALAGMITE,
+                        DamageTypes.OUTSIDE_BORDER,
+                        DamageTypes.FELL_OUT_OF_WORLD,
+                        DamageTypes.DRY_OUT,
+                        DamageTypes.IN_WALL,
+                        ISSDamageTypes.CAULDRON,
+                        ISSDamageTypes.HEARTSTOP);
+        //        tag(BYPASS_EVASION).addOptional(
+        //                NeoForgeMod.POISON_DAMAGE.location()
+        //        );
 
-        tag(LONG_CAST_IGNORE).add(
-                DamageTypes.FREEZE,
-                DamageTypes.STARVE,
-                DamageTypes.ON_FIRE,
-                DamageTypes.WITHER,
-                ISSDamageTypes.HEARTSTOP,
-                DamageTypes.DROWN,
-                DamageTypes.FALL
-        );
-//        tag(LONG_CAST_IGNORE).addOptional(
-//                NeoForgeMod.POISON_DAMAGE.location()
-//        );
-//        tag(Tags.)
-//                .addTags(
-//                        FIRE_MAGIC,
-//                        ICE_MAGIC,
-//                        LIGHTNING_MAGIC,
-//                        HOLY_MAGIC,
-//                        ENDER_MAGIC,
-//                        BLOOD_MAGIC,
-//                        EVOCATION_MAGIC,
-//                        ELDRITCH_MAGIC,
-//                        NATURE_MAGIC
-//                );
+        tag(LONG_CAST_IGNORE)
+                .add(
+                        DamageTypes.FREEZE,
+                        DamageTypes.STARVE,
+                        DamageTypes.ON_FIRE,
+                        DamageTypes.WITHER,
+                        ISSDamageTypes.HEARTSTOP,
+                        DamageTypes.DROWN,
+                        DamageTypes.FALL);
+        //        tag(LONG_CAST_IGNORE).addOptional(
+        //                NeoForgeMod.POISON_DAMAGE.location()
+        //        );
+        //        tag(Tags.)
+        //                .addTags(
+        //                        FIRE_MAGIC,
+        //                        ICE_MAGIC,
+        //                        LIGHTNING_MAGIC,
+        //                        HOLY_MAGIC,
+        //                        ENDER_MAGIC,
+        //                        BLOOD_MAGIC,
+        //                        EVOCATION_MAGIC,
+        //                        ELDRITCH_MAGIC,
+        //                        NATURE_MAGIC
+        //                );
     }
 }

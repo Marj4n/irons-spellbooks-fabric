@@ -20,20 +20,31 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class FireBossSoulLayer extends GeoRenderLayer<AbstractSpellCastingMob> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/keeper/keeper_ghost.png");
+    private static final ResourceLocation TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/keeper/keeper_ghost.png");
 
     public FireBossSoulLayer(GeoEntityRenderer entityRendererIn) {
         super(entityRendererIn);
     }
 
     @Override
-    public void render(PoseStack poseStack, AbstractSpellCastingMob animatable, BakedGeoModel bakedModel, RenderType renderType2, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+    public void render(
+            PoseStack poseStack,
+            AbstractSpellCastingMob animatable,
+            BakedGeoModel bakedModel,
+            RenderType renderType2,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay) {
 
         int i = animatable.hurtTime + animatable.deathTime;
         if (i <= 0) {
             return;
         }
-        float alpha = (animatable.deathTime > 0) ? i / 120f : i / (float) animatable.hurtDuration * 2;
+        float alpha =
+                (animatable.deathTime > 0) ? i / 120f : i / (float) animatable.hurtDuration * 2;
 
         float f = (float) animatable.tickCount + partialTick;
         var renderType = RenderType.energySwirl(TEXTURE, f * 0.02F % 1.0F, f * 0.01F % 1.0F);
@@ -42,8 +53,22 @@ public class FireBossSoulLayer extends GeoRenderLayer<AbstractSpellCastingMob> {
         poseStack.pushPose();
         var bones = bakedModel.topLevelBones();
         setArmorVisible(bones, false);
-        this.getRenderer().actuallyRender(poseStack, animatable, bakedModel, renderType, bufferSource, vertexconsumer, true, partialTick,
-                LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, .15f * alpha, .02f * alpha, 0.0f * alpha, 1f);
+        this.getRenderer()
+                .actuallyRender(
+                        poseStack,
+                        animatable,
+                        bakedModel,
+                        renderType,
+                        bufferSource,
+                        vertexconsumer,
+                        true,
+                        partialTick,
+                        LightTexture.FULL_BRIGHT,
+                        OverlayTexture.NO_OVERLAY,
+                        .15f * alpha,
+                        .02f * alpha,
+                        0.0f * alpha,
+                        1f);
         setArmorVisible(bones, true);
 
         poseStack.popPose();

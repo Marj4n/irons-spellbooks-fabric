@@ -60,14 +60,24 @@ public class SmallMagicFireball extends AbstractMagicProjectile {
             var x = Mth.lerp(f, d0, this.getX());
             var y = Mth.lerp(f, d1, this.getY());
             var z = Mth.lerp(f, d2, this.getZ());
-            this.level().addParticle(ParticleHelper.EMBERS, x - random.x, y + 0.5D - random.y, z - random.z, random.x * .5f, random.y * .5f, random.z * .5f);
+            this.level()
+                    .addParticle(
+                            ParticleHelper.EMBERS,
+                            x - random.x,
+                            y + 0.5D - random.y,
+                            z - random.z,
+                            random.x * .5f,
+                            random.y * .5f,
+                            random.z * .5f);
         }
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.FIERY_SPARKS, x, y, z, 5, 0, 0, 0, 0.25, true);
-        MagicManager.spawnParticles(level(), ParticleHelper.FIERY_SPARKS, x, y, z, 5, 0, 0, 0, 0.25, false);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.FIERY_SPARKS, x, y, z, 5, 0, 0, 0, 0.25, true);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.FIERY_SPARKS, x, y, z, 5, 0, 0, 0, 0.25, false);
     }
 
     @Override
@@ -85,7 +95,10 @@ public class SmallMagicFireball extends AbstractMagicProjectile {
         if (!this.level().isClientSide) {
             var target = pResult.getEntity();
             var owner = getOwner();
-            DamageSources.applyDamage(target, damage, SpellRegistry.BLAZE_STORM_SPELL.get().getDamageSource(this, owner));
+            DamageSources.applyDamage(
+                    target,
+                    damage,
+                    SpellRegistry.BLAZE_STORM_SPELL.get().getDamageSource(this, owner));
         }
     }
 
@@ -95,7 +108,9 @@ public class SmallMagicFireball extends AbstractMagicProjectile {
             if (ServerConfigs.SPELL_GREIFING.get()) {
                 BlockPos blockpos = pResult.getBlockPos().relative(pResult.getDirection());
                 if (this.level().isEmptyBlock(blockpos)) {
-                    this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
+                    this.level()
+                            .setBlockAndUpdate(
+                                    blockpos, BaseFireBlock.getState(this.level(), blockpos));
                 }
             }
         }

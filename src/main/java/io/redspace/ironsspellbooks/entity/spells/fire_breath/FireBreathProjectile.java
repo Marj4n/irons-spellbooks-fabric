@@ -21,7 +21,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class FireBreathProjectile extends AbstractConeProjectile {
-    public FireBreathProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level) {
+    public FireBreathProjectile(
+            EntityType<? extends AbstractConeProjectile> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -33,26 +34,42 @@ public class FireBreathProjectile extends AbstractConeProjectile {
     public void tick() {
         if (!level().isClientSide) {
             if (dealDamageActive) {
-                //Set Fire Blocks
+                // Set Fire Blocks
                 if (ServerConfigs.SPELL_GREIFING.get()) {
                     float range = 15 * Mth.DEG_TO_RAD;
                     for (int i = 0; i < 3; i++) {
-                        Vec3 cast = getOwner().getLookAngle().normalize().xRot(Utils.random.nextFloat() * range * 2 - range).yRot(Utils.random.nextFloat() * range * 2 - range);
-                        HitResult hitResult = level().clip(new ClipContext(getOwner().getEyePosition(), getOwner().getEyePosition().add(cast.scale(10)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+                        Vec3 cast =
+                                getOwner()
+                                        .getLookAngle()
+                                        .normalize()
+                                        .xRot(Utils.random.nextFloat() * range * 2 - range)
+                                        .yRot(Utils.random.nextFloat() * range * 2 - range);
+                        HitResult hitResult =
+                                level().clip(
+                                                new ClipContext(
+                                                        getOwner().getEyePosition(),
+                                                        getOwner()
+                                                                .getEyePosition()
+                                                                .add(cast.scale(10)),
+                                                        ClipContext.Block.COLLIDER,
+                                                        ClipContext.Fluid.NONE,
+                                                        this));
                         if (hitResult.getType() == HitResult.Type.BLOCK) {
-                            HitResult shieldResult = RaycastBuilder.begin(level(), this)
-                                    .start(getOwner().getEyePosition())
-                                    .end(hitResult.getLocation())
-                                    .checkForBlocks(false)
-                                    .filter(e -> e.getClass() == AbstractShieldEntity.class)
-                                    .build();
+                            HitResult shieldResult =
+                                    RaycastBuilder.begin(level(), this)
+                                            .start(getOwner().getEyePosition())
+                                            .end(hitResult.getLocation())
+                                            .checkForBlocks(false)
+                                            .filter(e -> e.getClass() == AbstractShieldEntity.class)
+                                            .build();
                             if (shieldResult.getType() == HitResult.Type.MISS) {
                                 Vec3 pos = hitResult.getLocation().subtract(cast.scale(.5));
                                 BlockPos blockPos = BlockPos.containing(pos.x, pos.y, pos.z);
                                 if (level().getBlockState(blockPos).isAir())
-                                    level().setBlockAndUpdate(blockPos, BaseFireBlock.getState(this.level(), blockPos));
+                                    level().setBlockAndUpdate(
+                                                    blockPos,
+                                                    BaseFireBlock.getState(this.level(), blockPos));
                             }
-
                         }
                     }
                 }
@@ -60,7 +77,6 @@ public class FireBreathProjectile extends AbstractConeProjectile {
         }
         super.tick();
     }
-
 
     @Override
     public void spawnParticles() {
@@ -83,15 +99,30 @@ public class FireBreathProjectile extends AbstractConeProjectile {
             double oz = Math.random() * 2 * offset - offset;
 
             double angularness = .5;
-            Vec3 randomVec = new Vec3(Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness).normalize();
+            Vec3 randomVec =
+                    new Vec3(
+                                    Math.random() * 2 * angularness - angularness,
+                                    Math.random() * 2 * angularness - angularness,
+                                    Math.random() * 2 * angularness - angularness)
+                            .normalize();
             Vec3 result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
-            level().addParticle(ParticleHelper.FIRE_EMITTER, x + ox, y + oy, z + oz, result.x, result.y, result.z);
+            level().addParticle(
+                            ParticleHelper.FIRE_EMITTER,
+                            x + ox,
+                            y + oy,
+                            z + oz,
+                            result.x,
+                            result.y,
+                            result.z);
         }
     }
 
     @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
         var entity = entityHitResult.getEntity();
-        DamageSources.applyDamage(entity, damage, SpellRegistry.FIRE_BREATH_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                entity,
+                damage,
+                SpellRegistry.FIRE_BREATH_SPELL.get().getDamageSource(this, getOwner()));
     }
 }

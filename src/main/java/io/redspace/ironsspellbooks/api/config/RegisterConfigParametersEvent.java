@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.api.config;
 
-
 import org.marj4n.irons_spellbooks.events.SpellEvent;
 
 import java.util.function.Consumer;

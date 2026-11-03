@@ -12,15 +12,21 @@ public final class FabricChannelClient {
     private FabricChannelClient() {}
 
     public static void initialize(FabricChannel channel) {
-        channel.installClientTransport((id, payload) -> {
-            if (!ClientPlayNetworking.canSend(id)) {
-                payload.release();
-                throw new IllegalStateException("The server does not support Iron's Fabric spell packets");
-            }
-            ClientPlayNetworking.send(id, payload);
-        });
-        ClientPlayNetworking.registerGlobalReceiver(channel.id(), (client, listener, buffer, response) ->
-                channel.handle(buffer, FabricChannel.Direction.PLAY_TO_CLIENT,
-                        new FabricPacketContext(client, null)));
+        channel.installClientTransport(
+                (id, payload) -> {
+                    if (!ClientPlayNetworking.canSend(id)) {
+                        payload.release();
+                        throw new IllegalStateException(
+                                "The server does not support Iron's Fabric spell packets");
+                    }
+                    ClientPlayNetworking.send(id, payload);
+                });
+        ClientPlayNetworking.registerGlobalReceiver(
+                channel.id(),
+                (client, listener, buffer, response) ->
+                        channel.handle(
+                                buffer,
+                                FabricChannel.Direction.PLAY_TO_CLIENT,
+                                new FabricPacketContext(client, null)));
     }
 }

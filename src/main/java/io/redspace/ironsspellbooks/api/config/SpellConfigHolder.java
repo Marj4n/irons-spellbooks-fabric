@@ -50,7 +50,9 @@ public class SpellConfigHolder {
             T value = (T) entry.getValue();
             Codec<T> codec = param.datatype();
             DataResult<JsonElement> result = codec.encodeStart(JsonOps.INSTANCE, value);
-            json.add(param.key().toString(), gson.toJsonTree(result.getOrThrow(false, IronsSpellbooks.LOGGER::error)));
+            json.add(
+                    param.key().toString(),
+                    gson.toJsonTree(result.getOrThrow(false, IronsSpellbooks.LOGGER::error)));
         }
         return json;
     }

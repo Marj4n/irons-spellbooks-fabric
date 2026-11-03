@@ -18,29 +18,49 @@ import org.jetbrains.annotations.NotNull;
 
 public record SwirlingParticleOptions(
         ParticleOptions particleOptions,
-        Vec3 normal, Vec3 up,
+        Vec3 normal,
+        Vec3 up,
         Vec3 heightWidthSpeed,
-        Vec3 deltaHeightWidthSpeed
-) implements ParticleOptions {
+        Vec3 deltaHeightWidthSpeed)
+        implements ParticleOptions {
 
-//    public static StreamCodec<RegistryFriendlyByteBuf, SwirlingParticleOptions> STREAM_CODEC = StreamCodec.composite(
-//            ParticleTypes.STREAM_CODEC, SwirlingParticleOptions::particleOptions,
-//            ByteBufCodecs.fromCodec(Vec3.CODEC), SwirlingParticleOptions::normal,
-//            ByteBufCodecs.fromCodec(Vec3.CODEC), SwirlingParticleOptions::up,
-//            ByteBufCodecs.fromCodec(Vec3.CODEC), SwirlingParticleOptions::heightWidthSpeed,
-//            ByteBufCodecs.fromCodec(Vec3.CODEC), SwirlingParticleOptions::deltaHeightWidthSpeed,
-//            SwirlingParticleOptions::new
-//    );
+    //    public static StreamCodec<RegistryFriendlyByteBuf, SwirlingParticleOptions> STREAM_CODEC =
+    // StreamCodec.composite(
+    //            ParticleTypes.STREAM_CODEC, SwirlingParticleOptions::particleOptions,
+    //            ByteBufCodecs.fromCodec(Vec3.CODEC), SwirlingParticleOptions::normal,
+    //            ByteBufCodecs.fromCodec(Vec3.CODEC), SwirlingParticleOptions::up,
+    //            ByteBufCodecs.fromCodec(Vec3.CODEC), SwirlingParticleOptions::heightWidthSpeed,
+    //            ByteBufCodecs.fromCodec(Vec3.CODEC),
+    // SwirlingParticleOptions::deltaHeightWidthSpeed,
+    //            SwirlingParticleOptions::new
+    //    );
 
-    public static Codec<SwirlingParticleOptions> MAP_CODEC = RecordCodecBuilder.create(builder ->
-            builder.group(
-                    ParticleTypes.CODEC.fieldOf("particle").forGetter(SwirlingParticleOptions::particleOptions),
-                    Vec3.CODEC.fieldOf("normal").forGetter(SwirlingParticleOptions::normal),
-                    Vec3.CODEC.fieldOf("up").forGetter(SwirlingParticleOptions::up),
-                    Vec3.CODEC.fieldOf("hws").forGetter(SwirlingParticleOptions::heightWidthSpeed),
-                    Vec3.CODEC.fieldOf("dhws").forGetter(SwirlingParticleOptions::deltaHeightWidthSpeed)
-            ).apply(builder, SwirlingParticleOptions::new
-            ));
+    public static Codec<SwirlingParticleOptions> MAP_CODEC =
+            RecordCodecBuilder.create(
+                    builder ->
+                            builder.group(
+                                            ParticleTypes.CODEC
+                                                    .fieldOf("particle")
+                                                    .forGetter(
+                                                            SwirlingParticleOptions
+                                                                    ::particleOptions),
+                                            Vec3.CODEC
+                                                    .fieldOf("normal")
+                                                    .forGetter(SwirlingParticleOptions::normal),
+                                            Vec3.CODEC
+                                                    .fieldOf("up")
+                                                    .forGetter(SwirlingParticleOptions::up),
+                                            Vec3.CODEC
+                                                    .fieldOf("hws")
+                                                    .forGetter(
+                                                            SwirlingParticleOptions
+                                                                    ::heightWidthSpeed),
+                                            Vec3.CODEC
+                                                    .fieldOf("dhws")
+                                                    .forGetter(
+                                                            SwirlingParticleOptions
+                                                                    ::deltaHeightWidthSpeed))
+                                    .apply(builder, SwirlingParticleOptions::new));
 
     public @NotNull ParticleType<SwirlingParticleOptions> getType() {
         return ParticleRegistry.SWIRLING_PARTICLE.get();
@@ -75,19 +95,29 @@ public record SwirlingParticleOptions(
     }
 
     @SuppressWarnings("deprecation")
-    public static final ParticleOptions.Deserializer<SwirlingParticleOptions> DESERIALIZER = new ParticleOptions.Deserializer<SwirlingParticleOptions>() {
-        public SwirlingParticleOptions fromCommand(ParticleType<SwirlingParticleOptions> p_123645_, StringReader p_123646_) throws CommandSyntaxException {
-//            p_123646_.expect(' ');
-//            var state = BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), p_123646_, false).blockState();
-//            var vector = DustParticleOptionsBase.readVector3f(p_123646_);
-//            return new SwirlingParticleOptions(p_123645_, state, new Vec3(vector.x(), vector.y(), vector.z()));
-             throw new SimpleCommandExceptionType(Component.literal("not supported")).create();
-        }
+    public static final ParticleOptions.Deserializer<SwirlingParticleOptions> DESERIALIZER =
+            new ParticleOptions.Deserializer<SwirlingParticleOptions>() {
+                public SwirlingParticleOptions fromCommand(
+                        ParticleType<SwirlingParticleOptions> p_123645_, StringReader p_123646_)
+                        throws CommandSyntaxException {
+                    //            p_123646_.expect(' ');
+                    //            var state =
+                    // BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), p_123646_,
+                    // false).blockState();
+                    //            var vector = DustParticleOptionsBase.readVector3f(p_123646_);
+                    //            return new SwirlingParticleOptions(p_123645_, state, new
+                    // Vec3(vector.x(), vector.y(), vector.z()));
+                    throw new SimpleCommandExceptionType(Component.literal("not supported"))
+                            .create();
+                }
 
-        public @NotNull SwirlingParticleOptions fromNetwork(@NotNull ParticleType<SwirlingParticleOptions> p_123692_, @NotNull FriendlyByteBuf buf) {
-            ParticleType particletype = buf.readById(BuiltInRegistries.PARTICLE_TYPE);
-            var particle = particletype.getDeserializer().fromNetwork(particletype, buf);
-            return new SwirlingParticleOptions(particle, readVec3(buf), readVec3(buf), readVec3(buf), readVec3(buf));
-        }
-    };
+                public @NotNull SwirlingParticleOptions fromNetwork(
+                        @NotNull ParticleType<SwirlingParticleOptions> p_123692_,
+                        @NotNull FriendlyByteBuf buf) {
+                    ParticleType particletype = buf.readById(BuiltInRegistries.PARTICLE_TYPE);
+                    var particle = particletype.getDeserializer().fromNetwork(particletype, buf);
+                    return new SwirlingParticleOptions(
+                            particle, readVec3(buf), readVec3(buf), readVec3(buf), readVec3(buf));
+                }
+            };
 }

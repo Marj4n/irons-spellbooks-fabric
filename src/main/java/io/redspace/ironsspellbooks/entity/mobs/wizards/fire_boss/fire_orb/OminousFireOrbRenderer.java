@@ -21,19 +21,20 @@ public class OminousFireOrbRenderer extends EntityRenderer<OminousFireOrbEntity>
     protected final ModelPart fireball;
     protected final ModelPart outline;
 
-    public static final ResourceLocation BASE_TEXTURE = IronsSpellbooks.id("textures/entity/fireball/fireball_core_soul.png");
+    public static final ResourceLocation BASE_TEXTURE =
+            IronsSpellbooks.id("textures/entity/fireball/fireball_core_soul.png");
     public static ResourceLocation[] SWIRL_TEXTURES = {
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_0.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_1.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_2.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_3.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_4.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_5.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_6.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_7.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_8.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_9.png"),
-            IronsSpellbooks.id("textures/entity/fireball/soul_swirl_10.png")
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_0.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_1.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_2.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_3.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_4.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_5.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_6.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_7.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_8.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_9.png"),
+        IronsSpellbooks.id("textures/entity/fireball/soul_swirl_10.png")
     };
 
     public OminousFireOrbRenderer(EntityRendererProvider.Context context) {
@@ -44,7 +45,13 @@ public class OminousFireOrbRenderer extends EntityRenderer<OminousFireOrbEntity>
     }
 
     @Override
-    public void render(OminousFireOrbEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(
+            OminousFireOrbEntity entity,
+            float entityYaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         float f = entity.tickCount + partialTick;
 
@@ -68,23 +75,42 @@ public class OminousFireOrbRenderer extends EntityRenderer<OminousFireOrbEntity>
         poseStack.mulPose(Axis.ZP.rotationDegrees(swirlZ));
 
         if (entity.getFuseProgressTicks() > 0) {
-            VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(BASE_TEXTURE));
-            fireball.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+            VertexConsumer consumer =
+                    bufferSource.getBuffer(RenderType.entityCutoutNoCull(BASE_TEXTURE));
+            fireball.render(
+                    poseStack,
+                    consumer,
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    1f,
+                    1f,
+                    1f,
+                    1f);
         }
         if (fuse > 0 || chargeTime > 0) {
             float percent = entity.tickCount >= chargeTime ? fusePercent : 1f - chargePercent;
             float intensity = Mth.lerp(percent, .5f, 1.25f);
-            float outlineScale = Mth.lerp(percent, 0.8f, 2.5f) + Mth.sin(f * intensity) * .4f * intensity;
+            float outlineScale =
+                    Mth.lerp(percent, 0.8f, 2.5f) + Mth.sin(f * intensity) * .4f * intensity;
             poseStack.scale(outlineScale, outlineScale, outlineScale);
-            VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getSwirlTextureLocation(entity)));
+            VertexConsumer consumer =
+                    bufferSource.getBuffer(
+                            RenderType.entityCutoutNoCull(getSwirlTextureLocation(entity)));
             poseStack.mulPose(Axis.XP.rotationDegrees(swirlX));
             poseStack.mulPose(Axis.YP.rotationDegrees(swirlY));
             poseStack.mulPose(Axis.ZP.rotationDegrees(swirlZ));
 
-            outline.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+            outline.render(
+                    poseStack,
+                    consumer,
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    1f,
+                    1f,
+                    1f,
+                    1f);
         }
         poseStack.popPose();
-
     }
 
     private static ResourceLocation getSwirlTextureLocation(Entity entity) {

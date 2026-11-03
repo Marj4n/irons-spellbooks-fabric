@@ -23,12 +23,16 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class GuidingBoltProjectile extends AbstractMagicProjectile {
-    public GuidingBoltProjectile(EntityType<? extends GuidingBoltProjectile> entityType, Level level) {
+    public GuidingBoltProjectile(
+            EntityType<? extends GuidingBoltProjectile> entityType, Level level) {
         super(entityType, level);
         this.setNoGravity(true);
     }
 
-    public GuidingBoltProjectile(EntityType<? extends GuidingBoltProjectile> entityType, Level levelIn, LivingEntity shooter) {
+    public GuidingBoltProjectile(
+            EntityType<? extends GuidingBoltProjectile> entityType,
+            Level levelIn,
+            LivingEntity shooter) {
         this(entityType, levelIn);
         setOwner(shooter);
     }
@@ -54,32 +58,41 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
 
     @Override
     protected void doImpactSound(Supplier<SoundEvent> sound) {
-        level().playSound(null, getX(), getY(), getZ(), sound.get(), SoundSource.NEUTRAL, 2, 0.9f + Utils.random.nextFloat() * .4f);
+        level().playSound(
+                        null,
+                        getX(),
+                        getY(),
+                        getZ(),
+                        sound.get(),
+                        SoundSource.NEUTRAL,
+                        2,
+                        0.9f + Utils.random.nextFloat() * .4f);
     }
 
     @Override
     protected void onHitBlock(BlockHitResult blockHitResult) {
         super.onHitBlock(blockHitResult);
-        //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitBlock");
+        // irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitBlock");
         discard();
-
     }
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
-        //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitEntity");
+        // irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitEntity");
 
-        if (DamageSources.applyDamage(entityHitResult.getEntity(), damage, SpellRegistry.GUIDING_BOLT_SPELL.get().getDamageSource(this, getOwner()))) {
+        if (DamageSources.applyDamage(
+                entityHitResult.getEntity(),
+                damage,
+                SpellRegistry.GUIDING_BOLT_SPELL.get().getDamageSource(this, getOwner()))) {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-                livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GUIDING_BOLT.get(), 25 * 20));
+                livingEntity.addEffect(
+                        new MobEffectInstance(MobEffectRegistry.GUIDING_BOLT.get(), 25 * 20));
             }
         }
         consumeEntityImpact(entityHitResult, true);
-
     }
 
     @Override
-    public void trailParticles() {
-    }
+    public void trailParticles() {}
 }

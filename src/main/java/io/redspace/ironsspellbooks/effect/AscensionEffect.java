@@ -26,13 +26,20 @@ public class AscensionEffect extends MagicMobEffect implements ISyncedMobEffect 
     public static void ambientParticles(ClientLevel level, LivingEntity entity) {
         var random = entity.getRandom();
         for (int i = 0; i < 2; i++) {
-            Vec3 motion = new Vec3(
-                    random.nextFloat() * 2 - 1,
-                    random.nextFloat() * 2 - 1,
-                    random.nextFloat() * 2 - 1
-            );
+            Vec3 motion =
+                    new Vec3(
+                            random.nextFloat() * 2 - 1,
+                            random.nextFloat() * 2 - 1,
+                            random.nextFloat() * 2 - 1);
             motion = motion.scale(.04f);
-            level.addParticle(ParticleHelper.ELECTRICITY, entity.getRandomX(.4f), entity.getRandomY(), entity.getRandomZ(.4f), motion.x, motion.y, motion.z);
+            level.addParticle(
+                    ParticleHelper.ELECTRICITY,
+                    entity.getRandomX(.4f),
+                    entity.getRandomY(),
+                    entity.getRandomZ(.4f),
+                    motion.x,
+                    motion.y,
+                    motion.z);
         }
     }
 

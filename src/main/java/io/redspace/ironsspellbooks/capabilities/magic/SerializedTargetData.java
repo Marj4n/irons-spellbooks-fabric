@@ -22,9 +22,7 @@ public class SerializedTargetData implements ICastDataSerializable {
     }
 
     @Override
-    public void reset() {
-
-    }
+    public void reset() {}
 
     @Nullable
     public Entity getTarget(ServerLevel level) {

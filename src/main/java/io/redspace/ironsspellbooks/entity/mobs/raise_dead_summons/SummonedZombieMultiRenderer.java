@@ -15,20 +15,28 @@ public class SummonedZombieMultiRenderer extends HumanoidRenderer<SummonedZombie
 
     public SummonedZombieMultiRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new SummonedZombieModel());
-        vanillaRenderer = new ZombieRenderer(pContext) {
-            @Override
-            public ResourceLocation getTextureLocation(Zombie pEntity) {
-                return SummonedZombieModel.TEXTURE;
-            }
-        };
+        vanillaRenderer =
+                new ZombieRenderer(pContext) {
+                    @Override
+                    public ResourceLocation getTextureLocation(Zombie pEntity) {
+                        return SummonedZombieModel.TEXTURE;
+                    }
+                };
         vanillaRenderer.addLayer(new SpellTargetingLayer.Vanilla<>(vanillaRenderer));
     }
 
     @Override
-    public void render(SummonedZombie entity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(
+            SummonedZombie entity,
+            float pEntityYaw,
+            float pPartialTick,
+            PoseStack pPoseStack,
+            MultiBufferSource pBuffer,
+            int pPackedLight) {
         if (entity.isAnimatingRise())
             super.render(entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
         else
-            vanillaRenderer.render(entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
+            vanillaRenderer.render(
+                    entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
     }
 }

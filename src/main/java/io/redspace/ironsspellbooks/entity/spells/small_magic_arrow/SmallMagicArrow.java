@@ -24,7 +24,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class SmallMagicArrow extends AbstractMagicProjectile {
-    private static final EntityDataAccessor<Boolean> IN_GROUND = SynchedEntityData.defineId(SmallMagicArrow.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IN_GROUND =
+            SynchedEntityData.defineId(SmallMagicArrow.class, EntityDataSerializers.BOOLEAN);
 
     public SmallMagicArrow(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -70,7 +71,9 @@ public class SmallMagicArrow extends AbstractMagicProjectile {
     }
 
     private boolean shouldFall() {
-        return this.inGround && this.level().noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
+        return this.inGround
+                && this.level()
+                        .noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
     }
 
     @Override
@@ -87,11 +90,14 @@ public class SmallMagicArrow extends AbstractMagicProjectile {
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
-        if (level().isClientSide)
-            return;
+        if (level().isClientSide) return;
         Entity entity = entityHitResult.getEntity();
-        boolean hit = DamageSources.applyDamage(entity, getDamage(), SpellRegistry.ARROW_VOLLEY_SPELL.get().getDamageSource(this, getOwner()));
-        //TODO: add evasion and stuff. Also do this for all other projectiles?
+        boolean hit =
+                DamageSources.applyDamage(
+                        entity,
+                        getDamage(),
+                        SpellRegistry.ARROW_VOLLEY_SPELL.get().getDamageSource(this, getOwner()));
+        // TODO: add evasion and stuff. Also do this for all other projectiles?
         boolean ignore = entity.getType() == EntityType.ENDERMAN;
         if (hit) {
             this.consumeEntityImpact(entityHitResult, true);
@@ -115,12 +121,10 @@ public class SmallMagicArrow extends AbstractMagicProjectile {
     }
 
     @Override
-    public void trailParticles() {
-    }
+    public void trailParticles() {}
 
     @Override
-    public void impactParticles(double x, double y, double z) {
-    }
+    public void impactParticles(double x, double y, double z) {}
 
     @Override
     public float getSpeed() {

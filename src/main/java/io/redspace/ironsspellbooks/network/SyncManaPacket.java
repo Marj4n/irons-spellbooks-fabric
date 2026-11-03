@@ -8,14 +8,12 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class SyncManaPacket implements CustomPacketPayload {
     private int playerMana = 0;
     private MagicData playerMagicData = null;
 
-
     public SyncManaPacket(MagicData playerMagicData) {
-        //Server side only
+        // Server side only
         this.playerMagicData = playerMagicData;
     }
 
@@ -29,9 +27,10 @@ public class SyncManaPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientMagicData.setMana(playerMana);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientMagicData.setMana(playerMana);
+                });
         return true;
     }
 }

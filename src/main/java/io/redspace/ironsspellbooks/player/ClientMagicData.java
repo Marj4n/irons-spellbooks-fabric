@@ -29,12 +29,14 @@ public class ClientMagicData {
      * Current Player's Synced Data
      */
     private static final MagicData playerMagicData = new MagicData();
+
     private static final Set<UUID> activeSummons = new HashSet<>();
 
     /**
      * Other Player's Synced Data
      */
     private static final HashMap<Integer, SyncedSpellData> playerSyncedDataLookup = new HashMap<>();
+
     private static final SyncedSpellData emptySyncedData = new SyncedSpellData(-999);
 
     /**
@@ -48,7 +50,6 @@ public class ClientMagicData {
             if (player != null) {
                 spellSelectionManager = new SpellSelectionManager(player);
             }
-
         }
 
         return spellSelectionManager;
@@ -75,8 +76,7 @@ public class ClientMagicData {
     }
 
     public static ClientSpellTargetingData getTargetingData() {
-        if (spellTargetingData == null)
-            setTargetingData(new ClientSpellTargetingData());
+        if (spellTargetingData == null) setTargetingData(new ClientSpellTargetingData());
         return spellTargetingData;
     }
 
@@ -95,11 +95,14 @@ public class ClientMagicData {
     public static void cacheClientSummons() {
         var recasts = getRecasts();
         activeSummons.clear();
-        recasts.getActiveRecasts().forEach(instance -> {
-            if (instance.getCastData() instanceof SummonedEntitiesCastData summonedEntitiesCastData) {
-                activeSummons.addAll(summonedEntitiesCastData.getSummons());
-            }
-        });
+        recasts.getActiveRecasts()
+                .forEach(
+                        instance -> {
+                            if (instance.getCastData()
+                                    instanceof SummonedEntitiesCastData summonedEntitiesCastData) {
+                                activeSummons.addAll(summonedEntitiesCastData.getSummons());
+                            }
+                        });
     }
 
     public static void setRecasts(PlayerRecasts playerRecasts) {
@@ -155,21 +158,35 @@ public class ClientMagicData {
         return playerMagicData.getCastCompletionPercent();
     }
 
-    public static void setClientCastState(String spellId, int spellLevel, int castDuration, CastSource castSource, String castingEquipmentSlot) {
-        playerMagicData.initiateCast(SpellRegistry.getSpell(spellId), spellLevel, castDuration, castSource, castingEquipmentSlot);
+    public static void setClientCastState(
+            String spellId,
+            int spellLevel,
+            int castDuration,
+            CastSource castSource,
+            String castingEquipmentSlot) {
+        playerMagicData.initiateCast(
+                SpellRegistry.getSpell(spellId),
+                spellLevel,
+                castDuration,
+                castSource,
+                castingEquipmentSlot);
     }
 
     public static void resetClientCastState(UUID playerUUID) {
-        //Ironsspellbooks.logger.debug("resetClientCastState.1: instanceUUID:{}, playerUUID:{}", Minecraft.getInstance().player.getUUID(), playerUUID);
+        // Ironsspellbooks.logger.debug("resetClientCastState.1: instanceUUID:{}, playerUUID:{}",
+        // Minecraft.getInstance().player.getUUID(), playerUUID);
 
         if (Minecraft.getInstance().player.getUUID().equals(playerUUID)) {
-            //Ironsspellbooks.logger.debug("resetClientCastState.1.1");
+            // Ironsspellbooks.logger.debug("resetClientCastState.1.1");
             playerMagicData.resetCastingState();
             resetTargetingData();
         }
 
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isUsingItem() && Minecraft.getInstance().player.getUUID().equals(playerUUID)) {
-            //Ironsspellbooks.logger.debug("resetClientCastState.2: instanceUUID:{}, playerUUID:{}", Minecraft.getInstance().player.getUUID(), playerUUID);
+        if (Minecraft.getInstance().player != null
+                && Minecraft.getInstance().player.isUsingItem()
+                && Minecraft.getInstance().player.getUUID().equals(playerUUID)) {
+            // Ironsspellbooks.logger.debug("resetClientCastState.2: instanceUUID:{},
+            // playerUUID:{}", Minecraft.getInstance().player.getUUID(), playerUUID);
             Minecraft.getInstance().player.stopUsingItem();
         }
     }
@@ -182,21 +199,27 @@ public class ClientMagicData {
             return abstractSpellCastingMob.getMagicData().getSyncedData();
         }
         return new SyncedSpellData(null);
-
     }
 
     public static void handlePlayerSyncedData(SyncedSpellData playerSyncedData) {
         if (Log.SPELL_SELECTION) {
-            IronsSpellbooks.LOGGER.debug("ClientMagicData.handlePlayerSyncedData {}", playerSyncedData.getSpellSelection());
+            IronsSpellbooks.LOGGER.debug(
+                    "ClientMagicData.handlePlayerSyncedData {}",
+                    playerSyncedData.getSpellSelection());
         }
         playerSyncedDataLookup.put(playerSyncedData.getServerPlayerId(), playerSyncedData);
     }
 
-    public static void handleAbstractCastingMobSyncedData(int entityId, SyncedSpellData syncedSpellData) {
+    public static void handleAbstractCastingMobSyncedData(
+            int entityId, SyncedSpellData syncedSpellData) {
         var level = Minecraft.getInstance().level;
 
         if (Log.SPELL_DEBUG) {
-            IronsSpellbooks.LOGGER.debug("handleAbstractCastingMobSyncedData {}, {}, {}", level, entityId, syncedSpellData);
+            IronsSpellbooks.LOGGER.debug(
+                    "handleAbstractCastingMobSyncedData {}, {}, {}",
+                    level,
+                    entityId,
+                    syncedSpellData);
         }
 
         if (level == null) {
@@ -208,6 +231,4 @@ public class ClientMagicData {
             abstractSpellCastingMob.setSyncedSpellData(syncedSpellData);
         }
     }
-
-
 }

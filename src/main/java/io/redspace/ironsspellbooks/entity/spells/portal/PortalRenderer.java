@@ -54,31 +54,57 @@ public class PortalRenderer<T extends Entity> extends EntityRenderer<T> {
         }
     }
 
-    public static final PortalType NORMAL = new PortalType(IronsSpellbooks.id("textures/entity/portal/portal"), true, true);
-    public static final PortalType POCKET_DIMENSION = new PortalType(IronsSpellbooks.id("textures/entity/portal/pocket_dimension_portal"), true, false);
-    public static final PortalType BLOOD = new PortalType(IronsSpellbooks.id("textures/entity/portal/blood_portal"), false, false);
+    public static final PortalType NORMAL =
+            new PortalType(IronsSpellbooks.id("textures/entity/portal/portal"), true, true);
+    public static final PortalType POCKET_DIMENSION =
+            new PortalType(
+                    IronsSpellbooks.id("textures/entity/portal/pocket_dimension_portal"),
+                    true,
+                    false);
+    public static final PortalType BLOOD =
+            new PortalType(IronsSpellbooks.id("textures/entity/portal/blood_portal"), false, false);
 
-    private static final ResourceLocation ROUND_PORTAL = IronsSpellbooks.id("textures/entity/portal/portal_round.png");
-    private static final ResourceLocation ELDRITCH_ROUND_PORTAL = IronsSpellbooks.id("textures/entity/portal/pocket_dimension_portal_round.png");
-    private static final ResourceLocation ELDRITCH_SQUARE_PORTAL = IronsSpellbooks.id("textures/entity/portal/pocket_dimension_portal_square.png");
-    private static final ResourceLocation SQUARE_PORTAL = IronsSpellbooks.id("textures/entity/portal/portal_square.png");
-    private static final ResourceLocation SQUARE_COLOR_PORTAL = IronsSpellbooks.id("textures/entity/portal/portal_square_color.png");
+    private static final ResourceLocation ROUND_PORTAL =
+            IronsSpellbooks.id("textures/entity/portal/portal_round.png");
+    private static final ResourceLocation ELDRITCH_ROUND_PORTAL =
+            IronsSpellbooks.id("textures/entity/portal/pocket_dimension_portal_round.png");
+    private static final ResourceLocation ELDRITCH_SQUARE_PORTAL =
+            IronsSpellbooks.id("textures/entity/portal/pocket_dimension_portal_square.png");
+    private static final ResourceLocation SQUARE_PORTAL =
+            IronsSpellbooks.id("textures/entity/portal/portal_square.png");
+    private static final ResourceLocation SQUARE_COLOR_PORTAL =
+            IronsSpellbooks.id("textures/entity/portal/portal_square_color.png");
 
     private final PortalType portalType;
+
     public PortalRenderer(Context context, PortalType portalType) {
         super(context);
         this.portalType = portalType;
     }
+
     public PortalRenderer(Context context) {
         this(context, NORMAL);
     }
 
     @Override
-    public void render(T entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            T entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot()));
 
-        renderPortal(getPortalType(entity), poseStack, bufferSource, entity.tickCount, partialTicks, true, -1);
+        renderPortal(
+                getPortalType(entity),
+                poseStack,
+                bufferSource,
+                entity.tickCount,
+                partialTicks,
+                true,
+                -1);
 
         poseStack.popPose();
         super.render(entity, yaw, partialTicks, poseStack, bufferSource, light);
@@ -88,7 +114,13 @@ public class PortalRenderer<T extends Entity> extends EntityRenderer<T> {
         return portalType;
     }
 
-    public static void renderPortal(PoseStack poseStack, MultiBufferSource buffer, int animationTick, float partialTicks, boolean round, int color) {
+    public static void renderPortal(
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int animationTick,
+            float partialTicks,
+            boolean round,
+            int color) {
         renderPortal(NORMAL, poseStack, buffer, animationTick, partialTicks, round, color);
     }
 
@@ -96,12 +128,26 @@ public class PortalRenderer<T extends Entity> extends EntityRenderer<T> {
      * Portals are no longer binary, use type-sensitive {@link PortalRenderer#renderPortal(PortalType, PoseStack, MultiBufferSource, int, float, boolean, int)}
      */
     @Deprecated(forRemoval = true)
-    public static void renderPortal(PoseStack poseStack, MultiBufferSource buffer, int animationTick, float partialTicks, boolean round, boolean eldritch, int color) {
+    public static void renderPortal(
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int animationTick,
+            float partialTicks,
+            boolean round,
+            boolean eldritch,
+            int color) {
         PortalType type = eldritch ? PortalRenderer.POCKET_DIMENSION : PortalRenderer.NORMAL;
         renderPortal(type, poseStack, buffer, animationTick, partialTicks, round, color);
     }
 
-    public static void renderPortal(PortalType portalType, PoseStack poseStack, MultiBufferSource buffer, int animationTick, float partialTicks, boolean round, int color) {
+    public static void renderPortal(
+            PortalType portalType,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int animationTick,
+            float partialTicks,
+            boolean round,
+            int color) {
         poseStack.pushPose();
         poseStack.scale(0.0625f, 0.0625f, 0.0625f);
 
@@ -109,7 +155,8 @@ public class PortalRenderer<T extends Entity> extends EntityRenderer<T> {
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
         ResourceLocation texture = portalType.getTextureLocation(!round, color);
-        VertexConsumer consumer = buffer.getBuffer(RenderHelper.CustomerRenderType.darkGlow(texture));
+        VertexConsumer consumer =
+                buffer.getBuffer(RenderHelper.CustomerRenderType.darkGlow(texture));
         int anim = (animationTick / ticksPerFrame) % frameCount;
         float uvMin = anim / (float) frameCount;
         float uvMax = (anim + 1) / (float) frameCount;
@@ -121,14 +168,28 @@ public class PortalRenderer<T extends Entity> extends EntityRenderer<T> {
         poseStack.popPose();
     }
 
-    public static void renderPortal(PoseStack poseStack, MultiBufferSource buffer, int animationTick, float partialTicks, boolean round) {
+    public static void renderPortal(
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int animationTick,
+            float partialTicks,
+            boolean round) {
         renderPortal(poseStack, buffer, animationTick, partialTicks, round, -1);
     }
 
     static int frameCount = 10;
     static int ticksPerFrame = 2;
 
-    public static void vertex(Matrix4f pMatrix, Matrix3f pNormals, VertexConsumer pVertexBuilder, float pOffsetX, float pOffsetY, float pOffsetZ, float pTextureX, float pTextureY, int color) {
+    public static void vertex(
+            Matrix4f pMatrix,
+            Matrix3f pNormals,
+            VertexConsumer pVertexBuilder,
+            float pOffsetX,
+            float pOffsetY,
+            float pOffsetZ,
+            float pTextureX,
+            float pTextureY,
+            int color) {
         int r = 255;
         int g = 255;
         int b = 255;
@@ -137,13 +198,18 @@ public class PortalRenderer<T extends Entity> extends EntityRenderer<T> {
             g = (color & 0x00FF00) >> 8;
             b = color & 0x0000FF;
         }
-        pVertexBuilder.vertex(pMatrix, pOffsetX, pOffsetY, pOffsetZ).color(r, g, b, 100).uv(pTextureX, pTextureY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal((float) 0, (float) 0, (float) 1).endVertex();
+        pVertexBuilder
+                .vertex(pMatrix, pOffsetX, pOffsetY, pOffsetZ)
+                .color(r, g, b, 100)
+                .uv(pTextureX, pTextureY)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .normal((float) 0, (float) 0, (float) 1)
+                .endVertex();
     }
 
     @Override
     public ResourceLocation getTextureLocation(T entity) {
         return ROUND_PORTAL;
     }
-
-
 }

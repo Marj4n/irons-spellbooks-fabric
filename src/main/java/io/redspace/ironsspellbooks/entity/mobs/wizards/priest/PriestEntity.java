@@ -67,16 +67,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class PriestEntity extends NeutralWizard implements VillagerDataHolder, SupportMob, HomeOwner, IMerchantWizard {
-    private static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA = SynchedEntityData.defineId(PriestEntity.class, EntityDataSerializers.VILLAGER_DATA);
-    private static final EntityDataAccessor<Boolean> DATA_VILLAGER_UNHAPPY = SynchedEntityData.defineId(PriestEntity.class, EntityDataSerializers.BOOLEAN);
+public class PriestEntity extends NeutralWizard
+        implements VillagerDataHolder, SupportMob, HomeOwner, IMerchantWizard {
+    private static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA =
+            SynchedEntityData.defineId(PriestEntity.class, EntityDataSerializers.VILLAGER_DATA);
+    private static final EntityDataAccessor<Boolean> DATA_VILLAGER_UNHAPPY =
+            SynchedEntityData.defineId(PriestEntity.class, EntityDataSerializers.BOOLEAN);
     public GoalSelector supportTargetSelector;
     private int unhappyTimer;
 
     public PriestEntity(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         xpReward = 15;
-
     }
 
     boolean shouldLookForPoi;
@@ -87,19 +89,27 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(0, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(1, new GustDefenseGoal(this));
-        this.goalSelector.addGoal(2, new WizardSupportGoal<>(this, 1.25f, 100, 180)
-                .setSpells(
-                        List.of(SpellRegistry.BLESSING_OF_LIFE_SPELL.get(), SpellRegistry.BLESSING_OF_LIFE_SPELL.get(), SpellRegistry.HEALING_CIRCLE_SPELL.get()),
-                        List.of(SpellRegistry.FORTIFY_SPELL.get())
-                ));
-        this.goalSelector.addGoal(3, new WizardAttackGoal(this, 1.25f, 35, 70)
-                .setSpells(
-                        List.of(SpellRegistry.WISP_SPELL.get(), SpellRegistry.GUIDING_BOLT_SPELL.get()),
-                        List.of(SpellRegistry.GUST_SPELL.get()),
-                        List.of(),
-                        List.of(SpellRegistry.HEAL_SPELL.get()))
-                .setSpellQuality(0.3f, 0.5f)
-                .setDrinksPotions());
+        this.goalSelector.addGoal(
+                2,
+                new WizardSupportGoal<>(this, 1.25f, 100, 180)
+                        .setSpells(
+                                List.of(
+                                        SpellRegistry.BLESSING_OF_LIFE_SPELL.get(),
+                                        SpellRegistry.BLESSING_OF_LIFE_SPELL.get(),
+                                        SpellRegistry.HEALING_CIRCLE_SPELL.get()),
+                                List.of(SpellRegistry.FORTIFY_SPELL.get())));
+        this.goalSelector.addGoal(
+                3,
+                new WizardAttackGoal(this, 1.25f, 35, 70)
+                        .setSpells(
+                                List.of(
+                                        SpellRegistry.WISP_SPELL.get(),
+                                        SpellRegistry.GUIDING_BOLT_SPELL.get()),
+                                List.of(SpellRegistry.GUST_SPELL.get()),
+                                List.of(),
+                                List.of(SpellRegistry.HEAL_SPELL.get()))
+                        .setSpellQuality(0.3f, 0.5f)
+                        .setDrinksPotions());
         this.goalSelector.addGoal(5, new RoamVillageGoal(this, 30, 1f));
         this.goalSelector.addGoal(6, new ReturnToHomeAtNightGoal<>(this, 1f));
         this.goalSelector.addGoal(7, new PatrolNearLocationGoal(this, 30, 1f));
@@ -108,18 +118,42 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new GenericDefendVillageTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isHostileTowards));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false, (mob) -> mob instanceof Enemy && !(mob instanceof Creeper)));
+        this.targetSelector.addGoal(
+                3,
+                new NearestAttackableTargetGoal<>(
+                        this, Player.class, 10, true, false, this::isHostileTowards));
+        this.targetSelector.addGoal(
+                4,
+                new NearestAttackableTargetGoal<>(
+                        this,
+                        Mob.class,
+                        5,
+                        false,
+                        false,
+                        (mob) -> mob instanceof Enemy && !(mob instanceof Creeper)));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
 
         this.supportTargetSelector = new GoalSelector(this.level().getProfilerSupplier());
-        this.supportTargetSelector.addGoal(0, new FindSupportableTargetGoal<>(this, LivingEntity.class, true,
-                (mob) -> !isAngryAt(mob) && mob.getHealth() * 1.25f < mob.getMaxHealth() && (mob.getType().is(ModTags.VILLAGE_ALLIES) || mob instanceof Player))
-        );
+        this.supportTargetSelector.addGoal(
+                0,
+                new FindSupportableTargetGoal<>(
+                        this,
+                        LivingEntity.class,
+                        true,
+                        (mob) ->
+                                !isAngryAt(mob)
+                                        && mob.getHealth() * 1.25f < mob.getMaxHealth()
+                                        && (mob.getType().is(ModTags.VILLAGE_ALLIES)
+                                                || mob instanceof Player)));
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         RandomSource randomsource = Utils.random;
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         if (pReason == MobSpawnType.STRUCTURE) {
@@ -129,7 +163,8 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(
+            RandomSource pRandom, DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemRegistry.PRIEST_HELMET.get()));
         this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemRegistry.PRIEST_CHESTPLATE.get()));
         this.setDropChance(EquipmentSlot.HEAD, 0.0F);
@@ -156,14 +191,14 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
                 this.nodeEvaluator.setCanOpenDoors(true);
                 return new PathFinder(this.nodeEvaluator, pMaxVisitedNodes);
             }
-//
-//            @Override
-//            public NodeEvaluator getNodeEvaluator() {
-//                var nodeEvalutator = super.getNodeEvaluator();
-//                nodeEvalutator.setCanPassDoors(true);
-//                nodeEvalutator.setCanOpenDoors(true);
-//                return nodeEvalutator;
-//            }
+            //
+            //            @Override
+            //            public NodeEvaluator getNodeEvaluator() {
+            //                var nodeEvalutator = super.getNodeEvaluator();
+            //                nodeEvalutator.setCanPassDoors(true);
+            //                nodeEvalutator.setCanOpenDoors(true);
+            //                return nodeEvalutator;
+            //            }
         };
     }
 
@@ -192,12 +227,14 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_VILLAGER_DATA, new VillagerData(VillagerType.PLAINS, VillagerProfession.NONE, 1));
+        this.entityData.define(
+                DATA_VILLAGER_DATA,
+                new VillagerData(VillagerType.PLAINS, VillagerProfession.NONE, 1));
         this.entityData.define(DATA_VILLAGER_UNHAPPY, false);
     }
 
     public void setVillagerData(VillagerData villagerdata) {
-        //VillagerData villagerdata = this.getVillagerData();
+        // VillagerData villagerdata = this.getVillagerData();
         villagerdata.setProfession(VillagerProfession.NONE);
         this.entityData.set(DATA_VILLAGER_DATA, villagerdata);
     }
@@ -228,8 +265,15 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
         super.customServerAiStep();
         if (shouldLookForPoi) {
             if (this.level() instanceof ServerLevel serverLevel) {
-                Optional<BlockPos> optional1 = serverLevel.getPoiManager().find((poiTypeHolder) -> poiTypeHolder.is(PoiTypes.MEETING),
-                        (blockPos) -> true, this.blockPosition(), 100, PoiManager.Occupancy.ANY);
+                Optional<BlockPos> optional1 =
+                        serverLevel
+                                .getPoiManager()
+                                .find(
+                                        (poiTypeHolder) -> poiTypeHolder.is(PoiTypes.MEETING),
+                                        (blockPos) -> true,
+                                        this.blockPosition(),
+                                        100,
+                                        PoiManager.Occupancy.ANY);
                 optional1.ifPresent((this::setHome));
             }
             shouldLookForPoi = false;
@@ -238,26 +282,40 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
             this.supportTargetSelector.tick();
         }
         if (this.tickCount % 60 == 0) {
-            this.level().getEntities(this, this.getBoundingBox().inflate(this.getAttributeValue(Attributes.FOLLOW_RANGE)), (entity) -> entity instanceof Enemy && !(entity instanceof Creeper || entity instanceof IMagicSummon || entity instanceof TamableAnimal)).forEach((enemy) -> {
-                if (enemy instanceof Mob mob && mob.getTarget() == null && TargetingConditions.forCombat().test(mob, this)) {
-                    mob.setTarget(this);
-                }
-            });
+            this.level()
+                    .getEntities(
+                            this,
+                            this.getBoundingBox()
+                                    .inflate(this.getAttributeValue(Attributes.FOLLOW_RANGE)),
+                            (entity) ->
+                                    entity instanceof Enemy
+                                            && !(entity instanceof Creeper
+                                                    || entity instanceof IMagicSummon
+                                                    || entity instanceof TamableAnimal))
+                    .forEach(
+                            (enemy) -> {
+                                if (enemy instanceof Mob mob
+                                        && mob.getTarget() == null
+                                        && TargetingConditions.forCombat().test(mob, this)) {
+                                    mob.setTarget(this);
+                                }
+                            });
         }
-        //One game day = 24,000 ticks
+        // One game day = 24,000 ticks
 
         if (unhappyTimer > 0 && --unhappyTimer == 0) {
             this.entityData.set(DATA_VILLAGER_UNHAPPY, false);
         }
 
-//        this.getBrain().tick((ServerLevel) this.level, this);
-//        this.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.CORE));
+        //        this.getBrain().tick((ServerLevel) this.level, this);
+        //        this.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.CORE));
 
     }
 
     @Override
     protected InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
-        boolean preventTrade = isAggressive() || (!this.level().isClientSide && this.getOffers().isEmpty());
+        boolean preventTrade =
+                isAggressive() || (!this.level().isClientSide && this.getOffers().isEmpty());
         if (pHand == InteractionHand.MAIN_HAND) {
             if (preventTrade && !this.level().isClientSide) {
                 this.setUnhappy();
@@ -287,7 +345,8 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
         serializeHome(this, pCompound);
-        serializeMerchant(pCompound, this.offers, this.lastRestockGameTime, this.numberOfRestocksToday);
+        serializeMerchant(
+                pCompound, this.offers, this.lastRestockGameTime, this.numberOfRestocksToday);
     }
 
     @Override
@@ -318,19 +377,16 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
         this.homePos = homePos;
     }
 
-
     /*
      * Merchant Implementations
      */
-    @Nullable
-    private Player tradingPlayer;
-    @Nullable
-    protected MerchantOffers offers;
+    @Nullable private Player tradingPlayer;
+    @Nullable protected MerchantOffers offers;
 
-    //Serialized
+    // Serialized
     private long lastRestockGameTime;
     private int numberOfRestocksToday;
-    //Not Serialized
+    // Not Serialized
     private long lastRestockCheckDayTime;
 
     @Override
@@ -348,33 +404,38 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
     public MerchantOffers getOffers() {
         if (this.offers == null) {
             this.offers = new MerchantOffers();
-            this.offers.add(new MerchantOffer(
-                    new ItemStack(Items.EMERALD, 24),
-                    ItemStack.EMPTY,
-                    FurledMapItem.of(IronsSpellbooks.id("evoker_fort"), FurledMapItem.OVERWORLD, Component.translatable("item.irons_spellbooks.evoker_fort_battle_plans")),
-                    0,
-                    1,
-                    5,
-                    10f
-            ));
-            this.offers.add(new MerchantOffer(
-                    new ItemStack(ItemRegistry.GREATER_HEALING_POTION.get()),
-                    new ItemStack(Items.EMERALD, 18),
-                    3,
-                    0,
-                    0.2F
-            ));
-            this.offers.add(new MerchantOffer(
-                    new ItemStack(Items.EMERALD, 6),
-                    PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.HEALING),
-                    2,
-                    0,
-                    0.2F
-            ));
+            this.offers.add(
+                    new MerchantOffer(
+                            new ItemStack(Items.EMERALD, 24),
+                            ItemStack.EMPTY,
+                            FurledMapItem.of(
+                                    IronsSpellbooks.id("evoker_fort"),
+                                    FurledMapItem.OVERWORLD,
+                                    Component.translatable(
+                                            "item.irons_spellbooks.evoker_fort_battle_plans")),
+                            0,
+                            1,
+                            5,
+                            10f));
+            this.offers.add(
+                    new MerchantOffer(
+                            new ItemStack(ItemRegistry.GREATER_HEALING_POTION.get()),
+                            new ItemStack(Items.EMERALD, 18),
+                            3,
+                            0,
+                            0.2F));
+            this.offers.add(
+                    new MerchantOffer(
+                            new ItemStack(Items.EMERALD, 6),
+                            PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.HEALING),
+                            2,
+                            0,
+                            0.2F));
             this.offers.add(new BibleTrade().getOffer(this, this.random));
 
             this.offers.removeIf(Objects::isNull);
-            //We count the creation of our stock as a restock so that we do not immediately refresh trades the same day.
+            // We count the creation of our stock as a restock so that we do not immediately refresh
+            // trades the same day.
             setLastRestockGameTime(level().getGameTime());
         }
         return this.offers;
@@ -382,22 +443,26 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
 
     @Override
     public void overrideOffers(MerchantOffers pOffers) {
-        //Not implemented by villagers. Might be only used client-side
-        //TODO: anyscroll trades???
+        // Not implemented by villagers. Might be only used client-side
+        // TODO: anyscroll trades???
     }
 
     @Override
     public void notifyTrade(MerchantOffer pOffer) {
         pOffer.increaseUses();
         this.ambientSoundTime = -this.getAmbientSoundInterval();
-        //this.rewardTradeXp(pOffer);
+        // this.rewardTradeXp(pOffer);
     }
 
     @Override
     public void notifyTradeUpdated(ItemStack pStack) {
-        if (!this.level().isClientSide && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
+        if (!this.level().isClientSide
+                && this.ambientSoundTime > -this.getAmbientSoundInterval() + 20) {
             this.ambientSoundTime = -this.getAmbientSoundInterval();
-            this.playSound(this.getTradeUpdatedSound(!pStack.isEmpty()), this.getSoundVolume(), this.getVoicePitch());
+            this.playSound(
+                    this.getTradeUpdatedSound(!pStack.isEmpty()),
+                    this.getSoundVolume(),
+                    this.getVoicePitch());
         }
     }
 
@@ -452,128 +517,131 @@ public class PriestEntity extends NeutralWizard implements VillagerDataHolder, S
 
     static class BibleTrade extends AdditionalWanderingTrades.SimpleTrade {
         private BibleTrade() {
-            super((trader, random) -> {
-                if (!trader.level().isClientSide) {
-                    ItemStack cost = new ItemStack(ItemRegistry.TRANSLATED_ARCHEVOKER_LOGBOOK.get());
-                    ItemStack forSale = new ItemStack(ItemRegistry.VILLAGER_SPELL_BOOK.get());
-                    return new MerchantOffer(cost, forSale, 1, 5, 0.5f);
-                }
-                return new MerchantOffer(ItemStack.EMPTY, ItemStack.EMPTY, 0, 0, 0);
-            });
+            super(
+                    (trader, random) -> {
+                        if (!trader.level().isClientSide) {
+                            ItemStack cost =
+                                    new ItemStack(ItemRegistry.TRANSLATED_ARCHEVOKER_LOGBOOK.get());
+                            ItemStack forSale =
+                                    new ItemStack(ItemRegistry.VILLAGER_SPELL_BOOK.get());
+                            return new MerchantOffer(cost, forSale, 1, 5, 0.5f);
+                        }
+                        return new MerchantOffer(ItemStack.EMPTY, ItemStack.EMPTY, 0, 0, 0);
+                    });
         }
     }
     /*
     Brain Testing
      */
-/*
-    public Brain<PriestEntity> getBrain() {
-        return (Brain<PriestEntity>) super.getBrain();
-    }
+    /*
+        public Brain<PriestEntity> getBrain() {
+            return (Brain<PriestEntity>) super.getBrain();
+        }
 
-    protected Brain.Provider<PriestEntity> brainProvider() {
-        return Brain.provider(
-                //Memories
-                ImmutableList.of(
-                        MemoryModuleType.WALK_TARGET,
-                        MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
-                        MemoryModuleType.PATH,
-                        //MemoryModuleType.MEETING_POINT,
-                        MemoryModuleType.LOOK_TARGET,
-                        MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES
-                ),
-                //Sensors
-                ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY));
-    }
-    //ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.NEAREST_BED, SensorType.HURT_BY, SensorType.VILLAGER_HOSTILES, SensorType.VILLAGER_BABIES, SensorType.SECONDARY_POIS, SensorType.GOLEM_DETECTED);
+        protected Brain.Provider<PriestEntity> brainProvider() {
+            return Brain.provider(
+                    //Memories
+                    ImmutableList.of(
+                            MemoryModuleType.WALK_TARGET,
+                            MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
+                            MemoryModuleType.PATH,
+                            //MemoryModuleType.MEETING_POINT,
+                            MemoryModuleType.LOOK_TARGET,
+                            MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES
+                    ),
+                    //Sensors
+                    ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY));
+        }
+        //ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.NEAREST_BED, SensorType.HURT_BY, SensorType.VILLAGER_HOSTILES, SensorType.VILLAGER_BABIES, SensorType.SECONDARY_POIS, SensorType.GOLEM_DETECTED);
 
-    protected Brain<?> makeBrain(Dynamic<?> pDynamic) {
-        Brain<PriestEntity> brain = this.brainProvider().makeBrain(pDynamic);
-        this.registerBrainGoals(brain);
-        return brain;
-    }
-//
-//    public void refreshBrain(ServerLevel pServerLevel) {
-//        Brain<PriestEntity> brain = this.getBrain();
-//        brain.stopAll(pServerLevel, this);
-//        this.brain = brain.copyWithoutBehaviors();
-//        this.registerBrainGoals(this.getBrain());
-//    }
+        protected Brain<?> makeBrain(Dynamic<?> pDynamic) {
+            Brain<PriestEntity> brain = this.brainProvider().makeBrain(pDynamic);
+            this.registerBrainGoals(brain);
+            return brain;
+        }
+    //
+    //    public void refreshBrain(ServerLevel pServerLevel) {
+    //        Brain<PriestEntity> brain = this.getBrain();
+    //        brain.stopAll(pServerLevel, this);
+    //        this.brain = brain.copyWithoutBehaviors();
+    //        this.registerBrainGoals(this.getBrain());
+    //    }
 
-    private void registerBrainGoals(Brain<PriestEntity> brain) {
+        private void registerBrainGoals(Brain<PriestEntity> brain) {
 
-        ImmutableList<Pair<Integer, ? extends Behavior<? super PriestEntity>>> core = ImmutableList.of(
-                Pair.of(0, new Swim(0.8F)),
-                Pair.of(0, new InteractWithDoor()),
+            ImmutableList<Pair<Integer, ? extends Behavior<? super PriestEntity>>> core = ImmutableList.of(
+                    Pair.of(0, new Swim(0.8F)),
+                    Pair.of(0, new InteractWithDoor()),
 
-                Pair.of(0, new LookAtTargetSink(45, 90)),
-                Pair.of(1, new MoveToTargetSink())
+                    Pair.of(0, new LookAtTargetSink(45, 90)),
+                    Pair.of(1, new MoveToTargetSink())
 
-//                Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
-//
-//                //Pair.of(0, new SetRaidStatus()),
-//                Pair.of(3, new RunOne<>(ImmutableList.of(
-//                        Pair.of(new RandomStroll(1.0F), 2),
-//                        Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
-//                        Pair.of(new DoNothing(30, 60), 1)
-//                )))
-//                Pair.of(10, new AcquirePoi((p_217499_) -> {
-//                    return p_217499_.is(PoiTypes.HOME);
-//                }, MemoryModuleType.HOME, false, Optional.of((byte) 14))),
-//                Pair.of(10, new AcquirePoi((p_217497_) -> {
-//                    return p_217497_.is(PoiTypes.MEETING);
-//                }, MemoryModuleType.MEETING_POINT, true, Optional.of((byte) 14)))
-        );
-        ImmutableList<Pair<Integer, ? extends Behavior<? super PriestEntity>>> idle = ImmutableList.of(
-                Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
+    //                Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
+    //
+    //                //Pair.of(0, new SetRaidStatus()),
+    //                Pair.of(3, new RunOne<>(ImmutableList.of(
+    //                        Pair.of(new RandomStroll(1.0F), 2),
+    //                        Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
+    //                        Pair.of(new DoNothing(30, 60), 1)
+    //                )))
+    //                Pair.of(10, new AcquirePoi((p_217499_) -> {
+    //                    return p_217499_.is(PoiTypes.HOME);
+    //                }, MemoryModuleType.HOME, false, Optional.of((byte) 14))),
+    //                Pair.of(10, new AcquirePoi((p_217497_) -> {
+    //                    return p_217497_.is(PoiTypes.MEETING);
+    //                }, MemoryModuleType.MEETING_POINT, true, Optional.of((byte) 14)))
+            );
+            ImmutableList<Pair<Integer, ? extends Behavior<? super PriestEntity>>> idle = ImmutableList.of(
+                    Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
 
-                Pair.of(3, new RunOne<>(ImmutableList.of(
-                        Pair.of(new RandomStroll(1.0F), 2),
-                        Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
-                        Pair.of(new DoNothing(30, 60), 1)
-                )))
+                    Pair.of(3, new RunOne<>(ImmutableList.of(
+                            Pair.of(new RandomStroll(1.0F), 2),
+                            Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
+                            Pair.of(new DoNothing(30, 60), 1)
+                    )))
 
-        );
-        brain.addActivity(Activity.CORE, core);
-        brain.addActivity(Activity.IDLE, idle);
-//        brain.addActivityWithConditions(Activity.MEET, VillagerGoalPackages.getMeetPackage(villagerprofession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryStatus.VALUE_PRESENT)));
-//        brain.addActivity(Activity.REST, VillagerGoalPackages.getRestPackage(villagerprofession, 0.5F));
-//        brain.addActivity(Activity.IDLE, VillagerGoalPackages.getIdlePackage(villagerprofession, 0.5F));
-//        brain.addActivity(Activity.PANIC, VillagerGoalPackages.getPanicPackage(villagerprofession, 0.5F));
-//        brain.addActivity(Activity.PRE_RAID, VillagerGoalPackages.getPreRaidPackage(villagerprofession, 0.5F));
-//        brain.addActivity(Activity.RAID, VillagerGoalPackages.getRaidPackage(villagerprofession, 0.5F));
-//        brain.addActivity(Activity.HIDE, VillagerGoalPackages.getHidePackage(villagerprofession, 0.5F));
-        brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
-        brain.setDefaultActivity(Activity.IDLE);
-        brain.useDefaultActivity();
-//
-//        pBrain.addActivity(Activity.CORE, 0,
-//                ImmutableList.of(
-//                        new Swim(0.8F),
-//                        new AnimalPanic(2.0F),
-//                        new LookAtTargetSink(45, 90),
-//                        new MoveToTargetSink(),
-//                        new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS),
-//                        new CountDownCooldownTicks(MemoryModuleType.LONG_JUMP_COOLDOWN_TICKS),
-//                        new CountDownCooldownTicks(MemoryModuleType.RAM_COOLDOWN_TICKS)
-//                ));
-//
-//        pBrain.addActivityWithConditions(Activity.IDLE,
-//                ImmutableList.of(
-//                        Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
-//                        Pair.of(0, new AnimalMakeLove(EntityType.GOAT, 1.0F)),
-//                        Pair.of(1, new FollowTemptation((p_149446_) -> {
-//                            return 1.25F;
-//                        })),
-//                        Pair.of(2, new BabyFollowAdult<>(ADULT_FOLLOW_RANGE, 1.25F)),
-//                        Pair.of(3, new RunOne<>(ImmutableList.of(
-//                                Pair.of(new RandomStroll(1.0F), 2),
-//                                Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
-//                                Pair.of(new DoNothing(30, 60), 1)
-//                        )))
-//                ),
-//                ImmutableSet.of(
-//                        Pair.of(MemoryModuleType.RAM_TARGET, MemoryStatus.VALUE_ABSENT),
-//                        Pair.of(MemoryModuleType.LONG_JUMP_MID_JUMP, MemoryStatus.VALUE_ABSENT)));
-    }
- */
+            );
+            brain.addActivity(Activity.CORE, core);
+            brain.addActivity(Activity.IDLE, idle);
+    //        brain.addActivityWithConditions(Activity.MEET, VillagerGoalPackages.getMeetPackage(villagerprofession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryStatus.VALUE_PRESENT)));
+    //        brain.addActivity(Activity.REST, VillagerGoalPackages.getRestPackage(villagerprofession, 0.5F));
+    //        brain.addActivity(Activity.IDLE, VillagerGoalPackages.getIdlePackage(villagerprofession, 0.5F));
+    //        brain.addActivity(Activity.PANIC, VillagerGoalPackages.getPanicPackage(villagerprofession, 0.5F));
+    //        brain.addActivity(Activity.PRE_RAID, VillagerGoalPackages.getPreRaidPackage(villagerprofession, 0.5F));
+    //        brain.addActivity(Activity.RAID, VillagerGoalPackages.getRaidPackage(villagerprofession, 0.5F));
+    //        brain.addActivity(Activity.HIDE, VillagerGoalPackages.getHidePackage(villagerprofession, 0.5F));
+            brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
+            brain.setDefaultActivity(Activity.IDLE);
+            brain.useDefaultActivity();
+    //
+    //        pBrain.addActivity(Activity.CORE, 0,
+    //                ImmutableList.of(
+    //                        new Swim(0.8F),
+    //                        new AnimalPanic(2.0F),
+    //                        new LookAtTargetSink(45, 90),
+    //                        new MoveToTargetSink(),
+    //                        new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS),
+    //                        new CountDownCooldownTicks(MemoryModuleType.LONG_JUMP_COOLDOWN_TICKS),
+    //                        new CountDownCooldownTicks(MemoryModuleType.RAM_COOLDOWN_TICKS)
+    //                ));
+    //
+    //        pBrain.addActivityWithConditions(Activity.IDLE,
+    //                ImmutableList.of(
+    //                        Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
+    //                        Pair.of(0, new AnimalMakeLove(EntityType.GOAT, 1.0F)),
+    //                        Pair.of(1, new FollowTemptation((p_149446_) -> {
+    //                            return 1.25F;
+    //                        })),
+    //                        Pair.of(2, new BabyFollowAdult<>(ADULT_FOLLOW_RANGE, 1.25F)),
+    //                        Pair.of(3, new RunOne<>(ImmutableList.of(
+    //                                Pair.of(new RandomStroll(1.0F), 2),
+    //                                Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
+    //                                Pair.of(new DoNothing(30, 60), 1)
+    //                        )))
+    //                ),
+    //                ImmutableSet.of(
+    //                        Pair.of(MemoryModuleType.RAM_TARGET, MemoryStatus.VALUE_ABSENT),
+    //                        Pair.of(MemoryModuleType.LONG_JUMP_MID_JUMP, MemoryStatus.VALUE_ABSENT)));
+        }
+     */
 }

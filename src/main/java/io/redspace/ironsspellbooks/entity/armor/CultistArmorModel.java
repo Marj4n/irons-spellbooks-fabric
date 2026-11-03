@@ -23,6 +23,7 @@ public class CultistArmorModel extends DefaultedItemGeoModel<CultistArmorItem> {
 
     @Override
     public ResourceLocation getAnimationResource(CultistArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

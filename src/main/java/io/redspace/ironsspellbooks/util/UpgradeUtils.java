@@ -20,30 +20,31 @@ import java.util.function.BiConsumer;
 
 public class UpgradeUtils {
 
-    //We need consistent UUIDs. Different Attributes on a player piece can have the same uuid, but duplicate UUID and attributes will break (UUID per attribute you can say)
-    public static final Map<EquipmentSlot, UUID> UPGRADE_UUIDS_BY_SLOT = Map.of(
-            EquipmentSlot.HEAD, UUID.fromString("f6c19678-1c70-4d41-ad19-cd84d8610242"),
-            EquipmentSlot.CHEST, UUID.fromString("8d02c916-b0eb-4d17-8414-329b4bd38ae7"),
-            EquipmentSlot.LEGS, UUID.fromString("3739c748-98d4-4a2d-9c25-3b4dec74823d"),
-            EquipmentSlot.FEET, UUID.fromString("41cede88-7881-42dd-aac3-d6ab4b56b1f2"),
-            EquipmentSlot.MAINHAND, UUID.fromString("c3865ad7-1f35-46d4-8b4b-a6b934a1a896"),
-            EquipmentSlot.OFFHAND, UUID.fromString("c508430e-7497-42a9-9a9c-1a324dccca54")
-    );
+    // We need consistent UUIDs. Different Attributes on a player piece can have the same uuid, but
+    // duplicate UUID and attributes will break (UUID per attribute you can say)
+    public static final Map<EquipmentSlot, UUID> UPGRADE_UUIDS_BY_SLOT =
+            Map.of(
+                    EquipmentSlot.HEAD, UUID.fromString("f6c19678-1c70-4d41-ad19-cd84d8610242"),
+                    EquipmentSlot.CHEST, UUID.fromString("8d02c916-b0eb-4d17-8414-329b4bd38ae7"),
+                    EquipmentSlot.LEGS, UUID.fromString("3739c748-98d4-4a2d-9c25-3b4dec74823d"),
+                    EquipmentSlot.FEET, UUID.fromString("41cede88-7881-42dd-aac3-d6ab4b56b1f2"),
+                    EquipmentSlot.MAINHAND, UUID.fromString("c3865ad7-1f35-46d4-8b4b-a6b934a1a896"),
+                    EquipmentSlot.OFFHAND, UUID.fromString("c508430e-7497-42a9-9a9c-1a324dccca54"));
 
-    public static final Map<String, EquipmentSlot> SLOTS_BY_NAME = Map.of(
-            EquipmentSlot.HEAD.getName(), EquipmentSlot.HEAD,
-            EquipmentSlot.CHEST.getName(), EquipmentSlot.CHEST,
-            EquipmentSlot.LEGS.getName(), EquipmentSlot.LEGS,
-            EquipmentSlot.FEET.getName(), EquipmentSlot.FEET,
-            EquipmentSlot.MAINHAND.getName(), EquipmentSlot.MAINHAND,
-            EquipmentSlot.OFFHAND.getName(), EquipmentSlot.OFFHAND
-    );
+    public static final Map<String, EquipmentSlot> SLOTS_BY_NAME =
+            Map.of(
+                    EquipmentSlot.HEAD.getName(), EquipmentSlot.HEAD,
+                    EquipmentSlot.CHEST.getName(), EquipmentSlot.CHEST,
+                    EquipmentSlot.LEGS.getName(), EquipmentSlot.LEGS,
+                    EquipmentSlot.FEET.getName(), EquipmentSlot.FEET,
+                    EquipmentSlot.MAINHAND.getName(), EquipmentSlot.MAINHAND,
+                    EquipmentSlot.OFFHAND.getName(), EquipmentSlot.OFFHAND);
 
     public static String getRelevantEquipmentSlot(ItemStack itemStack) {
         if (itemStack.getItem() instanceof EquipmentItem curioItem) {
             var tags = EquipmentApi.getCuriosHelper().getCurioTags((Item) curioItem);
             var slot = tags.stream().findFirst();
-            if(slot.isPresent()){
+            if (slot.isPresent()) {
                 return slot.get();
             }
         } else if (itemStack.getItem() instanceof ArmorItem armorItem) {
@@ -65,14 +66,25 @@ public class UpgradeUtils {
      * @param removeCallback function to remove old modifier from the item
      * @param uuidOverride optional uuid to use instead of default one. must be provided if curio
      */
-    public static void handleAttributeEvent(Multimap<Attribute, AttributeModifier> modifiers, UpgradeData upgradeData, BiConsumer<Attribute, AttributeModifier> addCallback, BiConsumer<Attribute, AttributeModifier> removeCallback, Optional<UUID> uuidOverride) {
+    public static void handleAttributeEvent(
+            Multimap<Attribute, AttributeModifier> modifiers,
+            UpgradeData upgradeData,
+            BiConsumer<Attribute, AttributeModifier> addCallback,
+            BiConsumer<Attribute, AttributeModifier> removeCallback,
+            Optional<UUID> uuidOverride) {
         var upgrades = upgradeData.upgrades();
         for (var entry : upgrades.entrySet()) {
             UpgradeOrbType upgradeType = entry.getKey().value();
             int count = entry.getValue();
-            double baseAmount = UpgradeUtils.collectAndRemovePreexistingAttribute(modifiers, upgradeType.attribute().value(), upgradeType.operation(), removeCallback);
+            double baseAmount =
+                    UpgradeUtils.collectAndRemovePreexistingAttribute(
+                            modifiers,
+                            upgradeType.attribute().value(),
+                            upgradeType.operation(),
+                            removeCallback);
             UUID uuid;
-            //IronsSpellbooks.LOGGER.debug("handleAttributeEvent: uuidOverride present: {} ({})", uuidOverride.isPresent(), uuidOverride);
+            // IronsSpellbooks.LOGGER.debug("handleAttributeEvent: uuidOverride present: {} ({})",
+            // uuidOverride.isPresent(), uuidOverride);
             if (uuidOverride.isPresent()) {
                 uuid = uuidOverride.get();
             } else {
@@ -84,12 +96,22 @@ public class UpgradeUtils {
                 }
             }
 
-            addCallback.accept(upgradeType.attribute().value(), new AttributeModifier(uuid, "upgrade", baseAmount + upgradeType.amount() * count, upgradeType.operation()));
+            addCallback.accept(
+                    upgradeType.attribute().value(),
+                    new AttributeModifier(
+                            uuid,
+                            "upgrade",
+                            baseAmount + upgradeType.amount() * count,
+                            upgradeType.operation()));
         }
     }
 
-    public static double collectAndRemovePreexistingAttribute(Multimap<Attribute, AttributeModifier> modifiers, Attribute key, AttributeModifier.Operation operationToMatch, BiConsumer<Attribute, AttributeModifier> removeCallback) {
-        //Tactical incision to remove the preexisting attribute but preserve its value
+    public static double collectAndRemovePreexistingAttribute(
+            Multimap<Attribute, AttributeModifier> modifiers,
+            Attribute key,
+            AttributeModifier.Operation operationToMatch,
+            BiConsumer<Attribute, AttributeModifier> removeCallback) {
+        // Tactical incision to remove the preexisting attribute but preserve its value
         if (modifiers.containsKey(key)) {
             for (AttributeModifier modifier : modifiers.get(key)) {
                 if (modifier.getOperation().equals(operationToMatch)) {

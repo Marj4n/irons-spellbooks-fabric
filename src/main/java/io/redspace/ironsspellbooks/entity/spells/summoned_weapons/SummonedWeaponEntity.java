@@ -41,7 +41,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob implements IMagicSummon, IAnimatedAttacker, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
+public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob
+        implements IMagicSummon,
+                IAnimatedAttacker,
+                org.marj4n.irons_spellbooks.events.WorldRemovalListener {
     @Override
     public void initiateCastSpell(AbstractSpell spell, int spellLevel) {
         // no spellcasting
@@ -50,7 +53,8 @@ public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob imple
 
     GenericAnimatedWarlockAttackGoal<? extends SummonedWeaponEntity> attackGoal;
 
-    public abstract GenericAnimatedWarlockAttackGoal<? extends SummonedWeaponEntity> makeAttackGoal();
+    public abstract GenericAnimatedWarlockAttackGoal<? extends SummonedWeaponEntity>
+            makeAttackGoal();
 
     public SummonedWeaponEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -58,7 +62,12 @@ public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob imple
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         this.setNoGravity(true);
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
@@ -77,13 +86,17 @@ public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob imple
     protected void registerGoals() {
         attackGoal = makeAttackGoal();
         goalSelector.addGoal(1, attackGoal.setMeleeBias(1f, 1f));
-        goalSelector.addGoal(3, new GenericFollowOwnerGoal(this, this::getSummoner, 1, 9, 4, true, 20));
+        goalSelector.addGoal(
+                3, new GenericFollowOwnerGoal(this, this::getSummoner, 1, 9, 4, true, 20));
         goalSelector.addGoal(5, new WaterAvoidingRandomFlyingGoal(this, 0.75));
 
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(3, new GenericCopyOwnerTargetGoal(this, this::getSummoner));
-        this.targetSelector.addGoal(4, (new GenericHurtByTargetGoal(this, (entity) -> entity == getSummoner())).setAlertOthers());
+        this.targetSelector.addGoal(
+                4,
+                (new GenericHurtByTargetGoal(this, (entity) -> entity == getSummoner()))
+                        .setAlertOthers());
         this.targetSelector.addGoal(5, new GenericProtectOwnerTargetGoal(this, this::getSummoner));
     }
 
@@ -100,11 +113,14 @@ public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob imple
     protected void customServerAiStep() {
         super.customServerAiStep();
         if (this.tickCount % 8 == 0) {
-            //fixme: not very consistent
+            // fixme: not very consistent
             var owner = getSummoner();
             var target = getTarget();
             var trackEntity = target == null ? owner : target;
-            var targetY = trackEntity == null ? Utils.moveToRelativeGroundLevel(level(), this.position(), 3).y + 1 : trackEntity.getY() + 1;
+            var targetY =
+                    trackEntity == null
+                            ? Utils.moveToRelativeGroundLevel(level(), this.position(), 3).y + 1
+                            : trackEntity.getY() + 1;
             var f = targetY - getY();
             var force = Mth.clamp(f * 0.05, -0.15, 0.15);
             this.setDeltaMovement(this.getDeltaMovement().add(0, force, 0));
@@ -121,12 +137,15 @@ public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob imple
 
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        return Utils.doMeleeAttack(this, pEntity, SpellRegistry.SUMMON_SWORDS.get().getDamageSource(this, getSummoner()));
+        return Utils.doMeleeAttack(
+                this,
+                pEntity,
+                SpellRegistry.SUMMON_SWORDS.get().getDamageSource(this, getSummoner()));
     }
 
     @Override
-    protected void checkFallDamage(double pY, boolean pOnGround, BlockState pState, BlockPos pPos) {
-    }
+    protected void checkFallDamage(
+            double pY, boolean pOnGround, BlockState pState, BlockPos pPos) {}
 
     protected LivingEntity cachedSummoner;
     protected UUID summonerUUID;
@@ -142,7 +161,7 @@ public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob imple
      */
     @Deprecated(forRemoval = true)
     public void setSummoner(@Nullable LivingEntity owner) {
-        if(owner == null) return;
+        if (owner == null) return;
         SummonManager.setOwner(this, owner);
     }
 
@@ -168,13 +187,25 @@ public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob imple
     @Override
     public void onUnSummon() {
         if (!level().isClientSide) {
-            MagicManager.spawnParticles(level(), ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleTypes.POOF,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    25,
+                    .4,
+                    .8,
+                    .4,
+                    .03,
+                    false);
             setRemoved(RemovalReason.DISCARDED);
         }
     }
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private final AnimationController<SummonedWeaponEntity> meleeController = new AnimationController<>(this, "animations", 0, this::predicate);
+    private final AnimationController<SummonedWeaponEntity> meleeController =
+            new AnimationController<>(this, "animations", 0, this::predicate);
     RawAnimation animationToPlay = null;
 
     @Override
@@ -217,9 +248,11 @@ public abstract class SummonedWeaponEntity extends AbstractSpellCastingMob imple
                 .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(Attributes.FLYING_SPEED, 1)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH, 4)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .ENTITY_REACH,
+                        4)
                 .add(Attributes.MOVEMENT_SPEED, .2);
-
     }
 
     @Override

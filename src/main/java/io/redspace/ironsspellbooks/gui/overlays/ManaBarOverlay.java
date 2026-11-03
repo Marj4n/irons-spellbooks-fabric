@@ -19,10 +19,13 @@ import static io.redspace.ironsspellbooks.api.registry.AttributeRegistry.MAX_MAN
 public class ManaBarOverlay implements HudOverlay {
     public static final ManaBarOverlay instance = new ManaBarOverlay();
 
-    public final static ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
+    public final static ResourceLocation TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
 
-    //public final static ResourceLocation EMPTY = new ResourceLocation(irons_spellbooks.MODID,"textures/gui/health_empty.png");
-    //public final static ResourceLocation FULL = new ResourceLocation(irons_spellbooks.MODID,"textures/gui/health_full.png");
+    // public final static ResourceLocation EMPTY = new
+    // ResourceLocation(irons_spellbooks.MODID,"textures/gui/health_empty.png");
+    // public final static ResourceLocation FULL = new
+    // ResourceLocation(irons_spellbooks.MODID,"textures/gui/health_full.png");
     public enum Anchor {
         Hunger,
         XP,
@@ -49,13 +52,18 @@ public class ManaBarOverlay implements HudOverlay {
     static final int SCREEN_BORDER_MARGIN = 20;
     static final int TEXT_COLOR = ChatFormatting.AQUA.getColor();
 
-    public void render(HudContext gui, GuiGraphics guiHelper, float partialTick, int screenWidth, int screenHeight) {
-        if (Minecraft.getInstance().options.hideGui || Minecraft.getInstance().player.isSpectator()) {
+    public void render(
+            HudContext gui,
+            GuiGraphics guiHelper,
+            float partialTick,
+            int screenWidth,
+            int screenHeight) {
+        if (Minecraft.getInstance().options.hideGui
+                || Minecraft.getInstance().player.isSpectator()) {
             return;
         }
         var player = Minecraft.getInstance().player;
-        if (!shouldShowManaBar(player))
-            return;
+        if (!shouldShowManaBar(player)) return;
 
         int maxMana = (int) player.getAttributeValue(MAX_MANA.get());
         int mana = ClientMagicData.getPlayerMana();
@@ -70,52 +78,76 @@ public class ManaBarOverlay implements HudOverlay {
         int spriteX = anchor == Anchor.XP ? 68 : 0;
         int spriteY = anchor == Anchor.XP ? 40 : 0;
         guiHelper.blit(TEXTURE, barX, barY, spriteX, spriteY, imageWidth, IMAGE_HEIGHT, 256, 256);
-        guiHelper.blit(TEXTURE, barX, barY, spriteX, spriteY + IMAGE_HEIGHT, (int) (imageWidth * Math.min((mana / (double) maxMana), 1)), IMAGE_HEIGHT);
+        guiHelper.blit(
+                TEXTURE,
+                barX,
+                barY,
+                spriteX,
+                spriteY + IMAGE_HEIGHT,
+                (int) (imageWidth * Math.min((mana / (double) maxMana), 1)),
+                IMAGE_HEIGHT);
 
         int textX, textY;
         String manaFraction = (mana) + "/" + maxMana;
 
-        textX = ClientConfigs.MANA_TEXT_X_OFFSET.get() + barX + imageWidth / 2 - (int) ((("" + mana).length() + 0.5) * CHAR_WIDTH);
-        textY = ClientConfigs.MANA_TEXT_Y_OFFSET.get() + barY + (anchor == Anchor.XP ? ICON_ROW_HEIGHT / 3 : ICON_ROW_HEIGHT);
+        textX =
+                ClientConfigs.MANA_TEXT_X_OFFSET.get()
+                        + barX
+                        + imageWidth / 2
+                        - (int) ((("" + mana).length() + 0.5) * CHAR_WIDTH);
+        textY =
+                ClientConfigs.MANA_TEXT_Y_OFFSET.get()
+                        + barY
+                        + (anchor == Anchor.XP ? ICON_ROW_HEIGHT / 3 : ICON_ROW_HEIGHT);
 
         if (ClientConfigs.MANA_BAR_TEXT_VISIBLE.get()) {
-            guiHelper.drawString(Minecraft.getInstance().font, manaFraction, textX, textY, TEXT_COLOR);
+            guiHelper.drawString(
+                    Minecraft.getInstance().font, manaFraction, textX, textY, TEXT_COLOR);
         }
     }
 
     public static boolean shouldShowManaBar(Player player) {
-        //We show mana if they are holding an item that can cast spells or if their mana is not full
+        // We show mana if they are holding an item that can cast spells or if their mana is not
+        // full
         var display = ClientConfigs.MANA_BAR_DISPLAY.get();
         var anchor = ClientConfigs.MANA_BAR_ANCHOR.get();
-        return !player.isSpectator() && display != Display.Never && (anchor != Anchor.XP || ((LocalPlayer) player).getJumpRidingScale() == 0) && (
-                display == Display.Always ||
-                        player.isHolding(itemStack -> itemStack.getItem() instanceof CastingItem || (ISpellContainer.isSpellContainer(itemStack) && !ISpellContainer.get(itemStack).mustEquip())) ||
-                        ClientMagicData.getPlayerMana() < player.getAttributeValue(MAX_MANA.get()));
-
+        return !player.isSpectator()
+                && display != Display.Never
+                && (anchor != Anchor.XP || ((LocalPlayer) player).getJumpRidingScale() == 0)
+                && (display == Display.Always
+                        || player.isHolding(
+                                itemStack ->
+                                        itemStack.getItem() instanceof CastingItem
+                                                || (ISpellContainer.isSpellContainer(itemStack)
+                                                        && !ISpellContainer.get(itemStack)
+                                                                .mustEquip()))
+                        || ClientMagicData.getPlayerMana()
+                                < player.getAttributeValue(MAX_MANA.get()));
     }
 
     private static int getBarX(Anchor anchor, int screenWidth) {
-        if (anchor == Anchor.XP)
-            return screenWidth / 2 - 91 - 3; //Vanilla's Pos - 3
+        if (anchor == Anchor.XP) return screenWidth / 2 - 91 - 3; // Vanilla's Pos - 3
         if (anchor == Anchor.Hunger || anchor == Anchor.Center)
-            return screenWidth / 2 - DEFAULT_IMAGE_WIDTH / 2 + (anchor == Anchor.Center ? 0 : HUNGER_BAR_OFFSET);
+            return screenWidth / 2
+                    - DEFAULT_IMAGE_WIDTH / 2
+                    + (anchor == Anchor.Center ? 0 : HUNGER_BAR_OFFSET);
         else if (anchor == Anchor.TopLeft || anchor == Anchor.BottomLeft)
             return SCREEN_BORDER_MARGIN;
         else return screenWidth - SCREEN_BORDER_MARGIN - DEFAULT_IMAGE_WIDTH;
-
     }
 
     private static int getBarY(Anchor anchor, int screenHeight, HudContext gui) {
-        if (anchor == Anchor.XP)
-            return screenHeight - 32 + 3 - 7; //Vanilla's Pos - 7
+        if (anchor == Anchor.XP) return screenHeight - 32 + 3 - 7; // Vanilla's Pos - 7
         if (anchor == Anchor.Hunger)
             return screenHeight - (getAndIncrementRightHeight(gui) - 2) - IMAGE_HEIGHT / 2;
         if (anchor == Anchor.Center)
-            return screenHeight - HOTBAR_HEIGHT - (int) (ICON_ROW_HEIGHT * 2.5f) - IMAGE_HEIGHT / 2 - (Math.max(gui.rightHeight, gui.leftHeight) - 49);
-        if (anchor == Anchor.TopLeft || anchor == Anchor.TopRight)
-            return SCREEN_BORDER_MARGIN;
+            return screenHeight
+                    - HOTBAR_HEIGHT
+                    - (int) (ICON_ROW_HEIGHT * 2.5f)
+                    - IMAGE_HEIGHT / 2
+                    - (Math.max(gui.rightHeight, gui.leftHeight) - 49);
+        if (anchor == Anchor.TopLeft || anchor == Anchor.TopRight) return SCREEN_BORDER_MARGIN;
         return screenHeight - SCREEN_BORDER_MARGIN - IMAGE_HEIGHT;
-
     }
 
     private static int getAndIncrementRightHeight(HudContext gui) {

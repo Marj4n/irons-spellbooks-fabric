@@ -41,17 +41,34 @@ public class Snowball extends AbstractMagicProjectile {
         double d2 = this.getZ() - vec3.z;
         for (int i = 0; i < 4; i++) {
             Vec3 random = Utils.getRandomVec3(.2);
-            this.level().addParticle(ParticleHelper.SNOW_DUST, d0 - random.x, d1 + 0.5D - random.y, d2 - random.z, random.x * .5f, random.y * .5f, random.z * .5f);
-
+            this.level()
+                    .addParticle(
+                            ParticleHelper.SNOW_DUST,
+                            d0 - random.x,
+                            d1 + 0.5D - random.y,
+                            d2 - random.z,
+                            random.x * .5f,
+                            random.y * .5f,
+                            random.z * .5f);
         }
         Vec3 random = Utils.getRandomVec3(.2);
-        this.level().addParticle(ParticleHelper.SNOWFLAKE, d0 - random.x, d1 + 0.5D - random.y, d2 - random.z, random.x * .5f, random.y * .5f, random.z * .5f);
+        this.level()
+                .addParticle(
+                        ParticleHelper.SNOWFLAKE,
+                        d0 - random.x,
+                        d1 + 0.5D - random.y,
+                        d2 - random.z,
+                        random.x * .5f,
+                        random.y * .5f,
+                        random.z * .5f);
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.SNOW_DUST, x, y, z, 50, 0.5, 0.5, 0.5, .2, true);
-        MagicManager.spawnParticles(level(), ParticleHelper.SNOWFLAKE, x, y, z, 50, 0.5, 0.5, 0.5, .2, false);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.SNOW_DUST, x, y, z, 50, 0.5, 0.5, 0.5, .2, true);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.SNOWFLAKE, x, y, z, 50, 0.5, 0.5, 0.5, .2, false);
     }
 
     @Override
@@ -67,11 +84,22 @@ public class Snowball extends AbstractMagicProjectile {
         var entities = level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
         for (Entity entity : entities) {
             double distance = entity.distanceToSqr(hitresult.getLocation());
-            if (entity instanceof LivingEntity livingEntity && distance < explosionRadius * explosionRadius && canHitEntity(entity) && !DamageSources.isFriendlyFireBetween(getOwner(), entity)) {
-                if (Utils.hasLineOfSight(level(), hitresult.getLocation(), entity.position().add(0, entity.getEyeHeight() * .5f, 0), true)) {
-//                    double p = (1 - Math.pow(Math.sqrt(distance) / (explosionRadius), 3));
-//                    entity.setTicksFrozen(entity.getTicksFrozen() + (int) (entity.getTicksRequiredToFreeze() * 2 * p));
-                    livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.CHILLED.get(), (int) getDamage()));
+            if (entity instanceof LivingEntity livingEntity
+                    && distance < explosionRadius * explosionRadius
+                    && canHitEntity(entity)
+                    && !DamageSources.isFriendlyFireBetween(getOwner(), entity)) {
+                if (Utils.hasLineOfSight(
+                        level(),
+                        hitresult.getLocation(),
+                        entity.position().add(0, entity.getEyeHeight() * .5f, 0),
+                        true)) {
+                    //                    double p = (1 - Math.pow(Math.sqrt(distance) /
+                    // (explosionRadius), 3));
+                    //                    entity.setTicksFrozen(entity.getTicksFrozen() + (int)
+                    // (entity.getTicksRequiredToFreeze() * 2 * p));
+                    livingEntity.addEffect(
+                            new MobEffectInstance(
+                                    MobEffectRegistry.CHILLED.get(), (int) getDamage()));
                 }
             }
         }
@@ -92,12 +120,19 @@ public class Snowball extends AbstractMagicProjectile {
 
     @Override
     protected void doImpactSound(Supplier<SoundEvent> sound) {
-        level().playSound(null, getX(), getY(), getZ(), sound.get(), SoundSource.NEUTRAL, 2, 0.7f + Utils.random.nextFloat() * .2f);
+        level().playSound(
+                        null,
+                        getX(),
+                        getY(),
+                        getZ(),
+                        sound.get(),
+                        SoundSource.NEUTRAL,
+                        2,
+                        0.7f + Utils.random.nextFloat() * .2f);
     }
 
     @Override
     public Optional<Supplier<SoundEvent>> getImpactSound() {
         return Optional.of(SoundRegistry.ICE_SPIKE_EMERGE);
     }
-
 }

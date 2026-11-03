@@ -29,20 +29,26 @@ import java.util.List;
 import java.util.Optional;
 
 public class ChainCreeperSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "chain_creeper");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "chain_creeper");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(6)
-            .setCooldownSeconds(15)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(6)
+                    .setCooldownSeconds(15)
+                    .build();
 
     public ChainCreeperSpell() {
         this.manaCostPerLevel = 10;
@@ -78,34 +84,51 @@ public class ChainCreeperSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .25f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 spawn = null;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             spawn = castTargetingData.getTargetPosition((ServerLevel) level);
         }
         if (spawn == null) {
-            HitResult raycast = RaycastBuilder.begin(level, entity)
-                    .range(32)
-                    .checkForBlocks(true)
-                    .build();
+            HitResult raycast =
+                    RaycastBuilder.begin(level, entity).range(32).checkForBlocks(true).build();
             if (raycast.getType() == HitResult.Type.ENTITY) {
                 spawn = ((EntityHitResult) raycast).getEntity().position();
             } else {
-                spawn = Utils.moveToRelativeGroundLevel(level, raycast.getLocation().subtract(entity.getForward().normalize()).add(0, 2, 0), 5);
+                spawn =
+                        Utils.moveToRelativeGroundLevel(
+                                level,
+                                raycast.getLocation()
+                                        .subtract(entity.getForward().normalize())
+                                        .add(0, 2, 0),
+                                5);
             }
         }
-        summonCreeperRing(level, entity, spawn.add(0, 0.5, 0), getDamage(spellLevel, entity), getCount(spellLevel, entity));
+        summonCreeperRing(
+                level,
+                entity,
+                spawn.add(0, 0.5, 0),
+                getDamage(spellLevel, entity),
+                getCount(spellLevel, entity));
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
-    public static void summonCreeperRing(Level level, LivingEntity owner, Vec3 origin, float damage, int count) {
+    public static void summonCreeperRing(
+            Level level, LivingEntity owner, Vec3 origin, float damage, int count) {
         if (count < 3) {
             count = 3;
         }
@@ -124,7 +147,12 @@ public class ChainCreeperSpell extends AbstractSpell {
             Vec3 spawn = origin.add(motion.multiply(1, 0, 1).normalize().scale(.6f));
             var angle = Utils.rotationFromDirection(motion);
 
-            head.moveTo(spawn.x, spawn.y - head.getBoundingBox().getYsize() / 2, spawn.z, angle.y, angle.x);
+            head.moveTo(
+                    spawn.x,
+                    spawn.y - head.getBoundingBox().getYsize() / 2,
+                    spawn.z,
+                    angle.y,
+                    angle.x);
             level.addFreshEntity(head);
         }
     }

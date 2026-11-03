@@ -19,7 +19,8 @@ public class ExtendedServerBossEvent extends BossEvent {
     private final Set<ServerPlayer> unmodifiablePlayers = Collections.unmodifiableSet(this.players);
     private boolean visible = true;
 
-    public ExtendedServerBossEvent(UUID uuid, Component name, BossBarColor color, BossBarOverlay overlay) {
+    public ExtendedServerBossEvent(
+            UUID uuid, Component name, BossBarColor color, BossBarOverlay overlay) {
         super(uuid, name, color, overlay);
     }
 
@@ -130,8 +131,10 @@ public class ExtendedServerBossEvent extends BossEvent {
             this.visible = visible;
 
             for (ServerPlayer serverplayer : this.players) {
-                serverplayer.connection
-                        .send(visible ? ClientboundBossEventPacket.createAddPacket(this) : ClientboundBossEventPacket.createRemovePacket(this.getId()));
+                serverplayer.connection.send(
+                        visible
+                                ? ClientboundBossEventPacket.createAddPacket(this)
+                                : ClientboundBossEventPacket.createRemovePacket(this.getId()));
             }
         }
     }

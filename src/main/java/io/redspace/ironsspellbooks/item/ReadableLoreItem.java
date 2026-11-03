@@ -34,10 +34,12 @@ public class ReadableLoreItem extends Item implements ILecternPlaceable {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level pLevel, Player pPlayer, InteractionHand pHand) {
         var itemstack = pPlayer.getItemInHand(pHand);
         if (pPlayer instanceof ServerPlayer serverPlayer) {
-            if (WrittenBookItem.resolveBookComponents(itemstack, serverPlayer.createCommandSourceStack(), serverPlayer)) {
+            if (WrittenBookItem.resolveBookComponents(
+                    itemstack, serverPlayer.createCommandSourceStack(), serverPlayer)) {
                 // not sure why vanilla broadcasts book resolution changes, but i will too
                 serverPlayer.containerMenu.broadcastChanges();
             }
@@ -52,7 +54,14 @@ public class ReadableLoreItem extends Item implements ILecternPlaceable {
         BlockPos blockpos = pContext.getClickedPos();
         BlockState blockstate = level.getBlockState(blockpos);
         if (blockstate.is(Blocks.LECTERN)) {
-            return LecternBlock.tryPlaceBook(pContext.getPlayer(), level, blockpos, blockstate, pContext.getItemInHand()) ? InteractionResult.sidedSuccess(level.isClientSide) : InteractionResult.PASS;
+            return LecternBlock.tryPlaceBook(
+                            pContext.getPlayer(),
+                            level,
+                            blockpos,
+                            blockstate,
+                            pContext.getItemInHand())
+                    ? InteractionResult.sidedSuccess(level.isClientSide)
+                    : InteractionResult.PASS;
         } else {
             return InteractionResult.PASS;
         }

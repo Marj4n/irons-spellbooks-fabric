@@ -18,16 +18,20 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public class IcicleRenderer extends EntityRenderer<IcicleProjectile> {
-    public static final ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/icicle_projectile.png");
-    public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "icicle_model"), "main");
+    public static final ResourceLocation TEXTURE =
+            IronsSpellbooks.id("textures/entity/icicle_projectile.png");
+    public static final ModelLayerLocation MODEL_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "icicle_model"), "main");
 
     private final ModelPart body;
-    //private final ModelPart tip;
+
+    // private final ModelPart tip;
 
     public IcicleRenderer(Context context) {
         super(context);
         ModelPart modelpart = context.bakeLayer(IcicleRenderer.MODEL_LAYER_LOCATION);
-        //this.tip = modelpart.getChild("tip");
+        // this.tip = modelpart.getChild("tip");
         this.body = modelpart.getChild("model");
     }
 
@@ -35,25 +39,59 @@ public class IcicleRenderer extends EntityRenderer<IcicleProjectile> {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition bb_main = partdefinition.addOrReplaceChild("model", CubeListBuilder.create().texOffs(0, 8).addBox(-1.0F, -1.0F, -6.0F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 0).addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.ZERO);
+        PartDefinition bb_main =
+                partdefinition.addOrReplaceChild(
+                        "model",
+                        CubeListBuilder.create()
+                                .texOffs(0, 8)
+                                .addBox(
+                                        -1.0F,
+                                        -1.0F,
+                                        -6.0F,
+                                        2.0F,
+                                        2.0F,
+                                        6.0F,
+                                        new CubeDeformation(0.0F))
+                                .texOffs(0, 0)
+                                .addBox(
+                                        -1.5F,
+                                        -1.5F,
+                                        0.0F,
+                                        3.0F,
+                                        3.0F,
+                                        5.0F,
+                                        new CubeDeformation(0.0F)),
+                        PartPose.ZERO);
 
         return LayerDefinition.create(meshdefinition, 16, 16);
     }
 
     @Override
-    public void render(IcicleProjectile entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            IcicleProjectile entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
 
         Vec3 motion = entity.getDeltaMovement();
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
         poseStack.scale(1, -1, 1);
         VertexConsumer consumer2 = bufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
         this.body.render(poseStack, consumer2, light, OverlayTexture.NO_OVERLAY);
-        //this.tip.render(poseStack, consumer2, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+        // this.tip.render(poseStack, consumer2, LightTexture.FULL_BRIGHT,
+        // OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
 
         super.render(entity, yaw, partialTicks, poseStack, bufferSource, light);

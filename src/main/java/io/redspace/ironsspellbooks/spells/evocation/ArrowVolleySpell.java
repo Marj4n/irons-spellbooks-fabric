@@ -30,20 +30,26 @@ import java.util.List;
 import java.util.Optional;
 
 public class ArrowVolleySpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "arrow_volley");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "arrow_volley");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(6)
-            .setCooldownSeconds(15)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(6)
+                    .setCooldownSeconds(15)
+                    .build();
 
     public ArrowVolleySpell() {
         this.manaCostPerLevel = 10;
@@ -79,35 +85,69 @@ public class ArrowVolleySpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .25f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 targetLocation = null;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             targetLocation = castTargetingData.getTargetPosition((ServerLevel) level);
         }
         if (targetLocation == null) {
-            targetLocation = RaycastBuilder.begin(level, entity)
-                    .range(100)
-                    .checkForBlocks(true)
-                    .build()
-                    .getLocation();
+            targetLocation =
+                    RaycastBuilder.begin(level, entity)
+                            .range(100)
+                            .checkForBlocks(true)
+                            .build()
+                            .getLocation();
         }
-        Vec3 backward = new Vec3(targetLocation.x - entity.getX(), 0, targetLocation.z - entity.getZ()).normalize().scale(-4);
-        //Vec3 spawnLocation = Utils.moveToRelativeGroundLevel(level, Utils.moveToRelativeGroundLevel(level, targetLocation, 6).add(backward), 1, 2);
-        //spawnLocation = Utils.raycastForBlock(level, spawnLocation.add(0, 0.25, 0), spawnLocation.add(0, 6, 0), ClipContext.Fluid.NONE).getLocation().add(0, -1, 0);
-        Vec3 raycastTarget = Utils.moveToRelativeGroundLevel(level, targetLocation.add(0, 2, 0), 4).add(backward).add(0, 6, 0);
-        Vec3 spawnLocation = Utils.raycastForBlock(level, targetLocation, raycastTarget, ClipContext.Fluid.NONE).getLocation();
+        Vec3 backward =
+                new Vec3(targetLocation.x - entity.getX(), 0, targetLocation.z - entity.getZ())
+                        .normalize()
+                        .scale(-4);
+        // Vec3 spawnLocation = Utils.moveToRelativeGroundLevel(level,
+        // Utils.moveToRelativeGroundLevel(level, targetLocation, 6).add(backward), 1, 2);
+        // spawnLocation = Utils.raycastForBlock(level, spawnLocation.add(0, 0.25, 0),
+        // spawnLocation.add(0, 6, 0), ClipContext.Fluid.NONE).getLocation().add(0, -1, 0);
+        Vec3 raycastTarget =
+                Utils.moveToRelativeGroundLevel(level, targetLocation.add(0, 2, 0), 4)
+                        .add(backward)
+                        .add(0, 6, 0);
+        Vec3 spawnLocation =
+                Utils.raycastForBlock(level, targetLocation, raycastTarget, ClipContext.Fluid.NONE)
+                        .getLocation();
         spawnLocation = spawnLocation.subtract(targetLocation).scale(.9f).add(targetLocation);
-        float dx = Mth.sqrt((float) ((spawnLocation.x - targetLocation.x) * (spawnLocation.x - targetLocation.x) + (spawnLocation.z - targetLocation.z) * (spawnLocation.z - targetLocation.z)));
-        float arrowAngleX = dx == 0 ? 70 : (float) (Mth.atan2(dx, (spawnLocation.y - targetLocation.y)) * Mth.RAD_TO_DEG);
-        float arrowAngleY = entity.getX() == targetLocation.x && entity.getZ() == targetLocation.z ? (entity.getYRot() - 90) * Mth.DEG_TO_RAD : Utils.getAngle(entity.getX(), entity.getZ(), targetLocation.x, targetLocation.z);
+        float dx =
+                Mth.sqrt(
+                        (float)
+                                ((spawnLocation.x - targetLocation.x)
+                                                * (spawnLocation.x - targetLocation.x)
+                                        + (spawnLocation.z - targetLocation.z)
+                                                * (spawnLocation.z - targetLocation.z)));
+        float arrowAngleX =
+                dx == 0
+                        ? 70
+                        : (float)
+                                (Mth.atan2(dx, (spawnLocation.y - targetLocation.y))
+                                        * Mth.RAD_TO_DEG);
+        float arrowAngleY =
+                entity.getX() == targetLocation.x && entity.getZ() == targetLocation.z
+                        ? (entity.getYRot() - 90) * Mth.DEG_TO_RAD
+                        : Utils.getAngle(
+                                entity.getX(), entity.getZ(), targetLocation.x, targetLocation.z);
 
-        ArrowVolleyEntity arrowVolleyEntity = new ArrowVolleyEntity(EntityRegistry.ARROW_VOLLEY_ENTITY.get(), level);
+        ArrowVolleyEntity arrowVolleyEntity =
+                new ArrowVolleyEntity(EntityRegistry.ARROW_VOLLEY_ENTITY.get(), level);
         arrowVolleyEntity.moveTo(spawnLocation);
         arrowVolleyEntity.setYRot(arrowAngleY * Mth.RAD_TO_DEG + 90);
         arrowVolleyEntity.setXRot(arrowAngleX + 25);

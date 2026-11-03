@@ -31,18 +31,32 @@ public class BlightSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.reduced_healing", Utils.stringTruncation((1 + getAmplifier(spellLevel, caster)) * BlightEffect.HEALING_PER_LEVEL * -100, 1)),
-                Component.translatable("ui.irons_spellbooks.reduced_damage", Utils.stringTruncation((1 + getAmplifier(spellLevel, caster)) * BlightEffect.DAMAGE_PER_LEVEL * -100, 1)),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.reduced_healing",
+                        Utils.stringTruncation(
+                                (1 + getAmplifier(spellLevel, caster))
+                                        * BlightEffect.HEALING_PER_LEVEL
+                                        * -100,
+                                1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.reduced_damage",
+                        Utils.stringTruncation(
+                                (1 + getAmplifier(spellLevel, caster))
+                                        * BlightEffect.DAMAGE_PER_LEVEL
+                                        * -100,
+                                1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getDuration(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(90)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(90)
+                    .build();
 
     public BlightSpell() {
         this.manaCostPerLevel = 20;
@@ -77,18 +91,27 @@ public class BlightSpell extends AbstractSpell {
         return Optional.of(SoundRegistry.POISON_CAST.get());
     }
 
-
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f);
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData targetData) {
             var targetEntity = targetData.getTarget((ServerLevel) world);
             if (targetEntity != null) {
-                targetEntity.addEffect(new MobEffectInstance(MobEffectRegistry.BLIGHT.get(), getDuration(spellLevel, entity), getAmplifier(spellLevel, entity)));
+                targetEntity.addEffect(
+                        new MobEffectInstance(
+                                MobEffectRegistry.BLIGHT.get(),
+                                getDuration(spellLevel, entity),
+                                getAmplifier(spellLevel, entity)));
             }
         }
 
@@ -102,5 +125,4 @@ public class BlightSpell extends AbstractSpell {
     public int getDuration(int spellLevel, LivingEntity caster) {
         return (int) (getSpellPower(spellLevel, caster) * 20 * 30);
     }
-
 }

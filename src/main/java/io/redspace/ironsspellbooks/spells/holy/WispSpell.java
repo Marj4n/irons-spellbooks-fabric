@@ -32,15 +32,19 @@ public class WispSpell extends AbstractSpell {
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(3)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(3)
+                    .build();
 
     public WispSpell() {
         this.manaCostPerLevel = 2;
@@ -80,17 +84,25 @@ public class WispSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .35f);
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData targetingData) {
             var targetEntity = targetingData.getTarget((ServerLevel) world);
-            WispEntity wispEntity = new WispEntity(world, entity, getSpellPower(spellLevel, entity));
+            WispEntity wispEntity =
+                    new WispEntity(world, entity, getSpellPower(spellLevel, entity));
             wispEntity.setTarget(targetEntity);
-            wispEntity.setPos(Utils.getPositionFromEntityLookDirection(entity, 2).subtract(0, .2, 0));
+            wispEntity.setPos(
+                    Utils.getPositionFromEntityLookDirection(entity, 2).subtract(0, .2, 0));
             world.addFreshEntity(wispEntity);
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
@@ -98,12 +110,14 @@ public class WispSpell extends AbstractSpell {
 
     @Nullable
     private LivingEntity findTarget(LivingEntity caster) {
-        var target = RaycastBuilder.begin(caster.level(), caster)
-                .range(64)
-                .checkForBlocks(true)
-                .bbInflation(0.35f)
-                .build();
-        if (target instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        var target =
+                RaycastBuilder.begin(caster.level(), caster)
+                        .range(64)
+                        .checkForBlocks(true)
+                        .bbInflation(0.35f)
+                        .build();
+        if (target instanceof EntityHitResult entityHit
+                && entityHit.getEntity() instanceof LivingEntity livingTarget) {
             return livingTarget;
         } else {
             return null;

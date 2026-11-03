@@ -15,13 +15,13 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 
-
-
 public class RayOfFrostVisualEntity extends Entity implements IEntityAdditionalSpawnData {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
+
     public static final int lifetime = 15;
 
     public RayOfFrostVisualEntity(EntityType<?> pEntityType, Level pLevel) {
@@ -34,7 +34,8 @@ public class RayOfFrostVisualEntity extends Entity implements IEntityAdditionalS
         super(EntityRegistry.RAY_OF_FROST_VISUAL_ENTITY.get(), level);
         this.setPos(start.subtract(0, .75f, 0));
         this.distance = (float) start.distanceTo(end);
-        Vec2 rotation = Utils.rotationFromDirection(end.subtract(start).normalize()).scale(Mth.RAD_TO_DEG);
+        Vec2 rotation =
+                Utils.rotationFromDirection(end.subtract(start).normalize()).scale(Mth.RAD_TO_DEG);
         this.setRot(-rotation.y, -rotation.x);
     }
 
@@ -56,20 +57,13 @@ public class RayOfFrostVisualEntity extends Entity implements IEntityAdditionalS
     }
 
     @Override
-    protected void defineSynchedData() {
-
-    }
+    protected void defineSynchedData() {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-
-    }
+    protected void readAdditionalSaveData(CompoundTag pCompound) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-
-    }
-
+    protected void addAdditionalSaveData(CompoundTag pCompound) {}
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buffer) {

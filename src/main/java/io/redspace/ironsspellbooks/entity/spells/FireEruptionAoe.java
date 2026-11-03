@@ -37,8 +37,11 @@ public class FireEruptionAoe extends AoeEntity {
 
     @Override
     public void applyEffect(LivingEntity target) {
-        //todo: real damage source
-        var damageSource = SpellRegistry.RAISE_HELL_SPELL.get().getDamageSource(this.getOwner() == null ? this : this.getOwner());
+        // todo: real damage source
+        var damageSource =
+                SpellRegistry.RAISE_HELL_SPELL
+                        .get()
+                        .getDamageSource(this.getOwner() == null ? this : this.getOwner());
         DamageSources.ignoreNextKnockback(target);
         if (target.hurt(damageSource, getDamage())) {
             target.setRemainingFireTicks(5 * 20);
@@ -53,9 +56,7 @@ public class FireEruptionAoe extends AoeEntity {
     }
 
     @Override
-    public void ambientParticles() {
-
-    }
+    public void ambientParticles() {}
 
     int waveAnim = -1; // anim step in units of blocks
 
@@ -67,7 +68,10 @@ public class FireEruptionAoe extends AoeEntity {
             if (!level.isClientSide) {
                 if (waveAnim % 2 == 0) {
                     float volume = (waveAnim + 8) / 16f;
-                    this.playSound(SoundRegistry.EARTHQUAKE_IMPACT.get(), volume, Utils.random.nextIntBetweenInclusive(90, 110) * .01f);
+                    this.playSound(
+                            SoundRegistry.EARTHQUAKE_IMPACT.get(),
+                            volume,
+                            Utils.random.nextIntBetweenInclusive(90, 110) * .01f);
                 }
                 var circumferenceMin = (waveAnim - 1) * 2 * 3.14f;
                 var circumferenceMax = (waveAnim + 1) * 2 * 3.14f;
@@ -75,33 +79,54 @@ public class FireEruptionAoe extends AoeEntity {
                 int maxBlocks = Mth.clamp((int) circumferenceMax, 0, 750);
                 float anglePerBlockMin = 360f / minBlocks;
                 float anglePerBlockMax = 360f / maxBlocks;
-                //block trail
+                // block trail
                 for (int i = 0; i < minBlocks; i++) {
-                    Vec3 vec3 = new Vec3(
-                            waveAnim * Mth.cos(anglePerBlockMin * i),
-                            0,
-                            waveAnim * Mth.sin(anglePerBlockMin * i)
-                    );
-                    BlockPos blockPos = BlockPos.containing(Utils.moveToRelativeGroundLevel(level, position().add(vec3), 4)).below();
+                    Vec3 vec3 =
+                            new Vec3(
+                                    waveAnim * Mth.cos(anglePerBlockMin * i),
+                                    0,
+                                    waveAnim * Mth.sin(anglePerBlockMin * i));
+                    BlockPos blockPos =
+                            BlockPos.containing(
+                                            Utils.moveToRelativeGroundLevel(
+                                                    level, position().add(vec3), 4))
+                                    .below();
                     Utils.createTremorBlock(level, blockPos, .1f + random.nextFloat() * .2f);
                 }
-                //fire trail
+                // fire trail
                 for (int i = 0; i < maxBlocks; i++) {
                     if (random.nextFloat() < 0.25f) {
                         // reduce density of fire for better visual clarity
                         continue;
                     }
-                    Vec3 vec3 = new Vec3(
-                            (waveAnim + 1) * Mth.cos(anglePerBlockMax * i),
-                            0,
-                            (waveAnim + 1) * Mth.sin(anglePerBlockMax * i)
-                    );
-                    BlockPos blockPos = BlockPos.containing(Utils.moveToRelativeGroundLevel(level, position().add(vec3), 4)).above();
-                    if (level.getBlockState(blockPos.below()).isFaceSturdy(level, blockPos.below(), Direction.UP)) {
-                        Utils.createTremorBlockWithState(level, Blocks.FIRE.defaultBlockState(), blockPos.below(), .1f + random.nextFloat() * .2f);
+                    Vec3 vec3 =
+                            new Vec3(
+                                    (waveAnim + 1) * Mth.cos(anglePerBlockMax * i),
+                                    0,
+                                    (waveAnim + 1) * Mth.sin(anglePerBlockMax * i));
+                    BlockPos blockPos =
+                            BlockPos.containing(
+                                            Utils.moveToRelativeGroundLevel(
+                                                    level, position().add(vec3), 4))
+                                    .above();
+                    if (level.getBlockState(blockPos.below())
+                            .isFaceSturdy(level, blockPos.below(), Direction.UP)) {
+                        Utils.createTremorBlockWithState(
+                                level,
+                                Blocks.FIRE.defaultBlockState(),
+                                blockPos.below(),
+                                .1f + random.nextFloat() * .2f);
                     }
                 }
-                List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(this.getInflation().x, this.getInflation().y, this.getInflation().z));
+                List<LivingEntity> targets =
+                        this.level()
+                                .getEntitiesOfClass(
+                                        LivingEntity.class,
+                                        this.getBoundingBox()
+                                                .inflate(
+                                                        this.getInflation().x,
+                                                        this.getInflation().y,
+                                                        this.getInflation().z));
                 var r1Sqr = waveAnim * waveAnim;
                 var r2Sqr = (waveAnim + 1) * (waveAnim + 1);
                 for (LivingEntity target : targets) {
@@ -117,21 +142,25 @@ public class FireEruptionAoe extends AoeEntity {
                 int particles = (int) ((waveAnim + 1) * 2 * 3.14f * 2.5f);
                 float anglePerParticle = Mth.TWO_PI / particles;
                 for (int i = 0; i < particles; i++) {
-                    Vec3 trig = new Vec3(
-                            Mth.cos(anglePerParticle * i),
-                            0,
-                            Mth.sin(anglePerParticle * i)
-                    );
+                    Vec3 trig =
+                            new Vec3(
+                                    Mth.cos(anglePerParticle * i),
+                                    0,
+                                    Mth.sin(anglePerParticle * i));
                     float r = Mth.lerp(Utils.random.nextFloat(), waveAnim, waveAnim + 1);
-                    Vec3 pos = trig.scale(r).add(Utils.getRandomVec3(0.4)).add(this.position()).add(0, 0.5, 0);
+                    Vec3 pos =
+                            trig.scale(r)
+                                    .add(Utils.getRandomVec3(0.4))
+                                    .add(this.position())
+                                    .add(0, 0.5, 0);
                     Vec3 motion = trig.add(Utils.getRandomVec3(0.5)).scale(0.1);
-                    level.addParticle(ParticleHelper.FIRE, pos.x, pos.y, pos.z, motion.x, motion.y, motion.z);
+                    level.addParticle(
+                            ParticleHelper.FIRE, pos.x, pos.y, pos.z, motion.x, motion.y, motion.z);
                 }
             }
         } else {
             this.discard();
         }
-
     }
 
     @Override
@@ -158,5 +187,4 @@ public class FireEruptionAoe extends AoeEntity {
     public Optional<ParticleOptions> getParticle() {
         return Optional.empty();
     }
-
 }

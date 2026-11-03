@@ -20,23 +20,30 @@ import java.util.List;
 import java.util.Optional;
 
 public class ArcaneShackleSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "arcane_shackle");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "arcane_shackle");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.hp", Utils.stringTruncation(getChainHealth(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.duration", Utils.timeFromTicks(getChainDuration(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getLashRadius(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.hp",
+                        Utils.stringTruncation(getChainHealth(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.duration",
+                        Utils.timeFromTicks(getChainDuration(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getLashRadius(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(45)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(45)
+                    .build();
 
     public ArcaneShackleSpell() {
         this.baseSpellPower = 6;
@@ -72,16 +79,34 @@ public class ArcaneShackleSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         ArcaneShackleProjectile projectile = new ArcaneShackleProjectile(level, entity);
-        projectile.setPos(entity.position().add(0, entity.getEyeHeight() - projectile.getBoundingBox().getYsize() * 0.5f, 0).add(entity.getForward()));
+        projectile.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight()
+                                        - projectile.getBoundingBox().getYsize() * 0.5f,
+                                0)
+                        .add(entity.getForward()));
         projectile.shoot(entity.getLookAngle());
         projectile.setChainHealth(getChainHealth(spellLevel, entity));
         projectile.setChainLifetime(getChainDuration(spellLevel, entity));
         projectile.setLashRadius(getLashRadius(spellLevel, entity));
         projectile.setRestraintStrength(0.015f);
         level.addFreshEntity(projectile);
-        level.playSound(null, entity.blockPosition(), SoundRegistry.THROW_DAGGER.get(),entity.getSoundSource(), 1f, 0.7f + entity.getRandom().nextFloat() * .1f);
+        level.playSound(
+                null,
+                entity.blockPosition(),
+                SoundRegistry.THROW_DAGGER.get(),
+                entity.getSoundSource(),
+                1f,
+                0.7f + entity.getRandom().nextFloat() * .1f);
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
@@ -96,7 +121,6 @@ public class ArcaneShackleSpell extends AbstractSpell {
     private float getLashRadius(int spellLevel, LivingEntity entity) {
         return 5f;
     }
-
 
     @Override
     public AnimationHolder getCastStartAnimation() {

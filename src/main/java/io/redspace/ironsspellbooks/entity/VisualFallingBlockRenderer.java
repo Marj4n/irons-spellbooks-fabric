@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-
 @Environment(EnvType.CLIENT)
 public class VisualFallingBlockRenderer extends EntityRenderer<VisualFallingBlockEntity> {
     private final BlockRenderDispatcher dispatcher;
@@ -27,19 +26,39 @@ public class VisualFallingBlockRenderer extends EntityRenderer<VisualFallingBloc
         this.dispatcher = pContext.getBlockRenderDispatcher();
     }
 
-    public void render(VisualFallingBlockEntity entity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(
+            VisualFallingBlockEntity entity,
+            float pEntityYaw,
+            float pPartialTicks,
+            PoseStack pMatrixStack,
+            MultiBufferSource pBuffer,
+            int pPackedLight) {
         BlockState blockstate = entity.getBlockState();
         if (blockstate.getRenderShape() == RenderShape.MODEL) {
             Level level = entity.level();
-//         if (blockstate != level.getBlockState(pEntity.blockPosition()) && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+            //         if (blockstate != level.getBlockState(pEntity.blockPosition()) &&
+            // blockstate.getRenderShape() != RenderShape.INVISIBLE) {
             pMatrixStack.pushPose();
-            BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
+            BlockPos blockpos =
+                    BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
             pMatrixStack.translate(-0.5D, 0.0D, -0.5D);
             var model = this.dispatcher.getBlockModel(blockstate);
-            var renderType = net.minecraft.client.renderer.ItemBlockRenderTypes.getMovingBlockRenderType(blockstate);
-            this.dispatcher.getModelRenderer().tesselateBlock(level, model, blockstate, blockpos,
-                    pMatrixStack, pBuffer.getBuffer(renderType), false, RandomSource.create(),
-                    blockstate.getSeed(entity.getStartPos()), OverlayTexture.NO_OVERLAY);
+            var renderType =
+                    net.minecraft.client.renderer.ItemBlockRenderTypes.getMovingBlockRenderType(
+                            blockstate);
+            this.dispatcher
+                    .getModelRenderer()
+                    .tesselateBlock(
+                            level,
+                            model,
+                            blockstate,
+                            blockpos,
+                            pMatrixStack,
+                            pBuffer.getBuffer(renderType),
+                            false,
+                            RandomSource.create(),
+                            blockstate.getSeed(entity.getStartPos()),
+                            OverlayTexture.NO_OVERLAY);
             pMatrixStack.popPose();
             super.render(entity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
         }

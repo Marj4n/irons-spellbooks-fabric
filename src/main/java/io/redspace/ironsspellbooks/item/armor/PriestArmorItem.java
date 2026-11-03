@@ -9,7 +9,10 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 public class PriestArmorItem extends ImbuableChestplateArmorItem {
     public PriestArmorItem(ArmorItem.Type slot, Properties settings) {
-        super(ExtendedArmorMaterials.PRIEST, slot, settings/*, schoolAttributes(AttributeRegistry.HOLY_SPELL_POWER)*/);
+        super(
+                ExtendedArmorMaterials.PRIEST,
+                slot,
+                settings /*, schoolAttributes(AttributeRegistry.HOLY_SPELL_POWER)*/);
     }
 
     @Override

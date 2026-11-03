@@ -33,7 +33,8 @@ import javax.annotation.Nullable;
 public class ArcaneAnvilBlock extends FallingBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-//    public static final MapCodec<ArcaneAnvilBlock> CODEC = simpleCodec((properties) -> new ArcaneAnvilBlock());
+    //    public static final MapCodec<ArcaneAnvilBlock> CODEC = simpleCodec((properties) -> new
+    // ArcaneAnvilBlock());
 
     private static final VoxelShape BASE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 4.0D, 14.0D);
     private static final VoxelShape X_LEG1 = Block.box(3.0D, 4.0D, 4.0D, 13.0D, 5.0D, 12.0D);
@@ -44,32 +45,46 @@ public class ArcaneAnvilBlock extends FallingBlock {
     private static final VoxelShape Z_TOP = Block.box(3.0D, 10.0D, 0.0D, 13.0D, 16.0D, 16.0D);
     private static final VoxelShape X_AXIS_AABB = Shapes.or(BASE, X_LEG1, X_LEG2, X_TOP);
     private static final VoxelShape Z_AXIS_AABB = Shapes.or(BASE, Z_LEG1, Z_LEG2, Z_TOP);
-    private static final Component CONTAINER_TITLE = Component.translatable("ui.irons_spellbooks.arcane_anvil_title");
-
+    private static final Component CONTAINER_TITLE =
+            Component.translatable("ui.irons_spellbooks.arcane_anvil_title");
 
     public ArcaneAnvilBlock() {
-        super(BlockBehaviour.Properties.copy(Blocks.ENCHANTING_TABLE).noOcclusion().sound(SoundType.AMETHYST));
+        super(
+                BlockBehaviour.Properties.copy(Blocks.ENCHANTING_TABLE)
+                        .noOcclusion()
+                        .sound(SoundType.AMETHYST));
     }
 
-//    @Override
-//    protected MapCodec<? extends FallingBlock> codec() {
-//        return CODEC;
-//    }
+    //    @Override
+    //    protected MapCodec<? extends FallingBlock> codec() {
+    //        return CODEC;
+    //    }
 
     protected void falling(FallingBlockEntity pFallingEntity) {
         pFallingEntity.setHurtsEntities(2.0F, 40);
     }
 
-    public void onLand(Level pLevel, BlockPos pPos, BlockState pState, BlockState pReplaceableState, FallingBlockEntity pFallingBlock) {
+    public void onLand(
+            Level pLevel,
+            BlockPos pPos,
+            BlockState pState,
+            BlockState pReplaceableState,
+            FallingBlockEntity pFallingBlock) {
         if (!pFallingBlock.isSilent()) {
-            pLevel.playSound(null, pPos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, .3F, Utils.random.nextFloat() * 0.1F + 0.9F);
+            pLevel.playSound(
+                    null,
+                    pPos,
+                    SoundEvents.ANVIL_LAND,
+                    SoundSource.BLOCKS,
+                    .3F,
+                    Utils.random.nextFloat() * 0.1F + 0.9F);
         }
-
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         Direction direction = pState.getValue(FACING);
         return direction.getAxis() == Direction.Axis.X ? X_AXIS_AABB : Z_AXIS_AABB;
     }
@@ -77,7 +92,8 @@ public class ArcaneAnvilBlock extends FallingBlock {
     /* FACING */
 
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getClockWise());
+        return this.defaultBlockState()
+                .setValue(FACING, pContext.getHorizontalDirection().getClockWise());
     }
 
     @Override
@@ -98,7 +114,13 @@ public class ArcaneAnvilBlock extends FallingBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult use(
+            BlockState pState,
+            Level pLevel,
+            BlockPos pPos,
+            Player pPlayer,
+            InteractionHand pHand,
+            BlockHitResult pHit) {
         if (pLevel.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {
@@ -111,8 +133,11 @@ public class ArcaneAnvilBlock extends FallingBlock {
     @Override
     @Nullable
     public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
-        return new SimpleMenuProvider((i, inventory, player) ->
-                new ArcaneAnvilMenu(i, inventory, ContainerLevelAccess.create(pLevel, pPos)), CONTAINER_TITLE);
+        return new SimpleMenuProvider(
+                (i, inventory, player) ->
+                        new ArcaneAnvilMenu(
+                                i, inventory, ContainerLevelAccess.create(pLevel, pPos)),
+                CONTAINER_TITLE);
     }
 
     @Override

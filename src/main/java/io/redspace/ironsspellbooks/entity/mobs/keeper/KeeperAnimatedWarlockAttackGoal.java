@@ -12,7 +12,11 @@ import net.minecraft.world.phys.Vec3;
 public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     final KeeperEntity keeper;
 
-    public KeeperAnimatedWarlockAttackGoal(KeeperEntity abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval) {
+    public KeeperAnimatedWarlockAttackGoal(
+            KeeperEntity abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval) {
         super(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
         keeper = abstractSpellCastingMob;
         nextAttack = randomizeNextAttack(0);
@@ -39,12 +43,12 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
 
     @Override
     protected void handleAttackLogic(double distanceSquared) {
-        //Handling Animation hit frames
+        // Handling Animation hit frames
         var meleeRange = meleeRange();
         float distance = Mth.sqrt((float) distanceSquared);
         mob.getLookControl().setLookAt(target);
         if (meleeAnimTimer > 0) {
-            //We are currently attacking and are in a melee animation
+            // We are currently attacking and are in a melee animation
             forceFaceTarget();
             meleeAnimTimer--;
             if (currentAttack.data.isHitFrame(meleeAnimTimer - 4)) {
@@ -53,23 +57,35 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
                 }
             } else if (currentAttack.data.isHitFrame(meleeAnimTimer)) {
                 if (currentAttack != KeeperEntity.AttackType.Lunge) {
-                    //mob.lookAt(target, 300, 300);
-                    Vec3 lunge = target.position().subtract(mob.position()).normalize().scale(.55f)/*.add(0, 0.2, 0)*/;
+                    // mob.lookAt(target, 300, 300);
+                    Vec3 lunge =
+                            target.position()
+                                    .subtract(mob.position())
+                                    .normalize()
+                                    .scale(.55f) /*.add(0, 0.2, 0)*/;
                     mob.push(lunge.x, lunge.y, lunge.z);
-                    if (distance <= meleeRange && Utils.hasLineOfSight(mob.level(), mob, target, true)) {
+                    if (distance <= meleeRange
+                            && Utils.hasLineOfSight(mob.level(), mob, target, true)) {
                         boolean flag = this.mob.doHurtTarget(target);
                         target.invulnerableTime = 0;
                         if (flag) {
                             playImpactSound();
-                            if (currentAttack.data.isSingleHit() && ((mob.getRandom().nextFloat() < .75f) || target.isBlocking())) {
-                                //Attack again! combos!
+                            if (currentAttack.data.isSingleHit()
+                                    && ((mob.getRandom().nextFloat() < .75f)
+                                            || target.isBlocking())) {
+                                // Attack again! combos!
                                 queueCombo = randomizeNextAttack(0);
                             }
                         }
                     }
                 } else {
                     if (!hasLunged) {
-                        Vec3 lunge = target.position().subtract(mob.position()).normalize().multiply(2.4, .5, 2.4).add(0, 0.15, 0);
+                        Vec3 lunge =
+                                target.position()
+                                        .subtract(mob.position())
+                                        .normalize()
+                                        .multiply(2.4, .5, 2.4)
+                                        .add(0, 0.15, 0);
                         mob.push(lunge.x, lunge.y, lunge.z);
                         oldLungePos = mob.position();
                         mob.getNavigation().stop();
@@ -91,12 +107,12 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
             queueCombo = null;
             doMeleeAction();
         } else if (meleeAnimTimer == 0) {
-            //Reset animations/attack
+            // Reset animations/attack
             nextAttack = randomizeNextAttack(distance);
             resetMeleeAttackInterval(distanceSquared);
             meleeAnimTimer = -1;
         } else {
-            //Handling attack delay
+            // Handling attack delay
             if (distance < meleeRange * (nextAttack == KeeperEntity.AttackType.Lunge ? 3 : 1)) {
                 if (hasLineOfSight && --this.meleeAttackDelay == 0) {
                     doMeleeAction();
@@ -104,7 +120,8 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
                     resetMeleeAttackInterval(distanceSquared);
                 }
             } else if (--this.meleeAttackDelay < 0) {
-                //Always keep the clock running, eventually he'll lunge to close distance. Otherwise he can be kited incredibly easily
+                // Always keep the clock running, eventually he'll lunge to close distance.
+                // Otherwise he can be kited incredibly easily
                 resetMeleeAttackInterval(distanceSquared);
                 nextAttack = randomizeNextAttack(distance);
             }
@@ -112,7 +129,8 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     }
 
     private KeeperEntity.AttackType randomizeNextAttack(float distance) {
-        //Lunge is the last enum. If we are close, no need to lunge. if we are far, we favor lunging
+        // Lunge is the last enum. If we are close, no need to lunge. if we are far, we favor
+        // lunging
         var meleeRange = meleeRange();
         int i;
         if (distance < meleeRange * 1.5f) {
@@ -125,10 +143,8 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
         return KeeperEntity.AttackType.values()[mob.getRandom().nextInt(i)];
     }
 
-
     private void forceFaceTarget() {
-        if (hasLunged)
-            return;
+        if (hasLunged) return;
         double d0 = target.getX() - mob.getX();
         double d1 = target.getZ() - mob.getZ();
         float yRot = (float) (Mth.atan2(d1, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
@@ -139,14 +155,15 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
 
     @Override
     protected void doMeleeAction() {
-        //anim duration
+        // anim duration
         currentAttack = nextAttack;
         if (currentAttack != null) {
             this.mob.swing(InteractionHand.MAIN_HAND);
             meleeAnimTimer = currentAttack.data.lengthInTicks;
             hasLunged = false;
             hasHitLunge = false;
-            PacketDistributor.sendToPlayersTrackingEntity(keeper, new SyncAnimationPacket<>(currentAttack.toString(), keeper));
+            PacketDistributor.sendToPlayersTrackingEntity(
+                    keeper, new SyncAnimationPacket<>(currentAttack.toString(), keeper));
         }
     }
 
@@ -173,10 +190,16 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     }
 
     public void playSwingSound() {
-        mob.playSound(SoundRegistry.KEEPER_SWING.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        mob.playSound(
+                SoundRegistry.KEEPER_SWING.get(),
+                1,
+                Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
 
     public void playImpactSound() {
-        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        mob.playSound(
+                SoundRegistry.KEEPER_SWORD_IMPACT.get(),
+                1,
+                Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
 }

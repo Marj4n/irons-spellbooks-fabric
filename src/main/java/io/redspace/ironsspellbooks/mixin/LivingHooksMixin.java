@@ -16,8 +16,10 @@ public abstract class LivingHooksMixin {
         var event = new LivingHealEvent((LivingEntity) (Object) this, amount);
         return event.post() ? 0 : Math.max(0, event.getAmount());
     }
+
     @Inject(method = "knockback", at = @At("HEAD"), cancellable = true)
-    private void ironsSpellbooks$cancelSpellKnockback(double strength, double x, double z, CallbackInfo ci) {
+    private void ironsSpellbooks$cancelSpellKnockback(
+            double strength, double x, double z, CallbackInfo ci) {
         if (new LivingKnockBackEvent((LivingEntity) (Object) this).post()) ci.cancel();
     }
 }

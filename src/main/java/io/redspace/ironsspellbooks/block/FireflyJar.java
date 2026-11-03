@@ -28,16 +28,24 @@ public class FireflyJar extends Block implements SimpleWaterloggedBlock {
         this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
     }
 
-    public static final VoxelShape SHAPE = Shapes.or(Block.box(4, 0, 4, 12, 13, 12), Block.box(6, 13, 6, 10, 16, 10));
+    public static final VoxelShape SHAPE =
+            Shapes.or(Block.box(4, 0, 4, 12, 13, 12), Block.box(6, 13, 6, 10, 16, 10));
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
     }
 
     @Override
-    public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos) {
+    public BlockState updateShape(
+            BlockState pState,
+            Direction pDirection,
+            BlockState pNeighborState,
+            LevelAccessor pLevel,
+            BlockPos pPos,
+            BlockPos pNeighborPos) {
         if (pState.getValue(WATERLOGGED)) {
             pLevel.scheduleTick(pPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
         }
@@ -47,12 +55,18 @@ public class FireflyJar extends Block implements SimpleWaterloggedBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(WATERLOGGED, pContext.getLevel().getFluidState(pContext.getClickedPos()).getType() == Fluids.WATER);
+        return this.defaultBlockState()
+                .setValue(
+                        WATERLOGGED,
+                        pContext.getLevel().getFluidState(pContext.getClickedPos()).getType()
+                                == Fluids.WATER);
     }
 
     @Override
     public FluidState getFluidState(BlockState pState) {
-        return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(pState);
+        return pState.getValue(WATERLOGGED)
+                ? Fluids.WATER.getSource(false)
+                : super.getFluidState(pState);
     }
 
     @Override
@@ -70,7 +84,7 @@ public class FireflyJar extends Block implements SimpleWaterloggedBlock {
         double d6 = pRandom.nextDouble() * 0.6D - 0.3D;
 
         pLevel.addParticle(ParticleHelper.FIREFLY, d0 + d3, d1 + d4, d2 + d6, 0.0D, 0.0D, 0.0D);
-        pLevel.addParticle(ParticleHelper.FIREFLY, d0 + d3 * 2, d1 + d4 * 2, d2 + d6 * 2, 0.0D, 0.0D, 0.0D);
-
+        pLevel.addParticle(
+                ParticleHelper.FIREFLY, d0 + d3 * 2, d1 + d4 * 2, d2 + d6 * 2, 0.0D, 0.0D, 0.0D);
     }
 }

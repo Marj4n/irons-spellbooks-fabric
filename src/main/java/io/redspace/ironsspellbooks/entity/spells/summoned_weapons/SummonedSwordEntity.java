@@ -10,7 +10,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
-
 import java.util.List;
 
 public class SummonedSwordEntity extends SummonedWeaponEntity {
@@ -22,9 +21,11 @@ public class SummonedSwordEntity extends SummonedWeaponEntity {
                 .add(Attributes.MAX_HEALTH, 25.0)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(Attributes.FLYING_SPEED, 1.5)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH, 4)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .ENTITY_REACH,
+                        4)
                 .add(Attributes.MOVEMENT_SPEED, .5);
-
     }
 
     public SummonedSwordEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
@@ -39,9 +40,10 @@ public class SummonedSwordEntity extends SummonedWeaponEntity {
     @Override
     public GenericAnimatedWarlockAttackGoal<SummonedSwordEntity> makeAttackGoal() {
         return new GenericAnimatedWarlockAttackGoal<>(this, 1.5, 0, 20)
-                .setMoveset(List.of(
-                        new AttackAnimationData(36, "summoned_sword_basic_swing", 20),
-                        new AttackAnimationData(52, "summoned_sword_basic_dual_swing", 20, 35)
-                ));
+                .setMoveset(
+                        List.of(
+                                new AttackAnimationData(36, "summoned_sword_basic_swing", 20),
+                                new AttackAnimationData(
+                                        52, "summoned_sword_basic_dual_swing", 20, 35)));
     }
 }

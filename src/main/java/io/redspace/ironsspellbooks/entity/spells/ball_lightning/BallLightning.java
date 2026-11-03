@@ -45,16 +45,24 @@ public class BallLightning extends AbstractMagicProjectile {
     @Override
     public void trailParticles() {
         Vec3 pos = this.getBoundingBox().getCenter().add(getDeltaMovement());
-//        Vec3 random = Utils.getRandomVec3(1.0).add(pos);
+        //        Vec3 random = Utils.getRandomVec3(1.0).add(pos);
         Vec3 random = Utils.getRandomVec3(0.28);
         pos = pos.add(getDeltaMovement());
-//        level.addParticle(new ZapParticleOption(random), pos.x, pos.y, pos.z, 0, 0, 0);
-        level().addParticle(ParticleHelper.ELECTRICITY, pos.x, pos.y, pos.z, random.x, random.y, random.z);
+        //        level.addParticle(new ZapParticleOption(random), pos.x, pos.y, pos.z, 0, 0, 0);
+        level().addParticle(
+                        ParticleHelper.ELECTRICITY,
+                        pos.x,
+                        pos.y,
+                        pos.z,
+                        random.x,
+                        random.y,
+                        random.z);
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.ELECTRIC_SPARKS, x, y, z, 12, .08, .08, .08, 0.3, false);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.ELECTRIC_SPARKS, x, y, z, 12, .08, .08, .08, 0.3, false);
     }
 
     @Override
@@ -83,15 +91,30 @@ public class BallLightning extends AbstractMagicProjectile {
         Vec3 vec3 = this.getDeltaMovement();
         Vec3 pos = this.position();
         Vec3 vec32 = pos.add(vec3);
-        HitResult hitresult = level().clip(new ClipContext(pos, vec32, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+        HitResult hitresult =
+                level().clip(
+                                new ClipContext(
+                                        pos,
+                                        vec32,
+                                        ClipContext.Block.COLLIDER,
+                                        ClipContext.Fluid.NONE,
+                                        this));
         if (hitresult.getType() != HitResult.Type.MISS) {
-            //block hits
+            // block hits
             onHit(hitresult);
         } else {
-            //entity hits
-            var entities = level().getEntities(this, this.getBoundingBox().inflate(0.25f), this::canHitEntity);
+            // entity hits
+            var entities =
+                    level().getEntities(
+                                    this, this.getBoundingBox().inflate(0.25f), this::canHitEntity);
             for (Entity entity : entities) {
-                onHit(new EntityHitResult(entity, this.getBoundingBox().getCenter().add(entity.getBoundingBox().getCenter()).scale(0.5f)));
+                onHit(
+                        new EntityHitResult(
+                                entity,
+                                this.getBoundingBox()
+                                        .getCenter()
+                                        .add(entity.getBoundingBox().getCenter())
+                                        .scale(0.5f)));
             }
         }
     }
@@ -108,7 +131,10 @@ public class BallLightning extends AbstractMagicProjectile {
         if (target instanceof LivingEntity livingEntity) {
             DamageSources.ignoreNextKnockback(livingEntity);
         }
-        DamageSources.applyDamage(target, getDamage(), SpellRegistry.BALL_LIGHTNING_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                target,
+                getDamage(),
+                SpellRegistry.BALL_LIGHTNING_SPELL.get().getDamageSource(this, getOwner()));
         victims.put(target.getUUID(), target.tickCount);
     }
 
@@ -117,7 +143,8 @@ public class BallLightning extends AbstractMagicProjectile {
         super.onHitBlock(pResult);
         switch (pResult.getDirection()) {
             case UP, DOWN ->
-                    this.setDeltaMovement(this.getDeltaMovement().multiply(1, this.isNoGravity() ? -1 : -.8f, 1));
+                    this.setDeltaMovement(
+                            this.getDeltaMovement().multiply(1, this.isNoGravity() ? -1 : -.8f, 1));
             case EAST, WEST -> this.setDeltaMovement(this.getDeltaMovement().multiply(-1, 1, 1));
             case NORTH, SOUTH -> this.setDeltaMovement(this.getDeltaMovement().multiply(1, 1, -1));
         }
@@ -130,5 +157,4 @@ public class BallLightning extends AbstractMagicProjectile {
     public Optional<Supplier<SoundEvent>> getImpactSound() {
         return Optional.of(SoundRegistry.CHAIN_LIGHTNING_CHAIN);
     }
-
 }

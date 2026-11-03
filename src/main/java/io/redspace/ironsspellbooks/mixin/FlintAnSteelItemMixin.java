@@ -26,17 +26,31 @@ public class FlintAnSteelItemMixin {
         Level level = pContext.getLevel();
         BlockPos blockpos = pContext.getClickedPos();
         BlockState blockstate = level.getBlockState(blockpos);
-        if (blockstate.getBlock() instanceof BrazierBlock &&
-                blockstate.hasProperty(BlockStateProperties.WATERLOGGED) && blockstate.hasProperty(BlockStateProperties.LIT) &&
-                !blockstate.getValue(BlockStateProperties.WATERLOGGED) && !blockstate.getValue(BlockStateProperties.LIT)
-        ) {
-            level.playSound(player, blockpos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
-            level.setBlock(blockpos, blockstate.setValue(BlockStateProperties.LIT, Boolean.valueOf(true)), 11);
+        if (blockstate.getBlock() instanceof BrazierBlock
+                && blockstate.hasProperty(BlockStateProperties.WATERLOGGED)
+                && blockstate.hasProperty(BlockStateProperties.LIT)
+                && !blockstate.getValue(BlockStateProperties.WATERLOGGED)
+                && !blockstate.getValue(BlockStateProperties.LIT)) {
+            level.playSound(
+                    player,
+                    blockpos,
+                    SoundEvents.FLINTANDSTEEL_USE,
+                    SoundSource.BLOCKS,
+                    1.0F,
+                    level.getRandom().nextFloat() * 0.4F + 0.8F);
+            level.setBlock(
+                    blockpos,
+                    blockstate.setValue(BlockStateProperties.LIT, Boolean.valueOf(true)),
+                    11);
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, blockpos);
             if (player != null) {
-                pContext.getItemInHand().hurtAndBreak(1, player, (p_41303_) -> {
-                    p_41303_.broadcastBreakEvent(pContext.getHand());
-                });
+                pContext.getItemInHand()
+                        .hurtAndBreak(
+                                1,
+                                player,
+                                (p_41303_) -> {
+                                    p_41303_.broadcastBreakEvent(pContext.getHand());
+                                });
             }
 
             cir.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide()));

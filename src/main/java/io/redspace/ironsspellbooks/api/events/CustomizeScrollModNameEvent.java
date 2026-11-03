@@ -47,8 +47,10 @@ public class CustomizeScrollModNameEvent extends SpellEvent {
     public static Optional<Component> resolveModLabel(String modid) {
         Optional<String> modname = ModNameCache.getModName(modid);
         if (modname.isPresent()) {
-            Component modNameComponent = Component.literal(modname.get()).withStyle(ChatFormatting.DARK_GRAY);
-            CustomizeScrollModNameEvent event = new CustomizeScrollModNameEvent(modNameComponent, modid);
+            Component modNameComponent =
+                    Component.literal(modname.get()).withStyle(ChatFormatting.DARK_GRAY);
+            CustomizeScrollModNameEvent event =
+                    new CustomizeScrollModNameEvent(modNameComponent, modid);
             org.marj4n.irons_spellbooks.events.SpellEvents.post(event);
             if (!event.isCanceled()) {
                 return Optional.of(event.getModName());

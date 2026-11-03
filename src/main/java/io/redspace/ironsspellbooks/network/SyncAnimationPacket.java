@@ -9,8 +9,8 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
-public class SyncAnimationPacket<T extends Entity & IAnimatedAttacker> implements CustomPacketPayload {
+public class SyncAnimationPacket<T extends Entity & IAnimatedAttacker>
+        implements CustomPacketPayload {
     int entityId;
     String animationId;
 
@@ -32,16 +32,17 @@ public class SyncAnimationPacket<T extends Entity & IAnimatedAttacker> implement
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
 
-        ctx.enqueueWork(() -> {
-            var level = Minecraft.getInstance().level;
-            if (level == null) {
-                return;
-            }
-            var entity = level.getEntity(entityId);
-            if (entity instanceof IAnimatedAttacker animatedAttacker) {
-                animatedAttacker.playAnimation(animationId);
-            }
-        });
+        ctx.enqueueWork(
+                () -> {
+                    var level = Minecraft.getInstance().level;
+                    if (level == null) {
+                        return;
+                    }
+                    var entity = level.getEntity(entityId);
+                    if (entity instanceof IAnimatedAttacker animatedAttacker) {
+                        animatedAttacker.playAnimation(animationId);
+                    }
+                });
 
         return true;
     }

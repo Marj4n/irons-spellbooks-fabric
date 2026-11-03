@@ -16,8 +16,11 @@ public class SimpleDescriptiveBlockItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Level context, List<Component> lines, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack, Level context, List<Component> lines, TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, context, lines, pIsAdvanced);
-        lines.add(Component.translatable(String.format("%s.description", this.getDescriptionId())).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        lines.add(
+                Component.translatable(String.format("%s.description", this.getDescriptionId()))
+                        .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
     }
 }

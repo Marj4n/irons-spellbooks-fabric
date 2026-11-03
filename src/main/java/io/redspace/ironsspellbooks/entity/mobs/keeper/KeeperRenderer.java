@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.mobs.keeper;
 
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
@@ -26,20 +25,59 @@ public class KeeperRenderer extends AbstractSpellCastingMobRenderer {
     }
 
     @Override
-    public void render(AbstractSpellCastingMob entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(
+            AbstractSpellCastingMob entity,
+            float entityYaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
         // let there be extra light during bossfight for visual clarity
-        int light = entity instanceof KeeperEntity keeper && keeper.isSummoned() ? Mth.clamp(packedLight + 100, 0, LightTexture.FULL_BLOCK) : packedLight;
+        int light =
+                entity instanceof KeeperEntity keeper && keeper.isSummoned()
+                        ? Mth.clamp(packedLight + 100, 0, LightTexture.FULL_BLOCK)
+                        : packedLight;
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, light);
     }
 
     @Override
-    public void preRender(PoseStack poseStack, AbstractSpellCastingMob animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void preRender(
+            PoseStack poseStack,
+            AbstractSpellCastingMob animatable,
+            BakedGeoModel model,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            boolean isReRender,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         poseStack.scale(1.3f, 1.3f, 1.3f);
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+        super.preRender(
+                poseStack,
+                animatable,
+                model,
+                bufferSource,
+                buffer,
+                isReRender,
+                partialTick,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha);
     }
 
     @Override
-    public RenderType getRenderType(AbstractSpellCastingMob animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+    public RenderType getRenderType(
+            AbstractSpellCastingMob animatable,
+            ResourceLocation texture,
+            @Nullable MultiBufferSource bufferSource,
+            float partialTick) {
         return RenderType.entityTranslucent(texture);
     }
 
@@ -49,10 +87,21 @@ public class KeeperRenderer extends AbstractSpellCastingMobRenderer {
     }
 
     @Override
-    public Color getRenderColor(AbstractSpellCastingMob animatable, float partialTick, int packedLight) {
+    public Color getRenderColor(
+            AbstractSpellCastingMob animatable, float partialTick, int packedLight) {
         Color color = super.getRenderColor(animatable, partialTick, packedLight);
         if (animatable instanceof KeeperEntity keeper && keeper.isRising()) {
-            color = new Color(RenderHelper.colorf(1f, 1f, 1f, Mth.clamp((KeeperEntity.RISE_ANIM_TIME - keeper.riseAnimTick + 1) / (float) KeeperEntity.RISE_ANIM_TIME, 0, 1f)));
+            color =
+                    new Color(
+                            RenderHelper.colorf(
+                                    1f,
+                                    1f,
+                                    1f,
+                                    Mth.clamp(
+                                            (KeeperEntity.RISE_ANIM_TIME - keeper.riseAnimTick + 1)
+                                                    / (float) KeeperEntity.RISE_ANIM_TIME,
+                                            0,
+                                            1f)));
         }
 
         return color;

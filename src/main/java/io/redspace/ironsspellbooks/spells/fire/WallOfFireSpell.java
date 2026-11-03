@@ -33,22 +33,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WallOfFireSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "wall_of_fire");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "wall_of_fire");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getWallLength(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.aoe_damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getWallLength(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(30)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(30)
+                    .build();
 
     public WallOfFireSpell() {
         this.manaCostPerLevel = 5;
@@ -83,16 +88,27 @@ public class WallOfFireSpell extends AbstractSpell {
         return 3;
     }
 
-
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.getPlayerRecasts().hasRecastForSpell(this)) {
             var recast = playerMagicData.getPlayerRecasts().getRecastInstance(getSpellId());
             var fireWallData = (FireWallData) recast.getCastData();
             addAnchor(fireWallData, world, entity, recast);
         } else {
             var fireWallData = new FireWallData(getWallLength(spellLevel, entity));
-            var recast = new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), 40, castSource, fireWallData);
+            var recast =
+                    new RecastInstance(
+                            getSpellId(),
+                            spellLevel,
+                            getRecastCount(spellLevel, entity),
+                            40,
+                            castSource,
+                            fireWallData);
             addAnchor(fireWallData, world, entity, recast);
             playerMagicData.getPlayerRecasts().addRecast(recast, playerMagicData);
         }
@@ -101,7 +117,11 @@ public class WallOfFireSpell extends AbstractSpell {
     }
 
     @Override
-    public void onRecastFinished(ServerPlayer entity, RecastInstance recastInstance, RecastResult recastResult, ICastDataSerializable castDataSerializable) {
+    public void onRecastFinished(
+            ServerPlayer entity,
+            RecastInstance recastInstance,
+            RecastResult recastResult,
+            ICastDataSerializable castDataSerializable) {
         if (!recastResult.isFailure()) {
             var level = entity.level();
             var fireWallData = (FireWallData) recastInstance.getCastData();
@@ -110,7 +130,12 @@ public class WallOfFireSpell extends AbstractSpell {
             }
 
             if (fireWallData.anchorPoints.size() > 0) {
-                WallOfFireEntity fireWall = new WallOfFireEntity(level, entity, fireWallData.anchorPoints, getDamage(recastInstance.getSpellLevel(), entity));
+                WallOfFireEntity fireWall =
+                        new WallOfFireEntity(
+                                level,
+                                entity,
+                                fireWallData.anchorPoints,
+                                getDamage(recastInstance.getSpellLevel(), entity));
                 Vec3 origin = fireWallData.anchorPoints.get(0);
                 for (int i = 1; i < fireWallData.anchorPoints.size(); i++) {
                     origin.add(fireWallData.anchorPoints.get(i));
@@ -136,7 +161,11 @@ public class WallOfFireSpell extends AbstractSpell {
         return getSpellPower(spellLevel, sourceEntity);
     }
 
-    public void addAnchor(FireWallData fireWallData, Level level, LivingEntity entity, RecastInstance recastInstance) {
+    public void addAnchor(
+            FireWallData fireWallData,
+            Level level,
+            LivingEntity entity,
+            RecastInstance recastInstance) {
         Vec3 anchor = Utils.getTargetBlock(level, entity, ClipContext.Fluid.ANY, 20).getLocation();
 
         anchor = setOnGround(anchor, level);
@@ -148,22 +177,41 @@ public class WallOfFireSpell extends AbstractSpell {
             float distance = (float) anchorPoints.get(i - 1).distanceTo(anchor);
             float maxDistance = fireWallData.maxTotalDistance - fireWallData.accumulatedDistance;
             if (distance <= maxDistance) {
-                //point fits, continue
+                // point fits, continue
                 fireWallData.accumulatedDistance += distance;
                 anchorPoints.add(anchor);
             } else {
-                //too long, clip and cancel spell
-                anchor = anchorPoints.get(i - 1).add(anchor.subtract(anchorPoints.get(i - 1)).normalize().scale(maxDistance));
+                // too long, clip and cancel spell
+                anchor =
+                        anchorPoints
+                                .get(i - 1)
+                                .add(
+                                        anchor.subtract(anchorPoints.get(i - 1))
+                                                .normalize()
+                                                .scale(maxDistance));
                 anchor = setOnGround(anchor, level);
                 anchorPoints.add(anchor);
                 if (entity instanceof ServerPlayer serverPlayer) {
                     if (recastInstance.getRemainingRecasts() > 0) {
-                        MagicData.getPlayerMagicData(serverPlayer).getPlayerRecasts().removeRecast(recastInstance, RecastResult.USED_ALL_RECASTS);
+                        MagicData.getPlayerMagicData(serverPlayer)
+                                .getPlayerRecasts()
+                                .removeRecast(recastInstance, RecastResult.USED_ALL_RECASTS);
                     }
                 }
             }
         }
-        MagicManager.spawnParticles(level, ParticleTypes.FLAME, anchor.x, anchor.y + 1.5, anchor.z, 5, .05, .25, .05, 0, true);
+        MagicManager.spawnParticles(
+                level,
+                ParticleTypes.FLAME,
+                anchor.x,
+                anchor.y + 1.5,
+                anchor.z,
+                5,
+                .05,
+                .25,
+                .05,
+                0,
+                true);
     }
 
     private Vec3 setOnGround(Vec3 in, Level level) {
@@ -192,9 +240,7 @@ public class WallOfFireSpell extends AbstractSpell {
         }
 
         @Override
-        public void reset() {
-
-        }
+        public void reset() {}
 
         @Override
         public void writeToBuffer(FriendlyByteBuf buffer) {
@@ -211,7 +257,8 @@ public class WallOfFireSpell extends AbstractSpell {
             anchorPoints = new ArrayList<>();
             int length = buffer.readInt();
             for (int i = 0; i < length; i++) {
-                anchorPoints.add(new Vec3(buffer.readFloat(), buffer.readFloat(), buffer.readFloat()));
+                anchorPoints.add(
+                        new Vec3(buffer.readFloat(), buffer.readFloat(), buffer.readFloat()));
             }
         }
 
@@ -237,7 +284,11 @@ public class WallOfFireSpell extends AbstractSpell {
                 ListTag anchors = (ListTag) nbt.get("Anchors");
                 for (Tag tag : anchors) {
                     if (tag instanceof CompoundTag anchor) {
-                        this.anchorPoints.add(new Vec3(anchor.getDouble("x"), anchor.getDouble("y"), anchor.getDouble("z")));
+                        this.anchorPoints.add(
+                                new Vec3(
+                                        anchor.getDouble("x"),
+                                        anchor.getDouble("y"),
+                                        anchor.getDouble("z")));
                     }
                 }
             }

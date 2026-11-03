@@ -33,19 +33,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class TelekinesisSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "telekinesis");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "telekinesis");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getRange(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(35)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(35)
+                    .build();
 
     public TelekinesisSpell() {
         this.manaCostPerLevel = 0;
@@ -86,13 +91,18 @@ public class TelekinesisSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (Utils.preCastTargetHelper(level, entity, playerMagicData, this, getRange(spellLevel, entity), .15f)) {
-            var target = ((TargetEntityCastData) playerMagicData.getAdditionalCastData()).getTarget((ServerLevel) level);
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        if (Utils.preCastTargetHelper(
+                level, entity, playerMagicData, this, getRange(spellLevel, entity), .15f)) {
+            var target =
+                    ((TargetEntityCastData) playerMagicData.getAdditionalCastData())
+                            .getTarget((ServerLevel) level);
             if (target == null) {
                 return false;
             }
-            playerMagicData.setAdditionalCastData(new TelekinesisData(entity.distanceTo(target), target, 6));
+            playerMagicData.setAdditionalCastData(
+                    new TelekinesisData(entity.distanceTo(target), target, 6));
             return true;
         } else {
             return false;
@@ -100,59 +110,94 @@ public class TelekinesisSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
     @Override
-    public void onServerCastTick(Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
+    public void onServerCastTick(
+            Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
         super.onServerCastTick(level, spellLevel, entity, playerMagicData);
         if (playerMagicData != null && (playerMagicData.getCastDurationRemaining()) % 2 == 0) {
             handleTelekinesis((ServerLevel) level, entity, playerMagicData, .6f);
         }
     }
 
-    private void handleTelekinesis(ServerLevel world, LivingEntity entity, MagicData playerMagicData, float strength) {
+    private void handleTelekinesis(
+            ServerLevel world, LivingEntity entity, MagicData playerMagicData, float strength) {
         if (playerMagicData.getAdditionalCastData() instanceof TelekinesisData targetData) {
             var targetEntity = targetData.getTarget(world);
             if (targetEntity != null) {
-                if ((targetEntity.isRemoved() || targetEntity.isDeadOrDying()) && entity instanceof ServerPlayer serverPlayer) {
+                if ((targetEntity.isRemoved() || targetEntity.isDeadOrDying())
+                        && entity instanceof ServerPlayer serverPlayer) {
                     Utils.serverSideCancelCast(serverPlayer);
                     return;
                 }
                 float resistance = Utils.clampedKnockbackResistanceFactor(entity, .2f, 1f);
                 float lockedDistance = targetData.getDistance();
                 float actualDistance = entity.distanceTo(targetEntity);
-                float distance = Mth.lerp(actualDistance > lockedDistance ? .05f : .02f, lockedDistance, actualDistance);
+                float distance =
+                        Mth.lerp(
+                                actualDistance > lockedDistance ? .05f : .02f,
+                                lockedDistance,
+                                actualDistance);
                 targetData.setDistance(distance);
-                Vec3 force = (entity.getForward().normalize().scale(targetData.getDistance()).add(entity.position()).subtract(targetEntity.position())).scale(resistance * strength);
-                Vec3 travel = new Vec3(targetEntity.getX() - targetEntity.xOld, targetEntity.getY() - targetEntity.yOld, targetEntity.getZ() - targetEntity.zOld);
+                Vec3 force =
+                        (entity.getForward()
+                                        .normalize()
+                                        .scale(targetData.getDistance())
+                                        .add(entity.position())
+                                        .subtract(targetEntity.position()))
+                                .scale(resistance * strength);
+                Vec3 travel =
+                        new Vec3(
+                                targetEntity.getX() - targetEntity.xOld,
+                                targetEntity.getY() - targetEntity.yOld,
+                                targetEntity.getZ() - targetEntity.zOld);
                 if (force.y > 0) {
                     targetEntity.resetFallDistance();
                 }
                 if ((playerMagicData.getCastDurationRemaining()) % 10 == 0) {
                     int airborne = (int) (travel.x * travel.x + travel.z * travel.z) / 2;
-                    targetEntity.addEffect(new MobEffectInstance(MobEffectRegistry.AIRBORNE.get(), 31, airborne, false, false, true));
-                    targetEntity.addEffect(new MobEffectInstance(MobEffectRegistry.ANTIGRAVITY.get(), 11, 0, false, false, true));
+                    targetEntity.addEffect(
+                            new MobEffectInstance(
+                                    MobEffectRegistry.AIRBORNE.get(),
+                                    31,
+                                    airborne,
+                                    false,
+                                    false,
+                                    true));
+                    targetEntity.addEffect(
+                            new MobEffectInstance(
+                                    MobEffectRegistry.ANTIGRAVITY.get(),
+                                    11,
+                                    0,
+                                    false,
+                                    false,
+                                    true));
                 }
                 var deltaMovement = targetEntity.getDeltaMovement();
                 var newMotion = force.subtract(deltaMovement).scale(0.25).add(deltaMovement);
                 var delta = newMotion.subtract(deltaMovement);
-                var clampedMotion = new Vec3(
-                        Utils.signedMin(delta.x, force.x * 4),
-                        Utils.signedMin(delta.y, force.y * 4),
-                        Utils.signedMin(delta.z, force.z * 4)
-                );
+                var clampedMotion =
+                        new Vec3(
+                                Utils.signedMin(delta.x, force.x * 4),
+                                Utils.signedMin(delta.y, force.y * 4),
+                                Utils.signedMin(delta.z, force.z * 4));
                 targetEntity.setDeltaMovement(deltaMovement.add(clampedMotion));
                 targetEntity.hurtMarked = true;
             }
         }
     }
 
-
     @Override
     public Vector3f getTargetingColor() {
-        //color similar to the spell icon
+        // color similar to the spell icon
         return new Vector3f(1f, .24f, .95f);
     }
 

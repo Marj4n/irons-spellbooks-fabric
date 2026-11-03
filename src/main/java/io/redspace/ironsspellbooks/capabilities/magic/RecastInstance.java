@@ -18,10 +18,15 @@ public class RecastInstance implements ISerializable, INBTSerializable<CompoundT
     protected int remainingTicks;
     protected CastSource castSource;
 
-    public RecastInstance() {
-    }
+    public RecastInstance() {}
 
-    public RecastInstance(String spellId, int spellLevel, int totalRecasts, int ticksToLive, CastSource castSource, ICastDataSerializable castData) {
+    public RecastInstance(
+            String spellId,
+            int spellLevel,
+            int totalRecasts,
+            int ticksToLive,
+            CastSource castSource,
+            ICastDataSerializable castData) {
         this.spellId = spellId;
         this.spellLevel = spellLevel;
         this.remainingRecasts = totalRecasts - 1;
@@ -138,6 +143,14 @@ public class RecastInstance implements ISerializable, INBTSerializable<CompoundT
     @Override
     public String toString() {
         var cd = castData == null ? "" : castData.serializeNBT().toString();
-        return String.format("spellId:%s, spellLevel:%d, remainingRecasts:%d, totalRecasts:%d, ticksToLive:%d, ticksRemaining:%d, castData:%s", spellId, spellLevel, remainingRecasts, totalRecasts, ticksToLive, remainingTicks, cd);
+        return String.format(
+                "spellId:%s, spellLevel:%d, remainingRecasts:%d, totalRecasts:%d, ticksToLive:%d, ticksRemaining:%d, castData:%s",
+                spellId,
+                spellLevel,
+                remainingRecasts,
+                totalRecasts,
+                ticksToLive,
+                remainingTicks,
+                cd);
     }
 }

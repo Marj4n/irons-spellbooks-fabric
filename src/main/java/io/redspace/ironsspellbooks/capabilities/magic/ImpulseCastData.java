@@ -10,8 +10,7 @@ public class ImpulseCastData implements ICastDataSerializable {
     public float z;
     public boolean hasImpulse;
 
-    public ImpulseCastData() {
-    }
+    public ImpulseCastData() {}
 
     public ImpulseCastData(float x, float y, float z, boolean hasImpulse) {
         this.x = x;
@@ -37,9 +36,7 @@ public class ImpulseCastData implements ICastDataSerializable {
     }
 
     @Override
-    public void reset() {
-
-    }
+    public void reset() {}
 
     @Override
     public CompoundTag serializeNBT() {

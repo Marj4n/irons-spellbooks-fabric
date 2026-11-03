@@ -26,22 +26,26 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class IceSpikesSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "ice_spikes");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "ice_spikes");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.spike_count", getCount(spellLevel, caster))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.spike_count", getCount(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(15)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(15)
+                    .build();
 
     public IceSpikesSpell() {
         this.manaCostPerLevel = 10;
@@ -67,13 +71,26 @@ public class IceSpikesSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) (getCount(spellLevel, entity) * 1.25f), .15f, false);
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        Utils.preCastTargetHelper(
+                level,
+                entity,
+                playerMagicData,
+                this,
+                (int) (getCount(spellLevel, entity) * 1.25f),
+                .15f,
+                false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 forward = entity.getForward().multiply(1, 0, 1).normalize();
         Vec3 start = entity.getEyePosition().add(forward.scale(1.5));
 
@@ -83,11 +100,14 @@ public class IceSpikesSpell extends AbstractSpell {
         int count = getCount(spellLevel, entity);
         start = Utils.moveToRelativeGroundLevel(level, start, 1, 3).add(0, 0.1, 0);
         double distance = count;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             var target = castTargetingData.getTarget((ServerLevel) level);
             if (target != null) {
                 distance = start.subtract(target.position()).horizontalDistance();
-                Vec3 targetPos = target.position().add(target.getDeltaMovement().multiply(distance, 0, distance));
+                Vec3 targetPos =
+                        target.position()
+                                .add(target.getDeltaMovement().multiply(distance, 0, distance));
                 distance = targetPos.subtract(start).horizontalDistance();
             }
         }
@@ -100,13 +120,14 @@ public class IceSpikesSpell extends AbstractSpell {
             spawn = ground.subtract(spawn).scale(Mth.clamp(i / 3f, 0, 1)).add(spawn);
             boolean isFinalSpike = i == count - 1 || distanceCovered + 1 > distance;
             if (isFinalSpike) {
-                //the final spike does full damage, the small spikes to half damage
+                // the final spike does full damage, the small spikes to half damage
                 scale = maxScale * 1.5f;
             }
 
             distanceCovered += (float) forward.horizontalDistance();
             int delay = i;
-            if (level.getBlockState(BlockPos.containing(spawn).below()).isFaceSturdy(level, BlockPos.containing(spawn).below(), Direction.UP)) {
+            if (level.getBlockState(BlockPos.containing(spawn).below())
+                    .isFaceSturdy(level, BlockPos.containing(spawn).below(), Direction.UP)) {
                 IceSpikeEntity spike = new IceSpikeEntity(level, entity);
                 if (i % 2 == count % 2) {
                     spike.setSilent(true);
@@ -115,7 +136,8 @@ public class IceSpikesSpell extends AbstractSpell {
                 spike.moveTo(spawn.add(0, 0, 0));
                 spike.setWaitTime(delay);
                 spike.setDamage(damage * (isFinalSpike ? 1 : 0.5f));
-                spike.setYRot((entity.getYRot() - 45 + Utils.random.nextIntBetweenInclusive(-20, 20)));
+                spike.setYRot(
+                        (entity.getYRot() - 45 + Utils.random.nextIntBetweenInclusive(-20, 20)));
                 spike.setXRot(Utils.random.nextIntBetweenInclusive(-15, 15));
                 level.addFreshEntity(spike);
             }

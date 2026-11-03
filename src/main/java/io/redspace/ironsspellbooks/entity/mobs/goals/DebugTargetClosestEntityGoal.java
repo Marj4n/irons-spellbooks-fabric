@@ -10,8 +10,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 public class DebugTargetClosestEntityGoal extends TargetGoal {
-    @Nullable
-    protected LivingEntity target;
+    @Nullable protected LivingEntity target;
 
     public DebugTargetClosestEntityGoal(Mob pMob) {
         super(pMob, false, false);
@@ -28,7 +27,8 @@ public class DebugTargetClosestEntityGoal extends TargetGoal {
         target = mob.level().getNearestPlayer(this.mob, 40);
 
         if (tmp != target) {
-            IronsSpellbooks.LOGGER.debug("DebugTargetClosestEntityGoal: Target Changed old:{} new:{}", tmp, target);
+            IronsSpellbooks.LOGGER.debug(
+                    "DebugTargetClosestEntityGoal: Target Changed old:{} new:{}", tmp, target);
             mob.setTarget(target);
         }
     }

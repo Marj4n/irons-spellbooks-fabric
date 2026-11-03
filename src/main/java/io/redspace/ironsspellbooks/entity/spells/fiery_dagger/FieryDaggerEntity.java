@@ -43,20 +43,24 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntityAdditionalSpawnData, GeoAnimatable {
+public class FieryDaggerEntity extends AbstractMagicProjectile
+        implements IEntityAdditionalSpawnData, GeoAnimatable {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
 
     public int delay;
     public @Nullable Vec3 ownerTrack = null;
     private @Nullable UUID targetEntity = null;
     private @Nullable Entity cachedTarget = null;
+
     /**
      * client-synced tick count
      */
     int age;
+
     /**
      * flag for the special behavior when we are formed as a circle of daggers in the ground
      */
@@ -85,13 +89,23 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
     }
 
     public boolean isSpawnDagger() {
-        //repurpose explosion radius as summon radius; if present, we summon on impact
+        // repurpose explosion radius as summon radius; if present, we summon on impact
         return explosionRadius > 0;
     }
 
     private void createFireField() {
         FireField fireField = new FireField(this.level());
-        fireField.setOwner(level().getNearestEntity(FireBossEntity.class, TargetingConditions.forNonCombat().ignoreLineOfSight().ignoreInvisibilityTesting(), null, getX(), getY(), getZ(), this.getBoundingBox().inflate(32)));
+        fireField.setOwner(
+                level().getNearestEntity(
+                                FireBossEntity.class,
+                                TargetingConditions.forNonCombat()
+                                        .ignoreLineOfSight()
+                                        .ignoreInvisibilityTesting(),
+                                null,
+                                getX(),
+                                getY(),
+                                getZ(),
+                                this.getBoundingBox().inflate(32)));
         fireField.setPos(Utils.moveToRelativeGroundLevel(level(), this.position(), 3));
         fireField.setRadius(this.explosionRadius + 1);
         fireField.setCircular();
@@ -105,7 +119,15 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
-        entityHitResult.getEntity().hurt(new DamageSource(DamageSources.getHolderFromResource(this, ISSDamageTypes.FIRE_MAGIC), this, getOwner()), getDamage());
+        entityHitResult
+                .getEntity()
+                .hurt(
+                        new DamageSource(
+                                DamageSources.getHolderFromResource(
+                                        this, ISSDamageTypes.FIRE_MAGIC),
+                                this,
+                                getOwner()),
+                        getDamage());
         entityHitResult.getEntity().invulnerableTime = 0;
     }
 
@@ -119,8 +141,22 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
     }
 
     public void createDaggerZone(Vec3 center) {
-        MagicManager.spawnParticles(level(), new BlastwaveParticleOptions(new Vector3f(1, .6f, 0.3f), explosionRadius + 1), center.x, center.y + .15, center.z, 1, 0, 0, 0, 0, false);
-        playSound(SoundRegistry.FIRE_CAST.get(), 2f, Utils.random.nextIntBetweenInclusive(80, 110) * .01f);
+        MagicManager.spawnParticles(
+                level(),
+                new BlastwaveParticleOptions(new Vector3f(1, .6f, 0.3f), explosionRadius + 1),
+                center.x,
+                center.y + .15,
+                center.z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                false);
+        playSound(
+                SoundRegistry.FIRE_CAST.get(),
+                2f,
+                Utils.random.nextIntBetweenInclusive(80, 110) * .01f);
 
         float spawnRadius = this.explosionRadius;
         float density = 1f;
@@ -132,7 +168,15 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
             float angle = 360f / daggerCount * Mth.DEG_TO_RAD;
             for (int j = 0; j < daggerCount; j++) {
                 Vec3 jitter = Utils.getRandomVec3(ringSpacing * .4f);
-                Vec3 pos = Utils.moveToRelativeGroundLevel(level(), center.add(ringRadius * Mth.sin(angle * j), 0, ringRadius * Mth.cos(angle * j)).add(jitter), 8);
+                Vec3 pos =
+                        Utils.moveToRelativeGroundLevel(
+                                level(),
+                                center.add(
+                                                ringRadius * Mth.sin(angle * j),
+                                                0,
+                                                ringRadius * Mth.cos(angle * j))
+                                        .add(jitter),
+                                8);
                 FieryDaggerEntity dagger = new FieryDaggerEntity(level());
                 dagger.setOwner(this.getOwner());
                 dagger.setDamage(this.getDamage());
@@ -153,18 +197,21 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
             var owner = getOwner();
             float strength = .5f;
             if (owner != null && isTrackingOwner()) {
-                //use client delta motion instead of jittery server information
+                // use client delta motion instead of jittery server information
                 Vec3 ownerMotion = owner.position().subtract(owner.xOld, owner.yOld, owner.zOld);
                 setPos(this.position().add(ownerMotion));
             }
             var target = getTargetEntity();
             if (target != null) {
                 var targetPos = target.getBoundingBox().getCenter();
-                Vec3 targetMotion = targetPos.subtract(this.position()).normalize().scale(this.getSpeed());
+                Vec3 targetMotion =
+                        targetPos.subtract(this.position()).normalize().scale(this.getSpeed());
                 Vec3 currentMotion = getDeltaMovement();
                 deltaMovementOld = currentMotion;
-                this.setDeltaMovement(currentMotion.add(targetMotion.subtract(currentMotion).scale(strength)));
-                // prevent first-tick flicker due to deltaMoveOld being "uninitialized" on our first tick
+                this.setDeltaMovement(
+                        currentMotion.add(targetMotion.subtract(currentMotion).scale(strength)));
+                // prevent first-tick flicker due to deltaMoveOld being "uninitialized" on our first
+                // tick
                 if (tickCount == 1) {
                     deltaMovementOld = getDeltaMovement();
                 }
@@ -172,20 +219,39 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
             if (age == delay) {
                 if (isGrounded) {
                     if (Utils.random.nextFloat() < 0.25f) {
-                        playSound(SoundRegistry.FIERY_DAGGER_THROW.get(), 0.75f, Utils.random.nextIntBetweenInclusive(90, 110) * .01f);
+                        playSound(
+                                SoundRegistry.FIERY_DAGGER_THROW.get(),
+                                0.75f,
+                                Utils.random.nextIntBetweenInclusive(90, 110) * .01f);
                     }
                 } else {
-                    playSound(SoundRegistry.FIERY_DAGGER_THROW.get(), 2f, Utils.random.nextIntBetweenInclusive(90, 110) * .01f);
+                    playSound(
+                            SoundRegistry.FIERY_DAGGER_THROW.get(),
+                            2f,
+                            Utils.random.nextIntBetweenInclusive(90, 110) * .01f);
                 }
-                // do an initial near-collision check since we cannot organically hit things if we originate inside their hitbox (such as if they are standing on a dagger)
-                var hits = level().getEntities(this, this.getBoundingBox().inflate(0.4f), this::canHitEntity);
-                EntityHitResult hitResult = hits.isEmpty() ? null : new EntityHitResult(hits.get(0));
+                // do an initial near-collision check since we cannot organically hit things if we
+                // originate inside their hitbox (such as if they are standing on a dagger)
+                var hits =
+                        level().getEntities(
+                                        this,
+                                        this.getBoundingBox().inflate(0.4f),
+                                        this::canHitEntity);
+                EntityHitResult hitResult =
+                        hits.isEmpty() ? null : new EntityHitResult(hits.get(0));
                 if (hitResult != null) {
                     onHit(hitResult);
                 }
             }
             if (level().isClientSide) {
-                level().addParticle(ParticleHelper.EMBERS, getX(), getY() + getBbHeight() * .5f, getZ(), 0, 0, 0);
+                level().addParticle(
+                                ParticleHelper.EMBERS,
+                                getX(),
+                                getY() + getBbHeight() * .5f,
+                                getZ(),
+                                0,
+                                0,
+                                0);
             }
         } else {
             super.tick();
@@ -204,7 +270,11 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
 
     @Override
     public void trailParticles() {
-        float yHeading = -((float) (Mth.atan2(getDeltaMovement().z, getDeltaMovement().x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        float yHeading =
+                -((float)
+                                (Mth.atan2(getDeltaMovement().z, getDeltaMovement().x)
+                                        * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         float radius = .25f;
         int steps = 2;
         var vec = getDeltaMovement();
@@ -217,11 +287,13 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
         for (int j = 0; j < steps; j++) {
             float offset = (1f / steps) * j;
             double radians = ((tickCount + offset) / 7.5f) * 360 * Mth.DEG_TO_RAD;
-            Vec3 swirl = new Vec3(Math.cos(radians) * radius, Math.sin(radians) * radius, 0).yRot(yHeading * Mth.DEG_TO_RAD);
+            Vec3 swirl =
+                    new Vec3(Math.cos(radians) * radius, Math.sin(radians) * radius, 0)
+                            .yRot(yHeading * Mth.DEG_TO_RAD);
             double x = Mth.lerp(offset, x1, x2) + swirl.x;
             double y = Mth.lerp(offset, y1, y2) + swirl.y + getBbHeight() / 2;
             double z = Mth.lerp(offset, z1, z2) + swirl.z;
-            Vec3 jitter = Vec3.ZERO;//Utils.getRandomVec3(.05f);
+            Vec3 jitter = Vec3.ZERO; // Utils.getRandomVec3(.05f);
             level().addParticle(ParticleHelper.EMBERS, x, y, z, jitter.x, jitter.y, jitter.z);
         }
     }
@@ -304,7 +376,8 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
         this.explosionRadius = buffer.readFloat();
         this.isGrounded = buffer.readBoolean();
         if (buffer.readBoolean()) {
-            this.ownerTrack = new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+            this.ownerTrack =
+                    new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
         }
         if (buffer.readBoolean()) {
             this.cachedTarget = this.level().getEntity(buffer.readInt());
@@ -318,9 +391,7 @@ public class FieryDaggerEntity extends AbstractMagicProjectile implements IEntit
     Geckolib
      */
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-
-    }
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {

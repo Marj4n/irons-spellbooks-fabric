@@ -10,7 +10,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class SyncEntityDataPacket implements CustomPacketPayload {
     SyncedSpellData syncedSpellData;
     int entityId;
@@ -19,7 +18,11 @@ public class SyncEntityDataPacket implements CustomPacketPayload {
         this.syncedSpellData = syncedSpellData;
         if (entity instanceof PathfinderMob m) {
             this.entityId = m.getId();
-        }else throw new IllegalStateException("Unable to add " + this.getClass().getSimpleName() + "to entity, must extend PathfinderMob.");
+        } else
+            throw new IllegalStateException(
+                    "Unable to add "
+                            + this.getClass().getSimpleName()
+                            + "to entity, must extend PathfinderMob.");
     }
 
     public SyncEntityDataPacket(FriendlyByteBuf buf) {
@@ -35,9 +38,10 @@ public class SyncEntityDataPacket implements CustomPacketPayload {
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
 
-        ctx.enqueueWork(() -> {
-            ClientMagicData.handleAbstractCastingMobSyncedData(entityId, syncedSpellData);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientMagicData.handleAbstractCastingMobSyncedData(entityId, syncedSpellData);
+                });
 
         return true;
     }

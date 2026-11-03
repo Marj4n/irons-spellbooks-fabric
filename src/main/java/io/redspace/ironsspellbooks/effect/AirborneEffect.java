@@ -24,16 +24,18 @@ public class AirborneEffect extends MobEffect {
             if (livingEntity.horizontalCollision) {
                 double d11 = livingEntity.getDeltaMovement().horizontalDistance();
                 float f1 = (float) (d11 * 10.0D - 1.0D);
-                //IronsSpellbooks.LOGGER.debug("AirborneEffect horizontalCollision: {}, {}", livingEntity.getDeltaMovement().horizontalDistance(),f1);
+                // IronsSpellbooks.LOGGER.debug("AirborneEffect horizontalCollision: {}, {}",
+                // livingEntity.getDeltaMovement().horizontalDistance(),f1);
                 if (f1 > 0.0F) {
                     livingEntity.playSound(SoundEvents.HOSTILE_BIG_FALL, 2.0F, 1.5F);
-                    livingEntity.hurt(livingEntity.damageSources().flyIntoWall(), getDamageFromLevel(pAmplifier + 1));
+                    livingEntity.hurt(
+                            livingEntity.damageSources().flyIntoWall(),
+                            getDamageFromLevel(pAmplifier + 1));
                     livingEntity.removeEffect(MobEffectRegistry.AIRBORNE.get());
                 }
             }
         }
     }
-
 
     public static float getDamageFromLevel(int level) {
         return 4 + level * damage_per_amp;

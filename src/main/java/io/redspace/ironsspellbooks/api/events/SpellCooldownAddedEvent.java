@@ -11,7 +11,8 @@ public abstract class SpellCooldownAddedEvent extends SpellEvent {
     private final Player entity;
     private CastSource castSource;
 
-    public SpellCooldownAddedEvent(int effectiveCooldown, AbstractSpell spell, Player entity, CastSource castSource) {
+    public SpellCooldownAddedEvent(
+            int effectiveCooldown, AbstractSpell spell, Player entity, CastSource castSource) {
         this.spell = spell;
         this.effectiveCooldown = effectiveCooldown;
         this.entity = entity;
@@ -38,8 +39,9 @@ public abstract class SpellCooldownAddedEvent extends SpellEvent {
         return entity;
     }
 
-    public static class Pre extends SpellCooldownAddedEvent  {
-        public Pre(int effectiveCooldown, AbstractSpell spell, Player entity, CastSource castSource) {
+    public static class Pre extends SpellCooldownAddedEvent {
+        public Pre(
+                int effectiveCooldown, AbstractSpell spell, Player entity, CastSource castSource) {
             super(effectiveCooldown, spell, entity, castSource);
         }
 
@@ -54,7 +56,8 @@ public abstract class SpellCooldownAddedEvent extends SpellEvent {
     }
 
     public static class Post extends SpellCooldownAddedEvent {
-        public Post(int effectiveCooldown, AbstractSpell spell, Player entity, CastSource castSource) {
+        public Post(
+                int effectiveCooldown, AbstractSpell spell, Player entity, CastSource castSource) {
             super(effectiveCooldown, spell, entity, castSource);
         }
     }

@@ -20,23 +20,30 @@ import java.util.List;
 import java.util.Optional;
 
 public class MagmaBombSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "magma_bomb");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "magma_bomb");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getAoeDamage(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.aoe_damage",
+                        Utils.stringTruncation(getAoeDamage(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(12)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(12)
+                    .build();
 
     public MagmaBombSpell() {
         this.manaCostPerLevel = 5;
@@ -72,9 +79,17 @@ public class MagmaBombSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         FireBomb orb = new FireBomb(level, entity);
-        orb.setPos(entity.position().add(0, entity.getEyeHeight() - orb.getBoundingBox().getYsize() * .5f, 0).add(entity.getForward()));
+        orb.setPos(
+                entity.position()
+                        .add(0, entity.getEyeHeight() - orb.getBoundingBox().getYsize() * .5f, 0)
+                        .add(entity.getForward()));
         orb.shoot(entity.getLookAngle());
         orb.setDeltaMovement(orb.getDeltaMovement().add(0, 0.2, 0));
         orb.setExplosionRadius(getRadius(spellLevel, entity));

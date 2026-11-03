@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.item;
 
-
 import io.redspace.ironsspellbooks.api.item.IScroll;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.magic.SpellSelectionManager;
@@ -43,7 +42,8 @@ public class Scroll extends Item implements IScroll {
     }
 
     public static void attemptRemoveScrollAfterCast(ServerPlayer serverPlayer) {
-        ItemStack potentialScroll = MagicData.getPlayerMagicData(serverPlayer).getPlayerCastingItem();
+        ItemStack potentialScroll =
+                MagicData.getPlayerMagicData(serverPlayer).getPlayerCastingItem();
         if (potentialScroll.getItem() instanceof Scroll scroll) {
             scroll.removeScrollAfterCast(serverPlayer, potentialScroll);
         }
@@ -57,7 +57,8 @@ public class Scroll extends Item implements IScroll {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(
+            Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         var spellSlot = getSpellSlotFromStack(stack);
         var spell = spellSlot.getSpell();
@@ -72,9 +73,19 @@ public class Scroll extends Item implements IScroll {
             }
         }
 
-        var castingSlot = hand.ordinal() == 0 ? SpellSelectionManager.MAINHAND : SpellSelectionManager.OFFHAND;
+        var castingSlot =
+                hand.ordinal() == 0
+                        ? SpellSelectionManager.MAINHAND
+                        : SpellSelectionManager.OFFHAND;
 
-        if (spell.attemptInitiateCast(stack, spell.getLevelFor(spellSlot.getLevel(), player), level, player, CastSource.SCROLL, false, castingSlot)) {
+        if (spell.attemptInitiateCast(
+                stack,
+                spell.getLevelFor(spellSlot.getLevel(), player),
+                level,
+                player,
+                CastSource.SCROLL,
+                false,
+                castingSlot)) {
             return InteractionResultHolder.consume(stack);
         } else {
             return InteractionResultHolder.fail(stack);
@@ -87,10 +98,15 @@ public class Scroll extends Item implements IScroll {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack, Level context, @NotNull List<Component> lines, @NotNull TooltipFlag flag) {
+    public void appendHoverText(
+            @NotNull ItemStack itemStack,
+            Level context,
+            @NotNull List<Component> lines,
+            @NotNull TooltipFlag flag) {
         super.appendHoverText(itemStack, context, lines, flag);
-        MinecraftInstanceHelper.ifPlayerPresent(player -> {
-            lines.addAll(TooltipsUtils.formatScrollTooltip(itemStack, player));
-        });
+        MinecraftInstanceHelper.ifPlayerPresent(
+                player -> {
+                    lines.addAll(TooltipsUtils.formatScrollTooltip(itemStack, player));
+                });
     }
 }

@@ -24,10 +24,17 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class DeadKingSoulRenderer extends EntityRenderer<DeadKingSoulEntity> {
-    public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "dead_king_orb_model"), "main");
-    public static final ModelLayerLocation CROWN_CUBE_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "dead_king_soul_crown_cube"), "main");
-    private static final ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/magic_missile/magic_missile.png");
-    private static final ResourceLocation CROWN_TEXTURE = IronsSpellbooks.id("textures/entity/dead_king/dead_king_crown.png");
+    public static final ModelLayerLocation MODEL_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "dead_king_orb_model"), "main");
+    public static final ModelLayerLocation CROWN_CUBE_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "dead_king_soul_crown_cube"),
+                    "main");
+    private static final ResourceLocation TEXTURE =
+            IronsSpellbooks.id("textures/entity/magic_missile/magic_missile.png");
+    private static final ResourceLocation CROWN_TEXTURE =
+            IronsSpellbooks.id("textures/entity/dead_king/dead_king_crown.png");
     private final ModelPart body;
     private final ModelPart crownCube;
 
@@ -41,39 +48,64 @@ public class DeadKingSoulRenderer extends EntityRenderer<DeadKingSoulEntity> {
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(4.0F, 4.0F, 4.0F, -8.0F, -8.0F, -8.0F), PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "body",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(4.0F, 4.0F, 4.0F, -8.0F, -8.0F, -8.0F),
+                PartPose.ZERO);
         return LayerDefinition.create(meshdefinition, 48, 24);
     }
 
     public static LayerDefinition createCrownCubeLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        partdefinition.addOrReplaceChild("cube", CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, -5.0F, -5.0F, 10.0F, 10.0F, 10.0F), PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "cube",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-5.0F, -5.0F, -5.0F, 10.0F, 10.0F, 10.0F),
+                PartPose.ZERO);
         return LayerDefinition.create(meshdefinition, 48, 48);
     }
 
     @Override
-    public void render(DeadKingSoulEntity entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            DeadKingSoulEntity entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBbHeight() * 1.5, 0);
         poseStack.scale(1.5f, -1.5f, 1.5f);
         poseStack.mulPose(Axis.YP.rotationDegrees(entity.tickCount + partialTicks));
-        poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin((entity.tickCount + partialTicks) / 100f) * 6f));
-        VertexConsumer crownConsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(CROWN_TEXTURE));
+        poseStack.mulPose(
+                Axis.XP.rotationDegrees(Mth.sin((entity.tickCount + partialTicks) / 100f) * 6f));
+        VertexConsumer crownConsumer =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(CROWN_TEXTURE));
         this.crownCube.render(poseStack, crownConsumer, light, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
 
         poseStack.pushPose();
         Vec3 motion = entity.getDeltaMovement();
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         poseStack.translate(0, entity.getBbHeight() * .5f, 0);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
         poseStack.scale(0.75f, 0.75f, 0.75f);
         float f = entity.tickCount + entity.getId() * 31 + partialTicks;
 
-        VertexConsumer consumer;// = bufferSource.getBuffer(renderType(getTextureLocation(entity)));
+        VertexConsumer
+                consumer; // = bufferSource.getBuffer(renderType(getTextureLocation(entity)));
 
         float noise = ((Mth.sin(f * .37f) + Mth.cos(f * .09f)) / 3 + 2) * .25f;
         float noise1 = ((Mth.cos(f * .065f) + Mth.sin(f * .09f)) / 3) * .15f;
@@ -93,11 +125,27 @@ public class DeadKingSoulRenderer extends EntityRenderer<DeadKingSoulEntity> {
         super.render(entity, yaw, partialTicks, poseStack, bufferSource, light);
     }
 
-    private void renderOrb(PoseStack poseStack, VertexConsumer consumer, float intensity, float jitter, float scale, int r, int g, int b) {
+    private void renderOrb(
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            float intensity,
+            float jitter,
+            float scale,
+            int r,
+            int g,
+            int b) {
         poseStack.pushPose();
         scale += jitter;
         poseStack.scale(scale, scale, scale);
-        this.body.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, r * intensity / 255f, g * intensity / 255f, b * intensity / 255f, intensity);
+        this.body.render(
+                poseStack,
+                consumer,
+                LightTexture.FULL_BRIGHT,
+                OverlayTexture.NO_OVERLAY,
+                r * intensity / 255f,
+                g * intensity / 255f,
+                b * intensity / 255f,
+                intensity);
         poseStack.popPose();
     }
 
@@ -109,5 +157,4 @@ public class DeadKingSoulRenderer extends EntityRenderer<DeadKingSoulEntity> {
     public @NotNull ResourceLocation getTextureLocation(@NotNull DeadKingSoulEntity entity) {
         return TEXTURE;
     }
-
 }

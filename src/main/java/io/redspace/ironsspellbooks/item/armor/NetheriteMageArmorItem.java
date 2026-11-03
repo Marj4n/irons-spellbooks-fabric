@@ -7,7 +7,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
-public class NetheriteMageArmorItem extends ImbuableChestplateArmorItem implements DyeableLeatherItem {
+public class NetheriteMageArmorItem extends ImbuableChestplateArmorItem
+        implements DyeableLeatherItem {
     public NetheriteMageArmorItem(Type type, Properties settings) {
         super(ExtendedArmorMaterials.NETHERITE_BATTLEMAGE, type, settings);
     }
@@ -17,5 +18,4 @@ public class NetheriteMageArmorItem extends ImbuableChestplateArmorItem implemen
     public GeoArmorRenderer<?> supplyRenderer() {
         return new DyeableArmorRenderer<>(new NetheriteMageArmorModel());
     }
-
 }

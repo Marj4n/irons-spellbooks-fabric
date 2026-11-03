@@ -11,10 +11,16 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 public class PaladinArmorItem extends ImbuableChestplateArmorItem {
     public PaladinArmorItem(Type type, Properties settings) {
-        super(ExtendedArmorMaterials.PALADIN, type, settings,
-                new AttributeContainer(AttributeRegistry.MAX_MANA, 150, AttributeModifier.Operation.ADDITION),
-                new AttributeContainer(AttributeRegistry.SPELL_POWER, 0.10, AttributeModifier.Operation.MULTIPLY_BASE)
-        );
+        super(
+                ExtendedArmorMaterials.PALADIN,
+                type,
+                settings,
+                new AttributeContainer(
+                        AttributeRegistry.MAX_MANA, 150, AttributeModifier.Operation.ADDITION),
+                new AttributeContainer(
+                        AttributeRegistry.SPELL_POWER,
+                        0.10,
+                        AttributeModifier.Operation.MULTIPLY_BASE));
     }
 
     @Override
@@ -22,5 +28,4 @@ public class PaladinArmorItem extends ImbuableChestplateArmorItem {
     public GeoArmorRenderer<?> supplyRenderer() {
         return new GenericCustomArmorRenderer<>(new PaladinArmorModel());
     }
-
 }

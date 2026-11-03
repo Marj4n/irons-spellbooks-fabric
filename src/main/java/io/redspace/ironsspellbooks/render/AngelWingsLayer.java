@@ -21,25 +21,43 @@ import net.minecraft.world.item.Items;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-
 @Environment(EnvType.CLIENT)
-public class AngelWingsLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-    private static final ResourceLocation WINGS_LOCATION = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/angel_wings.png");
+public class AngelWingsLayer<T extends LivingEntity, M extends EntityModel<T>>
+        extends RenderLayer<T, M> {
+    private static final ResourceLocation WINGS_LOCATION =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/angel_wings.png");
     private final AngelWingsModel<T> angelWingsModel;
 
     public AngelWingsLayer(RenderLayerParent<T, M> pRenderer) {
         super(pRenderer);
-        this.angelWingsModel = new AngelWingsModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(AngelWingsModel.ANGEL_WINGS_LAYER));
+        this.angelWingsModel =
+                new AngelWingsModel<>(
+                        Minecraft.getInstance()
+                                .getEntityModels()
+                                .bakeLayer(AngelWingsModel.ANGEL_WINGS_LAYER));
     }
 
-    public void render(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+    public void render(
+            PoseStack pMatrixStack,
+            MultiBufferSource pBuffer,
+            int pPackedLight,
+            T pLivingEntity,
+            float pLimbSwing,
+            float pLimbSwingAmount,
+            float pPartialTicks,
+            float pAgeInTicks,
+            float pNetHeadYaw,
+            float pHeadPitch) {
         if (shouldRender(pLivingEntity)) {
             ResourceLocation resourcelocation;
             if (pLivingEntity instanceof AbstractClientPlayer) {
                 AbstractClientPlayer abstractclientplayer = (AbstractClientPlayer) pLivingEntity;
-                if (abstractclientplayer.isElytraLoaded() && abstractclientplayer.getElytraTextureLocation() != null) {
+                if (abstractclientplayer.isElytraLoaded()
+                        && abstractclientplayer.getElytraTextureLocation() != null) {
                     resourcelocation = abstractclientplayer.getElytraTextureLocation();
-                } else if (abstractclientplayer.isCapeLoaded() && abstractclientplayer.getCloakTextureLocation() != null && abstractclientplayer.isModelPartShown(PlayerModelPart.CAPE)) {
+                } else if (abstractclientplayer.isCapeLoaded()
+                        && abstractclientplayer.getCloakTextureLocation() != null
+                        && abstractclientplayer.isModelPartShown(PlayerModelPart.CAPE)) {
                     resourcelocation = abstractclientplayer.getCloakTextureLocation();
                 } else {
                     resourcelocation = getAngelWingsTexture(pLivingEntity);
@@ -51,15 +69,32 @@ public class AngelWingsLayer<T extends LivingEntity, M extends EntityModel<T>> e
             pMatrixStack.pushPose();
             pMatrixStack.translate(0.0D, 0.0D, 0.125D);
             this.getParentModel().copyPropertiesTo(this.angelWingsModel);
-            this.angelWingsModel.setupAnim(pLivingEntity, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(pBuffer, RenderType.energySwirl(resourcelocation, 0, 0), false, false);
-            this.angelWingsModel.renderToBuffer(pMatrixStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.angelWingsModel.setupAnim(
+                    pLivingEntity,
+                    pLimbSwing,
+                    pLimbSwingAmount,
+                    pAgeInTicks,
+                    pNetHeadYaw,
+                    pHeadPitch);
+            VertexConsumer vertexconsumer =
+                    ItemRenderer.getArmorFoilBuffer(
+                            pBuffer, RenderType.energySwirl(resourcelocation, 0, 0), false, false);
+            this.angelWingsModel.renderToBuffer(
+                    pMatrixStack,
+                    vertexconsumer,
+                    pPackedLight,
+                    OverlayTexture.NO_OVERLAY,
+                    1.0F,
+                    1.0F,
+                    1.0F,
+                    1.0F);
             pMatrixStack.popPose();
         }
     }
 
     public boolean shouldRender(T entity) {
-        return !entity.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA) && entity.hasEffect(MobEffectRegistry.ANGEL_WINGS.get());
+        return !entity.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)
+                && entity.hasEffect(MobEffectRegistry.ANGEL_WINGS.get());
     }
 
     public ResourceLocation getAngelWingsTexture(T entity) {

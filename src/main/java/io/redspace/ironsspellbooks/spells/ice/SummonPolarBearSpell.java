@@ -23,22 +23,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class SummonPolarBearSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "summon_polar_bear");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "summon_polar_bear");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.hp", Utils.stringTruncation(getBearHealth(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getBearDamage(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.hp",
+                        Utils.stringTruncation(getBearHealth(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getBearDamage(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(180)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(180)
+                    .build();
 
     public SummonPolarBearSpell() {
         this.manaCostPerLevel = 10;
@@ -74,9 +79,15 @@ public class SummonPolarBearSpell extends AbstractSpell {
     }
 
     @Override
-    public void onRecastFinished(ServerPlayer serverPlayer, RecastInstance recastInstance, RecastResult recastResult, ICastDataSerializable castDataSerializable) {
-        if (SummonManager.recastFinishedHelper(serverPlayer, recastInstance, recastResult, castDataSerializable)) {
-            super.onRecastFinished(serverPlayer, recastInstance, recastResult, castDataSerializable);
+    public void onRecastFinished(
+            ServerPlayer serverPlayer,
+            RecastInstance recastInstance,
+            RecastResult recastResult,
+            ICastDataSerializable castDataSerializable) {
+        if (SummonManager.recastFinishedHelper(
+                serverPlayer, recastInstance, recastResult, castDataSerializable)) {
+            super.onRecastFinished(
+                    serverPlayer, recastInstance, recastResult, castDataSerializable);
         }
     }
 
@@ -86,7 +97,12 @@ public class SummonPolarBearSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         PlayerRecasts recasts = playerMagicData.getPlayerRecasts();
         if (!recasts.hasRecastForSpell(this)) {
             SummonedEntitiesCastData summonedEntitiesCastData = new SummonedEntitiesCastData();
@@ -95,14 +111,28 @@ public class SummonPolarBearSpell extends AbstractSpell {
             SummonedPolarBear polarBear = new SummonedPolarBear(world, entity);
             polarBear.setPos(entity.position());
 
-            polarBear.getAttributes().getInstance(Attributes.ATTACK_DAMAGE).setBaseValue(getBearDamage(spellLevel, entity));
-            polarBear.getAttributes().getInstance(Attributes.MAX_HEALTH).setBaseValue(getBearHealth(spellLevel, entity));
+            polarBear
+                    .getAttributes()
+                    .getInstance(Attributes.ATTACK_DAMAGE)
+                    .setBaseValue(getBearDamage(spellLevel, entity));
+            polarBear
+                    .getAttributes()
+                    .getInstance(Attributes.MAX_HEALTH)
+                    .setBaseValue(getBearHealth(spellLevel, entity));
             polarBear.setHealth(polarBear.getMaxHealth());
-//            var creature = org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellSummonEvent<>(entity, polarBear, this.spellId, spellLevel)).getCreature();
+            //            var creature = org.marj4n.irons_spellbooks.events.SpellEvents.post(new
+            // SpellSummonEvent<>(entity, polarBear, this.spellId, spellLevel)).getCreature();
             world.addFreshEntity(polarBear);
             SummonManager.initSummon(entity, polarBear, summonTime, summonedEntitiesCastData);
 
-            RecastInstance recastInstance = new RecastInstance(this.getSpellId(), spellLevel, getRecastCount(spellLevel, entity), summonTime, castSource, summonedEntitiesCastData);
+            RecastInstance recastInstance =
+                    new RecastInstance(
+                            this.getSpellId(),
+                            spellLevel,
+                            getRecastCount(spellLevel, entity),
+                            summonTime,
+                            castSource,
+                            summonedEntitiesCastData);
             recasts.addRecast(recastInstance, playerMagicData);
         }
 

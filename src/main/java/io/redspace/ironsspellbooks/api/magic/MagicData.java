@@ -26,11 +26,17 @@ import org.jetbrains.annotations.Nullable;
 public class MagicData {
     public interface IExtendedEntity {
         MagicData irons_spellbooks$getMagicData();
+
         EchoingStrikesData irons_spellbooks$getEchoingStrikesData();
+
         void irons_spellbooks$removeEchoingStrikesData();
+
         boolean irons_spellbooks$hasEchoingStrikesData();
+
         void irons_spellbooks$setOakskinData();
+
         void irons_spellbooks$removeOakskinData();
+
         boolean irons_spellbooks$hasOakskinData();
 
         IArmorCapeProvider.CapeData irons_spellbooks$getCapData();
@@ -73,13 +79,14 @@ public class MagicData {
     }
 
     public void setMana(float mana) {
-        //Event will not get posted if the server player is null
+        // Event will not get posted if the server player is null
         ChangeManaEvent e = new ChangeManaEvent(this.serverPlayer, this, this.mana, mana);
         if (this.serverPlayer == null || !org.marj4n.irons_spellbooks.events.SpellEvents.post(e)) {
             this.mana = e.getNewMana();
         }
         if (this.serverPlayer != null) {
-            float maxMana = (float) serverPlayer.getAttributeValue(AttributeRegistry.MAX_MANA.get());
+            float maxMana =
+                    (float) serverPlayer.getAttributeValue(AttributeRegistry.MAX_MANA.get());
             if (this.mana > maxMana) {
                 this.mana = maxMana;
             }
@@ -109,18 +116,21 @@ public class MagicData {
     /********* CASTING *******************************************************/
 
     private int castingSpellLevel = 0;
+
     private int castDuration = 0;
     private int castDurationRemaining = 0;
     private CastSource castSource;
     private CastType castType;
     private @Nullable ICastData additionalCastData;
-    private int poisonedTimestamp; //Poison does not have a damage source, so we mark when we are poisoned to ignore if instead of cancelling our long cast
+    private int
+            poisonedTimestamp; // Poison does not have a damage source, so we mark when we are
+                               // poisoned to ignore if instead of cancelling our long cast
 
     private ItemStack castingItemStack = ItemStack.EMPTY;
 
-
     public void resetCastingState() {
-        //Ironsspellbooks.logger.debug("PlayerMagicData.resetCastingState: serverPlayer:{}", serverPlayer);
+        // Ironsspellbooks.logger.debug("PlayerMagicData.resetCastingState: serverPlayer:{}",
+        // serverPlayer);
         this.castingSpellLevel = 0;
         this.castDuration = 0;
         this.castDurationRemaining = 0;
@@ -134,13 +144,19 @@ public class MagicData {
         }
     }
 
-    public void initiateCast(AbstractSpell spell, int spellLevel, int castDuration, CastSource castSource, String castingEquipmentSlot) {
+    public void initiateCast(
+            AbstractSpell spell,
+            int spellLevel,
+            int castDuration,
+            CastSource castSource,
+            String castingEquipmentSlot) {
         this.castingSpellLevel = spellLevel;
         this.castDuration = castDuration;
         this.castDurationRemaining = castDuration;
         this.castSource = castSource;
         this.castType = spell.getCastType();
-        this.syncedSpellData.setIsCasting(true, spell.getSpellId(), spellLevel, castingEquipmentSlot);
+        this.syncedSpellData.setIsCasting(
+                true, spell.getSpellId(), spellLevel, castingEquipmentSlot);
     }
 
     public ICastData getAdditionalCastData() {
@@ -171,7 +187,8 @@ public class MagicData {
     }
 
     public SpellData getCastingSpell() {
-        return new SpellData(SpellRegistry.getSpell(getSyncedData().getCastingSpellId()), castingSpellLevel);
+        return new SpellData(
+                SpellRegistry.getSpell(getSyncedData().getCastingSpellId()), castingSpellLevel);
     }
 
     public int getCastingSpellLevel() {
@@ -231,7 +248,7 @@ public class MagicData {
     public boolean popMarkedPoison() {
         if (this.serverPlayer != null) {
             boolean poisoned = this.serverPlayer.tickCount - poisonedTimestamp <= 1;
-            //reset so magic damage on the same tick does not get marked as poison
+            // reset so magic damage on the same tick does not get marked as poison
             poisonedTimestamp = 0;
             return poisoned;
         }
@@ -251,7 +268,8 @@ public class MagicData {
     private PlayerRecasts playerRecasts = new PlayerRecasts();
 
     public PlayerRecasts getPlayerRecasts() {
-        // mobs cannot support the more advanced state tracking of recasts, provide no-op data holder instead
+        // mobs cannot support the more advanced state tracking of recasts, provide no-op data
+        // holder instead
         // preserves maximum functionality
         return isMob ? new PlayerRecasts() : this.playerRecasts;
     }
@@ -264,7 +282,7 @@ public class MagicData {
     /********* SYSTEM *******************************************************/
 
     public static MagicData getPlayerMagicData(LivingEntity livingEntity) {
-//        return livingEntity.getData(DataAttachmentRegistry.MAGIC_DATA);
+        //        return livingEntity.getData(DataAttachmentRegistry.MAGIC_DATA);
         return ((IExtendedEntity) livingEntity).irons_spellbooks$getMagicData();
     }
 
@@ -300,7 +318,8 @@ public class MagicData {
 
     @Override
     public String toString() {
-        return String.format("isCasting:%s, spellID:%s], spellLevel:%s, duration:%s, durationRemaining:%s, source:%s, type:%s",
+        return String.format(
+                "isCasting:%s, spellID:%s], spellLevel:%s, duration:%s, durationRemaining:%s, source:%s, type:%s",
                 getSyncedData().isCasting(),
                 getSyncedData().getCastingSpellId(),
                 castingSpellLevel,

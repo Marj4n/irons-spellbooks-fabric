@@ -57,13 +57,18 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 
-public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAnimatedAttacker, IEntityAdditionalSpawnData {
+public class KeeperEntity extends AbstractSpellCastingMob
+        implements Enemy, IAnimatedAttacker, IEntityAdditionalSpawnData {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
-    private static final EntityDataAccessor<Boolean> DATA_IS_SUMMONED = SynchedEntityData.defineId(KeeperEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_IS_RESTORED = SynchedEntityData.defineId(KeeperEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private static final EntityDataAccessor<Boolean> DATA_IS_SUMMONED =
+            SynchedEntityData.defineId(KeeperEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_IS_RESTORED =
+            SynchedEntityData.defineId(KeeperEntity.class, EntityDataSerializers.BOOLEAN);
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buffer) {
@@ -92,10 +97,10 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
     }
 
     public enum AttackType {
-        //data measured from blockbench
+        // data measured from blockbench
         Double_Slash(43, "sword_double_slash", 13, 29),
-        //Triple_Slash(41, "sword_triple_slash", 11, 21, 35),
-        //Slash_Stab(38, "sword_slash_stab", 13, 33),
+        // Triple_Slash(41, "sword_triple_slash", 11, 21, 35),
+        // Slash_Stab(38, "sword_slash_stab", 13, 33),
         Single_Upward(26, "sword_single_upward", 13),
         Single_Horizontal(28, "sword_single_horizontal", 12),
         Single_Horizontal_Fast(24, "sword_single_horizontal_fast", 12),
@@ -107,7 +112,6 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
         }
 
         public final AttackAnimationData data;
-
     }
 
     public static final int RISE_ANIM_TIME = 25;
@@ -123,7 +127,6 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
         xpReward = 25;
         this.lookControl = createLookControl();
         this.moveControl = createMoveControl();
-
     }
 
     public boolean isSummoned() {
@@ -159,7 +162,18 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
             riseAnimTick--;
             if (!level().isClientSide) {
                 Vec3 vec3 = this.getBoundingBox().getCenter();
-                MagicManager.spawnParticles(level(), ParticleRegistry.EMBEROUS_ASH_PARTICLE.get(), vec3.x, vec3.y, vec3.z, 5, 0.2, 0.2, 0.2, 0.05, false);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleRegistry.EMBEROUS_ASH_PARTICLE.get(),
+                        vec3.x,
+                        vec3.y,
+                        vec3.z,
+                        5,
+                        0.2,
+                        0.2,
+                        0.2,
+                        0.05,
+                        false);
             }
         }
     }
@@ -186,7 +200,13 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, true, (entity) -> !(entity.getType().is(ModTags.INFERNAL_ALLIES))));
+        this.targetSelector.addGoal(
+                3,
+                new NearestAttackableTargetGoal<>(
+                        this,
+                        Mob.class,
+                        true,
+                        (entity) -> !(entity.getType().is(ModTags.INFERNAL_ALLIES))));
     }
 
     @Override
@@ -196,7 +216,8 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
 
     protected LookControl createLookControl() {
         return new LookControl(this) {
-            //This allows us to more rapidly turn towards our target. Helps to make sure his targets are aligned with his swing animations
+            // This allows us to more rapidly turn towards our target. Helps to make sure his
+            // targets are aligned with his swing animations
             @Override
             protected float rotateTowards(float pFrom, float pTo, float pMaxDelta) {
                 return super.rotateTowards(pFrom, pTo, pMaxDelta * 2.5f);
@@ -206,8 +227,9 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
 
     protected MoveControl createMoveControl() {
         return new MoveControl(this) {
-            //This fixes a bug where a mob tries to path into the block it's already standing, and spins around trying to look "forward"
-            //We nullify our rotation calculation if we are close to block we are trying to get to
+            // This fixes a bug where a mob tries to path into the block it's already standing, and
+            // spins around trying to look "forward"
+            // We nullify our rotation calculation if we are close to block we are trying to get to
             @Override
             protected float rotlerp(float pSourceAngle, float pTargetAngle, float pMaximumChange) {
                 double d0 = this.wantedX - this.mob.getX();
@@ -239,16 +261,26 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         RandomSource randomsource = Utils.random;
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         return pSpawnData;
     }
 
-
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
-        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(isRestored() ? ItemRegistry.LEGIONNAIRE_FLAMBERGE.get() : ItemRegistry.KEEPER_FLAMBERGE.get()));
+    protected void populateDefaultEquipmentSlots(
+            RandomSource pRandom, DifficultyInstance pDifficulty) {
+        this.setItemSlot(
+                EquipmentSlot.MAINHAND,
+                new ItemStack(
+                        isRestored()
+                                ? ItemRegistry.LEGIONNAIRE_FLAMBERGE.get()
+                                : ItemRegistry.KEEPER_FLAMBERGE.get()));
     }
 
     public static AttributeSupplier.Builder prepareAttributes() {
@@ -258,8 +290,14 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
                 .add(Attributes.FOLLOW_RANGE, 25.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8)
                 .add(Attributes.ATTACK_KNOCKBACK, 2.0)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.STEP_HEIGHT_ADDITION, 1)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH, 3.5)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .STEP_HEIGHT_ADDITION,
+                        1)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .ENTITY_REACH,
+                        3.5)
                 .add(Attributes.MOVEMENT_SPEED, .19);
     }
 
@@ -295,7 +333,8 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
         return super.isInvulnerableTo(pSource) || pSource.is(DamageTypeTags.IS_FALL);
     }
 
-    private final AnimationController<KeeperEntity> meleeController = new AnimationController<>(this, "keeper_animations", 0, this::predicate);
+    private final AnimationController<KeeperEntity> meleeController =
+            new AnimationController<>(this, "keeper_animations", 0, this::predicate);
     RawAnimation animationToPlay = null;
 
     @Override
@@ -304,7 +343,8 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
             var attackType = AttackType.valueOf(animationId);
             animationToPlay = RawAnimation.begin().thenPlay(attackType.data.animationId);
         } catch (Exception ignored) {
-            IronsSpellbooks.LOGGER.error("Entity {} Failed to play animation: {}", this, animationId);
+            IronsSpellbooks.LOGGER.error(
+                    "Entity {} Failed to play animation: {}", this, animationId);
         }
     }
 
@@ -325,10 +365,10 @@ public class KeeperEntity extends AbstractSpellCastingMob implements Enemy, IAni
         super.registerControllers(controllerRegistrar);
     }
 
-
     @Override
     public boolean isAnimating() {
-        return meleeController.getAnimationState() != AnimationController.State.STOPPED || super.isAnimating();
+        return meleeController.getAnimationState() != AnimationController.State.STOPPED
+                || super.isAnimating();
     }
 
     @Override

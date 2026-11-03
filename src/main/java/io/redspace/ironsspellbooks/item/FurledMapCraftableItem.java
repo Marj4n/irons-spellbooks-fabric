@@ -5,11 +5,13 @@ import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class FurledMapCraftableItem extends FurledMapItem implements IBackwardsCompatDefaultNbtItem {
+public class FurledMapCraftableItem extends FurledMapItem
+        implements IBackwardsCompatDefaultNbtItem {
     final FurledMapData mapData;
     final boolean ancient;
 
-    public FurledMapCraftableItem(boolean ancient, FurledMapData mapData, Item.Properties properties) {
+    public FurledMapCraftableItem(
+            boolean ancient, FurledMapData mapData, Item.Properties properties) {
         super(properties);
         this.ancient = ancient;
         this.mapData = mapData;
@@ -17,7 +19,9 @@ public class FurledMapCraftableItem extends FurledMapItem implements IBackwardsC
 
     @Override
     public String getDescriptionId() {
-        return ancient ? ItemRegistry.ANCIENT_FURLED_MAP.get().getDescriptionId() : ItemRegistry.FURLED_MAP.get().getDescriptionId();
+        return ancient
+                ? ItemRegistry.ANCIENT_FURLED_MAP.get().getDescriptionId()
+                : ItemRegistry.FURLED_MAP.get().getDescriptionId();
     }
 
     @Override

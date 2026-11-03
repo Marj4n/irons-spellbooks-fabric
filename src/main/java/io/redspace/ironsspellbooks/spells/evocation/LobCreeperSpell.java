@@ -25,21 +25,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class LobCreeperSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "lob_creeper");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "lob_creeper");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(2)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(2)
+                    .build();
 
     public LobCreeperSpell() {
         this.manaCostPerLevel = 2;
@@ -75,7 +78,12 @@ public class LobCreeperSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float speed = (10 + spellLevel) * .08f;
         float damage = getDamage(spellLevel, entity);
         Vec3 forward = entity.getForward();
@@ -84,7 +92,12 @@ public class LobCreeperSpell extends AbstractSpell {
         CreeperHeadProjectile head = new CreeperHeadProjectile(level, entity);
         head.setDamage(damage);
         head.setDeltaMovement(forward.scale(speed));
-        head.moveTo(spawn.x, spawn.y - head.getBoundingBox().getYsize() / 2, spawn.z, entity.getYRot() + 180, entity.getXRot());
+        head.moveTo(
+                spawn.x,
+                spawn.y - head.getBoundingBox().getYsize() / 2,
+                spawn.z,
+                entity.getYRot() + 180,
+                entity.getXRot());
         level.addFreshEntity(head);
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);

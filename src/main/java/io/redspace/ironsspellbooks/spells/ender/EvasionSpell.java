@@ -23,15 +23,19 @@ public class EvasionSpell extends AbstractSpell {
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.hits_dodged", (int) getSpellPower(spellLevel, caster) + 1));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.hits_dodged",
+                        (int) getSpellPower(spellLevel, caster) + 1));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.EPIC)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(180)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.EPIC)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(180)
+                    .build();
 
     public EvasionSpell() {
         this.manaCostPerLevel = 20;
@@ -57,10 +61,20 @@ public class EvasionSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.EVASION.get(), 60 * 20, (int) getSpellPower(spellLevel, entity), false, false, true));
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.EVASION.get(),
+                        60 * 20,
+                        (int) getSpellPower(spellLevel, entity),
+                        false,
+                        false,
+                        true));
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
-
-
 }

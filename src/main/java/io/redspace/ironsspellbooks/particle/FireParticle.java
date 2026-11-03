@@ -11,10 +11,17 @@ import net.fabricmc.api.Environment;
 public class FireParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
 
-    public FireParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public FireParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
-
 
         this.xd = xd;
         this.yd = yd;
@@ -25,8 +32,6 @@ public class FireParticle extends TextureSheetParticle {
         sprites = spriteSet;
         this.setSpriteFromAge(spriteSet);
         this.gravity = -0.01F;
-
-
     }
 
     @Override
@@ -38,7 +43,8 @@ public class FireParticle extends TextureSheetParticle {
         animateContinuously();
 
         if (this.random.nextFloat() <= .25f) {
-            this.level.addParticle(ParticleHelper.EMBERS, this.x, this.y, this.z, this.xd, this.yd, this.zd);
+            this.level.addParticle(
+                    ParticleHelper.EMBERS, this.x, this.y, this.z, this.xd, this.yd, this.zd);
         }
     }
 
@@ -55,9 +61,15 @@ public class FireParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new FireParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }
@@ -68,16 +80,15 @@ public class FireParticle extends TextureSheetParticle {
     }
 
     private void animateContinuously() {
-        if (age % 8 == 0)
-            setSprite(sprites.get(this.random));
+        if (age % 8 == 0) setSprite(sprites.get(this.random));
     }
-//
-//    @Override
-//    public float getQuadSize(float p_107567_) {
-//        float f = ((float) this.age + p_107567_) / (float) this.lifetime;
-//        f = 1.0F - f;
-//        f *= f;
-//        f = 1.0F - f;
-//        return this.quadSize * f;
-//    }
+    //
+    //    @Override
+    //    public float getQuadSize(float p_107567_) {
+    //        float f = ((float) this.age + p_107567_) / (float) this.lifetime;
+    //        f = 1.0F - f;
+    //        f *= f;
+    //        f = 1.0F - f;
+    //        return this.quadSize * f;
+    //    }
 }

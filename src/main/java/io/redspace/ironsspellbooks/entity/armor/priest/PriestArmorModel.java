@@ -23,6 +23,7 @@ public class PriestArmorModel extends DefaultedItemGeoModel<PriestArmorItem> {
 
     @Override
     public ResourceLocation getAnimationResource(PriestArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

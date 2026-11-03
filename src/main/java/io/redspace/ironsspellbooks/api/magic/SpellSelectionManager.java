@@ -29,18 +29,22 @@ import java.util.List;
 public class SpellSelectionManager {
     public static final String MAINHAND = EquipmentSlot.MAINHAND.getName();
     public static final String OFFHAND = EquipmentSlot.OFFHAND.getName();
+
     /**
      * List of selectable spells -- the spell wheel
      */
     private final List<SelectionOption> selectionOptionList;
+
     /**
      * Current Selected Spell
      */
     private SpellSelection spellSelection = null;
+
     /**
      * Global index of the current selection (spellSelection) from selectionOptionList
      */
     private int selectionIndex = -1;
+
     private boolean selectionValid = false;
     private final Player player;
 
@@ -56,11 +60,17 @@ public class SpellSelectionManager {
         if (player.level().isClientSide) {
             spellSelection = ClientMagicData.getSyncedSpellData(player).getSpellSelection();
         } else {
-            spellSelection = MagicData.getPlayerMagicData(player).getSyncedData().getSpellSelection();
+            spellSelection =
+                    MagicData.getPlayerMagicData(player).getSyncedData().getSpellSelection();
         }
 
         if (Log.SPELL_SELECTION) {
-            IronsSpellbooks.LOGGER.debug("SpellSelectionManager init.begin spellSelection:{} valid:{} index:{} isClient:{}", spellSelection, selectionValid, selectionIndex, player.level().isClientSide);
+            IronsSpellbooks.LOGGER.debug(
+                    "SpellSelectionManager init.begin spellSelection:{} valid:{} index:{} isClient:{}",
+                    spellSelection,
+                    selectionValid,
+                    selectionIndex,
+                    player.level().isClientSide);
         }
 
         initCurioItems(player);
@@ -70,7 +80,8 @@ public class SpellSelectionManager {
         initItem(player.getItemBySlot(EquipmentSlot.FEET), EquipmentSlot.FEET.getName());
         initItem(player.getItemBySlot(EquipmentSlot.MAINHAND), MAINHAND);
         initItem(player.getItemBySlot(EquipmentSlot.OFFHAND), OFFHAND);
-        org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellSelectionEvent(this.player, this));
+        org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                new SpellSelectionEvent(this.player, this));
 
         if (!selectionValid && !selectionOptionList.isEmpty()) {
             tryLastSelectionOrDefault();
@@ -80,20 +91,42 @@ public class SpellSelectionManager {
         }
 
         if (Log.SPELL_SELECTION) {
-            IronsSpellbooks.LOGGER.debug("SpellSelectionManager init.end spellSelection:{} valid:{} index:{} isClient:{}", spellSelection, selectionValid, selectionIndex, player.level().isClientSide);
+            IronsSpellbooks.LOGGER.debug(
+                    "SpellSelectionManager init.end spellSelection:{} valid:{} index:{} isClient:{}",
+                    spellSelection,
+                    selectionValid,
+                    selectionIndex,
+                    player.level().isClientSide);
         }
     }
 
     private void initCurioItems(Player player) {
-        EquipmentApi.getCuriosInventory(player).ifPresent(inv -> {
-            ItemStack spellbook = Utils.getPlayerSpellbookStack(player);
-            if (spellbook != null) {
-                initItem(spellbook, Curios.SPELLBOOK_SLOT);
-            }
-            inv.findCurios(ISpellContainer::isSpellContainer).stream().filter(slot -> !slot.slotContext().identifier().equals(Curios.SPELLBOOK_SLOT)).forEach(
-                    slotResult -> initItem(slotResult.stack(), String.format("%s_%s", slotResult.slotContext().identifier(), slotResult.slotContext().index())));
-        });
-
+        EquipmentApi.getCuriosInventory(player)
+                .ifPresent(
+                        inv -> {
+                            ItemStack spellbook = Utils.getPlayerSpellbookStack(player);
+                            if (spellbook != null) {
+                                initItem(spellbook, Curios.SPELLBOOK_SLOT);
+                            }
+                            inv.findCurios(ISpellContainer::isSpellContainer).stream()
+                                    .filter(
+                                            slot ->
+                                                    !slot.slotContext()
+                                                            .identifier()
+                                                            .equals(Curios.SPELLBOOK_SLOT))
+                                    .forEach(
+                                            slotResult ->
+                                                    initItem(
+                                                            slotResult.stack(),
+                                                            String.format(
+                                                                    "%s_%s",
+                                                                    slotResult
+                                                                            .slotContext()
+                                                                            .identifier(),
+                                                                    slotResult
+                                                                            .slotContext()
+                                                                            .index())));
+                        });
     }
 
     /**
@@ -108,12 +141,22 @@ public class SpellSelectionManager {
     private void initItem(@Nullable ItemStack itemStack, String equipmentSlot) {
         if (ISpellContainer.isSpellContainer(itemStack)) {
             var spellContainer = ISpellContainer.get(itemStack);
-            if (spellContainer.isSpellWheel() && (!spellContainer.mustEquip() || (!equipmentSlot.equals(MAINHAND) && !equipmentSlot.equals(OFFHAND)))) {
+            if (spellContainer.isSpellWheel()
+                    && (!spellContainer.mustEquip()
+                            || (!equipmentSlot.equals(MAINHAND)
+                                    && !equipmentSlot.equals(OFFHAND)))) {
                 var activeSpells = spellContainer.getActiveSpells();
                 for (int i = 0; i < activeSpells.size(); i++) {
                     var spellSlot = activeSpells.get(i);
-                    int globalIndex = addOrMergeSelectionOption(new SelectionOption(spellSlot.spellData(), equipmentSlot, i, selectionOptionList.size()));
-                    if (spellSelection.index == i && spellSelection.equipmentSlot.equals(equipmentSlot)) {
+                    int globalIndex =
+                            addOrMergeSelectionOption(
+                                    new SelectionOption(
+                                            spellSlot.spellData(),
+                                            equipmentSlot,
+                                            i,
+                                            selectionOptionList.size()));
+                    if (spellSelection.index == i
+                            && spellSelection.equipmentSlot.equals(equipmentSlot)) {
                         selectionIndex = globalIndex;
                         selectionValid = true;
                     }
@@ -155,10 +198,11 @@ public class SpellSelectionManager {
     }
 
     private void tryLastSelectionOrDefault() {
-//        if (!selectionOptionList.isEmpty() && ((selectionIndex == -1 && spellSelection.lastIndex != -1) || (!selectionValid && spellSelection.lastIndex != -1))) {
-//            tryLastSelection();
-//        }
-
+        //        if (!selectionOptionList.isEmpty() && ((selectionIndex == -1 &&
+        // spellSelection.lastIndex != -1) || (!selectionValid && spellSelection.lastIndex != -1)))
+        // {
+        //            tryLastSelection();
+        //        }
 
         if (Log.SPELL_SELECTION) {
             IronsSpellbooks.LOGGER.debug("SpellSelectionManager tryLastSelection");
@@ -166,21 +210,32 @@ public class SpellSelectionManager {
 
         if (spellSelection.lastEquipmentSlot.isEmpty()) {
             var select = selectionOptionList.stream().findFirst();
-            select.ifPresent(selection -> {
-                makeLocalSelection(selection.slot, selection.slotIndex, selection.globalIndex, false);
-            });
+            select.ifPresent(
+                    selection -> {
+                        makeLocalSelection(
+                                selection.slot, selection.slotIndex, selection.globalIndex, false);
+                    });
         } else if (spellSelection.lastIndex != -1) {
             var spellsForSlot = getSpellsForSlot(spellSelection.lastEquipmentSlot);
             if (!spellsForSlot.isEmpty()) {
                 if (spellSelection.lastIndex < spellsForSlot.size()) {
-                    makeLocalSelection(spellSelection.lastEquipmentSlot, spellSelection.lastIndex, spellsForSlot.get(spellSelection.lastIndex).globalIndex, false);
+                    makeLocalSelection(
+                            spellSelection.lastEquipmentSlot,
+                            spellSelection.lastIndex,
+                            spellsForSlot.get(spellSelection.lastIndex).globalIndex,
+                            false);
                 } else {
-                    makeLocalSelection(spellSelection.lastEquipmentSlot, 0, spellsForSlot.get(0).globalIndex, false);
+                    makeLocalSelection(
+                            spellSelection.lastEquipmentSlot,
+                            0,
+                            spellsForSlot.get(0).globalIndex,
+                            false);
                 }
             }
         } else {
             if (Log.SPELL_SELECTION) {
-                IronsSpellbooks.LOGGER.warn("SpellSelectionManager invalid spellSelection:{}", spellSelection);
+                IronsSpellbooks.LOGGER.warn(
+                        "SpellSelectionManager invalid spellSelection:{}", spellSelection);
             }
         }
     }
@@ -204,7 +259,8 @@ public class SpellSelectionManager {
 
     private void setSpellSelection(SpellSelection spellSelection) {
         if (Log.SPELL_SELECTION) {
-            IronsSpellbooks.LOGGER.debug("SSM.setSpellSelection old:{} new:{}", this.spellSelection, spellSelection);
+            IronsSpellbooks.LOGGER.debug(
+                    "SSM.setSpellSelection old:{} new:{}", this.spellSelection, spellSelection);
         }
 
         this.spellSelection = spellSelection;
@@ -259,11 +315,15 @@ public class SpellSelectionManager {
     }
 
     public SpellData getSelectedSpellData() {
-        return selectionIndex >= 0 && selectionIndex < selectionOptionList.size() ? selectionOptionList.get(selectionIndex).spellData : SpellData.EMPTY;
+        return selectionIndex >= 0 && selectionIndex < selectionOptionList.size()
+                ? selectionOptionList.get(selectionIndex).spellData
+                : SpellData.EMPTY;
     }
 
     public List<SelectionOption> getSpellsForSlot(String slot) {
-        return selectionOptionList.stream().filter(selectionOption -> selectionOption.slot.equals(slot)).toList();
+        return selectionOptionList.stream()
+                .filter(selectionOption -> selectionOption.slot.equals(slot))
+                .toList();
     }
 
     public List<SelectionOption> getAllSpells() {
@@ -298,8 +358,11 @@ public class SpellSelectionManager {
         }
 
         public CastSource getCastSource() {
-            //todo: this paradigm is unreliable, cast source should be explicitly stored on the selection option
-            return this.slot.startsWith(Curios.SPELLBOOK_SLOT) ? CastSource.SPELLBOOK : CastSource.SWORD;
+            // todo: this paradigm is unreliable, cast source should be explicitly stored on the
+            // selection option
+            return this.slot.startsWith(Curios.SPELLBOOK_SLOT)
+                    ? CastSource.SPELLBOOK
+                    : CastSource.SWORD;
         }
     }
 
@@ -328,7 +391,8 @@ public class SpellSelectionManager {
          * @param localSlotIndex Index of the slot to other like-types, ie helmet = 0, chestplate = 1, etc
          */
         public void addSelectionOption(SpellData spellData, String slotId, int localSlotIndex) {
-            addSelectionOption(spellData, slotId, localSlotIndex, manager.selectionOptionList.size());
+            addSelectionOption(
+                    spellData, slotId, localSlotIndex, manager.selectionOptionList.size());
         }
 
         /**
@@ -339,17 +403,23 @@ public class SpellSelectionManager {
          * @param localSlotIndex Index of the slot with regard to other like-types, ie helmet = 0, chestplate = 1... etc
          * @param globalIndex    Index of the spell within the manager (where it will appear on the spell bar)
          */
-        public void addSelectionOption(SpellData spellData, String slotId, int localSlotIndex, int globalIndex) {
-            //FIXME: spell selection manager does not work the way i remember it, injecting into specific slot indexes currently doesn't work
+        public void addSelectionOption(
+                SpellData spellData, String slotId, int localSlotIndex, int globalIndex) {
+            // FIXME: spell selection manager does not work the way i remember it, injecting into
+            // specific slot indexes currently doesn't work
             globalIndex = manager.selectionOptionList.size();
             if (globalIndex >= 0 && globalIndex <= manager.selectionOptionList.size()) {
-                manager.selectionOptionList.add(globalIndex, new SelectionOption(spellData, slotId, localSlotIndex, globalIndex));
-//                if (globalIndex != manager.selectionOptionList.size()) {
-//                    for (int i = globalIndex + 1; i < manager.selectionOptionList.size(); i++) {
-//                        manager.selectionOptionList.get(i).globalIndex++;
-//                    }
-//                }
-                if (manager.spellSelection.index == localSlotIndex && manager.spellSelection.equipmentSlot.equals(slotId)) {
+                manager.selectionOptionList.add(
+                        globalIndex,
+                        new SelectionOption(spellData, slotId, localSlotIndex, globalIndex));
+                //                if (globalIndex != manager.selectionOptionList.size()) {
+                //                    for (int i = globalIndex + 1; i <
+                // manager.selectionOptionList.size(); i++) {
+                //                        manager.selectionOptionList.get(i).globalIndex++;
+                //                    }
+                //                }
+                if (manager.spellSelection.index == localSlotIndex
+                        && manager.spellSelection.equipmentSlot.equals(slotId)) {
                     manager.selectionIndex = manager.selectionOptionList.size() - 1;
                     manager.selectionValid = true;
                 }

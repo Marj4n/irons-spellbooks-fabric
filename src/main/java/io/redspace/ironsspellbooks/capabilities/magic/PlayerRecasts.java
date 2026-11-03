@@ -21,10 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 public class PlayerRecasts {
-    private static final RecastInstance EMPTY = new RecastInstance(SpellRegistry.none().getSpellId(), 0, 0, 0, CastSource.NONE, null);
+    private static final RecastInstance EMPTY =
+            new RecastInstance(SpellRegistry.none().getSpellId(), 0, 0, 0, CastSource.NONE, null);
     private final Map<String, RecastInstance> recastLookup;
 
-    //This will only be null on the client side
+    // This will only be null on the client side
     private final ServerPlayer serverPlayer;
 
     public PlayerRecasts() {
@@ -57,7 +58,9 @@ public class PlayerRecasts {
     }
 
     public boolean isRecastActive(RecastInstance recastInstance) {
-        return recastInstance != null && recastInstance.remainingRecasts > 0 && recastInstance.remainingTicks > 0;
+        return recastInstance != null
+                && recastInstance.remainingRecasts > 0
+                && recastInstance.remainingTicks > 0;
     }
 
     @Environment(EnvType.CLIENT)
@@ -115,7 +118,7 @@ public class PlayerRecasts {
     }
 
     public void decrementRecastCount(String spellId) {
-        //IronsSpellbooks.LOGGER.debug("PlayerRecasts: {} {}", serverPlayer, spellId);
+        // IronsSpellbooks.LOGGER.debug("PlayerRecasts: {} {}", serverPlayer, spellId);
         var recastInstance = recastLookup.get(spellId);
 
         if (isRecastActive(recastInstance)) {
@@ -155,10 +158,13 @@ public class PlayerRecasts {
     }
 
     private void triggerRecastComplete(RecastInstance recastInstance, RecastResult recastResult) {
-        SpellRegistry.getSpell(recastInstance.getSpellId()).onRecastFinished(serverPlayer, recastInstance, recastResult, recastInstance.castData);
+        SpellRegistry.getSpell(recastInstance.getSpellId())
+                .onRecastFinished(
+                        serverPlayer, recastInstance, recastResult, recastInstance.castData);
     }
 
-    private void removeRecast(RecastInstance recastInstance, RecastResult recastResult, boolean doSync) {
+    private void removeRecast(
+            RecastInstance recastInstance, RecastResult recastResult, boolean doSync) {
         recastLookup.remove(recastInstance.spellId);
         if (doSync) {
             syncRemoveToPlayer(recastInstance.spellId);
@@ -171,43 +177,51 @@ public class PlayerRecasts {
     }
 
     public void removeAll(RecastResult recastResult) {
-        recastLookup.values().stream().toList().forEach(recastInstance -> removeRecast(recastInstance, recastResult, false));
+        recastLookup.values().stream()
+                .toList()
+                .forEach(recastInstance -> removeRecast(recastInstance, recastResult, false));
         syncAllToPlayer();
     }
 
     public ListTag saveNBTData(HolderLookup.Provider provider) {
         var listTag = new ListTag();
-        recastLookup.values().stream().filter(this::isRecastActive).forEach(recastInstance -> {
-            if (recastInstance.remainingRecasts > 0 && recastInstance.remainingTicks > 0) {
-                listTag.add(recastInstance.serializeNBT());
-            }
-        });
+        recastLookup.values().stream()
+                .filter(this::isRecastActive)
+                .forEach(
+                        recastInstance -> {
+                            if (recastInstance.remainingRecasts > 0
+                                    && recastInstance.remainingTicks > 0) {
+                                listTag.add(recastInstance.serializeNBT());
+                            }
+                        });
         return listTag;
     }
 
     public void loadNBTData(ListTag listTag, HolderLookup.Provider provider) {
         if (listTag != null) {
-            listTag.forEach(tag -> {
-                var recastInstance = new RecastInstance();
-                recastInstance.deserializeNBT((CompoundTag) tag);
-                if (recastInstance.remainingRecasts > 0 && recastInstance.remainingTicks > 0) {
-                    recastLookup.put(recastInstance.spellId, recastInstance);
-                } else {
-                    //cull anything leftover not removed. shouldn't get here
-                    IronsSpellbooks.LOGGER.warn("Trimming recast data: {}", recastInstance);
-                }
-            });
+            listTag.forEach(
+                    tag -> {
+                        var recastInstance = new RecastInstance();
+                        recastInstance.deserializeNBT((CompoundTag) tag);
+                        if (recastInstance.remainingRecasts > 0
+                                && recastInstance.remainingTicks > 0) {
+                            recastLookup.put(recastInstance.spellId, recastInstance);
+                        } else {
+                            // cull anything leftover not removed. shouldn't get here
+                            IronsSpellbooks.LOGGER.warn("Trimming recast data: {}", recastInstance);
+                        }
+                    });
         }
     }
 
     public void tick(int actualTicks) {
         if (serverPlayer != null && serverPlayer.level().getGameTime() % actualTicks == 0) {
-            recastLookup.values()
-                    .stream()
-                    .filter(r -> {
-                        r.remainingTicks -= actualTicks;
-                        return r.remainingTicks <= 0;
-                    })
+            recastLookup.values().stream()
+                    .filter(
+                            r -> {
+                                r.remainingTicks -= actualTicks;
+                                return r.remainingTicks <= 0;
+                            })
                     .toList()
                     .forEach(recastInstance -> removeRecast(recastInstance, RecastResult.TIMEOUT));
         }
@@ -217,10 +231,13 @@ public class PlayerRecasts {
     public String toString() {
         var sb = new StringBuilder();
 
-        recastLookup.values().forEach(recastInstance -> {
-            sb.append(recastInstance.toString());
-            sb.append("\n");
-        });
+        recastLookup
+                .values()
+                .forEach(
+                        recastInstance -> {
+                            sb.append(recastInstance.toString());
+                            sb.append("\n");
+                        });
 
         return sb.toString();
     }

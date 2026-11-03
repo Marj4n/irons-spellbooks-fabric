@@ -21,7 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class SummonHorseSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "summon_horse");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "summon_horse");
 
     public SummonHorseSpell() {
         this.manaCostPerLevel = 2;
@@ -31,12 +32,13 @@ public class SummonHorseSpell extends AbstractSpell {
         this.baseManaCost = 50;
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(20)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(20)
+                    .build();
 
     @Override
     public CastType getCastType() {
@@ -74,14 +76,25 @@ public class SummonHorseSpell extends AbstractSpell {
     }
 
     @Override
-    public void onRecastFinished(ServerPlayer serverPlayer, RecastInstance recastInstance, RecastResult recastResult, ICastDataSerializable castDataSerializable) {
-        if (SummonManager.recastFinishedHelper(serverPlayer, recastInstance, recastResult, castDataSerializable)) {
-            super.onRecastFinished(serverPlayer, recastInstance, recastResult, castDataSerializable);
+    public void onRecastFinished(
+            ServerPlayer serverPlayer,
+            RecastInstance recastInstance,
+            RecastResult recastResult,
+            ICastDataSerializable castDataSerializable) {
+        if (SummonManager.recastFinishedHelper(
+                serverPlayer, recastInstance, recastResult, castDataSerializable)) {
+            super.onRecastFinished(
+                    serverPlayer, recastInstance, recastResult, castDataSerializable);
         }
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         PlayerRecasts recasts = playerMagicData.getPlayerRecasts();
         if (!recasts.hasRecastForSpell(this)) {
             SummonedEntitiesCastData summonedEntitiesCastData = new SummonedEntitiesCastData();
@@ -93,11 +106,19 @@ public class SummonHorseSpell extends AbstractSpell {
             SummonedHorse horse = new SummonedHorse(world, entity);
             horse.setPos(spawn);
             setAttributes(horse, getSpellPower(spellLevel, entity) / 100f);
-//            var creature = org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellSummonEvent<>(entity, horse, this.spellId, spellLevel)).getCreature();
+            //            var creature = org.marj4n.irons_spellbooks.events.SpellEvents.post(new
+            // SpellSummonEvent<>(entity, horse, this.spellId, spellLevel)).getCreature();
             world.addFreshEntity(horse);
             SummonManager.initSummon(entity, horse, summonTime, summonedEntitiesCastData);
 
-            RecastInstance recastInstance = new RecastInstance(this.getSpellId(), spellLevel, getRecastCount(spellLevel, entity), summonTime, castSource, summonedEntitiesCastData);
+            RecastInstance recastInstance =
+                    new RecastInstance(
+                            this.getSpellId(),
+                            spellLevel,
+                            getRecastCount(spellLevel, entity),
+                            summonTime,
+                            castSource,
+                            summonedEntitiesCastData);
             recasts.addRecast(recastInstance, playerMagicData);
         }
 
@@ -113,7 +134,7 @@ public class SummonHorseSpell extends AbstractSpell {
         horse.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(speed);
         horse.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(jump);
         horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(health);
-//        horse.getAttribute(Attributes.SAFE_FALL_DISTANCE).setBaseValue(safeFall);
+        //        horse.getAttribute(Attributes.SAFE_FALL_DISTANCE).setBaseValue(safeFall);
         horse.setHealth(health);
     }
 }

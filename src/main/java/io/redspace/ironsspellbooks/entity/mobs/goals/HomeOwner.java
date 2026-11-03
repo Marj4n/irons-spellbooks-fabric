@@ -12,10 +12,11 @@ public interface HomeOwner {
 
     void setHome(BlockPos homePos);
 
-    //fixme: self reference... (remove)
+    // fixme: self reference... (remove)
     default void serializeHome(HomeOwner self, CompoundTag tag) {
         if (self.getHome() != null)
-            tag.putIntArray("HomePos", new int[]{getHome().getX(), getHome().getY(), getHome().getZ()});
+            tag.putIntArray(
+                    "HomePos", new int[] {getHome().getX(), getHome().getY(), getHome().getZ()});
     }
 
     default void deserializeHome(HomeOwner self, CompoundTag tag) {

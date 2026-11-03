@@ -18,7 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class SyncedSpellData {
-    //TODO: may want to switch this to ServerPlayer.UUID
+    // TODO: may want to switch this to ServerPlayer.UUID
     private final int serverPlayerId;
     private @Nullable LivingEntity livingEntity;
 
@@ -33,7 +33,7 @@ public class SyncedSpellData {
 
     private String castingEquipmentSlot;
 
-    //Use this on the client
+    // Use this on the client
     public SyncedSpellData(int serverPlayerId) {
         this.livingEntity = null;
         this.serverPlayerId = serverPlayerId;
@@ -69,49 +69,51 @@ public class SyncedSpellData {
         data.castingSpellLevel = buffer.readInt();
         data.heartStopAccumulatedDamage = buffer.readFloat();
         data.evasionHitsRemaining = buffer.readInt();
-        data.spinAttackType = new SpinAttackType(buffer.readResourceLocation(), buffer.readBoolean());
+        data.spinAttackType =
+                new SpinAttackType(buffer.readResourceLocation(), buffer.readBoolean());
         data.castingEquipmentSlot = buffer.readUtf();
         data.learnedSpellData.readFromBuffer(buffer);
         data.spellSelection.readFromBuffer(buffer);
         return data;
     }
 
-    //Use this on the server
+    // Use this on the server
     public SyncedSpellData(LivingEntity livingEntity) {
         this(livingEntity == null ? -1 : livingEntity.getId());
         this.livingEntity = livingEntity;
     }
 
-//    public static final EntityDataSerializer<SyncedSpellData> SYNCED_SPELL_DATA = new EntityDataSerializer.ForValueType<SyncedSpellData>() {
-//        public void write(FriendlyByteBuf buffer, SyncedSpellData data) {
-//            buffer.writeInt(data.serverPlayerId);
-//            buffer.writeBoolean(data.isCasting);
-//            buffer.writeUtf(data.castingSpellId);
-//            buffer.writeInt(data.castingSpellLevel);
-//            buffer.writeLong(data.syncedEffectFlags);
-//            buffer.writeFloat(data.heartStopAccumulatedDamage);
-//            buffer.writeInt(data.evasionHitsRemaining);
-//            buffer.writeEnum(data.spinAttackType);
-//            buffer.writeUtf(data.castingEquipmentSlot);
-//            data.learnedSpellData.writeToBuffer(buffer);
-//            data.spellSelection.writeToBuffer(buffer);
-//        }
-//
-//        public SyncedSpellData read(FriendlyByteBuf buffer) {
-//            var data = new SyncedSpellData(buffer.readInt());
-//            data.isCasting = buffer.readBoolean();
-//            data.castingSpellId = buffer.readUtf();
-//            data.castingSpellLevel = buffer.readInt();
-//            data.syncedEffectFlags = buffer.readLong();
-//            data.heartStopAccumulatedDamage = buffer.readFloat();
-//            data.evasionHitsRemaining = buffer.readInt();
-//            data.spinAttackType = buffer.readEnum(SpinAttackType.class);
-//            data.castingEquipmentSlot = buffer.readUtf();
-//            data.learnedSpellData.readFromBuffer(buffer);
-//            data.spellSelection.readFromBuffer(buffer);
-//            return data;
-//        }
-//    };
+    //    public static final EntityDataSerializer<SyncedSpellData> SYNCED_SPELL_DATA = new
+    // EntityDataSerializer.ForValueType<SyncedSpellData>() {
+    //        public void write(FriendlyByteBuf buffer, SyncedSpellData data) {
+    //            buffer.writeInt(data.serverPlayerId);
+    //            buffer.writeBoolean(data.isCasting);
+    //            buffer.writeUtf(data.castingSpellId);
+    //            buffer.writeInt(data.castingSpellLevel);
+    //            buffer.writeLong(data.syncedEffectFlags);
+    //            buffer.writeFloat(data.heartStopAccumulatedDamage);
+    //            buffer.writeInt(data.evasionHitsRemaining);
+    //            buffer.writeEnum(data.spinAttackType);
+    //            buffer.writeUtf(data.castingEquipmentSlot);
+    //            data.learnedSpellData.writeToBuffer(buffer);
+    //            data.spellSelection.writeToBuffer(buffer);
+    //        }
+    //
+    //        public SyncedSpellData read(FriendlyByteBuf buffer) {
+    //            var data = new SyncedSpellData(buffer.readInt());
+    //            data.isCasting = buffer.readBoolean();
+    //            data.castingSpellId = buffer.readUtf();
+    //            data.castingSpellLevel = buffer.readInt();
+    //            data.syncedEffectFlags = buffer.readLong();
+    //            data.heartStopAccumulatedDamage = buffer.readFloat();
+    //            data.evasionHitsRemaining = buffer.readInt();
+    //            data.spinAttackType = buffer.readEnum(SpinAttackType.class);
+    //            data.castingEquipmentSlot = buffer.readUtf();
+    //            data.learnedSpellData.readFromBuffer(buffer);
+    //            data.spellSelection.readFromBuffer(buffer);
+    //            return data;
+    //        }
+    //    };
 
     public void saveNBTData(CompoundTag compound, HolderLookup.Provider provider) {
         compound.putBoolean("isCasting", this.isCasting);
@@ -121,10 +123,10 @@ public class SyncedSpellData {
         compound.putFloat("heartStopAccumulatedDamage", this.heartStopAccumulatedDamage);
         compound.putFloat("evasionHitsRemaining", this.evasionHitsRemaining);
 
-        //TODO: refactor learned spell data to use INBTSerializable instead of this custom deal
+        // TODO: refactor learned spell data to use INBTSerializable instead of this custom deal
         learnedSpellData.saveToNBT(compound);
         compound.put("spellSelection", this.spellSelection.serializeNBT());
-        //SpinAttack not saved
+        // SpinAttack not saved
     }
 
     public void loadNBTData(CompoundTag compound, HolderLookup.Provider provider) {
@@ -134,10 +136,10 @@ public class SyncedSpellData {
         this.castingSpellLevel = compound.getInt("castingSpellLevel");
         this.heartStopAccumulatedDamage = compound.getFloat("heartStopAccumulatedDamage");
         this.evasionHitsRemaining = compound.getInt("evasionHitsRemaining");
-        //TODO: refactor learned spell data to use INBTSerializable instead of this custom deal
+        // TODO: refactor learned spell data to use INBTSerializable instead of this custom deal
         this.learnedSpellData.loadFromNBT(compound);
         this.spellSelection.deserializeNBT(compound.getCompound("spellSelection"));
-        //SpinAttack not saved
+        // SpinAttack not saved
 
     }
 
@@ -187,7 +189,8 @@ public class SyncedSpellData {
     }
 
     public boolean isSpellLearned(AbstractSpell spell) {
-        return !spell.requiresLearning() || this.learnedSpellData.learnedSpells.contains(spell.getSpellResource());
+        return !spell.requiresLearning()
+                || this.learnedSpellData.learnedSpells.contains(spell.getSpellResource());
     }
 
     public SpinAttackType getSpinAttackType() {
@@ -220,9 +223,11 @@ public class SyncedSpellData {
 
     public void doSync() {
         if (livingEntity instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncPlayerDataPacket(this));
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                    serverPlayer, new SyncPlayerDataPacket(this));
         } else if (livingEntity instanceof IMagicEntity abstractSpellCastingMob) {
-            PacketDistributor.sendToPlayersTrackingEntity(livingEntity, new SyncEntityDataPacket(this, abstractSpellCastingMob));
+            PacketDistributor.sendToPlayersTrackingEntity(
+                    livingEntity, new SyncEntityDataPacket(this, abstractSpellCastingMob));
         }
     }
 
@@ -230,7 +235,11 @@ public class SyncedSpellData {
         PacketDistributor.sendToPlayer(serverPlayer, new SyncPlayerDataPacket(this));
     }
 
-    public void setIsCasting(boolean isCasting, String castingSpellId, int castingSpellLevel, String castingEquipmentSlot) {
+    public void setIsCasting(
+            boolean isCasting,
+            String castingSpellId,
+            int castingSpellLevel,
+            String castingEquipmentSlot) {
         this.isCasting = isCasting;
         this.castingSpellId = castingSpellId;
         this.castingSpellLevel = castingSpellLevel;
@@ -257,10 +266,9 @@ public class SyncedSpellData {
 
     @Override
     public String toString() {
-        return String.format("isCasting:%s, spellID:%s, spellLevel:%d",
-                isCasting,
-                castingSpellId,
-                castingSpellLevel);
+        return String.format(
+                "isCasting:%s, spellID:%s, spellLevel:%d",
+                isCasting, castingSpellId, castingSpellLevel);
     }
 
     /**
@@ -268,7 +276,8 @@ public class SyncedSpellData {
      * @return Retuns a copy of this SyncedSpellData, but with only data for things that should be persisted after death.
      */
     public SyncedSpellData getPersistentData(ServerPlayer serverPlayer) {
-        //This updates the reference while keeping the id the same (because we are in the middle of cloning logic, where id has not been set yet)
+        // This updates the reference while keeping the id the same (because we are in the middle of
+        // cloning logic, where id has not been set yet)
         SyncedSpellData persistentData = new SyncedSpellData(livingEntity);
         persistentData.livingEntity = serverPlayer;
         persistentData.learnedSpellData.learnedSpells.addAll(this.learnedSpellData.learnedSpells);

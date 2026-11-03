@@ -24,17 +24,17 @@ public class ParallelMatcher implements AutoCloseable {
                 matcherPositions[matcherIndex]++;
 
                 if (matcherPositions[matcherIndex] == matchTarget.length) {
-                    //If any matcher has a full match return true
+                    // If any matcher has a full match return true
                     reset();
                     return true;
                 }
             } else {
-                //Reset the match index tracker for the current matcher on any missed token
+                // Reset the match index tracker for the current matcher on any missed token
                 matcherPositions[matcherIndex] = 0;
             }
         }
 
-        //If we don't have a full match on any item return false
+        // If we don't have a full match on any item return false
         return false;
     }
 

@@ -16,11 +16,18 @@ public class ExtendedEvokerFang extends EvokerFangs implements AntiMagicSuscepti
     private int warmupDelayTicks;
     private boolean attackStarted;
 
-    public ExtendedEvokerFang(Level pLevel, double pX, double pY, double pZ, float pYRot, int pWarmupDelay, LivingEntity pOwner, float damage) {
+    public ExtendedEvokerFang(
+            Level pLevel,
+            double pX,
+            double pY,
+            double pZ,
+            float pYRot,
+            int pWarmupDelay,
+            LivingEntity pOwner,
+            float damage) {
         super(pLevel, pX, pY, pZ, pYRot, pWarmupDelay, pOwner);
         this.warmupDelayTicks = pWarmupDelay;
-        if (warmupDelayTicks < 0)
-            warmupDelayTicks = 0;
+        if (warmupDelayTicks < 0) warmupDelayTicks = 0;
         this.damage = damage;
     }
 
@@ -39,24 +46,34 @@ public class ExtendedEvokerFang extends EvokerFangs implements AntiMagicSuscepti
             if (warmupDelayTicks == -8) {
                 if (this.level().isClientSide) {
                     for (int i = 0; i < 12; ++i) {
-                        double d0 = this.getX() + (this.random.nextDouble() * 2.0D - 1.0D) * (double) this.getBbWidth() * 0.5D;
+                        double d0 =
+                                this.getX()
+                                        + (this.random.nextDouble() * 2.0D - 1.0D)
+                                                * (double) this.getBbWidth()
+                                                * 0.5D;
                         double d1 = this.getY() + 0.05D + this.random.nextDouble();
-                        double d2 = this.getZ() + (this.random.nextDouble() * 2.0D - 1.0D) * (double) this.getBbWidth() * 0.5D;
+                        double d2 =
+                                this.getZ()
+                                        + (this.random.nextDouble() * 2.0D - 1.0D)
+                                                * (double) this.getBbWidth()
+                                                * 0.5D;
                         double d3 = (this.random.nextDouble() * 2.0D - 1.0D) * 0.3D;
                         double d4 = 0.3D + this.random.nextDouble() * 0.3D;
                         double d5 = (this.random.nextDouble() * 2.0D - 1.0D) * 0.3D;
                         this.level().addParticle(ParticleTypes.CRIT, d0, d1 + 1.0D, d2, d3, d4, d5);
                     }
                 } else {
-                    for (LivingEntity livingentity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.4D, 0.0D, 0.4D))) {
+                    for (LivingEntity livingentity :
+                            this.level()
+                                    .getEntitiesOfClass(
+                                            LivingEntity.class,
+                                            this.getBoundingBox().inflate(0.4D, 0.0D, 0.4D))) {
                         this.dealDamageTo(livingentity);
                     }
                 }
             }
         }
-        if (--warmupDelayTicks < -22)
-            this.discard();
-
+        if (--warmupDelayTicks < -22) this.discard();
     }
 
     private void dealDamageTo(LivingEntity pTarget) {

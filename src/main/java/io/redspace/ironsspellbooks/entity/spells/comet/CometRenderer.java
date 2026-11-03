@@ -7,12 +7,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.projectile.Projectile;
 
 public class CometRenderer extends FireballRenderer {
-    private final static ResourceLocation BASE_TEXTURE = IronsSpellbooks.id("textures/entity/comet/comet.png");
+    private final static ResourceLocation BASE_TEXTURE =
+            IronsSpellbooks.id("textures/entity/comet/comet.png");
     private final static ResourceLocation FIRE_TEXTURES[] = {
-            IronsSpellbooks.id("textures/entity/comet/fire_1.png"),
-            IronsSpellbooks.id("textures/entity/comet/fire_2.png"),
-            IronsSpellbooks.id("textures/entity/comet/fire_3.png"),
-            IronsSpellbooks.id("textures/entity/comet/fire_4.png")
+        IronsSpellbooks.id("textures/entity/comet/fire_1.png"),
+        IronsSpellbooks.id("textures/entity/comet/fire_2.png"),
+        IronsSpellbooks.id("textures/entity/comet/fire_3.png"),
+        IronsSpellbooks.id("textures/entity/comet/fire_4.png")
     };
 
     public CometRenderer(Context context, float scale) {
@@ -28,5 +29,4 @@ public class CometRenderer extends FireballRenderer {
         int frame = (entity.tickCount / 2) % FIRE_TEXTURES.length;
         return FIRE_TEXTURES[frame];
     }
-
 }

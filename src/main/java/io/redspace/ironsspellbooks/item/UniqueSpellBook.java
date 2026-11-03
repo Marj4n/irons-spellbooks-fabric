@@ -25,20 +25,30 @@ public class UniqueSpellBook extends SpellBook implements UniqueItem {
 
     @Deprecated
     public UniqueSpellBook(SpellDataRegistryHolder[] spellDataRegistryHolders) {
-        this(spellDataRegistryHolders, ItemPropertiesHelper.equipment().stacksTo(1).rarity(Rarity.UNCOMMON));
+        this(
+                spellDataRegistryHolders,
+                ItemPropertiesHelper.equipment().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
-    public UniqueSpellBook(SpellDataRegistryHolder[] spellDataRegistryHolders, Item.Properties properties) {
+    public UniqueSpellBook(
+            SpellDataRegistryHolder[] spellDataRegistryHolders, Item.Properties properties) {
         super(spellDataRegistryHolders.length, properties);
         this.spellDataRegistryHolders = spellDataRegistryHolders;
     }
 
     @Deprecated
-    public UniqueSpellBook(SpellDataRegistryHolder[] spellDataRegistryHolders, int additionalSlots) {
-        this(spellDataRegistryHolders, additionalSlots, ItemPropertiesHelper.equipment().stacksTo(1).rarity(Rarity.UNCOMMON));
+    public UniqueSpellBook(
+            SpellDataRegistryHolder[] spellDataRegistryHolders, int additionalSlots) {
+        this(
+                spellDataRegistryHolders,
+                additionalSlots,
+                ItemPropertiesHelper.equipment().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
-    public UniqueSpellBook(SpellDataRegistryHolder[] spellDataRegistryHolders, int additionalSlots, Item.Properties properties) {
+    public UniqueSpellBook(
+            SpellDataRegistryHolder[] spellDataRegistryHolders,
+            int additionalSlots,
+            Item.Properties properties) {
         super(spellDataRegistryHolders.length + additionalSlots, properties);
         this.spellDataRegistryHolders = spellDataRegistryHolders;
     }
@@ -47,15 +57,30 @@ public class UniqueSpellBook extends SpellBook implements UniqueItem {
      * Backwards compat for 1.20.1 addons. Use {@link SpellBook#withSpellbookAttributes(AttributeContainer...)} to assign attributes instead.
      */
     @Deprecated(forRemoval = true)
-    public UniqueSpellBook(SpellRarity rarity, SpellDataRegistryHolder[] spellDataRegistryHolders, int additionalSlots, Supplier<Multimap<Attribute, AttributeModifier>> defaultModifiers) {
+    public UniqueSpellBook(
+            SpellRarity rarity,
+            SpellDataRegistryHolder[] spellDataRegistryHolders,
+            int additionalSlots,
+            Supplier<Multimap<Attribute, AttributeModifier>> defaultModifiers) {
         this(spellDataRegistryHolders, additionalSlots);
-        AttributeContainer[] ary = defaultModifiers.get().entries().stream().map(entry -> new AttributeContainer(entry::getKey, entry.getValue().getAmount(), entry.getValue().getOperation())).toArray(AttributeContainer[]::new);
+        AttributeContainer[] ary =
+                defaultModifiers.get().entries().stream()
+                        .map(
+                                entry ->
+                                        new AttributeContainer(
+                                                entry::getKey,
+                                                entry.getValue().getAmount(),
+                                                entry.getValue().getOperation()))
+                        .toArray(AttributeContainer[]::new);
         withSpellbookAttributes(ary);
     }
 
     public List<SpellData> getSpells() {
         if (spellData == null) {
-            spellData = Arrays.stream(spellDataRegistryHolders).map(SpellDataRegistryHolder::getSpellData).toList();
+            spellData =
+                    Arrays.stream(spellDataRegistryHolders)
+                            .map(SpellDataRegistryHolder::getSpellData)
+                            .toList();
             spellDataRegistryHolders = null;
         }
         return spellData;
@@ -63,7 +88,10 @@ public class UniqueSpellBook extends SpellBook implements UniqueItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        return ISpellContainer.isSpellContainer(stack) && ISpellContainer.get(stack).isImproved() ? Component.translatable("tooltip.irons_spellbooks.improved_format", super.getName(stack)) : super.getName(stack);
+        return ISpellContainer.isSpellContainer(stack) && ISpellContainer.get(stack).isImproved()
+                ? Component.translatable(
+                        "tooltip.irons_spellbooks.improved_format", super.getName(stack))
+                : super.getName(stack);
     }
 
     @Override
@@ -78,8 +106,13 @@ public class UniqueSpellBook extends SpellBook implements UniqueItem {
         }
 
         if (!ISpellContainer.isSpellContainer(itemStack)) {
-            var spellContainer = ISpellContainer.create(getMaxSpellSlots(), true, true).mutableCopy();
-            getSpells().forEach(spellSlot -> spellContainer.addSpell(spellSlot.getSpell(), spellSlot.getLevel(), true));
+            var spellContainer =
+                    ISpellContainer.create(getMaxSpellSlots(), true, true).mutableCopy();
+            getSpells()
+                    .forEach(
+                            spellSlot ->
+                                    spellContainer.addSpell(
+                                            spellSlot.getSpell(), spellSlot.getLevel(), true));
             ISpellContainer.set(itemStack, spellContainer.toImmutable());
         }
     }

@@ -20,6 +20,4 @@ public class SimpleClientFluidType implements FluidAppearance {
     public @NotNull ResourceLocation getFlowingTexture() {
         return texture;
     }
-
-
 }

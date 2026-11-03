@@ -31,10 +31,13 @@ public class IceSpiderModel extends DefaultedEntityGeoModel<IceSpiderEntity> {
         super(IronsSpellbooks.id("spellcastingmob"));
     }
 
-
-    public static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/ice_spider/ice_spider.png");
-    public static final ResourceLocation MODEL = new ResourceLocation(IronsSpellbooks.MODID, "geo/ice_spider.geo.json");
-    public static final ResourceLocation ANIMATION = new ResourceLocation(IronsSpellbooks.MODID, "animations/ice_spider.animation.json");
+    public static final ResourceLocation TEXTURE =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID, "textures/entity/ice_spider/ice_spider.png");
+    public static final ResourceLocation MODEL =
+            new ResourceLocation(IronsSpellbooks.MODID, "geo/ice_spider.geo.json");
+    public static final ResourceLocation ANIMATION =
+            new ResourceLocation(IronsSpellbooks.MODID, "animations/ice_spider.animation.json");
 
     @Override
     public ResourceLocation getModelResource(IceSpiderEntity object) {
@@ -55,14 +58,20 @@ public class IceSpiderModel extends DefaultedEntityGeoModel<IceSpiderEntity> {
     protected TransformStack transformStack = new TransformStack();
 
     @Override
-    public void handleAnimations(IceSpiderEntity entity, long instanceId, AnimationState<IceSpiderEntity> animationState) {
+    public void handleAnimations(
+            IceSpiderEntity entity,
+            long instanceId,
+            AnimationState<IceSpiderEntity> animationState) {
         float partialTick = animationState.getPartialTick();
         var manager = entity.getAnimatableInstanceCache().getManagerForId(instanceId);
         Double currentTick = animationState.getData(DataTickets.TICK);
-        double currentFrameTime = entity instanceof Entity || entity instanceof GeoReplacedEntity ? currentTick + partialTick : currentTick - manager.getFirstTickTime();
-        boolean isReRender = !manager.isFirstTick() && currentFrameTime == manager.getLastUpdateTime();
-        if (isReRender && instanceId == this.lastRenderedInstance)
-            return;
+        double currentFrameTime =
+                entity instanceof Entity || entity instanceof GeoReplacedEntity
+                        ? currentTick + partialTick
+                        : currentTick - manager.getFirstTickTime();
+        boolean isReRender =
+                !manager.isFirstTick() && currentFrameTime == manager.getLastUpdateTime();
+        if (isReRender && instanceId == this.lastRenderedInstance) return;
         this.lastRenderedInstance = instanceId;
         transformStack.resetDirty();
         super.handleAnimations(entity, instanceId, animationState);
@@ -70,23 +79,36 @@ public class IceSpiderModel extends DefaultedEntityGeoModel<IceSpiderEntity> {
     }
 
     @Override
-    public void setCustomAnimations(IceSpiderEntity entity, long instanceId, AnimationState<IceSpiderEntity> animationState) {
+    public void setCustomAnimations(
+            IceSpiderEntity entity,
+            long instanceId,
+            AnimationState<IceSpiderEntity> animationState) {
         super.setCustomAnimations(entity, instanceId, animationState);
         var partialTick = animationState.getPartialTick();
-        transformStack.pushPosition(getAnimationProcessor().getBone("torso"),
+        transformStack.pushPosition(
+                getAnimationProcessor().getBone("torso"),
                 (float) IceSpiderEntity.TORSO_OFFSET.x,
-                (float) IceSpiderEntity.TORSO_OFFSET.y * entity.getCrouchHeightMultiplier(partialTick),
+                (float) IceSpiderEntity.TORSO_OFFSET.y
+                        * entity.getCrouchHeightMultiplier(partialTick),
                 (float) IceSpiderEntity.TORSO_OFFSET.z);
 
         Vec3 normal = Utils.lerp(partialTick, entity.lastNormal, entity.normal);
-        Quaternionf normalRotation = Utils.rotationBetweenVectors(normal.toVector3f(), new Vector3f(0, 1, 0));
-        Vector3f headRotation = new Vector3f(
-                Mth.lerp(partialTick, entity.xRotO, entity.getXRot()) * Mth.DEG_TO_RAD,
-                Mth.lerp(partialTick,
-                        Mth.wrapDegrees(entity.yHeadRotO - entity.yBodyRotO) * Mth.DEG_TO_RAD,
-                        Mth.wrapDegrees(entity.yHeadRot - entity.yBodyRot) * Mth.DEG_TO_RAD
-                ), 0);
-        normalRotation.invert().transform(headRotation); // undo body rotation and apply to head rotation to normalize
+        Quaternionf normalRotation =
+                Utils.rotationBetweenVectors(normal.toVector3f(), new Vector3f(0, 1, 0));
+        Vector3f headRotation =
+                new Vector3f(
+                        Mth.lerp(partialTick, entity.xRotO, entity.getXRot()) * Mth.DEG_TO_RAD,
+                        Mth.lerp(
+                                partialTick,
+                                Mth.wrapDegrees(entity.yHeadRotO - entity.yBodyRotO)
+                                        * Mth.DEG_TO_RAD,
+                                Mth.wrapDegrees(entity.yHeadRot - entity.yBodyRot)
+                                        * Mth.DEG_TO_RAD),
+                        0);
+        normalRotation
+                .invert()
+                .transform(
+                        headRotation); // undo body rotation and apply to head rotation to normalize
         var head = getAnimationProcessor().getBone("head");
         transformStack.pushRotation(head, -headRotation.x, -headRotation.y, -headRotation.z);
 
@@ -99,7 +121,6 @@ public class IceSpiderModel extends DefaultedEntityGeoModel<IceSpiderEntity> {
         float zRange = 12 * Mth.DEG_TO_RAD * f;
         float speed = 2 * .05f / f;
 
-
         float primaryY = legY(limbSwing, speed, 0) * yRange * limbSwingAmount;
         float secondaryY = legY(limbSwing, speed, Mth.PI) * yRange * limbSwingAmount;
         float primaryZ = legZ(limbSwing, speed, Mth.PI) * zRange * limbSwingAmount;
@@ -108,14 +129,23 @@ public class IceSpiderModel extends DefaultedEntityGeoModel<IceSpiderEntity> {
         for (int i = 0; i < SIDES.length; i++) {
             for (int j = 0; j < LEGS.length; j++) {
                 int sideSign = Mth.sign(i - 0.5);
-                float baseY = 0;//(j - 1.5f) * OFFSET_PER_LEG * sideSign;
-                float baseZ = Mth.lerp(entity.crouchTweenPercent(partialTick), 10, 0) * Mth.DEG_TO_RAD;
+                float baseY = 0; // (j - 1.5f) * OFFSET_PER_LEG * sideSign;
+                float baseZ =
+                        Mth.lerp(entity.crouchTweenPercent(partialTick), 10, 0) * Mth.DEG_TO_RAD;
                 String shoulderBone = String.format("%s%s%s", SIDES[i], LEGS[j], SHOULDER);
                 String legBone = String.format("%s%s%s", SIDES[i], LEGS[j], LEG);
                 boolean primary = j % 2 == 0;
                 try {
-                    transformStack.pushRotation(Objects.requireNonNull(getAnimationProcessor().getBone(shoulderBone)), 0, ((primary ? primaryY : secondaryY) + baseY) * sideSign, 0);
-                    transformStack.pushRotation(Objects.requireNonNull(getAnimationProcessor().getBone(legBone)), 0, 0, ((primary ? primaryZ : secondaryZ) + baseZ) * -sideSign);
+                    transformStack.pushRotation(
+                            Objects.requireNonNull(getAnimationProcessor().getBone(shoulderBone)),
+                            0,
+                            ((primary ? primaryY : secondaryY) + baseY) * sideSign,
+                            0);
+                    transformStack.pushRotation(
+                            Objects.requireNonNull(getAnimationProcessor().getBone(legBone)),
+                            0,
+                            0,
+                            ((primary ? primaryZ : secondaryZ) + baseZ) * -sideSign);
                 } catch (Exception e) {
                     IronsSpellbooks.LOGGER.error("beep");
                 }
@@ -126,8 +156,10 @@ public class IceSpiderModel extends DefaultedEntityGeoModel<IceSpiderEntity> {
     private float legY(float limbSwing, float speedFactor, float offset) {
         float f = offset - Mth.HALF_PI;
 
-        return Mth.sin((limbSwing * Mth.TWO_PI) * speedFactor + f +
-                (Mth.sin(limbSwing * Mth.TWO_PI * speedFactor + f)) * 0.5f);
+        return Mth.sin(
+                (limbSwing * Mth.TWO_PI) * speedFactor
+                        + f
+                        + (Mth.sin(limbSwing * Mth.TWO_PI * speedFactor + f)) * 0.5f);
     }
 
     private float legZ(float limbSwing, float speedFactor, float offset) {
@@ -140,7 +172,10 @@ public class IceSpiderModel extends DefaultedEntityGeoModel<IceSpiderEntity> {
      * @param walkAnimationState
      * @return x: amount, y: speed
      */
-    protected Vector2f getLimbSwing(AbstractSpellCastingMob entity, WalkAnimationState walkAnimationState, float partialTick) {
+    protected Vector2f getLimbSwing(
+            AbstractSpellCastingMob entity,
+            WalkAnimationState walkAnimationState,
+            float partialTick) {
         float limbSwingAmount = 0;
         float limbSwingSpeed = 0;
         if (entity.isAlive()) {

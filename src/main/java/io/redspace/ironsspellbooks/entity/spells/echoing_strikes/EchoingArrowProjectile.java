@@ -38,7 +38,14 @@ public class EchoingArrowProjectile extends MagicArrowProjectile implements NoKn
             for (int i = 0; i < 2; i++) {
                 Vec3 delta = Utils.getRandomVec3(0.05);
                 Vec3 speed = Utils.getRandomVec3(0.15);
-                level().addParticle(ParticleHelper.UNSTABLE_ENDER, getX() + delta.x, getY() + delta.y, getZ() + delta.z, speed.x, speed.y, speed.z);
+                level().addParticle(
+                                ParticleHelper.UNSTABLE_ENDER,
+                                getX() + delta.x,
+                                getY() + delta.y,
+                                getZ() + delta.z,
+                                speed.x,
+                                speed.y,
+                                speed.z);
             }
             return;
         }
@@ -48,11 +55,23 @@ public class EchoingArrowProjectile extends MagicArrowProjectile implements NoKn
             this.stopEntityHoming();
             Vec3 trajectory = lastHomingPosition.subtract(this.position()).normalize();
             this.setDeltaMovement(trajectory.scale(2));
-            this.playSound(SoundRegistry.ECHOING_STRIKE.get(), 1.5f, Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
+            this.playSound(
+                    SoundRegistry.ECHOING_STRIKE.get(),
+                    1.5f,
+                    Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
             for (int i = 0; i < 15; i++) {
                 Vec3 delta = Utils.getRandomVec3(0.05);
-                Vec3 speed = Utils.getRandomVec3(0.35).add(trajectory.scale(1 * Utils.random.nextFloat()));
-                level().addParticle(ParticleHelper.ENDER_SPARKS, getX() + delta.x, getY() + delta.y, getZ() + delta.z, speed.x, speed.y, speed.z);
+                Vec3 speed =
+                        Utils.getRandomVec3(0.35)
+                                .add(trajectory.scale(1 * Utils.random.nextFloat()));
+                level().addParticle(
+                                ParticleHelper.ENDER_SPARKS,
+                                getX() + delta.x,
+                                getY() + delta.y,
+                                getZ() + delta.z,
+                                speed.x,
+                                speed.y,
+                                speed.z);
             }
         }
     }
@@ -62,7 +81,10 @@ public class EchoingArrowProjectile extends MagicArrowProjectile implements NoKn
         entityHitResult.getEntity().invulnerableTime = 0;
         Entity entity = entityHitResult.getEntity();
         if (!victims.contains(entity.getUUID())) {
-            DamageSources.applyDamage(entity, damage, SpellRegistry.ECHOING_STRIKES_SPELL.get().getDamageSource(this, getOwner()));
+            DamageSources.applyDamage(
+                    entity,
+                    damage,
+                    SpellRegistry.ECHOING_STRIKES_SPELL.get().getDamageSource(this, getOwner()));
             victims.add(entity.getUUID());
         }
         consumeEntityImpact(entityHitResult, true);

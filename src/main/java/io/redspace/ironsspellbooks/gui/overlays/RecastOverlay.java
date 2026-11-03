@@ -18,7 +18,8 @@ import org.joml.Vector3f;
 public class RecastOverlay implements HudOverlay {
     public static RecastOverlay instance = new RecastOverlay();
 
-    public final static ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
+    public final static ResourceLocation TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
     static final int IMAGE_WIDTH = 54;
     static final int COMPLETION_BAR_WIDTH = 44;
     static final int IMAGE_HEIGHT = 21;
@@ -47,14 +48,19 @@ public class RecastOverlay implements HudOverlay {
 
     int bossbarOffset;
 
-    public void render(HudContext gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
-        if (Minecraft.getInstance().options.hideGui || Minecraft.getInstance().player.isSpectator()) {
+    public void render(
+            HudContext gui,
+            GuiGraphics guiGraphics,
+            float partialTick,
+            int screenWidth,
+            int screenHeight) {
+        if (Minecraft.getInstance().options.hideGui
+                || Minecraft.getInstance().player.isSpectator()) {
             return;
         }
-//        var screenWidth = guiGraphics.guiWidth();
-//        var screenHeight = guiGraphics.guiHeight();
-        if (!ClientMagicData.getRecasts().hasRecastsActive())
-            return;
+        //        var screenWidth = guiGraphics.guiWidth();
+        //        var screenHeight = guiGraphics.guiHeight();
+        if (!ClientMagicData.getRecasts().hasRecastsActive()) return;
         int totalHeightPerBar = 18;
         int screenTopBuffer = 6;
         var activeRecasts = ClientMagicData.getRecasts().getActiveRecasts();
@@ -96,31 +102,79 @@ public class RecastOverlay implements HudOverlay {
                 int connectorX = orbX + ORB_WIDTH;
                 if (i + 1 < total) {
                     // connector
-                    guiGraphics.blit(TEXTURE, connectorX, barY + 3, CONNECTOR_TEXTURE_OFFSET_X, CONNECTOR_TEXTURE_OFFSET_Y, 6, 4, 256, 256);
+                    guiGraphics.blit(
+                            TEXTURE,
+                            connectorX,
+                            barY + 3,
+                            CONNECTOR_TEXTURE_OFFSET_X,
+                            CONNECTOR_TEXTURE_OFFSET_Y,
+                            6,
+                            4,
+                            256,
+                            256);
                 }
-                //orb filling
+                // orb filling
                 boolean charged = i < remaining;
-                guiGraphics.blit(TEXTURE, orbX, barY, ORB_TEXTURE_OFFSET_X + (charged ? 0 : 10), ORB_TEXTURE_OFFSET_Y + 21, ORB_WIDTH, ORB_WIDTH, 256, 256);
+                guiGraphics.blit(
+                        TEXTURE,
+                        orbX,
+                        barY,
+                        ORB_TEXTURE_OFFSET_X + (charged ? 0 : 10),
+                        ORB_TEXTURE_OFFSET_Y + 21,
+                        ORB_WIDTH,
+                        ORB_WIDTH,
+                        256,
+                        256);
                 if (charged) {
-//                    RenderSystem.setShader(GameRenderer::getRendertypeEyesShader);
-//                    Vector3f color = SpellRegistry.getSpell(recastInstance.getKey()).getSchoolType().getTargetingColor();
-//                    RenderSystem.setShaderColor(color.x(), color.y(), color.z(), 1f);
-//                    blit(poseStack, orbX, barY, ORB_TEXTURE_OFFSET_X + 10, ORB_TEXTURE_OFFSET_Y + 21, ORB_WIDTH, ORB_WIDTH, 256, 256);
-//                    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-//                    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+                    //
+                    // RenderSystem.setShader(GameRenderer::getRendertypeEyesShader);
+                    //                    Vector3f color =
+                    // SpellRegistry.getSpell(recastInstance.getKey()).getSchoolType().getTargetingColor();
+                    //                    RenderSystem.setShaderColor(color.x(), color.y(),
+                    // color.z(), 1f);
+                    //                    blit(poseStack, orbX, barY, ORB_TEXTURE_OFFSET_X + 10,
+                    // ORB_TEXTURE_OFFSET_Y + 21, ORB_WIDTH, ORB_WIDTH, 256, 256);
+                    //
+                    // RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                    //                    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
                     Vector3f color = spell.getSchoolType().getTargetingColor();
                     RenderSystem.setShaderColor(color.x(), color.y(), color.z(), 1f);
-                    guiGraphics.blit(TEXTURE, orbX, barY, ORB_TEXTURE_OFFSET_X + (charged ? 0 : 10), ORB_TEXTURE_OFFSET_Y + 21, ORB_WIDTH, ORB_WIDTH, 256, 256);
+                    guiGraphics.blit(
+                            TEXTURE,
+                            orbX,
+                            barY,
+                            ORB_TEXTURE_OFFSET_X + (charged ? 0 : 10),
+                            ORB_TEXTURE_OFFSET_Y + 21,
+                            ORB_WIDTH,
+                            ORB_WIDTH,
+                            256,
+                            256);
                     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-                    //int color = SpellRegistry.getSpell(recastInstance.getSpellId()).getSchoolType().getDisplayName().getStyle().getColor().getValue();
-                    //fillGradient(poseStack, orbX + 3, barY + 3, orbX + 7, barY + 7, color, color, 0);
+                    // int color =
+                    // SpellRegistry.getSpell(recastInstance.getSpellId()).getSchoolType().getDisplayName().getStyle().getColor().getValue();
+                    // fillGradient(poseStack, orbX + 3, barY + 3, orbX + 7, barY + 7, color, color,
+                    // 0);
                 }
-                //orb
-                guiGraphics.blit(TEXTURE, orbX, barY, ORB_TEXTURE_OFFSET_X, ORB_TEXTURE_OFFSET_Y, ORB_WIDTH, ORB_WIDTH, 256, 256);
+                // orb
+                guiGraphics.blit(
+                        TEXTURE,
+                        orbX,
+                        barY,
+                        ORB_TEXTURE_OFFSET_X,
+                        ORB_TEXTURE_OFFSET_Y,
+                        ORB_WIDTH,
+                        ORB_WIDTH,
+                        256,
+                        256);
             }
 
             int textX = (barX + (ORB_WIDTH + CONNECTOR_WIDTH) * total);
-            guiGraphics.drawString(Minecraft.getInstance().font, formatTime(recastInstance.getTicksRemaining(), recastInstance.getTicksToLive()), textX, barY + (ORB_WIDTH - Minecraft.getInstance().font.lineHeight) / 2, ChatFormatting.WHITE.getColor());
+            guiGraphics.drawString(
+                    Minecraft.getInstance().font,
+                    formatTime(recastInstance.getTicksRemaining(), recastInstance.getTicksToLive()),
+                    textX,
+                    barY + (ORB_WIDTH - Minecraft.getInstance().font.lineHeight) / 2,
+                    ChatFormatting.WHITE.getColor());
         }
 
         bossbarOffset = 0; // reset for next render frame
@@ -141,5 +195,7 @@ public class RecastOverlay implements HudOverlay {
         return time + "s";
     }
 
-    public void setBossbarOffset(int offset) { bossbarOffset = offset; }
+    public void setBossbarOffset(int offset) {
+        bossbarOffset = offset;
+    }
 }

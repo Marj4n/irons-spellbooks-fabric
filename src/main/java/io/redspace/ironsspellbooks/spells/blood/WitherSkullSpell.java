@@ -23,17 +23,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class WitherSkullSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "wither_skull");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(1)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "wither_skull");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(1)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
     public WitherSkullSpell() {
@@ -70,7 +75,12 @@ public class WitherSkullSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float speed = (6 + spellLevel) * .08f;
         float damage = getDamage(spellLevel, entity);
         Vec3 spawn = entity.getEyePosition().add(entity.getForward());
@@ -78,7 +88,12 @@ public class WitherSkullSpell extends AbstractSpell {
         WitherSkullProjectile skullProjectile = new WitherSkullProjectile(level, entity);
         skullProjectile.setDamage(damage);
         skullProjectile.speed = speed;
-        skullProjectile.moveTo(spawn.x, spawn.y - skullProjectile.getBoundingBox().getYsize() / 2, spawn.z, entity.getYRot() + 180, entity.getXRot());
+        skullProjectile.moveTo(
+                spawn.x,
+                spawn.y - skullProjectile.getBoundingBox().getYsize() / 2,
+                spawn.z,
+                entity.getYRot() + 180,
+                entity.getXRot());
         skullProjectile.shoot(entity.getForward());
         level.addFreshEntity(skullProjectile);
 

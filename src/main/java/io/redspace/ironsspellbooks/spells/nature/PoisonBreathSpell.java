@@ -25,11 +25,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class PoisonBreathSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "poison_breath");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "poison_breath");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
     public PoisonBreathSpell() {
@@ -40,12 +44,13 @@ public class PoisonBreathSpell extends AbstractSpell {
         this.baseManaCost = 5;
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(12)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(12)
+                    .build();
 
     @Override
     public CastType getCastType() {
@@ -73,7 +78,12 @@ public class PoisonBreathSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (playerMagicData.isCasting()
                 && playerMagicData.getCastingSpellId().equals(getSpellId())
                 && playerMagicData.getAdditionalCastData() instanceof EntityCastData entityCastData

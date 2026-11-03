@@ -26,16 +26,17 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
-public class SummonedHorse extends AbstractHorse implements IMagicSummon, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
+public class SummonedHorse extends AbstractHorse
+        implements IMagicSummon, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
     public SummonedHorse(EntityType<? extends AbstractHorse> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-        //randomizeAttributes(Utils.random);
+        // randomizeAttributes(Utils.random);
 
     }
 
     public SummonedHorse(Level pLevel) {
         this(EntityRegistry.SPECTRAL_STEED.get(), pLevel);
-        //randomizeAttributes(Utils.random);
+        // randomizeAttributes(Utils.random);
 
     }
 
@@ -52,12 +53,12 @@ public class SummonedHorse extends AbstractHorse implements IMagicSummon, org.ma
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new GenericFollowOwnerGoal(this, this::getSummoner, 0.8f, 12, 4, false, 32));
+        this.goalSelector.addGoal(
+                2, new GenericFollowOwnerGoal(this, this::getSummoner, 0.8f, 12, 4, false, 32));
         this.goalSelector.addGoal(3, new PanicGoal(this, 0.9f));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-
     }
 
     @Override
@@ -91,15 +92,25 @@ public class SummonedHorse extends AbstractHorse implements IMagicSummon, org.ma
 
     public void onUnSummon() {
         if (!level().isClientSide) {
-            MagicManager.spawnParticles(level(), ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleTypes.POOF,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    25,
+                    .4,
+                    .8,
+                    .4,
+                    .03,
+                    false);
             setRemoved(RemovalReason.DISCARDED);
         }
     }
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (shouldIgnoreDamage(pSource))
-            return false;
+        if (shouldIgnoreDamage(pSource)) return false;
         return super.hurt(pSource, pAmount);
     }
 
@@ -122,12 +133,19 @@ public class SummonedHorse extends AbstractHorse implements IMagicSummon, org.ma
         if (level().isClientSide) {
             if (Utils.random.nextFloat() < .25f) {
                 float radius = .75f;
-                Vec3 vec = new Vec3(
-                        random.nextFloat() * 2 * radius - radius,
-                        random.nextFloat() * 2 * radius - radius,
-                        random.nextFloat() * 2 * radius - radius
-                );
-                level().addParticle(ParticleTypes.ENCHANT, this.getX() + vec.x, this.getY() + vec.y + 1, this.getZ() + vec.z, vec.x * .01f, .08 + vec.y * .01f, vec.z * .01f);
+                Vec3 vec =
+                        new Vec3(
+                                random.nextFloat() * 2 * radius - radius,
+                                random.nextFloat() * 2 * radius - radius,
+                                random.nextFloat() * 2 * radius - radius);
+                level().addParticle(
+                                ParticleTypes.ENCHANT,
+                                this.getX() + vec.x,
+                                this.getY() + vec.y + 1,
+                                this.getZ() + vec.z,
+                                vec.x * .01f,
+                                .08 + vec.y * .01f,
+                                vec.z * .01f);
             }
         }
     }
@@ -197,6 +215,4 @@ public class SummonedHorse extends AbstractHorse implements IMagicSummon, org.ma
     public boolean isTamed() {
         return true;
     }
-
-
 }

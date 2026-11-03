@@ -11,9 +11,9 @@ public class EchoingStrikesData {
         this.hitCount = hitsRemaining;
     }
 
-//    public EchoingStrikesData(IAttachmentHolder holder) {
-//
-//    }
+    //    public EchoingStrikesData(IAttachmentHolder holder) {
+    //
+    //    }
 
     public int getHitCount() {
         return hitCount;
@@ -40,6 +40,7 @@ public class EchoingStrikesData {
     public static EchoingStrikesData get(LivingEntity entity) {
         return ((MagicData.IExtendedEntity) entity).irons_spellbooks$getEchoingStrikesData();
     }
+
     public static boolean has(LivingEntity entity) {
         return ((MagicData.IExtendedEntity) entity).irons_spellbooks$hasEchoingStrikesData();
     }

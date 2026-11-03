@@ -8,7 +8,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class BloodSiphonParticlesPacket implements CustomPacketPayload {
     private Vec3 pos1;
     private Vec3 pos2;
@@ -43,9 +42,10 @@ public class BloodSiphonParticlesPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientSpellCastHelper.handleClientboundBloodSiphonParticles(pos1, pos2);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientSpellCastHelper.handleClientboundBloodSiphonParticles(pos1, pos2);
+                });
         return true;
     }
 }

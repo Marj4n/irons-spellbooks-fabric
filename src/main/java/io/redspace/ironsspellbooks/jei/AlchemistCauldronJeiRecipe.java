@@ -6,7 +6,8 @@ import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
 
 import java.util.List;
 
-public record AlchemistCauldronJeiRecipe(Ingredient itemIn, FluidStack fluidIn, List<FluidStack> results,
-                                         ItemStack resultByproduct) {
-
-}
+public record AlchemistCauldronJeiRecipe(
+        Ingredient itemIn,
+        FluidStack fluidIn,
+        List<FluidStack> results,
+        ItemStack resultByproduct) {}

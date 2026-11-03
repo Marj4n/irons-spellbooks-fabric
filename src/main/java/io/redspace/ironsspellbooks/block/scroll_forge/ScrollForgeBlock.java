@@ -23,7 +23,7 @@ import io.github.fabricators_of_create.porting_lib.util.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//https://youtu.be/CUHEKcaIpOk?t=451
+// https://youtu.be/CUHEKcaIpOk?t=451
 public class ScrollForgeBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final Component CONTAINER_TITLE = Component.translatable("container.crafting");
@@ -33,15 +33,18 @@ public class ScrollForgeBlock extends BaseEntityBlock {
 
     public static final VoxelShape SHAPE = Shapes.or(SHAPE_LEG_1, SHAPE_LEG_2, SHAPE_TABLETOP);
 
-
     public ScrollForgeBlock() {
-        super(Properties.copy(Blocks.ENCHANTING_TABLE).noOcclusion().sound(SoundType.NETHERITE_BLOCK));
+        super(
+                Properties.copy(Blocks.ENCHANTING_TABLE)
+                        .noOcclusion()
+                        .sound(SoundType.NETHERITE_BLOCK));
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        //return Shapes.or(LEG_NE,LEG_NW,LEG_SE,LEG_SW,TABLE_TOP);
+    public VoxelShape getShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        // return Shapes.or(LEG_NE,LEG_NW,LEG_SE,LEG_SW,TABLE_TOP);
         return SHAPE;
     }
 
@@ -49,7 +52,8 @@ public class ScrollForgeBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState()
+                .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -70,7 +74,13 @@ public class ScrollForgeBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level pLevel, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult use(
+            BlockState state,
+            Level pLevel,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit) {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pos);
             if (entity instanceof ScrollForgeTile) {
@@ -84,7 +94,12 @@ public class ScrollForgeBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+    public void onRemove(
+            BlockState pState,
+            Level pLevel,
+            BlockPos pPos,
+            BlockState pNewState,
+            boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof ScrollForgeTile) {

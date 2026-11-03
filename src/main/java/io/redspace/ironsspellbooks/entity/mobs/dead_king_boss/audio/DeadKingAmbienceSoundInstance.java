@@ -17,7 +17,10 @@ public class DeadKingAmbienceSoundInstance extends AbstractTickableSoundInstance
     boolean triggerEnd = false;
 
     protected DeadKingAmbienceSoundInstance(Vec3 vec3) {
-        super(SoundRegistry.DEAD_KING_AMBIENCE.get(), SoundSource.RECORDS, SoundInstance.createUnseededRandom());
+        super(
+                SoundRegistry.DEAD_KING_AMBIENCE.get(),
+                SoundSource.RECORDS,
+                SoundInstance.createUnseededRandom());
         this.attenuation = Attenuation.NONE;
         this.looping = true;
         this.delay = 0;
@@ -33,11 +36,18 @@ public class DeadKingAmbienceSoundInstance extends AbstractTickableSoundInstance
             }
             this.volume -= END_TRANSITION_TIME;
         } else {
-            MinecraftInstanceHelper.ifPlayerPresent(player -> {
-                var d = player.distanceToSqr(vec3);
-                this.volume = 1f - (float) Mth.clamp((d - MAX_VOLUME_RANGE_SQR) / (SOUND_RANGE_SQR), 0, 1f);
-            });
-
+            MinecraftInstanceHelper.ifPlayerPresent(
+                    player -> {
+                        var d = player.distanceToSqr(vec3);
+                        this.volume =
+                                1f
+                                        - (float)
+                                                Mth.clamp(
+                                                        (d - MAX_VOLUME_RANGE_SQR)
+                                                                / (SOUND_RANGE_SQR),
+                                                        0,
+                                                        1f);
+                    });
         }
 
         if (volume <= 0) {

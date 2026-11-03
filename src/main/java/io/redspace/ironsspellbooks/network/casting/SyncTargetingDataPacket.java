@@ -16,26 +16,28 @@ import java.util.function.Supplier;
 
 public class SyncTargetingDataPacket implements CustomPacketPayload {
 
-    //private UUID targetUuid;
+    // private UUID targetUuid;
     private final List<UUID> targetUUIDs;
     private final String spellId;
 
     public SyncTargetingDataPacket(LivingEntity entity, AbstractSpell spell) {
-        //For some reason client level doesnt have generic get by UUID. players need uuid, mobs need "id"
+        // For some reason client level doesnt have generic get by UUID. players need uuid, mobs
+        // need "id"
         targetUUIDs = new ArrayList<>();
         targetUUIDs.add(entity.getUUID());
         spellId = spell.getSpellId();
     }
 
     public SyncTargetingDataPacket(AbstractSpell spell, List<UUID> uuids) {
-        //For some reason client level doesnt have generic get by UUID. players need uuid, mobs need "id"
+        // For some reason client level doesnt have generic get by UUID. players need uuid, mobs
+        // need "id"
         targetUUIDs = new ArrayList<>();
         targetUUIDs.addAll(uuids);
         spellId = spell.getSpellId();
     }
 
     public SyncTargetingDataPacket(FriendlyByteBuf buf) {
-        //targetUuid = buf.readUUID();
+        // targetUuid = buf.readUUID();
         targetUUIDs = new ArrayList<>();
         spellId = buf.readUtf();
         int i = buf.readInt();
@@ -45,7 +47,11 @@ public class SyncTargetingDataPacket implements CustomPacketPayload {
     }
 
     public void toBytes(FriendlyByteBuf buf) {
-        IronsSpellbooks.LOGGER.debug("ClientboundSyncTargetingData.toBytes: {} {}: {}", spellId, targetUUIDs.size(), targetUUIDs);
+        IronsSpellbooks.LOGGER.debug(
+                "ClientboundSyncTargetingData.toBytes: {} {}: {}",
+                spellId,
+                targetUUIDs.size(),
+                targetUUIDs);
         buf.writeUtf(spellId);
         buf.writeInt(targetUUIDs.size());
         targetUUIDs.forEach(buf::writeUUID);
@@ -53,9 +59,11 @@ public class SyncTargetingDataPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientMagicData.setTargetingData(new ClientSpellTargetingData(spellId, targetUUIDs));
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientMagicData.setTargetingData(
+                            new ClientSpellTargetingData(spellId, targetUUIDs));
+                });
         return true;
     }
 }

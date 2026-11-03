@@ -43,7 +43,10 @@ public class ScapegoatEntity extends PathfinderMob implements AntiMagicSusceptib
 
         @Override
         public boolean canUse() {
-            return targetPos != null && ScapegoatEntity.this.distanceToSqr(ScapegoatEntity.this.targetPos.getCenter()) > 1.5 * 1.5;
+            return targetPos != null
+                    && ScapegoatEntity.this.distanceToSqr(
+                                    ScapegoatEntity.this.targetPos.getCenter())
+                            > 1.5 * 1.5;
         }
 
         @Override
@@ -53,10 +56,14 @@ public class ScapegoatEntity extends PathfinderMob implements AntiMagicSusceptib
                 return;
             }
             var path = ScapegoatEntity.this.navigation.getPath();
-            if (path != null && path.isDone() || (path == null && (pathingDelay-- <= 0 || tickCount < 20))) {
+            if (path != null && path.isDone()
+                    || (path == null && (pathingDelay-- <= 0 || tickCount < 20))) {
                 pathingDelay = 30;
                 Vec3 flee = ScapegoatEntity.this.targetPos.getCenter();
-//                Vec3 flee = Optional.ofNullable(DefaultRandomPos.getPosTowards(ScapegoatEntity.this, 16, 7, ScapegoatEntity.this.targetPos.getCenter(), 1f)).orElse(ScapegoatEntity.this.targetPos.getCenter());
+                //                Vec3 flee =
+                // Optional.ofNullable(DefaultRandomPos.getPosTowards(ScapegoatEntity.this, 16, 7,
+                // ScapegoatEntity.this.targetPos.getCenter(),
+                // 1f)).orElse(ScapegoatEntity.this.targetPos.getCenter());
                 ScapegoatEntity.this.getNavigation().moveTo(flee.x, flee.y, flee.z, 1);
             }
         }
@@ -72,13 +79,10 @@ public class ScapegoatEntity extends PathfinderMob implements AntiMagicSusceptib
         return new NotIdioticNavigation(this, level);
     }
 
-    @Nullable
-    private UUID ownerUUID;
-    @Nullable
-    private Entity cachedOwner;
+    @Nullable private UUID ownerUUID;
+    @Nullable private Entity cachedOwner;
 
-    @Nullable
-    protected BlockPos targetPos;
+    @Nullable protected BlockPos targetPos;
 
     protected int jumpDelay;
 
@@ -152,7 +156,8 @@ public class ScapegoatEntity extends PathfinderMob implements AntiMagicSusceptib
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (!DamageSources.isFriendlyFireBetween(source.getEntity(), this.getOwner()) && super.hurt(source, amount)) {
+        if (!DamageSources.isFriendlyFireBetween(source.getEntity(), this.getOwner())
+                && super.hurt(source, amount)) {
             if (level() instanceof ServerLevel serverLevel) {
                 poofParticles(10, 0.4f);
             }
@@ -174,20 +179,31 @@ public class ScapegoatEntity extends PathfinderMob implements AntiMagicSusceptib
     }
 
     // fixme: fix this
-//    @Override
-//    protected @Nullable SoundEvent getDeathSound() {
-//        return SoundEvents.BREEZE_WIND_CHARGE_BURST.value();
-//    }
-//
-//    @Override
-//    protected void playHurtSound(DamageSource source) {
-//        this.playSound(SoundEvents.BREEZE_WIND_CHARGE_BURST.value(), 1, 0.75f);
-//    }
+    //    @Override
+    //    protected @Nullable SoundEvent getDeathSound() {
+    //        return SoundEvents.BREEZE_WIND_CHARGE_BURST.value();
+    //    }
+    //
+    //    @Override
+    //    protected void playHurtSound(DamageSource source) {
+    //        this.playSound(SoundEvents.BREEZE_WIND_CHARGE_BURST.value(), 1, 0.75f);
+    //    }
 
     public void poofParticles(int amount, float strength) {
         if (level().isClientSide) return;
         Vec3 pos = this.getBoundingBox().getCenter();
-        MagicManager.spawnParticles(level(), ParticleRegistry.FALLING_SPARKLE_PARTICLE.get(), pos.x, pos.y + 0.5, pos.z, amount, .1, .1, .1, .3 * strength, false);
+        MagicManager.spawnParticles(
+                level(),
+                ParticleRegistry.FALLING_SPARKLE_PARTICLE.get(),
+                pos.x,
+                pos.y + 0.5,
+                pos.z,
+                amount,
+                .1,
+                .1,
+                .1,
+                .3 * strength,
+                false);
     }
 
     @Override
@@ -225,8 +241,11 @@ public class ScapegoatEntity extends PathfinderMob implements AntiMagicSusceptib
             this.ownerUUID = compound.getUUID("Owner");
             this.cachedOwner = null;
         }
-        if(compound.contains("scapegoat_target")){
-            this.targetPos = NbtUtils.readBlockPos(compound.getCompound("scapegoat_target"))/*.ifPresent(p_325838_ -> this.targetPos = p_325838_)*/;
+        if (compound.contains("scapegoat_target")) {
+            this.targetPos =
+                    NbtUtils.readBlockPos(
+                            compound.getCompound(
+                                    "scapegoat_target")) /*.ifPresent(p_325838_ -> this.targetPos = p_325838_)*/;
         }
         this.durationRemaining = compound.getInt("duration_remaining");
     }
@@ -236,14 +255,20 @@ public class ScapegoatEntity extends PathfinderMob implements AntiMagicSusceptib
                 .add(Attributes.MAX_HEALTH, 1)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.6)
                 .add(Attributes.FOLLOW_RANGE, 32)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH, 4)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.STEP_HEIGHT_ADDITION, 1)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .ENTITY_REACH,
+                        4)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .STEP_HEIGHT_ADDITION,
+                        1)
                 .add(Attributes.MOVEMENT_SPEED, .35);
     }
 
     /*
-     Geckolib Impl
-     */
+    Geckolib Impl
+    */
     RawAnimation animationToPlay = null;
 
     private PlayState animationPredicate(AnimationState<ScapegoatEntity> event) {
@@ -258,7 +283,8 @@ public class ScapegoatEntity extends PathfinderMob implements AntiMagicSusceptib
 
     private final RawAnimation ANIMATION = RawAnimation.begin().thenPlay("emerge");
 
-    private final AnimationController controller = new AnimationController(this, "controller", 0, this::animationPredicate);
+    private final AnimationController controller =
+            new AnimationController(this, "controller", 0, this::animationPredicate);
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {

@@ -14,10 +14,21 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 public class DeadKingEmissiveLayer extends GeoRenderLayer<AbstractSpellCastingMob> {
-    public static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/dead_king/dead_king_glowing.png");
-    public static final ResourceLocation TEXTURE_ENRAGED = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/dead_king/dead_king_enraged_glowing.png");
-    public static final ResourceLocation TEXTURE_NORMAL_OMINOUS = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/dead_king/ominous/dead_king_glowing_ominous.png");
-    public static final ResourceLocation TEXTURE_ENRAGED_OMINOUS = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/dead_king/ominous/dead_king_enraged_glowing_ominous.png");
+    public static final ResourceLocation TEXTURE_NORMAL =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID, "textures/entity/dead_king/dead_king_glowing.png");
+    public static final ResourceLocation TEXTURE_ENRAGED =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID,
+                    "textures/entity/dead_king/dead_king_enraged_glowing.png");
+    public static final ResourceLocation TEXTURE_NORMAL_OMINOUS =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID,
+                    "textures/entity/dead_king/ominous/dead_king_glowing_ominous.png");
+    public static final ResourceLocation TEXTURE_ENRAGED_OMINOUS =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID,
+                    "textures/entity/dead_king/ominous/dead_king_enraged_glowing_ominous.png");
 
     public DeadKingEmissiveLayer(GeoEntityRenderer<AbstractSpellCastingMob> renderer) {
         super(renderer);
@@ -44,18 +55,39 @@ public class DeadKingEmissiveLayer extends GeoRenderLayer<AbstractSpellCastingMo
         return RenderType.energySwirl(resourceLocation, 0, 0);
     }
 
-
     @Override
-    public void render(PoseStack poseStack, AbstractSpellCastingMob animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        if (animatable instanceof DeadKingCorpseEntity || animatable.isInvisible())
-            return;
+    public void render(
+            PoseStack poseStack,
+            AbstractSpellCastingMob animatable,
+            BakedGeoModel bakedModel,
+            RenderType renderType,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay) {
+        if (animatable instanceof DeadKingCorpseEntity || animatable.isInvisible()) return;
         var model = this.getGeoModel().getBakedModel(currentModel(animatable));
 
         poseStack.pushPose();
         renderType = renderType(currentTexture(animatable));
         VertexConsumer vertexconsumer = bufferSource.getBuffer(renderType);
-        this.getRenderer().actuallyRender(poseStack, animatable, model, renderType, bufferSource, vertexconsumer, true, partialTick,
-                LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,1f,1f,1f,1f);
+        this.getRenderer()
+                .actuallyRender(
+                        poseStack,
+                        animatable,
+                        model,
+                        renderType,
+                        bufferSource,
+                        vertexconsumer,
+                        true,
+                        partialTick,
+                        LightTexture.FULL_BRIGHT,
+                        OverlayTexture.NO_OVERLAY,
+                        1f,
+                        1f,
+                        1f,
+                        1f);
         poseStack.popPose();
     }
 }

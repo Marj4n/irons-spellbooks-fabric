@@ -22,33 +22,51 @@ public class PlayerMixin {
     }
 
     @Inject(method = "isModelPartShown", at = @At(value = "RETURN"), cancellable = true)
-    void irons_spellbooks$hideJacketLayers(PlayerModelPart part, CallbackInfoReturnable<Boolean> cir) {
+    void irons_spellbooks$hideJacketLayers(
+            PlayerModelPart part, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue()) {
             var self = (Player) (Object) this;
             switch (part) {
                 case HAT:
-                    cir.setReturnValue(!(self.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof IDisableHat));
+                    cir.setReturnValue(
+                            !(self.getItemBySlot(EquipmentSlot.HEAD).getItem()
+                                    instanceof IDisableHat));
                     break;
                 case JACKET:
                 case LEFT_SLEEVE:
                 case RIGHT_SLEEVE:
-                    if (self.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof IDisableJacket chestplate && chestplate.disableForSlot(EquipmentSlot.CHEST)) {
+                    if (self.getItemBySlot(EquipmentSlot.CHEST).getItem()
+                                    instanceof IDisableJacket chestplate
+                            && chestplate.disableForSlot(EquipmentSlot.CHEST)) {
                         cir.setReturnValue(false);
                     }
                     break;
                 case LEFT_PANTS_LEG:
                 case RIGHT_PANTS_LEG:
-                    if ((self.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof IDisableJacket leggings && leggings.disableForSlot(EquipmentSlot.LEGS))
-                            || (self.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof IDisableJacket boots && boots.disableForSlot(EquipmentSlot.FEET))) {
+                    if ((self.getItemBySlot(EquipmentSlot.LEGS).getItem()
+                                            instanceof IDisableJacket leggings
+                                    && leggings.disableForSlot(EquipmentSlot.LEGS))
+                            || (self.getItemBySlot(EquipmentSlot.FEET).getItem()
+                                            instanceof IDisableJacket boots
+                                    && boots.disableForSlot(EquipmentSlot.FEET))) {
                         cir.setReturnValue(false);
                     }
                     break;
             }
         }
     }
+
     @Inject(method = "getDestroySpeed", at = @At("RETURN"), cancellable = true)
-    private void irons_spellbooks$miningSpeed(net.minecraft.world.level.block.state.BlockState state, CallbackInfoReturnable<Float> cir) {
-        cir.setReturnValue(cir.getReturnValue() * (float)((Player)(Object)this).getAttributeValue(
-                org.marj4n.irons_spellbooks.ironlib.MiningSpeed.MINING_SPEED.get()));
+    private void irons_spellbooks$miningSpeed(
+            net.minecraft.world.level.block.state.BlockState state,
+            CallbackInfoReturnable<Float> cir) {
+        cir.setReturnValue(
+                cir.getReturnValue()
+                        * (float)
+                                ((Player) (Object) this)
+                                        .getAttributeValue(
+                                                org.marj4n.irons_spellbooks.ironlib.MiningSpeed
+                                                        .MINING_SPEED
+                                                        .get()));
     }
 }

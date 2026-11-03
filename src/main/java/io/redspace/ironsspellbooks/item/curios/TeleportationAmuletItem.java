@@ -24,7 +24,9 @@ import org.marj4n.irons_spellbooks.equipment.EquipmentSlotContext;
 import java.util.List;
 
 public class TeleportationAmuletItem extends SimpleDescriptiveCurio {
-    private static final Component VANITY_DESCRIPTION = Component.translatable("item.irons_spellbooks.teleportation_amulet.desc.alt").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
+    private static final Component VANITY_DESCRIPTION =
+            Component.translatable("item.irons_spellbooks.teleportation_amulet.desc.alt")
+                    .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
 
     public TeleportationAmuletItem(Properties properties) {
         super(properties, Curios.NECKLACE_SLOT);
@@ -33,31 +35,45 @@ public class TeleportationAmuletItem extends SimpleDescriptiveCurio {
     private void handleCurse(EquipmentSlotContext slotContext, ItemStack stack) {
         var entity = slotContext.entity();
         if (entity != null && !slotContext.entity().level().isClientSide && !canUse(entity)) {
-            EquipmentApi.getCuriosInventory(slotContext.entity()).ifPresent(
-                    handler ->
-                    {
-                        var equippedStack = handler.findSlot(slotContext.identifier(), slotContext.index()).map(org.marj4n.irons_spellbooks.equipment.EquippedSlot::stack).orElse(ItemStack.EMPTY);
-                        if (ItemStack.matches(stack, equippedStack)) {
-                            handler.setEquippedCurio(slotContext.identifier(), slotContext.index(), ItemStack.EMPTY);
-                            createItemEntity(slotContext.entity().level(), stack, slotContext.entity().position());
-                        }
-                    }
-            );
+            EquipmentApi.getCuriosInventory(slotContext.entity())
+                    .ifPresent(
+                            handler -> {
+                                var equippedStack =
+                                        handler.findSlot(
+                                                        slotContext.identifier(),
+                                                        slotContext.index())
+                                                .map(
+                                                        org.marj4n.irons_spellbooks.equipment
+                                                                        .EquippedSlot
+                                                                ::stack)
+                                                .orElse(ItemStack.EMPTY);
+                                if (ItemStack.matches(stack, equippedStack)) {
+                                    handler.setEquippedCurio(
+                                            slotContext.identifier(),
+                                            slotContext.index(),
+                                            ItemStack.EMPTY);
+                                    createItemEntity(
+                                            slotContext.entity().level(),
+                                            stack,
+                                            slotContext.entity().position());
+                                }
+                            });
         }
     }
 
-//    @Override
-//    public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext tooltipContext, ItemStack stack) {
-//
-//        var player = MinecraftInstanceHelper.getPlayer();
-//        if (player != null) {
-//            if (canUse(player)) {
-//                super.getAttributesTooltip(tooltips, tooltipContext, stack);
-//            }
-//        }
-//        tooltips.add(0, VANITY_DESCRIPTION);
-//        return tooltips;
-//    }
+    //    @Override
+    //    public List<Component> getAttributesTooltip(List<Component> tooltips, TooltipContext
+    // tooltipContext, ItemStack stack) {
+    //
+    //        var player = MinecraftInstanceHelper.getPlayer();
+    //        if (player != null) {
+    //            if (canUse(player)) {
+    //                super.getAttributesTooltip(tooltips, tooltipContext, stack);
+    //            }
+    //        }
+    //        tooltips.add(0, VANITY_DESCRIPTION);
+    //        return tooltips;
+    //    }
 
     @Override
     public List<Component> getSlotsTooltip(List<Component> tooltips, ItemStack stack) {
@@ -74,7 +90,8 @@ public class TeleportationAmuletItem extends SimpleDescriptiveCurio {
     @Override
     public void curioTick(EquipmentSlotContext slotContext, ItemStack stack) {
         super.curioTick(slotContext, stack);
-        //Using short modulo on tick because #onEquip fires before the living entity's attributes are calculated on relog/entity creation, meaning the curse will erroneously fire
+        // Using short modulo on tick because #onEquip fires before the living entity's attributes
+        // are calculated on relog/entity creation, meaning the curse will erroneously fire
         if (slotContext.entity().tickCount % 5 == 0) {
             handleCurse(slotContext, stack);
         }
@@ -85,13 +102,49 @@ public class TeleportationAmuletItem extends SimpleDescriptiveCurio {
     }
 
     private void createItemEntity(Level level, ItemStack stack, Vec3 center) {
-        Vec3 target = center.add(new Vec3(Utils.random.nextIntBetweenInclusive(4, 8) + Utils.random.nextFloat(), 0, 0).yRot(Utils.random.nextFloat() * Mth.TWO_PI));
-        Vec3 clipped = Utils.raycastForBlock(level, center.add(0, 0.5, 0), target.add(0, 0.5, 0), ClipContext.Fluid.NONE).getLocation();
+        Vec3 target =
+                center.add(
+                        new Vec3(
+                                        Utils.random.nextIntBetweenInclusive(4, 8)
+                                                + Utils.random.nextFloat(),
+                                        0,
+                                        0)
+                                .yRot(Utils.random.nextFloat() * Mth.TWO_PI));
+        Vec3 clipped =
+                Utils.raycastForBlock(
+                                level,
+                                center.add(0, 0.5, 0),
+                                target.add(0, 0.5, 0),
+                                ClipContext.Fluid.NONE)
+                        .getLocation();
         Vec3 placement = Utils.moveToRelativeGroundLevel(level, clipped, 5).add(0, 0.75, 0);
         var item = new ItemEntity(level, placement.x, placement.y, placement.z, stack);
         level.addFreshEntity(item);
-        MagicManager.spawnParticles(level, ParticleHelper.UNSTABLE_ENDER, placement.x, placement.y, placement.z, 20, 0.2, 0.2, 0.2, 0.2, false);
-        level.playSound(null, BlockPos.containing(placement), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1, 1);
-        level.playSound(null, BlockPos.containing(center), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1, 1);
+        MagicManager.spawnParticles(
+                level,
+                ParticleHelper.UNSTABLE_ENDER,
+                placement.x,
+                placement.y,
+                placement.z,
+                20,
+                0.2,
+                0.2,
+                0.2,
+                0.2,
+                false);
+        level.playSound(
+                null,
+                BlockPos.containing(placement),
+                SoundEvents.ENDERMAN_TELEPORT,
+                SoundSource.PLAYERS,
+                1,
+                1);
+        level.playSound(
+                null,
+                BlockPos.containing(center),
+                SoundEvents.ENDERMAN_TELEPORT,
+                SoundSource.PLAYERS,
+                1,
+                1);
     }
 }

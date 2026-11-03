@@ -28,15 +28,38 @@ public class EchoingStrikesHologramLayer {
             super(pRenderer);
         }
 
-        public void render(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight, Player pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+        public void render(
+                PoseStack pMatrixStack,
+                MultiBufferSource pBuffer,
+                int pPackedLight,
+                Player pLivingEntity,
+                float pLimbSwing,
+                float pLimbSwingAmount,
+                float pPartialTicks,
+                float pAgeInTicks,
+                float pNetHeadYaw,
+                float pHeadPitch) {
             float percent = getRenderPercent(pLivingEntity);
             if (percent > 0) {
                 float f = (float) pLivingEntity.tickCount + pPartialTicks;
                 float offset = Mth.sin(f * 2) * 0.75f * percent;
                 pMatrixStack.translate(offset, 0, 0);
                 pMatrixStack.scale(1.01f, 1.01f, 1.01f);
-                int color = RenderHelper.colorf(.988f * percent, .313f * percent, .968f * percent, percent);
-                this.getParentModel().renderToBuffer(pMatrixStack, pBuffer.getBuffer(RenderHelper.CustomerRenderType.magic(this.getTextureLocation(pLivingEntity))), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, .988f * percent, .313f * percent, .968f * percent, percent);
+                int color =
+                        RenderHelper.colorf(
+                                .988f * percent, .313f * percent, .968f * percent, percent);
+                this.getParentModel()
+                        .renderToBuffer(
+                                pMatrixStack,
+                                pBuffer.getBuffer(
+                                        RenderHelper.CustomerRenderType.magic(
+                                                this.getTextureLocation(pLivingEntity))),
+                                LightTexture.FULL_BRIGHT,
+                                OverlayTexture.NO_OVERLAY,
+                                .988f * percent,
+                                .313f * percent,
+                                .968f * percent,
+                                percent);
             }
         }
     }
@@ -47,23 +70,54 @@ public class EchoingStrikesHologramLayer {
         }
 
         @Override
-        public void render(PoseStack pMatrixStack, AbstractSpellCastingMob pLivingEntity, BakedGeoModel bakedModel, RenderType renderType2, MultiBufferSource bufferSource, VertexConsumer buffer, float pPartialTicks, int packedLight, int packedOverlay) {
+        public void render(
+                PoseStack pMatrixStack,
+                AbstractSpellCastingMob pLivingEntity,
+                BakedGeoModel bakedModel,
+                RenderType renderType2,
+                MultiBufferSource bufferSource,
+                VertexConsumer buffer,
+                float pPartialTicks,
+                int packedLight,
+                int packedOverlay) {
             float percent = getRenderPercent(pLivingEntity);
             if (percent > 0) {
                 float f = (float) pLivingEntity.tickCount + pPartialTicks;
                 float offset = Mth.sin(f * 2) * 0.75f * percent;
                 pMatrixStack.translate(offset, 0, 0);
                 pMatrixStack.scale(1.01f, 1.01f, 1.01f);
-                int color = RenderHelper.colorf(.988f * percent, .313f * percent, .968f * percent, percent);
-                var type = RenderHelper.CustomerRenderType.magic(this.getRenderer().getTextureLocation(pLivingEntity));
-                this.getRenderer().actuallyRender(pMatrixStack, pLivingEntity, bakedModel, type, bufferSource, bufferSource.getBuffer(type), true, pPartialTicks, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, .988f * percent, .313f * percent, .968f * percent, percent);
+                int color =
+                        RenderHelper.colorf(
+                                .988f * percent, .313f * percent, .968f * percent, percent);
+                var type =
+                        RenderHelper.CustomerRenderType.magic(
+                                this.getRenderer().getTextureLocation(pLivingEntity));
+                this.getRenderer()
+                        .actuallyRender(
+                                pMatrixStack,
+                                pLivingEntity,
+                                bakedModel,
+                                type,
+                                bufferSource,
+                                bufferSource.getBuffer(type),
+                                true,
+                                pPartialTicks,
+                                LightTexture.FULL_BRIGHT,
+                                OverlayTexture.NO_OVERLAY,
+                                .988f * percent,
+                                .313f * percent,
+                                .968f * percent,
+                                percent);
             }
         }
     }
 
     private static float getRenderPercent(LivingEntity entity) {
-        return EchoingStrikesData.has(entity) ?
-                Mth.clamp((EchoingStrikesData.get(entity).vfxTimestamp - entity.tickCount) / 20f, 0, 1) :
-                0;
+        return EchoingStrikesData.has(entity)
+                ? Mth.clamp(
+                        (EchoingStrikesData.get(entity).vfxTimestamp - entity.tickCount) / 20f,
+                        0,
+                        1)
+                : 0;
     }
 }

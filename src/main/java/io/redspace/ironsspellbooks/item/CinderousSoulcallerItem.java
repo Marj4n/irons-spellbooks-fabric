@@ -38,44 +38,85 @@ public class CinderousSoulcallerItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level level, Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
-        if (level instanceof ServerLevel serverlevel && player instanceof ServerPlayer serverPlayer) {
+        if (level instanceof ServerLevel serverlevel
+                && player instanceof ServerPlayer serverPlayer) {
             player.getCooldowns().addCooldown(ItemRegistry.CINDEROUS_SOULCALLER.get(), 80);
             BlockPos playerBlockPos = player.blockPosition();
             PoiManager poimanager = serverlevel.getPoiManager();
-            // arena radius is 23. slightly shorter distance means player must approach center/keystone
-            // player must also be at or above the keystone (with tolerance of 2 blocks) so as to be on an even fighting field
-            var keystone = poimanager.findClosest(poi -> Objects.equals(poi.unwrapKey().get(), PoiTypeRegistry.CINDEROUS_KEYSTONE_POI.getKey()), playerBlockPos, 22, PoiManager.Occupancy.ANY);
+            // arena radius is 23. slightly shorter distance means player must approach
+            // center/keystone
+            // player must also be at or above the keystone (with tolerance of 2 blocks) so as to be
+            // on an even fighting field
+            var keystone =
+                    poimanager.findClosest(
+                            poi ->
+                                    Objects.equals(
+                                            poi.unwrapKey().get(),
+                                            PoiTypeRegistry.CINDEROUS_KEYSTONE_POI.getKey()),
+                            playerBlockPos,
+                            22,
+                            PoiManager.Occupancy.ANY);
             if (keystone.isPresent() && playerBlockPos.getY() + 2 >= keystone.get().getY()) {
                 BlockPos keystonePos = keystone.get();
                 AABB exclusiveRange = AABB.ofSize(keystonePos.getCenter(), 80, 80, 80);
                 if (level.getEntitiesOfClass(FireBossEntity.class, exclusiveRange).isEmpty()) {
-                    //success, consume and summon
+                    // success, consume and summon
                     if (!player.getAbilities().instabuild) {
-                        Vec3 particlePos = player.getEyePosition().add(player.getForward().scale(0.6)).subtract(0, 0.3, 0);
-                        MagicManager.spawnParticles(serverlevel, new ItemParticleOption(ParticleTypes.ITEM, itemStack), particlePos.x, particlePos.y, particlePos.z, 9, .15, .15, .15, 0.08, false);
+                        Vec3 particlePos =
+                                player.getEyePosition()
+                                        .add(player.getForward().scale(0.6))
+                                        .subtract(0, 0.3, 0);
+                        MagicManager.spawnParticles(
+                                serverlevel,
+                                new ItemParticleOption(ParticleTypes.ITEM, itemStack),
+                                particlePos.x,
+                                particlePos.y,
+                                particlePos.z,
+                                9,
+                                .15,
+                                .15,
+                                .15,
+                                0.08,
+                                false);
                         itemStack.shrink(1);
                         player.setItemInHand(hand, itemStack);
                     }
                     Vec3 center = keystonePos.getCenter().add(0, 0.6, 0);
-                    float yRot = Utils.getAngle(center.x, center.z, player.getX(), player.getZ()) * Mth.RAD_TO_DEG;
+                    float yRot =
+                            Utils.getAngle(center.x, center.z, player.getX(), player.getZ())
+                                    * Mth.RAD_TO_DEG;
                     FireBossEntity fireBoss = EntityRegistry.FIRE_BOSS.get().create(serverlevel);
                     fireBoss.setSpawnPos(center);
                     fireBoss.moveTo(center);
                     fireBoss.setYRot(yRot + 90);
                     fireBoss.triggerSpawnAnim();
                     level.addFreshEntity(fireBoss);
-                    fireBoss.finalizeSpawn(serverlevel, level.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
+                    fireBoss.finalizeSpawn(
+                            serverlevel,
+                            level.getCurrentDifficultyAt(player.blockPosition()),
+                            MobSpawnType.MOB_SUMMONED,
+                            null,
+                            null);
                     tollEffects(serverlevel, player.position(), true);
                 } else {
-                    //failure, boss already exists
-                    serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("item.irons_spellbooks.cinderous_soulcaller.failure.in_progress").withStyle(ChatFormatting.GOLD)));
+                    // failure, boss already exists
+                    serverPlayer.connection.send(
+                            new ClientboundSetActionBarTextPacket(
+                                    Component.translatable(
+                                                    "item.irons_spellbooks.cinderous_soulcaller.failure.in_progress")
+                                            .withStyle(ChatFormatting.GOLD)));
                     tollEffects(serverlevel, player.position(), false);
                 }
             } else {
-                //failure, no soul present
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("item.irons_spellbooks.cinderous_soulcaller.failure.no_soul").withStyle(ChatFormatting.GOLD)));
+                // failure, no soul present
+                serverPlayer.connection.send(
+                        new ClientboundSetActionBarTextPacket(
+                                Component.translatable(
+                                                "item.irons_spellbooks.cinderous_soulcaller.failure.no_soul")
+                                        .withStyle(ChatFormatting.GOLD)));
                 tollEffects(serverlevel, player.position(), false);
             }
         }
@@ -84,7 +125,28 @@ public class CinderousSoulcallerItem extends Item {
     }
 
     public void tollEffects(ServerLevel serverLevel, Vec3 usePosition, boolean success) {
-        serverLevel.playSound(null, usePosition.x, usePosition.y, usePosition.z, success ? SoundRegistry.SOULCALLER_TOLL_SUCCESS.get() : SoundRegistry.SOULCALLER_TOLL_FAILURE.get(), SoundSource.PLAYERS, 6, 1f);
-        MagicManager.spawnParticles(serverLevel, new BlastwaveParticleOptions(1, .6f, 0.3f, 16), usePosition.x, usePosition.y, usePosition.z, 0, 0, 0, 0, 0, false);
+        serverLevel.playSound(
+                null,
+                usePosition.x,
+                usePosition.y,
+                usePosition.z,
+                success
+                        ? SoundRegistry.SOULCALLER_TOLL_SUCCESS.get()
+                        : SoundRegistry.SOULCALLER_TOLL_FAILURE.get(),
+                SoundSource.PLAYERS,
+                6,
+                1f);
+        MagicManager.spawnParticles(
+                serverLevel,
+                new BlastwaveParticleOptions(1, .6f, 0.3f, 16),
+                usePosition.x,
+                usePosition.y,
+                usePosition.z,
+                0,
+                0,
+                0,
+                0,
+                0,
+                false);
     }
 }

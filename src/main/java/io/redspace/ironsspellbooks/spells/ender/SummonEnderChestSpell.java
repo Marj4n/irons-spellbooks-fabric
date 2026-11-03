@@ -17,7 +17,8 @@ import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.level.Level;
 
 public class SummonEnderChestSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "summon_ender_chest");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "summon_ender_chest");
 
     public SummonEnderChestSpell() {
         this.manaCostPerLevel = 1;
@@ -27,12 +28,13 @@ public class SummonEnderChestSpell extends AbstractSpell {
         this.baseManaCost = 25;
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(1)
-            .setCooldownSeconds(5)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(1)
+                    .setCooldownSeconds(5)
+                    .build();
 
     @Override
     public CastType getCastType() {
@@ -52,13 +54,24 @@ public class SummonEnderChestSpell extends AbstractSpell {
     private static final Component CONTAINER_TITLE = Component.translatable("container.enderchest");
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (entity instanceof ServerPlayer player) {
-            Scroll.attemptRemoveScrollAfterCast(player); // Manually call this because opening the screen causes the cast to cancel, short-circuiting the scroll consumption
+            Scroll.attemptRemoveScrollAfterCast(
+                    player); // Manually call this because opening the screen causes the cast to
+                             // cancel, short-circuiting the scroll consumption
             PlayerEnderChestContainer playerenderchestcontainer = player.getEnderChestInventory();
-            player.openMenu(new SimpleMenuProvider((p_53124_, p_53125_, p_53126_) -> {
-                return ChestMenu.threeRows(p_53124_, p_53125_, playerenderchestcontainer);
-            }, CONTAINER_TITLE));
+            player.openMenu(
+                    new SimpleMenuProvider(
+                            (p_53124_, p_53125_, p_53126_) -> {
+                                return ChestMenu.threeRows(
+                                        p_53124_, p_53125_, playerenderchestcontainer);
+                            },
+                            CONTAINER_TITLE));
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }

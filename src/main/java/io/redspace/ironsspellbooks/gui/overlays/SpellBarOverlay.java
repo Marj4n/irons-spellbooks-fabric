@@ -22,7 +22,8 @@ import java.util.List;
 public class SpellBarOverlay implements HudOverlay {
     public static final SpellBarOverlay instance = new SpellBarOverlay();
 
-    public final static ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
+    public final static ResourceLocation TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
     static final int IMAGE_HEIGHT = 21;
     static final int IMAGE_WIDTH = 21;
     static final int HOTBAR_HALFWIDTH = 91;
@@ -50,12 +51,18 @@ public class SpellBarOverlay implements HudOverlay {
     static float alpha;
     static int lastSpellCount;
 
-    public void render(HudContext gui, GuiGraphics guiHelper, float partialTick, int screenWidth, int screenHeight) {
-        if (Minecraft.getInstance().options.hideGui || Minecraft.getInstance().player.isSpectator()) {
+    public void render(
+            HudContext gui,
+            GuiGraphics guiHelper,
+            float partialTick,
+            int screenWidth,
+            int screenHeight) {
+        if (Minecraft.getInstance().options.hideGui
+                || Minecraft.getInstance().player.isSpectator()) {
             return;
         }
-//        var screenWidth = guiHelper.guiWidth();
-//        var screenHeight = guiHelper.guiHeight();
+        //        var screenWidth = guiHelper.guiWidth();
+        //        var screenHeight = guiHelper.guiHeight();
         Player player = Minecraft.getInstance().player;
         ManaBarOverlay.Display displayMode = ClientConfigs.SPELL_BAR_DISPLAY.get();
         if (displayMode == ManaBarOverlay.Display.Never || player == null) {
@@ -80,7 +87,7 @@ public class SpellBarOverlay implements HudOverlay {
         if (ssm.getSpellCount() <= 0) {
             return;
         }
-        //System.out.println("SpellBarDisplay: Holding Spellbook");
+        // System.out.println("SpellBarDisplay: Holding Spellbook");
 
         int centerX, centerY;
         int configOffsetY = ClientConfigs.SPELL_BAR_Y_OFFSET.get();
@@ -103,36 +110,76 @@ public class SpellBarOverlay implements HudOverlay {
         int spellbookCount = ssm.getSpellsForSlot(Curios.SPELLBOOK_SLOT).size();
         var locations = ClientRenderCache.relativeSpellBarSlotLocations;
         int approximateWidth = locations.size() / 3;
-        //Move spellbar away from hotbar as it gets bigger
+        // Move spellbar away from hotbar as it gets bigger
         centerX -= approximateWidth * 5;
-        //var spellSelection = ClientMagicData.getSyncedSpellData(player).getSpellSelection();
+        // var spellSelection = ClientMagicData.getSyncedSpellData(player).getSpellSelection();
         int selectedSpellIndex = ssm.getGlobalSelectionIndex();
 
-        //Slot Border
+        // Slot Border
         prepTranslucency();
         for (Vec2 location : locations) {
-            guiHelper.blit(TEXTURE, centerX + (int) location.x, centerY + (int) location.y, 66, 84, 22, 22);
+            guiHelper.blit(
+                    TEXTURE,
+                    centerX + (int) location.x,
+                    centerY + (int) location.y,
+                    66,
+                    84,
+                    22,
+                    22);
         }
-        //Spell Icons
+        // Spell Icons
         for (int i = 0; i < locations.size(); i++) {
-            guiHelper.blit(spells.get(i).getSpell().getSpellIconResource(), centerX + (int) locations.get(i).x + 3, centerY + (int) locations.get(i).y + 3, 0, 0, 16, 16, 16, 16);
+            guiHelper.blit(
+                    spells.get(i).getSpell().getSpellIconResource(),
+                    centerX + (int) locations.get(i).x + 3,
+                    centerY + (int) locations.get(i).y + 3,
+                    0,
+                    0,
+                    16,
+                    16,
+                    16,
+                    16);
         }
-        //Border + Cooldowns
+        // Border + Cooldowns
         for (int i = 0; i < locations.size(); i++) {
             if (i != selectedSpellIndex) {
-                guiHelper.blit(TEXTURE, centerX + (int) locations.get(i).x, centerY + (int) locations.get(i).y, 22 + (!ssm.getAllSpells().get(i).slot.equals(Curios.SPELLBOOK_SLOT) ? 110 : 0), 84, 22, 22);
+                guiHelper.blit(
+                        TEXTURE,
+                        centerX + (int) locations.get(i).x,
+                        centerY + (int) locations.get(i).y,
+                        22
+                                + (!ssm.getAllSpells().get(i).slot.equals(Curios.SPELLBOOK_SLOT)
+                                        ? 110
+                                        : 0),
+                        84,
+                        22,
+                        22);
             }
             float f = ClientMagicData.getCooldownPercent(spells.get(i).getSpell());
             if (f > 0) {
                 int pixels = (int) (16 * f + 1f);
-                guiHelper.blit(TEXTURE, centerX + (int) locations.get(i).x + 3, centerY + (int) locations.get(i).y + 19 - pixels, 47, 87, 16, pixels);
+                guiHelper.blit(
+                        TEXTURE,
+                        centerX + (int) locations.get(i).x + 3,
+                        centerY + (int) locations.get(i).y + 19 - pixels,
+                        47,
+                        87,
+                        16,
+                        pixels);
             }
         }
-        //Selected Outline
+        // Selected Outline
         for (int i = 0; i < locations.size(); i++) {
-            //setTranslucentTexture(TEXTURE);
+            // setTranslucentTexture(TEXTURE);
             if (i == selectedSpellIndex) {
-                guiHelper.blit(TEXTURE, centerX + (int) locations.get(i).x, centerY + (int) locations.get(i).y, 0, 84, 22, 22);
+                guiHelper.blit(
+                        TEXTURE,
+                        centerX + (int) locations.get(i).x,
+                        centerY + (int) locations.get(i).y,
+                        0,
+                        84,
+                        22,
+                        22);
             }
         }
         flushTranslucency();
@@ -141,7 +188,9 @@ public class SpellBarOverlay implements HudOverlay {
     private static void handleFading(Player player) {
         if (lastTick != player.tickCount) {
             lastTick = player.tickCount;
-            if (ClientMagicData.isCasting() || ClientMagicData.getCooldowns().hasCooldownsActive() || ClientMagicData.getRecasts().hasRecastsActive()) {
+            if (ClientMagicData.isCasting()
+                    || ClientMagicData.getCooldowns().hasCooldownsActive()
+                    || ClientMagicData.getRecasts().hasRecastsActive()) {
                 fadeoutDelay = CONTEXTUAL_FADE_WAIT;
             }
             if (fadeoutDelay > 0) {

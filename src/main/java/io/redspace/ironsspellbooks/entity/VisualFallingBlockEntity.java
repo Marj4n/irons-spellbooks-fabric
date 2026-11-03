@@ -14,13 +14,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-
 /**
  * Use {@link io.redspace.ironsspellbooks.particle.FallingBlockParticleOption} instead.
  */
 @Deprecated(forRemoval = true)
 public class VisualFallingBlockEntity extends FallingBlockEntity {
-    public VisualFallingBlockEntity(EntityType<? extends VisualFallingBlockEntity> pEntityType, Level pLevel) {
+    public VisualFallingBlockEntity(
+            EntityType<? extends VisualFallingBlockEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
@@ -32,15 +32,17 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
     private boolean particlesOnImpact;
 
     @Override
-    public void setOnGround(boolean pOnGround) {
-    }
+    public void setOnGround(boolean pOnGround) {}
 
     @Override
     public boolean onGround() {
-        return tickCount > 1 && (/*this.position().y <= originalY || */this.getDeltaMovement().lengthSqr() < .001f);
+        return tickCount > 1
+                && (
+                /*this.position().y <= originalY || */ this.getDeltaMovement().lengthSqr() < .001f);
     }
 
-    public VisualFallingBlockEntity(Level pLevel, double pX, double pY, double pZ, BlockState pState) {
+    public VisualFallingBlockEntity(
+            Level pLevel, double pX, double pY, double pZ, BlockState pState) {
         this(EntityRegistry.FALLING_BLOCK.get(), pLevel);
 
         originalX = pX;
@@ -59,23 +61,33 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
         this.cancelDrop = true;
     }
 
-    public VisualFallingBlockEntity(Level pLevel, double pX, double pY, double pZ, BlockState pState, int maxAge) {
+    public VisualFallingBlockEntity(
+            Level pLevel, double pX, double pY, double pZ, BlockState pState, int maxAge) {
         this(pLevel, pX, pY, pZ, pState);
         this.maxAge = maxAge;
     }
 
-    public VisualFallingBlockEntity(Level pLevel, double pX, double pY, double pZ, BlockState pState, int maxAge, boolean particlesOnImpact) {
+    public VisualFallingBlockEntity(
+            Level pLevel,
+            double pX,
+            double pY,
+            double pZ,
+            BlockState pState,
+            int maxAge,
+            boolean particlesOnImpact) {
         this(pLevel, pX, pY, pZ, pState, maxAge);
         this.particlesOnImpact = particlesOnImpact;
     }
 
     @Override
     public void tick() {
-//        super.tick();
+        //        super.tick();
         boolean onGround = this.onGround();
         if (this.blockState.isAir() || onGround || tickCount > maxAge) {
             if (onGround) {
-                callOnBrokenAfterFall(level().getBlockState(this.blockPosition().below()).getBlock(), this.blockPosition());
+                callOnBrokenAfterFall(
+                        level().getBlockState(this.blockPosition().below()).getBlock(),
+                        this.blockPosition());
             }
             this.discard();
         } else {
@@ -101,7 +113,18 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
     @Override
     public void callOnBrokenAfterFall(Block pBlock, BlockPos pPos) {
         if (!level().isClientSide && particlesOnImpact) {
-            MagicManager.spawnParticles(level(), new BlockParticleOption(ParticleTypes.BLOCK, this.blockState), getX(), getY(), getZ(), 25, .25, .25, .25, .04, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    new BlockParticleOption(ParticleTypes.BLOCK, this.blockState),
+                    getX(),
+                    getY(),
+                    getZ(),
+                    25,
+                    .25,
+                    .25,
+                    .25,
+                    .04,
+                    false);
         }
     }
 
@@ -109,5 +132,4 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
     public boolean causeFallDamage(float pFallDistance, float pMultiplier, DamageSource pSource) {
         return false;
     }
-
 }

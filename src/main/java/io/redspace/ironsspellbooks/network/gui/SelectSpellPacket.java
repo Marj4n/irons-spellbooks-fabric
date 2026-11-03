@@ -11,7 +11,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class SelectSpellPacket implements CustomPacketPayload {
     private final SpellSelection spellSelection;
 
@@ -31,16 +30,20 @@ public class SelectSpellPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            // Here we are server side
-            ServerPlayer serverPlayer = ctx.getSender();
-            if (serverPlayer != null) {
-                if (Log.SPELL_SELECTION) {
-                    IronsSpellbooks.LOGGER.debug("ServerboundSelectSpell.handle {}", spellSelection);
-                }
-                MagicData.getPlayerMagicData(serverPlayer).getSyncedData().setSpellSelection(spellSelection);
-            }
-        });
+        ctx.enqueueWork(
+                () -> {
+                    // Here we are server side
+                    ServerPlayer serverPlayer = ctx.getSender();
+                    if (serverPlayer != null) {
+                        if (Log.SPELL_SELECTION) {
+                            IronsSpellbooks.LOGGER.debug(
+                                    "ServerboundSelectSpell.handle {}", spellSelection);
+                        }
+                        MagicData.getPlayerMagicData(serverPlayer)
+                                .getSyncedData()
+                                .setSpellSelection(spellSelection);
+                    }
+                });
         return true;
     }
 }

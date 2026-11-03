@@ -18,7 +18,8 @@ public class OnClientCastPacket implements CustomPacketPayload {
     CastSource castSource;
     ICastData castData;
 
-    public OnClientCastPacket(String spellId, int level, CastSource castSource, ICastData castData) {
+    public OnClientCastPacket(
+            String spellId, int level, CastSource castSource, ICastData castData) {
         this.spellId = spellId;
         this.level = level;
         this.castSource = castSource;
@@ -50,9 +51,11 @@ public class OnClientCastPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientSpellCastHelper.handleClientboundOnClientCast(spellId, level, castSource, castData);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientSpellCastHelper.handleClientboundOnClientCast(
+                            spellId, level, castSource, castData);
+                });
         return true;
     }
 }

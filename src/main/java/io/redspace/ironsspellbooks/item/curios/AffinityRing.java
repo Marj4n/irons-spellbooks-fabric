@@ -21,33 +21,38 @@ public class AffinityRing extends CurioBaseItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Level context, List<Component> tooltip, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack, Level context, List<Component> tooltip, TooltipFlag pIsAdvanced) {
         var affinity = AffinityData.getAffinityData(pStack);
         if (affinity != AffinityData.NONE && !affinity.affinityData().isEmpty()) {
             tooltip.add(Component.empty());
-            tooltip.add(Component.translatable("curios.modifiers.ring").withStyle(ChatFormatting.GOLD));
+            tooltip.add(
+                    Component.translatable("curios.modifiers.ring").withStyle(ChatFormatting.GOLD));
             tooltip.addAll(affinity.getDescriptionComponent());
         } else {
-            tooltip.add(Component.translatable("tooltip.irons_spellbooks.empty_affinity_ring").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+            tooltip.add(
+                    Component.translatable("tooltip.irons_spellbooks.empty_affinity_ring")
+                            .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
     }
 
     @Override
     public Component getName(ItemStack pStack) {
-        return Component.translatable(this.getDescriptionId(pStack), AffinityData.getAffinityData(pStack).getNameForItem());
+        return Component.translatable(
+                this.getDescriptionId(pStack),
+                AffinityData.getAffinityData(pStack).getNameForItem());
     }
 
     @Override
     public void initializeClient(Consumer<NativeClientItemExtensions> consumer) {
-        consumer.accept(
-                new ClientExtension()
-        );
+        consumer.accept(new ClientExtension());
     }
 
     public static class ClientExtension implements NativeClientItemExtensions {
         @Override
         public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-            return new AffinityRingRenderer(Minecraft.getInstance().getItemRenderer(),
+            return new AffinityRingRenderer(
+                    Minecraft.getInstance().getItemRenderer(),
                     Minecraft.getInstance().getEntityModels());
         }
     }

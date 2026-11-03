@@ -17,12 +17,19 @@ public class DebugWizardAttackGoal extends Goal {
 
     private int castingTicks = 0;
 
-    public DebugWizardAttackGoal(IMagicEntity abstractSpellCastingMob, AbstractSpell spell, int spellLevel, int cancelCastAfterTicks) {
+    public DebugWizardAttackGoal(
+            IMagicEntity abstractSpellCastingMob,
+            AbstractSpell spell,
+            int spellLevel,
+            int cancelCastAfterTicks) {
         this.spellCastingMob = abstractSpellCastingMob;
         if (abstractSpellCastingMob instanceof PathfinderMob m) {
             this.mob = m;
         } else
-            throw new IllegalStateException("Unable to add " + this.getClass().getSimpleName() + "to entity, must extend PathfinderMob.");
+            throw new IllegalStateException(
+                    "Unable to add "
+                            + this.getClass().getSimpleName()
+                            + "to entity, must extend PathfinderMob.");
         this.spell = spell;
         this.spellLevel = spellLevel;
         this.cancelCastAfterTicks = cancelCastAfterTicks;
@@ -42,7 +49,13 @@ public class DebugWizardAttackGoal extends Goal {
 
     public void tick() {
         if (tickCount++ % 200 == 0) {
-            IronsSpellbooks.LOGGER.debug("DebugWizardAttackGoal:  mob.initiateCastSpell:{}({}), pos:{}, isCasting:{}, isClient:{}", spell.getSpellId(), spellLevel, mob.position(), spellCastingMob.isCasting(), mob.level().isClientSide());
+            IronsSpellbooks.LOGGER.debug(
+                    "DebugWizardAttackGoal:  mob.initiateCastSpell:{}({}), pos:{}, isCasting:{}, isClient:{}",
+                    spell.getSpellId(),
+                    spellLevel,
+                    mob.position(),
+                    spellCastingMob.isCasting(),
+                    mob.level().isClientSide());
             spellCastingMob.initiateCastSpell(spell, spellLevel);
             castingTicks = 0;
         }

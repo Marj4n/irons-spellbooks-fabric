@@ -29,10 +29,11 @@ public class CancelCastPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer serverPlayer = ctx.getSender();
-            cancelCast(serverPlayer, triggerCooldown);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ServerPlayer serverPlayer = ctx.getSender();
+                    cancelCast(serverPlayer, triggerCooldown);
+                });
         return true;
     }
 
@@ -43,12 +44,22 @@ public class CancelCastPacket implements CustomPacketPayload {
                 var spellData = playerMagicData.getCastingSpell();
 
                 if (triggerCooldown) {
-                    MagicHelper.MAGIC_MANAGER.addCooldown(serverPlayer, spellData.getSpell(), playerMagicData.getCastSource());
+                    MagicHelper.MAGIC_MANAGER.addCooldown(
+                            serverPlayer, spellData.getSpell(), playerMagicData.getCastSource());
                 }
-                if (playerMagicData.getCastSource() == CastSource.SCROLL && spellData.getSpell().getCastType() == CastType.CONTINUOUS) {
+                if (playerMagicData.getCastSource() == CastSource.SCROLL
+                        && spellData.getSpell().getCastType() == CastType.CONTINUOUS) {
                     Scroll.attemptRemoveScrollAfterCast(serverPlayer);
                 }
-                playerMagicData.getCastingSpell().getSpell().onServerCastComplete(serverPlayer.level(), spellData.getLevel(), serverPlayer, playerMagicData, true);
+                playerMagicData
+                        .getCastingSpell()
+                        .getSpell()
+                        .onServerCastComplete(
+                                serverPlayer.level(),
+                                spellData.getLevel(),
+                                serverPlayer,
+                                playerMagicData,
+                                true);
             }
         }
     }

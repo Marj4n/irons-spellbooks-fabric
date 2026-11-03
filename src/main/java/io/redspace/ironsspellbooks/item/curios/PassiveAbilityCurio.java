@@ -40,11 +40,18 @@ public abstract class PassiveAbilityCurio extends SimpleDescriptiveCurio {
     public List<Component> getDescriptionLines(ItemStack stack) {
 
         return List.of(
-                Component.literal(" ").append(Component.translatable(
-                        "tooltip.irons_spellbooks.passive_ability",
-                        Component.literal(Utils.timeFromTicks(getCooldownTicks(MinecraftInstanceHelper.getPlayer()), 1)).withStyle(ChatFormatting.LIGHT_PURPLE)
-                ).withStyle(ChatFormatting.DARK_PURPLE)),
-                getDescription(stack)
-        );
+                Component.literal(" ")
+                        .append(
+                                Component.translatable(
+                                                "tooltip.irons_spellbooks.passive_ability",
+                                                Component.literal(
+                                                                Utils.timeFromTicks(
+                                                                        getCooldownTicks(
+                                                                                MinecraftInstanceHelper
+                                                                                        .getPlayer()),
+                                                                        1))
+                                                        .withStyle(ChatFormatting.LIGHT_PURPLE))
+                                        .withStyle(ChatFormatting.DARK_PURPLE)),
+                getDescription(stack));
     }
 }

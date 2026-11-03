@@ -20,7 +20,8 @@ import java.util.Random;
 public class ElectrocuteProjectile extends AbstractConeProjectile {
     private List<Vec3> beamVectors;
 
-    public ElectrocuteProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level) {
+    public ElectrocuteProjectile(
+            EntityType<? extends AbstractConeProjectile> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -39,7 +40,7 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
     }
 
     public void generateLightningBeams() {
-        //irons_spellbooks.LOGGER.debug("generatingLightningBeams");
+        // irons_spellbooks.LOGGER.debug("generatingLightningBeams");
         Random random = new Random();
         beamVectors = new ArrayList<>();
         Vec3 coreStart = new Vec3(0, 0, 0);
@@ -56,7 +57,8 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
         }
     }
 
-    public static List<Vec3> generateBranch(Vec3 origin, int maxLength, float splitChance, int recursionCount) {
+    public static List<Vec3> generateBranch(
+            Vec3 origin, int maxLength, float splitChance, int recursionCount) {
         List<Vec3> branchSegements = new ArrayList<>();
         Random random = new Random();
         int branches = random.nextInt(maxLength + 1);
@@ -64,11 +66,14 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
         int dir = random.nextBoolean() ? 1 : -1;
         float branchLength = 1.75f / (recursionCount + 1);
         for (int i = 0; i < branches; i++) {
-            Vec3 branchEnd = branchStart.add(dir * branchLength, 0, branchLength).add(randomVector(.4f));
+            Vec3 branchEnd =
+                    branchStart.add(dir * branchLength, 0, branchLength).add(randomVector(.4f));
             branchSegements.add(branchStart);
             branchSegements.add(branchEnd);
             if (random.nextFloat() <= splitChance)
-                branchSegements.addAll(generateBranch(branchEnd, maxLength - 1, splitChance * 1.2f, recursionCount + 1));
+                branchSegements.addAll(
+                        generateBranch(
+                                branchEnd, maxLength - 1, splitChance * 1.2f, recursionCount + 1));
             branchStart = branchEnd;
         }
         return branchSegements;
@@ -94,43 +99,58 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
     }
 
     public List<Vec3> getBeamCache() {
-        if (beamVectors == null)
-            generateLightningBeams();
+        if (beamVectors == null) generateLightningBeams();
         return beamVectors;
     }
 
     @Override
     public void spawnParticles() {
-//        var owner = getOwner();
-//        if (!level.isClientSide || owner == null) {
-//            return;
-//        }
-//        Vec3 rotation = owner.getLookAngle().normalize();
-//        var pos = owner.position().add(rotation.scale(0.5f));
-//
-//        double x = pos.x;
-//        double y = pos.y + owner.getEyeHeight() * .8f;
-//        double z = pos.z;
-//
-//        double speed = random.nextDouble() * .35 + .25;
-//        for (int i = 0; i < 1; i++) {
-//            double offset = .25;
-//            double ox = Math.random() * 2 * offset - offset;
-//            double oy = 0;
-//            double oz = Math.random() * 2 * offset - offset;
-//
-//            Vec3 randomVec = new Vec3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize();
-//            Vec3 result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
-//            level.addParticle(ParticleHelper.ELECTRICITY, x + ox, y + oy, z + oz, result.x, result.y, result.z);
-//        }
+        //        var owner = getOwner();
+        //        if (!level.isClientSide || owner == null) {
+        //            return;
+        //        }
+        //        Vec3 rotation = owner.getLookAngle().normalize();
+        //        var pos = owner.position().add(rotation.scale(0.5f));
+        //
+        //        double x = pos.x;
+        //        double y = pos.y + owner.getEyeHeight() * .8f;
+        //        double z = pos.z;
+        //
+        //        double speed = random.nextDouble() * .35 + .25;
+        //        for (int i = 0; i < 1; i++) {
+        //            double offset = .25;
+        //            double ox = Math.random() * 2 * offset - offset;
+        //            double oy = 0;
+        //            double oz = Math.random() * 2 * offset - offset;
+        //
+        //            Vec3 randomVec = new Vec3(Math.random() * 2 - 1, Math.random() * 2 - 1,
+        // Math.random() * 2 - 1).normalize();
+        //            Vec3 result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
+        //            level.addParticle(ParticleHelper.ELECTRICITY, x + ox, y + oy, z + oz,
+        // result.x, result.y, result.z);
+        //        }
 
     }
 
     @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
         var entity = entityHitResult.getEntity();
-        DamageSources.applyDamage(entity, damage, SpellRegistry.ELECTROCUTE_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                entity,
+                damage,
+                SpellRegistry.ELECTROCUTE_SPELL.get().getDamageSource(this, getOwner()));
 
-        MagicManager.spawnParticles(level(), ParticleHelper.ELECTRICITY, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(), 10, entity.getBbWidth() / 3, entity.getBbHeight() / 3, entity.getBbWidth() / 3, 0.1, false);
+        MagicManager.spawnParticles(
+                level(),
+                ParticleHelper.ELECTRICITY,
+                entity.getX(),
+                entity.getY() + entity.getBbHeight() / 2,
+                entity.getZ(),
+                10,
+                entity.getBbWidth() / 3,
+                entity.getBbHeight() / 3,
+                entity.getBbWidth() / 3,
+                0.1,
+                false);
     }
 }

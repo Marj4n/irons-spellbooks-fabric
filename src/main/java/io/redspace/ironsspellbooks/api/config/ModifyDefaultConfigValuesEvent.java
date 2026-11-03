@@ -8,7 +8,8 @@ public class ModifyDefaultConfigValuesEvent extends SpellEvent {
     private final AbstractSpell spell;
     private final SpellConfigHolder config;
 
-    public ModifyDefaultConfigValuesEvent(AbstractSpell spell, SpellConfigHolder spellConfigHolder) {
+    public ModifyDefaultConfigValuesEvent(
+            AbstractSpell spell, SpellConfigHolder spellConfigHolder) {
         this.spell = spell;
         this.config = spellConfigHolder;
     }

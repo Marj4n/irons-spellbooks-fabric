@@ -27,7 +27,7 @@ public class LeapBackGoal extends AnimatedActionGoal<IceSpiderEntity> {
 
     @Override
     protected int getCooldown() {
-        return 0;//mob.getRandom().nextIntBetweenInclusive(3, 8) * 20;
+        return 0; // mob.getRandom().nextIntBetweenInclusive(3, 8) * 20;
     }
 
     @Override
@@ -37,7 +37,10 @@ public class LeapBackGoal extends AnimatedActionGoal<IceSpiderEntity> {
 
     @Override
     protected void doAction() {
-        mob.playSound(SoundRegistry.ICE_SPIDER_SWING.get(), 3, Utils.random.nextIntBetweenInclusive(13, 16) * .1f);
+        mob.playSound(
+                SoundRegistry.ICE_SPIDER_SWING.get(),
+                3,
+                Utils.random.nextIntBetweenInclusive(13, 16) * .1f);
         Vec3 leapVector = new Vec3(0, .5, -2.2);
         mob.setDeltaMovement(mob.getDeltaMovement().add(mob.rotateWithBody(leapVector)));
         mob.wantsToLeapBack = false;

@@ -25,7 +25,8 @@ public class SpellSelection implements ISerializable, INBTSerializable<CompoundT
         this.lastIndex = -1;
     }
 
-    public SpellSelection(String equipmentSlot, int index, String lastEquipmentSlot, int lastIndex) {
+    public SpellSelection(
+            String equipmentSlot, int index, String lastEquipmentSlot, int lastIndex) {
         this.equipmentSlot = equipmentSlot;
         this.index = index;
         this.lastEquipmentSlot = lastEquipmentSlot;
@@ -81,6 +82,8 @@ public class SpellSelection implements ISerializable, INBTSerializable<CompoundT
 
     @Override
     public String toString() {
-        return String.format("equipmentSlot:%s, index:%d, lastEquipmentSlot:%s, lastIndex:%d", equipmentSlot, index, lastEquipmentSlot, lastIndex);
+        return String.format(
+                "equipmentSlot:%s, index:%d, lastEquipmentSlot:%s, lastIndex:%d",
+                equipmentSlot, index, lastEquipmentSlot, lastIndex);
     }
 }

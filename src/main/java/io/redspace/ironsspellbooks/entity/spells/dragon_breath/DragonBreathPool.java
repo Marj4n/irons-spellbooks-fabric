@@ -24,7 +24,7 @@ public class DragonBreathPool extends AoeEntity {
         setRadius(1.8f);
         this.radiusOnUse = -.15f;
         this.radiusPerTick = -.02f;
-        //IronsSpellbooks.LOGGER.debug("Creating DragonBreathPool");
+        // IronsSpellbooks.LOGGER.debug("Creating DragonBreathPool");
     }
 
     public DragonBreathPool(Level level) {
@@ -34,7 +34,12 @@ public class DragonBreathPool extends AoeEntity {
     @Override
     public void applyEffect(LivingEntity target) {
         if (damageSource == null) {
-            damageSource = new DamageSource(DamageSources.getHolderFromResource(target, ISSDamageTypes.DRAGON_BREATH_POOL), this, getOwner());
+            damageSource =
+                    new DamageSource(
+                            DamageSources.getHolderFromResource(
+                                    target, ISSDamageTypes.DRAGON_BREATH_POOL),
+                            this,
+                            getOwner());
         }
         DamageSources.ignoreNextKnockback(target);
         target.hurt(damageSource, getDamage());

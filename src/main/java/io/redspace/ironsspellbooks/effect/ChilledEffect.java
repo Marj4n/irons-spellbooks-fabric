@@ -12,11 +12,10 @@ public class ChilledEffect extends MagicMobEffect {
         super(mobEffectCategory, color);
     }
 
-@Override
+    @Override
     public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
         return true;
     }
-
 
     @Override
     public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
@@ -31,7 +30,8 @@ public class ChilledEffect extends MagicMobEffect {
             iceTombEntity.setLifetime(20 * 5);
             pLivingEntity.level().addFreshEntity(iceTombEntity);
             pLivingEntity.startRiding(iceTombEntity, true);
-            pLivingEntity.playSound(SoundRegistry.FROSTBITE_FREEZE.get(), 2, Utils.random.nextInt(9, 11) * .1f);
+            pLivingEntity.playSound(
+                    SoundRegistry.FROSTBITE_FREEZE.get(), 2, Utils.random.nextInt(9, 11) * .1f);
             pLivingEntity.removeEffect(this);
         }
     }

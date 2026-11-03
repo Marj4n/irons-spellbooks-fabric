@@ -21,8 +21,11 @@ import net.minecraft.util.Mth;
 
 public class GustRenderer extends EntityRenderer<GustCollider> {
 
-    public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "gust_model"), "main");
-    private static ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/trident_riptide.png");
+    public static final ModelLayerLocation MODEL_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "gust_model"), "main");
+    private static ResourceLocation TEXTURE =
+            IronsSpellbooks.id("textures/entity/trident_riptide.png");
 
     private final ModelPart body;
 
@@ -35,12 +38,21 @@ public class GustRenderer extends EntityRenderer<GustCollider> {
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-8, -16, -8, 16, 32, 16), PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "body",
+                CubeListBuilder.create().texOffs(0, 0).addBox(-8, -16, -8, 16, 32, 16),
+                PartPose.ZERO);
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
     @Override
-    public void render(GustCollider entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            GustCollider entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBoundingBox().getYsize() * .5f, 0);
         poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot() - 180.0F));
@@ -49,16 +61,17 @@ public class GustRenderer extends EntityRenderer<GustCollider> {
 
         float f = entity.tickCount + partialTicks;
         float scale = Mth.lerp(Mth.clamp(f / 6f, 0, 1), 1, 2.3f);
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
+        VertexConsumer consumer =
+                bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
         float alpha = 1f - f / 10f;
 
         for (int i = 0; i < 3; i++) {
             poseStack.mulPose(Axis.YP.rotationDegrees(f * 10));
             poseStack.scale(scale, scale, scale);
             poseStack.translate(0, scale - 1, 0);
-            this.body.render(poseStack, consumer, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, alpha);
+            this.body.render(
+                    poseStack, consumer, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, alpha);
         }
-
 
         poseStack.popPose();
 
@@ -69,5 +82,4 @@ public class GustRenderer extends EntityRenderer<GustCollider> {
     public ResourceLocation getTextureLocation(GustCollider entity) {
         return TEXTURE;
     }
-
 }

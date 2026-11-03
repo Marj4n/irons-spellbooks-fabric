@@ -8,7 +8,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.storage.WritableLevelData;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,11 +20,20 @@ import java.util.function.Supplier;
 
 @Mixin(Level.class)
 public class LevelMixin {
-    @Shadow
-    WorldBorder worldBorder;
+    @Shadow @Final @Mutable private WorldBorder worldBorder;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void noopWorldBorder(WritableLevelData levelData, ResourceKey dimension, RegistryAccess registryAccess, Holder dimensionTypeRegistration, Supplier profiler, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates, CallbackInfo ci) {
+    private void noopWorldBorder(
+            WritableLevelData levelData,
+            ResourceKey dimension,
+            RegistryAccess registryAccess,
+            Holder dimensionTypeRegistration,
+            Supplier profiler,
+            boolean isClientSide,
+            boolean isDebug,
+            long biomeZoomSeed,
+            int maxChainedNeighborUpdates,
+            CallbackInfo ci) {
         if (dimension != null && dimension.equals(PocketDimensionManager.POCKET_DIMENSION)) {
             worldBorder = new NoopWorldBorder();
         }

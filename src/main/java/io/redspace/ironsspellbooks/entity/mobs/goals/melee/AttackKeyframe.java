@@ -51,10 +51,13 @@ public class AttackKeyframe {
 
     @Override
     public String toString() {
-        return "AttackKeyframe{" +
-                "timeStamp=" + timeStamp +
-                ", lungeVector=" + lungeVector +
-                ", extraKnockback=" + extraKnockback +
-                '}';
+        return "AttackKeyframe{"
+                + "timeStamp="
+                + timeStamp
+                + ", lungeVector="
+                + lungeVector
+                + ", extraKnockback="
+                + extraKnockback
+                + '}';
     }
 }

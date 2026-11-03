@@ -4,7 +4,11 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 
 public class ExtendedKeyMapping extends KeyMapping {
-    public ExtendedKeyMapping(String description, final InputConstants.Type inputType, final int keyCode, String category) {
+    public ExtendedKeyMapping(
+            String description,
+            final InputConstants.Type inputType,
+            final int keyCode,
+            String category) {
         super(description, inputType, keyCode, category);
     }
 
@@ -12,6 +16,7 @@ public class ExtendedKeyMapping extends KeyMapping {
      * Stores the rising edge of pressing this key map
      */
     private boolean canBeConsumed;
+
     private boolean wasDown;
 
     @Override
@@ -31,7 +36,8 @@ public class ExtendedKeyMapping extends KeyMapping {
      */
     public boolean consume() {
         // Consume all keypresses available
-        while (consumeClick()) ;
+        while (consumeClick())
+            ;
         // If this is the first time we are consuming, return true and reset
         if (canBeConsumed) {
             canBeConsumed = false;

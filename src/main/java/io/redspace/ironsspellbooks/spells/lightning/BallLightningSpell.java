@@ -19,19 +19,24 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class BallLightningSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "ball_lightning");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "ball_lightning");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(1)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(1)
+                    .build();
 
     public BallLightningSpell() {
         this.manaCostPerLevel = 4;
@@ -57,19 +62,28 @@ public class BallLightningSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         BallLightning balllightning = new BallLightning(world, entity);
-        balllightning.setPos(entity.position().add(0, entity.getEyeHeight() - balllightning.getBoundingBox().getYsize() * .5f, 0));
+        balllightning.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight()
+                                        - balllightning.getBoundingBox().getYsize() * .5f,
+                                0));
         balllightning.shoot(entity.getLookAngle());
         balllightning.setDamage(getDamage(spellLevel, entity));
         world.addFreshEntity(balllightning);
-//        balllightning.setNoGravity(false);
+        //        balllightning.setNoGravity(false);
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
-
 
     private float getDamage(int spellLevel, LivingEntity entity) {
         return getSpellPower(spellLevel, entity) * 0.5f;
     }
-
 }

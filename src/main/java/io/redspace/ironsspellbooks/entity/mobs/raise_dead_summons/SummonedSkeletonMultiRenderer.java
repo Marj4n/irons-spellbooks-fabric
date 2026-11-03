@@ -13,24 +13,34 @@ import net.minecraft.world.entity.monster.AbstractSkeleton;
 
 public class SummonedSkeletonMultiRenderer extends HumanoidRenderer<SummonedSkeleton> {
     SkeletonRenderer vanillaRenderer;
-    public static final ResourceLocation TEXTURE_ALT = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/summoned_skeleton_alt.png");
+    public static final ResourceLocation TEXTURE_ALT =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID, "textures/entity/summoned_skeleton_alt.png");
 
     public SummonedSkeletonMultiRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new SummonedSkeletonModel());
-        vanillaRenderer = new SkeletonRenderer(pContext) {
-            @Override
-            public ResourceLocation getTextureLocation(AbstractSkeleton pEntity) {
-                return TEXTURE_ALT;
-            }
-        };
+        vanillaRenderer =
+                new SkeletonRenderer(pContext) {
+                    @Override
+                    public ResourceLocation getTextureLocation(AbstractSkeleton pEntity) {
+                        return TEXTURE_ALT;
+                    }
+                };
         vanillaRenderer.addLayer(new SpellTargetingLayer.Vanilla<>(vanillaRenderer));
     }
 
     @Override
-    public void render(SummonedSkeleton entity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(
+            SummonedSkeleton entity,
+            float pEntityYaw,
+            float pPartialTick,
+            PoseStack pPoseStack,
+            MultiBufferSource pBuffer,
+            int pPackedLight) {
         if (entity.isAnimatingRise())
             super.render(entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
         else
-            vanillaRenderer.render(entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
+            vanillaRenderer.render(
+                    entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
     }
 }

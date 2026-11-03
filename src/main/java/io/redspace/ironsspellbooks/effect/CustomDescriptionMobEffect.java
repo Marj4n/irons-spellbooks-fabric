@@ -15,10 +15,17 @@ public abstract class CustomDescriptionMobEffect extends MagicMobEffect {
         super(pCategory, pColor);
     }
 
-    public static void handleCustomPotionTooltip(ItemStack itemStack, List<Component> tooltipLines, boolean isAdvanced, MobEffectInstance mobEffectInstance, CustomDescriptionMobEffect customDescriptionMobEffect) {
+    public static void handleCustomPotionTooltip(
+            ItemStack itemStack,
+            List<Component> tooltipLines,
+            boolean isAdvanced,
+            MobEffectInstance mobEffectInstance,
+            CustomDescriptionMobEffect customDescriptionMobEffect) {
         var description = customDescriptionMobEffect.getDescriptionLine(mobEffectInstance);
 
-        var header = net.minecraft.network.chat.Component.translatable("potion.whenDrank").withStyle(ChatFormatting.DARK_PURPLE);
+        var header =
+                net.minecraft.network.chat.Component.translatable("potion.whenDrank")
+                        .withStyle(ChatFormatting.DARK_PURPLE);
         var newLines = new ArrayList<Component>();
         int i = TooltipsUtils.indexOfComponent(tooltipLines, "potion.whenDrank");
 
@@ -26,7 +33,10 @@ public abstract class CustomDescriptionMobEffect extends MagicMobEffect {
             newLines.add(net.minecraft.network.chat.Component.empty());
             newLines.add(header);
             newLines.add(description);
-            i = isAdvanced ? TooltipsUtils.indexOfAdvancedText(tooltipLines, itemStack) : tooltipLines.size();
+            i =
+                    isAdvanced
+                            ? TooltipsUtils.indexOfAdvancedText(tooltipLines, itemStack)
+                            : tooltipLines.size();
         } else {
             newLines.add(description);
             i++;

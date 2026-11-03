@@ -23,7 +23,8 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSusceptible/*, NoKnockbackProjectile*/ {
+public class FireflySwarmProjectile extends PathfinderMob
+        implements AntiMagicSusceptible /*, NoKnockbackProjectile*/ {
 
     public FireflySwarmProjectile(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -32,13 +33,13 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
         this.setNoGravity(true);
     }
 
-    public FireflySwarmProjectile(Level level, @Nullable Entity owner, @Nullable Entity target, float damage) {
+    public FireflySwarmProjectile(
+            Level level, @Nullable Entity owner, @Nullable Entity target, float damage) {
         this(EntityRegistry.FIREFLY_SWARM.get(), level);
         setOwner(owner);
         setTarget(target);
         this.damage = damage;
     }
-
 
     static final int maxLife = 10 * 20;
     public static final float radius = 2f;
@@ -65,7 +66,14 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
             for (int i = 0; i < 2; i++) {
                 var motion = Utils.getRandomVec3(.05f).add(this.getDeltaMovement());
                 var spawn = Utils.getRandomVec3(.25f);
-                level().addParticle(ParticleHelper.FIREFLY, getX() + spawn.x, getY() + this.getBbHeight() * .5f + spawn.z, getZ() + spawn.z, motion.x, motion.y, motion.z);
+                level().addParticle(
+                                ParticleHelper.FIREFLY,
+                                getX() + spawn.x,
+                                getY() + this.getBbHeight() * .5f + spawn.z,
+                                getZ() + spawn.z,
+                                motion.x,
+                                motion.y,
+                                motion.z);
             }
         }
         super.tick();
@@ -81,7 +89,7 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
         LivingEntity target = getTarget();
         if (target != null) {
             this.navigation.moveTo(target, 7);
-            //this.moveControl.setWantedPosition(target.getX(), target.getY(), target.getZ(), 5);
+            // this.moveControl.setWantedPosition(target.getX(), target.getY(), target.getZ(), 5);
         }
         if (this.tickCount % 8 == 0) {
             if (level().collidesWithSuffocatingBlock(this, this.getBoundingBox().move(0, -1, 0))) {
@@ -95,26 +103,39 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
         }
         if ((this.tickCount % 7) == 0) {
             float fade = 1 - Mth.clamp((tickCount - maxLife + 40) / (float) (maxLife), 0, 1f);
-            this.playSound(SoundRegistry.FIREFLY_SWARM_IDLE.get(), .25f * fade, .95f + Utils.random.nextFloat() * .1f);
+            this.playSound(
+                    SoundRegistry.FIREFLY_SWARM_IDLE.get(),
+                    .25f * fade,
+                    .95f + Utils.random.nextFloat() * .1f);
         }
         if (this.tickCount % 15 == 0) {
-            //Damage tick
+            // Damage tick
             float inflate = radius - this.getBbWidth() * .5f;
-            this.level().getEntities(this, this.getBoundingBox().inflate(inflate), this::canHitEntity).forEach(
-                    (entity) -> {
-                        if (canHitEntity(entity)) {
-                            boolean hit = DamageSources.applyDamage(entity, damage, SpellRegistry.FIREFLY_SWARM_SPELL.get().getDamageSource(this, getOwner()));
-                            if (hit) {
-                                this.playSound(SoundRegistry.FIREFLY_SWARM_ATTACK.get(), .75f, .9f + Utils.random.nextFloat() * .2f);
-                                if (target == null) {
-                                    setTarget(entity);
-                                } else if (target != entity) {
-                                    nextTarget = entity;
+            this.level()
+                    .getEntities(this, this.getBoundingBox().inflate(inflate), this::canHitEntity)
+                    .forEach(
+                            (entity) -> {
+                                if (canHitEntity(entity)) {
+                                    boolean hit =
+                                            DamageSources.applyDamage(
+                                                    entity,
+                                                    damage,
+                                                    SpellRegistry.FIREFLY_SWARM_SPELL
+                                                            .get()
+                                                            .getDamageSource(this, getOwner()));
+                                    if (hit) {
+                                        this.playSound(
+                                                SoundRegistry.FIREFLY_SWARM_ATTACK.get(),
+                                                .75f,
+                                                .9f + Utils.random.nextFloat() * .2f);
+                                        if (target == null) {
+                                            setTarget(entity);
+                                        } else if (target != entity) {
+                                            nextTarget = entity;
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                    }
-            );
+                            });
             if (getTarget() == null || getTarget().isDeadOrDying()) {
                 setTarget(nextTarget);
                 if (nextTarget != null && nextTarget.isRemoved()) {
@@ -132,7 +153,6 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
             return false;
         }
     }
-
 
     public void setOwner(@Nullable Entity owner) {
         if (owner != null) {

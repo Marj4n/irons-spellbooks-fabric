@@ -20,26 +20,27 @@ import net.minecraft.world.level.material.PushReaction;
 import static net.minecraft.world.level.block.PipeBlock.PROPERTY_BY_DIRECTION;
 
 public class VoidstoneBlock extends Block {
-//    public static final MapCodec<FenceBlock> CODEC = simpleCodec(FenceBlock::new);
+    //    public static final MapCodec<FenceBlock> CODEC = simpleCodec(FenceBlock::new);
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
     public static final BooleanProperty EAST = PipeBlock.EAST;
     public static final BooleanProperty SOUTH = PipeBlock.SOUTH;
     public static final BooleanProperty WEST = PipeBlock.WEST;
 
-//    @Override
-//    public MapCodec<FenceBlock> codec() {
-//        return CODEC;
-//    }
+    //    @Override
+    //    public MapCodec<FenceBlock> codec() {
+    //        return CODEC;
+    //    }
 
     public VoidstoneBlock() {
-        super(BlockBehaviour.Properties.of()
-                .strength(-1.0F, 3600000.8F)
-                .mapColor(MapColor.NONE)
-                .noLootTable()
-                .isValidSpawn(VoidstoneBlock::never)
-                .pushReaction(PushReaction.BLOCK)
-                .sound(SoundType.COPPER)
-                .lightLevel(state -> 9));
+        super(
+                BlockBehaviour.Properties.of()
+                        .strength(-1.0F, 3600000.8F)
+                        .mapColor(MapColor.NONE)
+                        .noLootTable()
+                        .isValidSpawn(VoidstoneBlock::never)
+                        .pushReaction(PushReaction.BLOCK)
+                        .sound(SoundType.COPPER)
+                        .lightLevel(state -> 9));
         this.registerDefaultState(
                 this.stateDefinition
                         .any()
@@ -52,9 +53,12 @@ public class VoidstoneBlock extends Block {
     public boolean connectsTo(BlockState state, Direction direction) {
         return state.is(BlockRegistry.VOIDSTONE.get());
     }
-    private static Boolean never(BlockState p_50779_, BlockGetter p_50780_, BlockPos p_50781_, EntityType<?> p_50782_) {
+
+    private static Boolean never(
+            BlockState p_50779_, BlockGetter p_50780_, BlockPos p_50781_, EntityType<?> p_50782_) {
         return (boolean) false;
     }
+
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockGetter blockgetter = context.getLevel();
@@ -80,13 +84,18 @@ public class VoidstoneBlock extends Block {
      * Note that this method should ideally consider only the specific direction passed in.
      */
     @Override
-    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState facingState,
+            LevelAccessor level,
+            BlockPos currentPos,
+            BlockPos facingPos) {
 
         return facing.getAxis().getPlane() == Direction.Plane.HORIZONTAL
                 ? state.setValue(
-                PROPERTY_BY_DIRECTION.get(facing),
-                this.connectsTo(facingState, facing.getOpposite())
-        )
+                        PROPERTY_BY_DIRECTION.get(facing),
+                        this.connectsTo(facingState, facing.getOpposite()))
                 : super.updateShape(state, facing, facingState, level, currentPos, facingPos);
     }
 

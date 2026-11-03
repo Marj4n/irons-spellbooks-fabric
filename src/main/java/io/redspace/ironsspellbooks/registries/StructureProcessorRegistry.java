@@ -9,19 +9,34 @@ import org.marj4n.irons_spellbooks.registry.DeferredRegistry;
 
 import java.util.function.Supplier;
 
-
 public class StructureProcessorRegistry {
 
-    public static final DeferredRegistry<StructureProcessorType<?>> PROCESSORS = DeferredRegistry.create(Registries.STRUCTURE_PROCESSOR, IronsSpellbooks.MODID);
+    public static final DeferredRegistry<StructureProcessorType<?>> PROCESSORS =
+            DeferredRegistry.create(Registries.STRUCTURE_PROCESSOR, IronsSpellbooks.MODID);
 
     public static void register() {
         PROCESSORS.register();
     }
 
-    public static final Supplier<StructureProcessorType<WeatherCopperProcessor>> WEATHER_COPPER = PROCESSORS.register("weather_copper", () -> () -> WeatherCopperProcessor.CODEC);
-    public static final Supplier<StructureProcessorType<DegradeSlabsStairsProcessor>> DEGRADE_SLABS_STAIRS = PROCESSORS.register("degrade_slabs_stairs", () -> () -> DegradeSlabsStairsProcessor.CODEC);
-    public static final Supplier<StructureProcessorType<StructureFoundationProcessor>> STRUCTURE_FOUNDATION_PROCESSOR = PROCESSORS.register("foundation", () -> () -> StructureFoundationProcessor.CODEC);
-    public static final Supplier<StructureProcessorType<HandleLitBlocksProcessor>> HANDLE_LIT_BLOCKS_PROCESSOR = PROCESSORS.register("handle_lit_blocks", () -> () -> HandleLitBlocksProcessor.CODEC);
-    public static final Supplier<StructureProcessorType<ClearPortalFrameDataProcessor>> CLEAR_PORTAL_FRAME_DATA = PROCESSORS.register("clear_portal_frame_data", () -> () -> ClearPortalFrameDataProcessor.CODEC);
-    public static final Supplier<StructureProcessorType<ClearVaultDataProcessor>> CLEAR_VAULT_DATA = PROCESSORS.register("clear_vault_data", () -> () -> ClearVaultDataProcessor.CODEC);
+    public static final Supplier<StructureProcessorType<WeatherCopperProcessor>> WEATHER_COPPER =
+            PROCESSORS.register("weather_copper", () -> () -> WeatherCopperProcessor.CODEC);
+    public static final Supplier<StructureProcessorType<DegradeSlabsStairsProcessor>>
+            DEGRADE_SLABS_STAIRS =
+                    PROCESSORS.register(
+                            "degrade_slabs_stairs", () -> () -> DegradeSlabsStairsProcessor.CODEC);
+    public static final Supplier<StructureProcessorType<StructureFoundationProcessor>>
+            STRUCTURE_FOUNDATION_PROCESSOR =
+                    PROCESSORS.register(
+                            "foundation", () -> () -> StructureFoundationProcessor.CODEC);
+    public static final Supplier<StructureProcessorType<HandleLitBlocksProcessor>>
+            HANDLE_LIT_BLOCKS_PROCESSOR =
+                    PROCESSORS.register(
+                            "handle_lit_blocks", () -> () -> HandleLitBlocksProcessor.CODEC);
+    public static final Supplier<StructureProcessorType<ClearPortalFrameDataProcessor>>
+            CLEAR_PORTAL_FRAME_DATA =
+                    PROCESSORS.register(
+                            "clear_portal_frame_data",
+                            () -> () -> ClearPortalFrameDataProcessor.CODEC);
+    public static final Supplier<StructureProcessorType<ClearVaultDataProcessor>> CLEAR_VAULT_DATA =
+            PROCESSORS.register("clear_vault_data", () -> () -> ClearVaultDataProcessor.CODEC);
 }

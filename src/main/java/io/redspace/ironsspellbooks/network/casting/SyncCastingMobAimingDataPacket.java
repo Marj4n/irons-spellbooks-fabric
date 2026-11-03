@@ -30,7 +30,8 @@ public class SyncCastingMobAimingDataPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> ClientSpellCastHelper.handleCastingMobAimingData(entityId, aimingData));
+        ctx.enqueueWork(
+                () -> ClientSpellCastHelper.handleCastingMobAimingData(entityId, aimingData));
         return true;
     }
 }

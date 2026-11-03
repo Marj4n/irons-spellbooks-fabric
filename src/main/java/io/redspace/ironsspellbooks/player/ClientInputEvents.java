@@ -27,7 +27,8 @@ public final class ClientInputEvents {
     private static boolean showExpandedTooltip;
 
     public static boolean clientMouseScrolled(double deltaX, double deltaY) {
-        if (MinecraftInstanceHelper.getPlayer() == null || Minecraft.getInstance().screen != null) return false;
+        if (MinecraftInstanceHelper.getPlayer() == null || Minecraft.getInstance().screen != null)
+            return false;
         return SPELLBAR_SCROLL_MODIFIER_KEYMAP.isDown()
                 && handleSpellBarScrollModifier(Mth.clamp((int) deltaY, -1, 1));
     }
@@ -45,9 +46,11 @@ public final class ClientInputEvents {
         if (spellSelectionManager.getSpellCount() <= 0) {
             return false;
         }
-        List<SpellSelectionManager.SelectionOption> spellbookSpells = spellSelectionManager.getAllSpells();
+        List<SpellSelectionManager.SelectionOption> spellbookSpells =
+                spellSelectionManager.getAllSpells();
         int spellCount = spellbookSpells.size();
-        int scrollIndex = (Mth.clamp(spellSelectionManager.getSelectionIndex(), 0, spellCount) - direction);
+        int scrollIndex =
+                (Mth.clamp(spellSelectionManager.getSelectionIndex(), 0, spellCount) - direction);
         int selectedIndex = (Mth.clamp(scrollIndex, -1, spellCount + 1) + spellCount) % spellCount;
         spellSelectionManager.makeSelection(selectedIndex);
         return true;
@@ -117,9 +120,11 @@ public final class ClientInputEvents {
     /// Extracted for modularity without assuming keyboard/mouse specific input,
     /// allowing other mods to provide controller or alternative input sources.
     private static void updateShowExpandedTooltip() {
-        /// Uses [KeyMapping#getDefaultKey()] instead of [KeyMapping#getKey()] to always use "Left Shift"
+        /// Uses [KeyMapping#getDefaultKey()] instead of [KeyMapping#getKey()] to always use "Left
+        // Shift"
         /// without respecting the current bound input to "Sneak"
-        showExpandedTooltip = isKeyboardMouseInputDown(Minecraft.getInstance().options.keyShift.getDefaultKey());
+        showExpandedTooltip =
+                isKeyboardMouseInputDown(Minecraft.getInstance().options.keyShift.getDefaultKey());
     }
 
     /// Tracks the previous [KeyMapping#isDown()] state for [net.minecraft.client.Options#keyUse].
@@ -146,13 +151,18 @@ public final class ClientInputEvents {
     }
 
     public static boolean isUseKeyDown() {
-        return isKeyboardMouseInputDown(net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.getBoundKeyOf(Minecraft.getInstance().options.keyUse));
+        return isKeyboardMouseInputDown(
+                net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.getBoundKeyOf(
+                        Minecraft.getInstance().options.keyUse));
     }
 
-    /// Returns whether the provided key or mouse button is physically down, regardless of Minecraft internals,
-    /// so this may report `true` when down even when a screen is open, unlike [KeyMapping#isDown()].
+    /// Returns whether the provided key or mouse button is physically down, regardless of Minecraft
+    // internals,
+    /// so this may report `true` when down even when a screen is open, unlike
+    // [KeyMapping#isDown()].
     ///
-    /// **Important:** Consumers should always consider using [KeyMapping#isDown()] over this API, as it does not
+    /// **Important:** Consumers should always consider using [KeyMapping#isDown()] over this API,
+    // as it does not
     /// work with other input systems, and is not a vanilla supported API.
     /// This is only needed in the case of GUI,
     /// since [KeyMapping#isDown()] will always report `false` when any screen is open.

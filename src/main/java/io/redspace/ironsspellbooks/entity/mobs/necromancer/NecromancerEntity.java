@@ -33,22 +33,29 @@ import java.util.List;
 
 public class NecromancerEntity extends AbstractSpellCastingMob implements Enemy {
 
-    public NecromancerEntity(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
+    public NecromancerEntity(
+            EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         xpReward = 15;
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(4, new WizardAttackGoal(this, 1.25f, 35, 80)
-                .setSpells(
-                        List.of(SpellRegistry.FANG_STRIKE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.MAGIC_MISSILE_SPELL.get()),
-                        List.of(SpellRegistry.FANG_WARD_SPELL.get()),
-                        List.of(),
-                        List.of(SpellRegistry.BLIGHT_SPELL.get(), SpellRegistry.ROOT_SPELL.get())
-                )
-                .setSingleUseSpell(SpellRegistry.RAISE_DEAD_SPELL.get(), 80, 350, 4, 5)
-                .setDrinksPotions());
+        this.goalSelector.addGoal(
+                4,
+                new WizardAttackGoal(this, 1.25f, 35, 80)
+                        .setSpells(
+                                List.of(
+                                        SpellRegistry.FANG_STRIKE_SPELL.get(),
+                                        SpellRegistry.ICICLE_SPELL.get(),
+                                        SpellRegistry.MAGIC_MISSILE_SPELL.get()),
+                                List.of(SpellRegistry.FANG_WARD_SPELL.get()),
+                                List.of(),
+                                List.of(
+                                        SpellRegistry.BLIGHT_SPELL.get(),
+                                        SpellRegistry.ROOT_SPELL.get()))
+                        .setSingleUseSpell(SpellRegistry.RAISE_DEAD_SPELL.get(), 80, 350, 4, 5)
+                        .setDrinksPotions());
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
@@ -56,11 +63,15 @@ public class NecromancerEntity extends AbstractSpellCastingMob implements Enemy 
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
+        this.targetSelector.addGoal(
+                3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+        this.targetSelector.addGoal(
+                3,
+                new NearestAttackableTargetGoal<>(
+                        this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
 
-        //this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        //this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        // this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        // this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     }
 
     protected SoundEvent getAmbientSound() {
@@ -80,18 +91,25 @@ public class NecromancerEntity extends AbstractSpellCastingMob implements Enemy 
     }
 
     @Override
-        public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         RandomSource randomsource = Utils.random;
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(
+            RandomSource pRandom, DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemRegistry.TARNISHED_CROWN.get()));
         this.setDropChance(EquipmentSlot.HEAD, 0.15f);
-//        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemRegistry.WANDERING_MAGICIAN_ROBE.get()));
-//        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
+        //        this.setItemSlot(EquipmentSlot.CHEST, new
+        // ItemStack(ItemRegistry.WANDERING_MAGICIAN_ROBE.get()));
+        //        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
     }
 
     public static AttributeSupplier.Builder prepareAttributes() {

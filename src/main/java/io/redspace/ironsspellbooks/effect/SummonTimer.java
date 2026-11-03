@@ -13,7 +13,9 @@ public class SummonTimer extends MobEffect implements IMobEffectEndCallback {
 
     @Override
     public void onEffectRemoved(LivingEntity pLivingEntity, int pAmplifier) {
-        if (pLivingEntity instanceof IMagicSummon summon && !pLivingEntity.isDeadOrDying() && !pLivingEntity.isRemoved()) {
+        if (pLivingEntity instanceof IMagicSummon summon
+                && !pLivingEntity.isDeadOrDying()
+                && !pLivingEntity.isRemoved()) {
             summon.onUnSummon();
         }
     }

@@ -29,7 +29,8 @@ import java.util.List;
 
 public class ArchevokerEntity extends AbstractSpellCastingMob implements Enemy {
 
-    public ArchevokerEntity(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
+    public ArchevokerEntity(
+            EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         xpReward = 25;
     }
@@ -37,39 +38,54 @@ public class ArchevokerEntity extends AbstractSpellCastingMob implements Enemy {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SpellBarrageGoal(this, SpellRegistry.SUMMON_VEX_SPELL.get(), 1, 3, 100, 260, 1));
+        this.goalSelector.addGoal(
+                1,
+                new SpellBarrageGoal(
+                        this, SpellRegistry.SUMMON_VEX_SPELL.get(), 1, 3, 100, 260, 1));
         this.goalSelector.addGoal(1, new GustDefenseGoal(this));
-        this.goalSelector.addGoal(2, new WizardAttackGoal(this, 1.5f, 30, 80)
-                .setSpells(
-                        List.of(SpellRegistry.FANG_STRIKE_SPELL.get(), SpellRegistry.FIRECRACKER_SPELL.get()),
-                        List.of(SpellRegistry.FANG_WARD_SPELL.get(), SpellRegistry.SHIELD_SPELL.get()),
-                        List.of(),
-                        List.of())
-                .setSpellQuality(.4f, .6f)
-                .setSingleUseSpell(SpellRegistry.INVISIBILITY_SPELL.get(), 40, 80, 5, 5)
-                .setDrinksPotions());
+        this.goalSelector.addGoal(
+                2,
+                new WizardAttackGoal(this, 1.5f, 30, 80)
+                        .setSpells(
+                                List.of(
+                                        SpellRegistry.FANG_STRIKE_SPELL.get(),
+                                        SpellRegistry.FIRECRACKER_SPELL.get()),
+                                List.of(
+                                        SpellRegistry.FANG_WARD_SPELL.get(),
+                                        SpellRegistry.SHIELD_SPELL.get()),
+                                List.of(),
+                                List.of())
+                        .setSpellQuality(.4f, .6f)
+                        .setSingleUseSpell(SpellRegistry.INVISIBILITY_SPELL.get(), 40, 80, 5, 5)
+                        .setDrinksPotions());
         this.goalSelector.addGoal(3, new PatrolNearLocationGoal(this, 30, .75f));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new WizardRecoverGoal(this));
 
-        //this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        //this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        // this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        // this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-
     @Override
-        public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         RandomSource randomsource = Utils.random;
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(
+            RandomSource pRandom, DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ItemRegistry.ARCHEVOKER_HELMET.get()));
-        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemRegistry.ARCHEVOKER_CHESTPLATE.get()));
+        this.setItemSlot(
+                EquipmentSlot.CHEST, new ItemStack(ItemRegistry.ARCHEVOKER_CHESTPLATE.get()));
         this.setDropChance(EquipmentSlot.HEAD, 0.0F);
         this.setDropChance(EquipmentSlot.CHEST, 0.0F);
     }

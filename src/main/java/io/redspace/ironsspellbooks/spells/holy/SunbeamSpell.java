@@ -32,16 +32,18 @@ public class SunbeamSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(20)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(20)
+                    .build();
 
     public SunbeamSpell() {
         this.manaCostPerLevel = 10;
@@ -67,28 +69,40 @@ public class SunbeamSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .5f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 spawn = null;
         SunbeamEntity sunbeam = new SunbeamEntity(level);
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             spawn = castTargetingData.getTargetPosition((ServerLevel) level);
             sunbeam.setTarget(castTargetingData.getTarget((ServerLevel) level));
         }
         if (spawn == null) {
-            HitResult raycast = RaycastBuilder.begin(level, entity)
-                    .range(48)
-                    .checkForBlocks(true)
-                    .build();
+            HitResult raycast =
+                    RaycastBuilder.begin(level, entity).range(48).checkForBlocks(true).build();
             if (raycast.getType() == HitResult.Type.ENTITY) {
                 spawn = ((EntityHitResult) raycast).getEntity().position();
             } else {
-                spawn = Utils.moveToRelativeGroundLevel(level, raycast.getLocation().subtract(entity.getForward().normalize()).add(0, 2, 0), 3, 18);
+                spawn =
+                        Utils.moveToRelativeGroundLevel(
+                                level,
+                                raycast.getLocation()
+                                        .subtract(entity.getForward().normalize())
+                                        .add(0, 2, 0),
+                                3,
+                                18);
             }
         }
 
@@ -96,11 +110,16 @@ public class SunbeamSpell extends AbstractSpell {
         sunbeam.moveTo(spawn);
         sunbeam.setDamage(getDamage(spellLevel, entity));
         level.addFreshEntity(sunbeam);
-        level.playSound(null, sunbeam.blockPosition(), SoundRegistry.SUNBEAM_WINDUP.get(), SoundSource.NEUTRAL, 3.5f, 1);
+        level.playSound(
+                null,
+                sunbeam.blockPosition(),
+                SoundRegistry.SUNBEAM_WINDUP.get(),
+                SoundSource.NEUTRAL,
+                3.5f,
+                1);
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
-
 
     private float getDamage(int spellLevel, LivingEntity entity) {
         return this.getSpellPower(spellLevel, entity) * .5f;

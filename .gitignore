@@ -5,3 +5,8 @@
 /.idea/
 *.iml
 .DS_Store
+*.log
+/runs/
+/common/build/
+/fabric/build/
+/forge/build/

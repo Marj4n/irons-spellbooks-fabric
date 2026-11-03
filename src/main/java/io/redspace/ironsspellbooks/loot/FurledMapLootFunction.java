@@ -35,16 +35,23 @@ public class FurledMapLootFunction extends LootItemConditionalFunction {
     private final String destination, translation;
     private final Optional<String> dimension;
 
+    //    public static final MapCodec<FurledMapLootFunction> CODEC =
+    // RecordCodecBuilder.mapCodec(builder -> commonFields(builder).and(
+    //            builder.group(
+    //
+    // Codec.STRING.fieldOf("destination").forGetter(FurledMapLootFunction::getDestination),
+    //
+    // Codec.STRING.fieldOf("description_translation").forGetter(FurledMapLootFunction::getTranslation),
+    //
+    // Codec.STRING.optionalFieldOf("dimension").forGetter(FurledMapLootFunction::getDimension)
+    //            )
+    //    ).apply(builder, FurledMapLootFunction::new));
 
-//    public static final MapCodec<FurledMapLootFunction> CODEC = RecordCodecBuilder.mapCodec(builder -> commonFields(builder).and(
-//            builder.group(
-//                    Codec.STRING.fieldOf("destination").forGetter(FurledMapLootFunction::getDestination),
-//                    Codec.STRING.fieldOf("description_translation").forGetter(FurledMapLootFunction::getTranslation),
-//                    Codec.STRING.optionalFieldOf("dimension").forGetter(FurledMapLootFunction::getDimension)
-//            )
-//    ).apply(builder, FurledMapLootFunction::new));
-
-    protected FurledMapLootFunction(LootItemCondition[] lootConditions, String destination, String translation, Optional<String> dimension) {
+    protected FurledMapLootFunction(
+            LootItemCondition[] lootConditions,
+            String destination,
+            String translation,
+            Optional<String> dimension) {
         super(lootConditions);
         this.destination = destination;
         this.translation = translation;
@@ -54,11 +61,18 @@ public class FurledMapLootFunction extends LootItemConditionalFunction {
     @Override
     protected ItemStack run(ItemStack itemStack, LootContext lootContext) {
         if (itemStack.getItem() instanceof FurledMapItem) {
-            //todo: ancient map support
+            // todo: ancient map support
             if (dimension.isPresent()) {
-                return FurledMapItem.of(new ResourceLocation(destination), ResourceKey.create(Registries.DIMENSION, new ResourceLocation(dimension.get())), Component.translatable(translation));
+                return FurledMapItem.of(
+                        new ResourceLocation(destination),
+                        ResourceKey.create(
+                                Registries.DIMENSION, new ResourceLocation(dimension.get())),
+                        Component.translatable(translation));
             } else {
-                return FurledMapItem.of(new ResourceLocation(destination), FurledMapItem.OVERWORLD, Component.translatable(translation));
+                return FurledMapItem.of(
+                        new ResourceLocation(destination),
+                        FurledMapItem.OVERWORLD,
+                        Component.translatable(translation));
             }
         }
         return itemStack;
@@ -69,14 +83,21 @@ public class FurledMapLootFunction extends LootItemConditionalFunction {
         return LootRegistry.SET_FURLED_MAP_FUNCTION.get();
     }
 
-    public static class Serializer extends LootItemConditionalFunction.Serializer<FurledMapLootFunction> {
-        public void serialize(JsonObject json, FurledMapLootFunction scrollFunction, JsonSerializationContext jsonDeserializationContext) {
+    public static class Serializer
+            extends LootItemConditionalFunction.Serializer<FurledMapLootFunction> {
+        public void serialize(
+                JsonObject json,
+                FurledMapLootFunction scrollFunction,
+                JsonSerializationContext jsonDeserializationContext) {
             super.serialize(json, scrollFunction, jsonDeserializationContext);
             json.addProperty("destination", scrollFunction.destination);
             json.addProperty("translation", scrollFunction.translation);
         }
 
-        public FurledMapLootFunction deserialize(JsonObject json, JsonDeserializationContext jsonDeserializationContext, LootItemCondition[] lootConditions) {
+        public FurledMapLootFunction deserialize(
+                JsonObject json,
+                JsonDeserializationContext jsonDeserializationContext,
+                LootItemCondition[] lootConditions) {
             if (!GsonHelper.isValidNode(json, "destination")) {
                 throw new JsonSyntaxException("set_furled_map missing key: destination!");
             } else if (!GsonHelper.isValidNode(json, "description_translation")) {
@@ -86,7 +107,11 @@ public class FurledMapLootFunction extends LootItemConditionalFunction {
                 if (GsonHelper.isValidNode(json, "dimension")) {
                     dimension = Optional.of(GsonHelper.getAsString(json, "dimension"));
                 }
-                return new FurledMapLootFunction(lootConditions, GsonHelper.getAsString(json, "destination"), GsonHelper.getAsString(json, "description_translation"), dimension);
+                return new FurledMapLootFunction(
+                        lootConditions,
+                        GsonHelper.getAsString(json, "destination"),
+                        GsonHelper.getAsString(json, "description_translation"),
+                        dimension);
             }
         }
     }

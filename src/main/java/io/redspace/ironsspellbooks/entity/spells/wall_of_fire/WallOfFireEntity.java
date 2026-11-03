@@ -23,7 +23,6 @@ import net.minecraft.world.phys.Vec3;
 import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,31 +31,28 @@ import java.util.UUID;
 public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdditionalSpawnData {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
+
     protected ShieldPart[] subEntities;
     protected List<Vec3> partPositions = new ArrayList<>();
     protected List<Vec3> anchorPoints = new ArrayList<>();
 
-    @Nullable
-    private UUID ownerUUID;
-    @Nullable
-    private Entity cachedOwner;
+    @Nullable private UUID ownerUUID;
+    @Nullable private Entity cachedOwner;
     protected float damage;
 
     protected int lifetime = 12 * 20;
 
     public WallOfFireEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-        //Ironsspellbooks.logger.debug("WallOfFire.attempting to create sub entities");
+        // Ironsspellbooks.logger.debug("WallOfFire.attempting to create sub entities");
         subEntities = new ShieldPart[0];
-
     }
 
     @Override
-    public void takeDamage(DamageSource source, float amount, @Nullable Vec3 location) {
-
-    }
+    public void takeDamage(DamageSource source, float amount, @Nullable Vec3 location) {}
 
     public WallOfFireEntity(Level level, Entity owner, List<Vec3> anchors, float damage) {
         this(EntityRegistry.WALL_OF_FIRE_ENTITY.get(), level);
@@ -86,13 +82,34 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
             if (level().isClientSide && i < subEntitiesLength - 1) {
                 int count = this.random.nextIntBetweenInclusive(1, 2);
                 for (int j = 0; j < count; j++) {
-                    Vec3 offset = partPositions.get(i + 1).subtract(pos).scale(Utils.random.nextFloat()).add(Utils.getRandomVec3(.1));
-                    level().addParticle(ParticleHelper.FIRE, pos.x + offset.x, pos.y + Utils.random.nextFloat() * .25 + .1, pos.z + offset.z, 0, Math.random() * .25 + 0.05, 0);
+                    Vec3 offset =
+                            partPositions
+                                    .get(i + 1)
+                                    .subtract(pos)
+                                    .scale(Utils.random.nextFloat())
+                                    .add(Utils.getRandomVec3(.1));
+                    level().addParticle(
+                                    ParticleHelper.FIRE,
+                                    pos.x + offset.x,
+                                    pos.y + Utils.random.nextFloat() * .25 + .1,
+                                    pos.z + offset.z,
+                                    0,
+                                    Math.random() * .25 + 0.05,
+                                    0);
                 }
             } else {
-                for (LivingEntity livingentity : this.level().getEntitiesOfClass(LivingEntity.class, subEntity.getBoundingBox().inflate(0.2D, 0.0D, 0.2D))) {
+                for (LivingEntity livingentity :
+                        this.level()
+                                .getEntitiesOfClass(
+                                        LivingEntity.class,
+                                        subEntity.getBoundingBox().inflate(0.2D, 0.0D, 0.2D))) {
                     if (livingentity != getOwner()) {
-                        DamageSources.applyDamage(livingentity, damage, SpellRegistry.WALL_OF_FIRE_SPELL.get().getDamageSource(this, getOwner()));
+                        DamageSources.applyDamage(
+                                livingentity,
+                                damage,
+                                SpellRegistry.WALL_OF_FIRE_SPELL
+                                        .get()
+                                        .getDamageSource(this, getOwner()));
                     }
                 }
             }
@@ -104,44 +121,48 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
 
     @Override
     public void createShield() {
-        //Ironsspellbooks.logger.debug("Attempting to create shield, achor points length: {}", anchorPoints.size());
+        // Ironsspellbooks.logger.debug("Attempting to create shield, achor points length: {}",
+        // anchorPoints.size());
         float height = 3;
         float step = .8f;
         List<ShieldPart> entitiesList = new ArrayList<>();
-        //Ironsspellbooks.logger.debug("WallOfFire:Creating shield");
+        // Ironsspellbooks.logger.debug("WallOfFire:Creating shield");
         for (int i = 0; i < anchorPoints.size() - 1; i++) {
             Vec3 start = anchorPoints.get(i);
             Vec3 end = anchorPoints.get(i + 1);
             Vec3 dirVec = end.subtract(start).normalize().scale(step);
             int steps = (int) ((start.distanceTo(end) + .5) / step);
             for (int currentStep = 0; currentStep < steps; currentStep++) {
-                //MagicManager.spawnParticles(level, ParticleTypes.DRAGON_BREATH, start.x + dirVec.x * x, start.y + dirVec.y * x, start.z + dirVec.z * x, 1, 0, 0, 0, 0, true);
-                ShieldPart part = new ShieldPart(this, "part" + i * steps + currentStep, .55f, height, false);
+                // MagicManager.spawnParticles(level, ParticleTypes.DRAGON_BREATH, start.x +
+                // dirVec.x * x, start.y + dirVec.y * x, start.z + dirVec.z * x, 1, 0, 0, 0, 0,
+                // true);
+                ShieldPart part =
+                        new ShieldPart(this, "part" + i * steps + currentStep, .55f, height, false);
                 double x = start.x + dirVec.x * currentStep;
                 double y = start.y + dirVec.y * currentStep;
                 double z = start.z + dirVec.z * currentStep;
-                double groundY = Utils.moveToRelativeGroundLevel(level(), new Vec3(x, y, z), 4, 4).y;
+                double groundY =
+                        Utils.moveToRelativeGroundLevel(level(), new Vec3(x, y, z), 4, 4).y;
                 Vec3 pos = new Vec3(x, groundY, z);
 
                 partPositions.add(pos);
-                //Ironsspellbooks.logger.debug("WallOfFire:Creating shield: new sub entity {}", pos);
+                // Ironsspellbooks.logger.debug("WallOfFire:Creating shield: new sub entity {}",
+                // pos);
                 entitiesList.add(part);
             }
-
         }
-        //subEntities = new ShieldPart[entitiesList.size()];
+        // subEntities = new ShieldPart[entitiesList.size()];
         subEntities = entitiesList.toArray(subEntities);
-        //Ironsspellbooks.logger.debug("WallOfFire.createShield (array length: {}, real length: {}),", subEntities.length, entitiesList.size());
+        // Ironsspellbooks.logger.debug("WallOfFire.createShield (array length: {}, real length:
+        // {}),", subEntities.length, entitiesList.size());
 
     }
-
 
     public void setOwner(@Nullable Entity pOwner) {
         if (pOwner != null) {
             this.ownerUUID = pOwner.getUUID();
             this.cachedOwner = pOwner;
         }
-
     }
 
     @Nullable
@@ -168,7 +189,7 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
         }
         compoundTag.putInt("lifetime", lifetime);
 
-        //TODO: use castData
+        // TODO: use castData
         ListTag anchors = new ListTag();
         for (Vec3 vec : anchorPoints) {
             CompoundTag anchor = new CompoundTag();
@@ -186,28 +207,30 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
         if (compoundTag.hasUUID("Owner")) {
             this.ownerUUID = compoundTag.getUUID("Owner");
         }
-        if (compoundTag.contains("lifetime"))
-            this.lifetime = compoundTag.getInt("lifetime");
+        if (compoundTag.contains("lifetime")) this.lifetime = compoundTag.getInt("lifetime");
 
-        //9 is list tag id
-        //TODO: use castData
+        // 9 is list tag id
+        // TODO: use castData
         anchorPoints = new ArrayList<>();
         if (compoundTag.contains("Anchors", 9)) {
             ListTag anchors = (ListTag) compoundTag.get("Anchors");
             for (Tag tag : anchors) {
                 if (tag instanceof CompoundTag anchor) {
-                    anchorPoints.add(new Vec3(anchor.getDouble("x"), anchor.getDouble("y"), anchor.getDouble("z")));
+                    anchorPoints.add(
+                            new Vec3(
+                                    anchor.getDouble("x"),
+                                    anchor.getDouble("y"),
+                                    anchor.getDouble("z")));
                 }
             }
         }
         super.readAdditionalSaveData(compoundTag);
-
     }
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buffer) {
-        //Ironsspellbooks.logger.debug("WallOfFire.writeSpawnData");
-        //TODO: use castData
+        // Ironsspellbooks.logger.debug("WallOfFire.writeSpawnData");
+        // TODO: use castData
         buffer.writeInt(anchorPoints.size());
         for (Vec3 vec : anchorPoints) {
             buffer.writeFloat((float) vec.x);
@@ -218,15 +241,17 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
 
     @Override
     public void readSpawnData(FriendlyByteBuf additionalData) {
-        //Ironsspellbooks.logger.debug("WallOfFire.readSpawnData");
-        //TODO: use castData
+        // Ironsspellbooks.logger.debug("WallOfFire.readSpawnData");
+        // TODO: use castData
         anchorPoints = new ArrayList<>();
         int length = additionalData.readInt();
         for (int i = 0; i < length; i++) {
-            anchorPoints.add(new Vec3(additionalData.readFloat(), additionalData.readFloat(), additionalData.readFloat()));
+            anchorPoints.add(
+                    new Vec3(
+                            additionalData.readFloat(),
+                            additionalData.readFloat(),
+                            additionalData.readFloat()));
         }
         createShield();
     }
-
-
 }

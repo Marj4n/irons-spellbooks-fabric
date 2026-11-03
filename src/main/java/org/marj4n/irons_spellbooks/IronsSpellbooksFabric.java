@@ -41,9 +41,12 @@ public final class IronsSpellbooksFabric implements ModInitializer {
         ItemRegistry.register();
         MenuRegistry.register();
         net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlockEntity(
-                (tile, side) -> tile.fabricFluidStorage, BlockRegistry.ALCHEMIST_CAULDRON_TILE.get());
+                (tile, side) -> tile.fabricFluidStorage,
+                BlockRegistry.ALCHEMIST_CAULDRON_TILE.get());
         net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.registerForBlockEntity(
-                (tile, side) -> net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage.of(tile.getItemHandler(), side),
+                (tile, side) ->
+                        net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage.of(
+                                tile.getItemHandler(), side),
                 BlockRegistry.SCROLL_FORGE_TILE.get());
         EntityRegistry.register();
         MobEffectRegistry.register();
@@ -61,10 +64,15 @@ public final class IronsSpellbooksFabric implements ModInitializer {
 
         CommonSetup.registerEntityAttributes();
         CommonSetup.registerSpawnPlacements();
-        ModConfigEvents.loading(IronsSpellbooks.MODID).register(CommonSetup::onModConfigLoadingEvent);
-        ModConfigEvents.reloading(IronsSpellbooks.MODID).register(CommonSetup::onModConfigReloadingEvent);
-        ForgeConfigRegistry.INSTANCE.register(IronsSpellbooks.MODID, ModConfig.Type.SERVER,
-                ServerConfigs.SPEC, "irons_spellbooks-server.toml");
+        ModConfigEvents.loading(IronsSpellbooks.MODID)
+                .register(CommonSetup::onModConfigLoadingEvent);
+        ModConfigEvents.reloading(IronsSpellbooks.MODID)
+                .register(CommonSetup::onModConfigReloadingEvent);
+        ForgeConfigRegistry.INSTANCE.register(
+                IronsSpellbooks.MODID,
+                ModConfig.Type.SERVER,
+                ServerConfigs.SPEC,
+                "irons_spellbooks-server.toml");
 
         PacketDistributor.register();
         io.redspace.ironsspellbooks.setup.ModSetup.init();
@@ -72,19 +80,22 @@ public final class IronsSpellbooksFabric implements ModInitializer {
         net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents.CUSTOM.register(
                 (entity, tick) -> entity.hasEffect(MobEffectRegistry.ANGEL_WINGS.get()));
         org.marj4n.irons_spellbooks.events.ServerRuntimeHooks.register();
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(SpellConfigManager.INSTANCE);
+        ResourceManagerHelper.get(PackType.SERVER_DATA)
+                .registerReloadListener(SpellConfigManager.INSTANCE);
         CommandRegistrationCallback.EVENT.register(CommandRegistry::onCommandsRegister);
         ServerTickEvents.END_WORLD_TICK.register(MagicEvents::onWorldTick);
         ServerLifecycleEvents.SERVER_STARTING.register(VillageAddition::addNewVillageBuilding);
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            IronsSpellbooks.MCS = server;
-            IronsSpellbooks.OVERWORLD = server.overworld();
-            IronsDataStorage.init(server.overworld().getDataStorage());
-        });
+        ServerLifecycleEvents.SERVER_STARTED.register(
+                server -> {
+                    IronsSpellbooks.MCS = server;
+                    IronsSpellbooks.OVERWORLD = server.overworld();
+                    IronsDataStorage.init(server.overworld().getDataStorage());
+                });
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(SpellConfigManager::onDatapackSync);
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
-            IronsSpellbooks.MCS = null;
-            IronsSpellbooks.OVERWORLD = null;
-        });
+        ServerLifecycleEvents.SERVER_STOPPED.register(
+                server -> {
+                    IronsSpellbooks.MCS = null;
+                    IronsSpellbooks.OVERWORLD = null;
+                });
     }
 }

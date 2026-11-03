@@ -7,5 +7,4 @@ public class AngelWingsEffect extends MagicMobEffect implements ISyncedMobEffect
     public AngelWingsEffect(MobEffectCategory mobEffectCategory, int color) {
         super(mobEffectCategory, color);
     }
-
 }

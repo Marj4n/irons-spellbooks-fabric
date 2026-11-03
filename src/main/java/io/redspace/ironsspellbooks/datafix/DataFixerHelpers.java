@@ -1,25 +1,26 @@
-//package io.redspace.ironsspellbooks.datafix;
+// package io.redspace.ironsspellbooks.datafix;
 //
-//import com.google.common.collect.ImmutableMap;
-//import io.redspace.ironsspellbooks.datafix.fixers.*;
-//import io.redspace.ironsspellbooks.spells.blood.*;
-//import io.redspace.ironsspellbooks.spells.eldritch.AbyssalShroudSpell;
-//import io.redspace.ironsspellbooks.spells.eldritch.SculkTentaclesSpell;
-//import io.redspace.ironsspellbooks.spells.ender.*;
-//import io.redspace.ironsspellbooks.spells.evocation.*;
-//import io.redspace.ironsspellbooks.spells.fire.*;
-//import io.redspace.ironsspellbooks.spells.holy.*;
-//import io.redspace.ironsspellbooks.spells.ice.*;
-//import io.redspace.ironsspellbooks.spells.lightning.*;
-//import io.redspace.ironsspellbooks.spells.nature.*;
-//import net.minecraft.nbt.CompoundTag;
+// import com.google.common.collect.ImmutableMap;
+// import io.redspace.ironsspellbooks.datafix.fixers.*;
+// import io.redspace.ironsspellbooks.spells.blood.*;
+// import io.redspace.ironsspellbooks.spells.eldritch.AbyssalShroudSpell;
+// import io.redspace.ironsspellbooks.spells.eldritch.SculkTentaclesSpell;
+// import io.redspace.ironsspellbooks.spells.ender.*;
+// import io.redspace.ironsspellbooks.spells.evocation.*;
+// import io.redspace.ironsspellbooks.spells.fire.*;
+// import io.redspace.ironsspellbooks.spells.holy.*;
+// import io.redspace.ironsspellbooks.spells.ice.*;
+// import io.redspace.ironsspellbooks.spells.lightning.*;
+// import io.redspace.ironsspellbooks.spells.nature.*;
+// import net.minecraft.nbt.CompoundTag;
 //
-//import java.util.List;
-//import java.util.Map;
-//import java.util.concurrent.atomic.AtomicInteger;
+// import java.util.List;
+// import java.util.Map;
+// import java.util.concurrent.atomic.AtomicInteger;
 //
-//public class DataFixerHelpers {
-//    public static final Map<Integer, String> LEGACY_SPELL_MAPPING = ImmutableMap.<Integer, String>builder()
+// public class DataFixerHelpers {
+//    public static final Map<Integer, String> LEGACY_SPELL_MAPPING = ImmutableMap.<Integer,
+// String>builder()
 //            .put(1, new FireballSpell().getSpellId())
 //            .put(2, new BurningDashSpell().getSpellId())
 //            .put(3, new TeleportSpell().getSpellId())
@@ -88,12 +89,14 @@
 //            .put(66, new DevourSpell().getSpellId())
 //            .build();
 //
-//    public static final Map<String, String> LEGACY_ITEM_IDS = ImmutableMap.<String, String>builder()
+//    public static final Map<String, String> LEGACY_ITEM_IDS = ImmutableMap.<String,
+// String>builder()
 //            .put("irons_spellbooks:poison_rune", "irons_spellbooks:nature_rune")
 //            .put("irons_spellbooks:poison_upgrade_orb", "irons_spellbooks:nature_upgrade_orb")
 //            .build();
 //
-//    public static final Map<String, String> LEGACY_UPGRADE_TYPE_IDS = ImmutableMap.<String, String>builder()
+//    public static final Map<String, String> LEGACY_UPGRADE_TYPE_IDS = ImmutableMap.<String,
+// String>builder()
 //            .put("fire_power", "irons_spellbooks:fire_power")
 //            .put("ice_power", "irons_spellbooks:ice_power")
 //            .put("lightning_power", "irons_spellbooks:lightning_power")
@@ -148,4 +151,4 @@
 //
 //        return runningCount.get() > 0;
 //    }
-//}
+// }

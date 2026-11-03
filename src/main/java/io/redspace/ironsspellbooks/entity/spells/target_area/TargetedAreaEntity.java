@@ -21,15 +21,15 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class TargetedAreaEntity extends Entity {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(TargetedAreaEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_COLOR = SynchedEntityData.defineId(TargetedAreaEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DATA_FADING = SynchedEntityData.defineId(TargetedAreaEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> DATA_RADIUS =
+            SynchedEntityData.defineId(TargetedAreaEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> DATA_COLOR =
+            SynchedEntityData.defineId(TargetedAreaEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_FADING =
+            SynchedEntityData.defineId(TargetedAreaEntity.class, EntityDataSerializers.BOOLEAN);
 
-
-    @Nullable
-    private UUID ownerUUID;
-    @Nullable
-    private Entity cachedOwner;
+    @Nullable private UUID ownerUUID;
+    @Nullable private Entity cachedOwner;
     boolean hasOwner;
     boolean shouldFade;
 
@@ -64,14 +64,16 @@ public class TargetedAreaEntity extends Entity {
         this.setNoGravity(true);
     }
 
-    public static TargetedAreaEntity createTargetAreaEntity(Level level, Vec3 center, float radius, int color) {
+    public static TargetedAreaEntity createTargetAreaEntity(
+            Level level, Vec3 center, float radius, int color) {
         TargetedAreaEntity targetedAreaEntity = new TargetedAreaEntity(level, radius, color);
         targetedAreaEntity.setPos(center);
         level.addFreshEntity(targetedAreaEntity);
         return targetedAreaEntity;
     }
 
-    public static TargetedAreaEntity createTargetAreaEntity(Level level, Vec3 center, float radius, int color, Entity owner) {
+    public static TargetedAreaEntity createTargetAreaEntity(
+            Level level, Vec3 center, float radius, int color, Entity owner) {
         TargetedAreaEntity targetedAreaEntity = new TargetedAreaEntity(level, radius, color);
         targetedAreaEntity.setPos(center);
         targetedAreaEntity.setOwner(owner);
@@ -97,9 +99,8 @@ public class TargetedAreaEntity extends Entity {
         }
         if (!level().isClientSide
                 && (duration > 0 && tickCount > duration
-                || duration == 0 && tickCount > 20 * 20
-                || (hasOwner && (owner == null || owner.isRemoved())))
-        ) {
+                        || duration == 0 && tickCount > 20 * 20
+                        || (hasOwner && (owner == null || owner.isRemoved())))) {
             discard();
         }
     }
@@ -171,8 +172,7 @@ public class TargetedAreaEntity extends Entity {
     public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
-            if (getRadius() < .1f)
-                this.discard();
+            if (getRadius() < .1f) this.discard();
         }
         super.onSyncedDataUpdated(pKey);
     }
@@ -190,10 +190,8 @@ public class TargetedAreaEntity extends Entity {
         tag.putInt("Color", this.getColorRaw());
         tag.putInt("Age", this.tickCount);
         tag.putBoolean("ShouldFade", this.shouldFade);
-        if (duration > 0)
-            tag.putInt("Duration", duration);
-        if (ownerUUID != null)
-            tag.putUUID("Owner", ownerUUID);
+        if (duration > 0) tag.putInt("Duration", duration);
+        if (ownerUUID != null) tag.putUUID("Owner", ownerUUID);
     }
 
     protected void readAdditionalSaveData(CompoundTag tag) {
@@ -222,6 +220,5 @@ public class TargetedAreaEntity extends Entity {
         if (entity != null) {
             this.setOwner(entity);
         }
-
     }
 }

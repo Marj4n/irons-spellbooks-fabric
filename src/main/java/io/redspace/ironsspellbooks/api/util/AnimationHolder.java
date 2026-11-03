@@ -18,12 +18,21 @@ public class AnimationHolder {
      */
     @Deprecated(forRemoval = true)
     public AnimationHolder(String path, boolean playOnce, boolean animatesLegs) {
-        this(path.contains(":") ? new ResourceLocation(path) : IronsSpellbooks.id(path), playOnce, animatesLegs);
+        this(
+                path.contains(":") ? new ResourceLocation(path) : IronsSpellbooks.id(path),
+                playOnce,
+                animatesLegs);
     }
 
     public AnimationHolder(ResourceLocation animation, boolean playOnce, boolean animatesLegs) {
         this.playerAnimation = animation;
-        this.geckoAnimation = RawAnimation.begin().then(playerAnimation.getPath(), playOnce ? Animation.LoopType.PLAY_ONCE : Animation.LoopType.HOLD_ON_LAST_FRAME);
+        this.geckoAnimation =
+                RawAnimation.begin()
+                        .then(
+                                playerAnimation.getPath(),
+                                playOnce
+                                        ? Animation.LoopType.PLAY_ONCE
+                                        : Animation.LoopType.HOLD_ON_LAST_FRAME);
         this.isPass = false;
         this.animatesLegs = animatesLegs;
     }
@@ -70,6 +79,5 @@ public class AnimationHolder {
 
     public Optional<ResourceLocation> getForPlayer() {
         return playerAnimation == null ? Optional.empty() : Optional.of(playerAnimation);
-
     }
 }

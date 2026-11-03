@@ -43,17 +43,19 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.UUID;
 
-public class RootEntity extends LivingEntity implements GeoEntity, PreventDismount, AntiMagicSusceptible, org.marj4n.irons_spellbooks.events.RiderSettings {
-    @Nullable
-    private LivingEntity owner;
+public class RootEntity extends LivingEntity
+        implements GeoEntity,
+                PreventDismount,
+                AntiMagicSusceptible,
+                org.marj4n.irons_spellbooks.events.RiderSettings {
+    @Nullable private LivingEntity owner;
 
     @Override
     public float getScale() {
         return target == null ? 1 : target.getScale();
     }
 
-    @Nullable
-    private UUID ownerUUID;
+    @Nullable private UUID ownerUUID;
     private int duration;
     private boolean playSound = true;
     private LivingEntity target;
@@ -86,19 +88,13 @@ public class RootEntity extends LivingEntity implements GeoEntity, PreventDismou
     }
 
     @Override
-    protected void doPush(@NotNull Entity pEntity) {
-
-    }
+    protected void doPush(@NotNull Entity pEntity) {}
 
     @Override
-    public void push(@NotNull Entity pEntity) {
-
-    }
+    public void push(@NotNull Entity pEntity) {}
 
     @Override
-    protected void pushEntities() {
-
-    }
+    protected void pushEntities() {}
 
     @Override
     public boolean dismountsUnderwater() {
@@ -144,10 +140,14 @@ public class RootEntity extends LivingEntity implements GeoEntity, PreventDismou
         }
 
         if (!level().isClientSide) {
-            if (tickCount % 20 == 0 && this.random.nextFloat() < .5f && this.getFirstPassenger() instanceof Mob mob) {
+            if (tickCount % 20 == 0
+                    && this.random.nextFloat() < .5f
+                    && this.getFirstPassenger() instanceof Mob mob) {
                 mob.setTarget(this);
             }
-            if (tickCount > duration || (target != null && target.isDeadOrDying()) || !isVehicle()) {
+            if (tickCount > duration
+                    || (target != null && target.isDeadOrDying())
+                    || !isVehicle()) {
                 this.removeRoot();
             }
         } else {
@@ -162,10 +162,21 @@ public class RootEntity extends LivingEntity implements GeoEntity, PreventDismou
         BlockState blockstate = livingEntity.getBlockStateOn();
         if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
             for (int i = 0; i < 15; ++i) {
-                double d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
+                double d0 =
+                        livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
                 double d1 = livingEntity.getY();
-                double d2 = livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
-                livingEntity.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+                double d2 =
+                        livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
+                livingEntity
+                        .level()
+                        .addParticle(
+                                new BlockParticleOption(ParticleTypes.BLOCK, blockstate),
+                                d0,
+                                d1,
+                                d2,
+                                0.0D,
+                                0.0D,
+                                0.0D);
             }
         }
     }
@@ -194,7 +205,14 @@ public class RootEntity extends LivingEntity implements GeoEntity, PreventDismou
     public void removeRoot() {
         if (level().isClientSide) {
             for (int i = 0; i < 5; i++) {
-                level().addParticle(ParticleHelper.ROOT_FOG, getX() + Utils.getRandomScaled(.1f), getY() + Utils.getRandomScaled(.1f), getZ() + Utils.getRandomScaled(.1f), Utils.getRandomScaled(2f), -random.nextFloat() * .5f, Utils.getRandomScaled(2f));
+                level().addParticle(
+                                ParticleHelper.ROOT_FOG,
+                                getX() + Utils.getRandomScaled(.1f),
+                                getY() + Utils.getRandomScaled(.1f),
+                                getZ() + Utils.getRandomScaled(.1f),
+                                Utils.getRandomScaled(2f),
+                                -random.nextFloat() * .5f,
+                                Utils.getRandomScaled(2f));
             }
         }
         if (this.getFirstPassenger() instanceof Mob mob && mob.getTarget() == this) {
@@ -261,20 +279,18 @@ public class RootEntity extends LivingEntity implements GeoEntity, PreventDismou
     }
 
     @Override
-    public void knockback(double pStrength, double pX, double pZ) {
-
-    }
+    public void knockback(double pStrength, double pX, double pZ) {}
 
     @Override
     public void positionRider(Entity passenger, Entity.MoveFunction p_19958_) {
-        //super.positionRider(pPassenger);
+        // super.positionRider(pPassenger);
         int x = (int) (this.getX() - passenger.getX());
         int y = (int) (this.getY() - passenger.getY());
         int z = (int) (this.getZ() - passenger.getZ());
         x *= x;
         y *= y;
         z *= z;
-        //probably teleported away
+        // probably teleported away
         if (x + y + z > 5 * 5) {
             this.removeRoot();
         } else {
@@ -326,13 +342,12 @@ public class RootEntity extends LivingEntity implements GeoEntity, PreventDismou
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {
-
-    }
+    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {}
 
     private boolean played = false;
 
-    private PlayState animationPredicate(software.bernie.geckolib.core.animation.AnimationState event) {
+    private PlayState animationPredicate(
+            software.bernie.geckolib.core.animation.AnimationState event) {
         var controller = event.getController();
 
         if (!played && controller.getAnimationState() == AnimationController.State.STOPPED) {
@@ -346,7 +361,8 @@ public class RootEntity extends LivingEntity implements GeoEntity, PreventDismou
 
     private final RawAnimation ANIMATION = RawAnimation.begin().thenPlay("emerge");
 
-    private final AnimationController controller = new AnimationController(this, "root_controller", 0, this::animationPredicate);
+    private final AnimationController controller =
+            new AnimationController(this, "root_controller", 0, this::animationPredicate);
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {

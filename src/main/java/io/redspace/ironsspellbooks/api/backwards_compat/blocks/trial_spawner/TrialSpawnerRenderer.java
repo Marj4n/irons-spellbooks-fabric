@@ -22,16 +22,30 @@ public class TrialSpawnerRenderer implements BlockEntityRenderer<TrialSpawnerBlo
         this.entityRenderer = context.getEntityRenderer();
     }
 
-    public void render(TrialSpawnerBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(
+            TrialSpawnerBlockEntity blockEntity,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         Level level = blockEntity.getLevel();
         if (level != null) {
             TrialSpawner trialspawner = blockEntity.getTrialSpawner();
             TrialSpawnerData trialspawnerdata = trialspawner.getData();
-            Entity entity = trialspawnerdata.getOrCreateDisplayEntity(trialspawner, level, trialspawner.getState());
+            Entity entity =
+                    trialspawnerdata.getOrCreateDisplayEntity(
+                            trialspawner, level, trialspawner.getState());
             if (entity != null) {
                 renderEntityInSpawner(
-                    partialTick, poseStack, bufferSource, packedLight, entity, this.entityRenderer, trialspawnerdata.getOSpin(), trialspawnerdata.getSpin()
-                );
+                        partialTick,
+                        poseStack,
+                        bufferSource,
+                        packedLight,
+                        entity,
+                        this.entityRenderer,
+                        trialspawnerdata.getOSpin(),
+                        trialspawnerdata.getSpin());
             }
         }
     }
@@ -44,33 +58,37 @@ public class TrialSpawnerRenderer implements BlockEntityRenderer<TrialSpawnerBlo
             Entity entity,
             EntityRenderDispatcher entityRenderer,
             double oSpin,
-            double spin
-    ) {
+            double spin) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);
         float f = 0.53125F;
         float f1 = Math.max(entity.getBbWidth(), entity.getBbHeight());
-        if ((double)f1 > 1.0) {
+        if ((double) f1 > 1.0) {
             f /= f1;
         }
 
         poseStack.translate(0.0F, 0.4F, 0.0F);
-        poseStack.mulPose(Axis.YP.rotationDegrees((float) Mth.lerp((double)partialTick, oSpin, spin) * 10.0F));
+        poseStack.mulPose(
+                Axis.YP.rotationDegrees(
+                        (float) Mth.lerp((double) partialTick, oSpin, spin) * 10.0F));
         poseStack.translate(0.0F, -0.2F, 0.0F);
         poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
         poseStack.scale(f, f, f);
-        entityRenderer.render(entity, 0.0, 0.0, 0.0, 0.0F, partialTick, poseStack, buffer, packedLight);
+        entityRenderer.render(
+                entity, 0.0, 0.0, 0.0, 0.0F, partialTick, poseStack, buffer, packedLight);
         poseStack.popPose();
     }
 
-//    @Override
-//    public boolean shouldRender(TrialSpawnerBlockEntity pBlockEntity, Vec3 pCameraPos) {
-//        return BlockEntityRenderer.super.shouldRender(pBlockEntity, pCameraPos);
-//    }
-//
-//    @Override
-//    public net.minecraft.world.phys.AABB getRenderBoundingBox(TrialSpawnerBlockEntity blockEntity) {
-//        net.minecraft.core.BlockPos pos = blockEntity.getBlockPos();
-//        return new net.minecraft.world.phys.AABB(pos.getX() - 1.0, pos.getY() - 1.0, pos.getZ() - 1.0, pos.getX() + 2.0, pos.getY() + 2.0, pos.getZ() + 2.0);
-//    }
+    //    @Override
+    //    public boolean shouldRender(TrialSpawnerBlockEntity pBlockEntity, Vec3 pCameraPos) {
+    //        return BlockEntityRenderer.super.shouldRender(pBlockEntity, pCameraPos);
+    //    }
+    //
+    //    @Override
+    //    public net.minecraft.world.phys.AABB getRenderBoundingBox(TrialSpawnerBlockEntity
+    // blockEntity) {
+    //        net.minecraft.core.BlockPos pos = blockEntity.getBlockPos();
+    //        return new net.minecraft.world.phys.AABB(pos.getX() - 1.0, pos.getY() - 1.0,
+    // pos.getZ() - 1.0, pos.getX() + 2.0, pos.getY() + 2.0, pos.getZ() + 2.0);
+    //    }
 }

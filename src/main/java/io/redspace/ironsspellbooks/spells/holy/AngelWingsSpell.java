@@ -24,19 +24,24 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class AngelWingsSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "angel_wing");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "angel_wing");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(120)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(120)
+                    .build();
 
     public AngelWingsSpell() {
         this.manaCostPerLevel = 20;
@@ -66,10 +71,38 @@ public class AngelWingsSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.ANGEL_WINGS.get(), getEffectDuration(spellLevel, entity), 0, false, false, true), entity);
-        MagicManager.spawnParticles(world, new SwirlingParticleOptions(ParticleHelper.WISP, new Vec3(0, 1, 0), new Vec3(1, 0, 0),
-                new Vec3(0, 0, 5), new Vec3(0.25, 0.25, 2)), entity.getX(), entity.getY() + 1, entity.getZ(), 35, 0, 0.2, 0, 0.1, false);
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.ANGEL_WINGS.get(),
+                        getEffectDuration(spellLevel, entity),
+                        0,
+                        false,
+                        false,
+                        true),
+                entity);
+        MagicManager.spawnParticles(
+                world,
+                new SwirlingParticleOptions(
+                        ParticleHelper.WISP,
+                        new Vec3(0, 1, 0),
+                        new Vec3(1, 0, 0),
+                        new Vec3(0, 0, 5),
+                        new Vec3(0.25, 0.25, 2)),
+                entity.getX(),
+                entity.getY() + 1,
+                entity.getZ(),
+                35,
+                0,
+                0.2,
+                0,
+                0.1,
+                false);
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
 }

@@ -18,13 +18,21 @@ public class SimpleTeleporter implements ITeleporter {
     }
 
     @Override
-    public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
+    public Entity placeEntity(
+            Entity entity,
+            ServerLevel currentWorld,
+            ServerLevel destWorld,
+            float yaw,
+            Function<Boolean, Entity> repositionEntity) {
         entity.fallDistance = 0;
         return repositionEntity.apply(false);
     }
 
     @Override
-    public @Nullable PortalInfo getPortalInfo(Entity entity, ServerLevel destWorld, Function<ServerLevel, PortalInfo> defaultPortalInfo) {
+    public @Nullable PortalInfo getPortalInfo(
+            Entity entity,
+            ServerLevel destWorld,
+            Function<ServerLevel, PortalInfo> defaultPortalInfo) {
         return new PortalInfo(destinationPosition, Vec3.ZERO, entity.getYRot(), entity.getXRot());
     }
 
@@ -34,7 +42,8 @@ public class SimpleTeleporter implements ITeleporter {
     }
 
     @Override
-    public boolean playTeleportSound(ServerPlayer player, ServerLevel sourceWorld, ServerLevel destWorld) {
+    public boolean playTeleportSound(
+            ServerPlayer player, ServerLevel sourceWorld, ServerLevel destWorld) {
         return false;
     }
 }

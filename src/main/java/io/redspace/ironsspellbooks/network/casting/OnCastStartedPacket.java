@@ -33,9 +33,11 @@ public class OnCastStartedPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientSpellCastHelper.handleClientBoundOnCastStarted(castingEntityId, spellId, spellLevel);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientSpellCastHelper.handleClientBoundOnCastStarted(
+                            castingEntityId, spellId, spellLevel);
+                });
         return true;
     }
 }

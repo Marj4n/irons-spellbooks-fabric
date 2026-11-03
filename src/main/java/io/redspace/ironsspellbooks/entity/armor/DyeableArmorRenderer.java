@@ -15,21 +15,45 @@ public class DyeableArmorRenderer<T extends Item & GeoItem> extends GenericCusto
     }
 
     @Override
-    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderCubesOfBone(
+            PoseStack poseStack,
+            GeoBone bone,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         int color = 0xFFFFFFFF; // todo: default color?
         if (bone.getName().startsWith("dye") && this.currentStack != null) {
-            color = net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.get(this.currentStack.getItem()).getColor(this.currentStack, 0) | 0xFF000000;
+            color =
+                    net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM
+                                    .get(this.currentStack.getItem())
+                                    .getColor(this.currentStack, 0)
+                            | 0xFF000000;
         }
         Vec3i c = new Vec3i((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
-        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, c.getX() / 255f, c.getY() / 255f, c.getZ() / 255f, alpha);
+        super.renderCubesOfBone(
+                poseStack,
+                bone,
+                buffer,
+                packedLight,
+                packedOverlay,
+                c.getX() / 255f,
+                c.getY() / 255f,
+                c.getZ() / 255f,
+                alpha);
     }
 
-//    @Override
-//    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-//        color = 0xFFFFFFFF; // todo: default color?
-//        if (bone.getName().startsWith("dye") && this.currentStack != null) {
-//            color = net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.get(this.currentStack.getItem()).getColor(this.currentStack, 0) | 0xFF000000;
-//        }
-//        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, color);
-//    }
+    //    @Override
+    //    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer,
+    // int packedLight, int packedOverlay, int color) {
+    //        color = 0xFFFFFFFF; // todo: default color?
+    //        if (bone.getName().startsWith("dye") && this.currentStack != null) {
+    //            color =
+    // net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.ITEM.get(this.currentStack.getItem()).getColor(this.currentStack, 0) | 0xFF000000;
+    //        }
+    //        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, color);
+    //    }
 }

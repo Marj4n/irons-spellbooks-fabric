@@ -30,23 +30,28 @@ import java.util.List;
 import java.util.Optional;
 
 public class FangSwirlSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "fang_swirl");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "fang_swirl");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getSwirlRadius(spellLevel, caster), 2))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getSwirlRadius(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.EPIC)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(28)
-            .setAllowCrafting(false)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.EPIC)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(28)
+                    .setAllowCrafting(false)
+                    .build();
 
     public FangSwirlSpell() {
         this.manaCostPerLevel = 8;
@@ -82,26 +87,41 @@ public class FangSwirlSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) getRange(spellLevel, entity), 0.35f, false);
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        Utils.preCastTargetHelper(
+                level,
+                entity,
+                playerMagicData,
+                this,
+                (int) getRange(spellLevel, entity),
+                0.35f,
+                false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 dest = null;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             LivingEntity target = castTargetingData.getTarget((ServerLevel) level);
             if (target != null) {
                 dest = target.position();
             }
         }
         if (dest == null) {
-            HitResult raycast = RaycastBuilder.begin(level, entity)
-                    .range(getRange(spellLevel, entity))
-                    .checkForBlocks(true)
-                    .bbInflation(0.35f)
-                    .build();
+            HitResult raycast =
+                    RaycastBuilder.begin(level, entity)
+                            .range(getRange(spellLevel, entity))
+                            .checkForBlocks(true)
+                            .bbInflation(0.35f)
+                            .build();
             if (raycast.getType() == HitResult.Type.ENTITY) {
                 dest = ((EntityHitResult) raycast).getEntity().position();
             } else {
@@ -111,7 +131,7 @@ public class FangSwirlSpell extends AbstractSpell {
         dest = Utils.moveToRelativeGroundLevel(level, dest, 6);
         Vec3 start = entity.position();
         float horizontalDist = (float) dest.subtract(start).horizontalDistance();
-        int delay = Math.max(8, Math.min(40, Mth.ceil(horizontalDist * 1.5f))) * 2/ 3;
+        int delay = Math.max(8, Math.min(40, Mth.ceil(horizontalDist * 1.5f))) * 2 / 3;
 
         FangSwirlEntity swirl = new FangSwirlEntity(EntityRegistry.FANG_SWIRL.get(), level);
         swirl.moveTo(dest.x, dest.y, dest.z);

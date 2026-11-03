@@ -33,18 +33,25 @@ import java.util.List;
 import java.util.Optional;
 
 public class RayOfSiphoningSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "ray_of_siphoning");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(15)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "ray_of_siphoning");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(15)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getTickDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getTickDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getRange(spellLevel), 1)));
     }
 
     public RayOfSiphoningSpell() {
@@ -86,36 +93,52 @@ public class RayOfSiphoningSpell extends AbstractSpell {
     }
 
     @Override
-    public void onServerCastTick(Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
+    public void onServerCastTick(
+            Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
         super.onServerCastTick(level, spellLevel, entity, playerMagicData);
-        if (playerMagicData != null && playerMagicData.getAdditionalCastData() instanceof CastingMobAimingData aimData && entity instanceof Mob mob) {
+        if (playerMagicData != null
+                && playerMagicData.getAdditionalCastData() instanceof CastingMobAimingData aimData
+                && entity instanceof Mob mob) {
             var target = mob.getTarget();
             if (target != null) {
                 aimData.updateAim(target, .15f);
             }
-            PacketDistributor.sendToPlayersTrackingEntity(entity, new SyncCastingMobAimingDataPacket(entity.getId(), aimData));
+            PacketDistributor.sendToPlayersTrackingEntity(
+                    entity, new SyncCastingMobAimingDataPacket(entity.getId(), aimData));
         }
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 forward = entity.getForward();
-        if (playerMagicData.getAdditionalCastData() instanceof CastingMobAimingData aimData && entity instanceof Mob mob) {
+        if (playerMagicData.getAdditionalCastData() instanceof CastingMobAimingData aimData
+                && entity instanceof Mob mob) {
             forward = aimData.getForward(entity);
         }
-        var hitResult = RaycastBuilder.begin(level, entity)
-                .start(entity.getEyePosition())
-                .end(entity.getEyePosition().add(forward.scale(getRange(spellLevel))))
-                .checkForBlocks(true)
-                .bbInflation(.15f)
-                .filter(Utils::canHitWithRaycast)
-                .build();
+        var hitResult =
+                RaycastBuilder.begin(level, entity)
+                        .start(entity.getEyePosition())
+                        .end(entity.getEyePosition().add(forward.scale(getRange(spellLevel))))
+                        .checkForBlocks(true)
+                        .bbInflation(.15f)
+                        .filter(Utils::canHitWithRaycast)
+                        .build();
 
         if (hitResult.getType() == HitResult.Type.ENTITY) {
             Entity target = ((EntityHitResult) hitResult).getEntity();
             if (target.canBeHitByProjectile()) {
-                if (DamageSources.applyDamage(target, getTickDamage(spellLevel, entity), getDamageSource(entity))) {
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new BloodSiphonParticlesPacket(target.position().add(0, target.getBbHeight() / 2, 0), entity.position().add(0, entity.getBbHeight() / 2, 0)));
+                if (DamageSources.applyDamage(
+                        target, getTickDamage(spellLevel, entity), getDamageSource(entity))) {
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                            entity,
+                            new BloodSiphonParticlesPacket(
+                                    target.position().add(0, target.getBbHeight() / 2, 0),
+                                    entity.position().add(0, entity.getBbHeight() / 2, 0)));
                 }
             }
         }

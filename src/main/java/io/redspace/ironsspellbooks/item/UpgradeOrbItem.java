@@ -12,11 +12,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class UpgradeOrbItem extends Item implements IBackwardsCompatDefaultNbtItem {
-    public final static Component TOOLTIP_HEADER = Component.translatable("tooltip.irons_spellbooks.upgrade_tooltip").withStyle(ChatFormatting.GRAY);
+    public final static Component TOOLTIP_HEADER =
+            Component.translatable("tooltip.irons_spellbooks.upgrade_tooltip")
+                    .withStyle(ChatFormatting.GRAY);
 
     public final ResourceKey<UpgradeOrbType> upgradeOrbTypeResourceKey;
 
-    public UpgradeOrbItem(Properties pProperties, ResourceKey<UpgradeOrbType> upgradeOrbTypeResourceKey) {
+    public UpgradeOrbItem(
+            Properties pProperties, ResourceKey<UpgradeOrbType> upgradeOrbTypeResourceKey) {
         super(pProperties);
         this.upgradeOrbTypeResourceKey = upgradeOrbTypeResourceKey;
     }
@@ -25,7 +28,9 @@ public class UpgradeOrbItem extends Item implements IBackwardsCompatDefaultNbtIt
     /** THIS CONSTRUCTOR DOES NOTHING, and is here for 1.20.1 api compat. Use new upgrade orb system (See {@link UpgradeOrbTypeRegistry} for resource storage/datagen reference)*/
     public UpgradeOrbItem(UpgradeType type, Item.Properties properties) {
         this(properties, UpgradeOrbTypeRegistry.MANA);
-        IronsSpellbooks.LOGGER.warn("Upgrade orb {} using legacy upgrade orb format! This is no longer valid, defaulting to mana upgrade", type.getId().toString());
+        IronsSpellbooks.LOGGER.warn(
+                "Upgrade orb {} using legacy upgrade orb format! This is no longer valid, defaulting to mana upgrade",
+                type.getId().toString());
     }
 
     @Override

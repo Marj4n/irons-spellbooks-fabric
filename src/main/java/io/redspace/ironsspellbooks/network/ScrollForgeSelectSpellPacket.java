@@ -8,7 +8,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class ScrollForgeSelectSpellPacket implements CustomPacketPayload {
     private final BlockPos pos;
     private final String spellId;
@@ -24,7 +23,6 @@ public class ScrollForgeSelectSpellPacket implements CustomPacketPayload {
         int z = buf.readInt();
         pos = new BlockPos(x, y, z);
         spellId = buf.readUtf();
-
     }
 
     public void toBytes(FriendlyByteBuf buf) {
@@ -36,11 +34,13 @@ public class ScrollForgeSelectSpellPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            if (ctx.getSender().level().getBlockEntity(this.pos) instanceof ScrollForgeTile scrollForgeTile) {
-                scrollForgeTile.setRecipeSpell(this.spellId);
-            }
-        });
+        ctx.enqueueWork(
+                () -> {
+                    if (ctx.getSender().level().getBlockEntity(this.pos)
+                            instanceof ScrollForgeTile scrollForgeTile) {
+                        scrollForgeTile.setRecipeSpell(this.spellId);
+                    }
+                });
         return true;
     }
 }

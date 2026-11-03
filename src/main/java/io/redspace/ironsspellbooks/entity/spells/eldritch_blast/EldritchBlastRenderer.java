@@ -23,9 +23,13 @@ import net.minecraft.util.Mth;
 
 public class EldritchBlastRenderer extends EntityRenderer<EldritchBlastVisualEntity> {
 
-    public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "eldritch_blast_model"), "main");
-    private static final ResourceLocation TEXTURE_CORE = IronsSpellbooks.id("textures/entity/eldritch_blast/core.png");
-    private static final ResourceLocation TEXTURE_OVERLAY = IronsSpellbooks.id("textures/entity/eldritch_blast/overlay.png");
+    public static final ModelLayerLocation MODEL_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "eldritch_blast_model"), "main");
+    private static final ResourceLocation TEXTURE_CORE =
+            IronsSpellbooks.id("textures/entity/eldritch_blast/core.png");
+    private static final ResourceLocation TEXTURE_OVERLAY =
+            IronsSpellbooks.id("textures/entity/eldritch_blast/overlay.png");
 
     private final ModelPart body;
 
@@ -38,17 +42,31 @@ public class EldritchBlastRenderer extends EntityRenderer<EldritchBlastVisualEnt
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-8, -16, -8, 16, 32, 16), PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "body",
+                CubeListBuilder.create().texOffs(0, 0).addBox(-8, -16, -8, 16, 32, 16),
+                PartPose.ZERO);
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
     @Override
-    public boolean shouldRender(EldritchBlastVisualEntity pLivingEntity, Frustum pCamera, double pCamX, double pCamY, double pCamZ) {
+    public boolean shouldRender(
+            EldritchBlastVisualEntity pLivingEntity,
+            Frustum pCamera,
+            double pCamX,
+            double pCamY,
+            double pCamZ) {
         return true;
     }
 
     @Override
-    public void render(EldritchBlastVisualEntity entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            EldritchBlastVisualEntity entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         float lifetime = EldritchBlastVisualEntity.lifetime;
         float scalar = .25f;
@@ -59,37 +77,57 @@ public class EldritchBlastRenderer extends EntityRenderer<EldritchBlastVisualEnt
         poseStack.mulPose(Axis.XP.rotationDegrees(-entity.getXRot() - 90));
         poseStack.scale(scalar, scalar, scalar);
 
-        //float scale = Mth.lerp(Mth.clamp(f / 6f, 0, 1), 1, 2.3f);
+        // float scale = Mth.lerp(Mth.clamp(f / 6f, 0, 1), 1, 2.3f);
 
         float alpha = Mth.clamp(1f - f / lifetime, 0, 1);
 
         for (float i = 0; i < entity.distance * 4; i += length) {
             poseStack.translate(0, length, 0);
-            //Render overlay
-            //VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucent(TEXTURE_OVERLAY));
-            VertexConsumer consumer = bufferSource.getBuffer(RenderHelper.CustomerRenderType.magicNoCull(TEXTURE_OVERLAY));
+            // Render overlay
+            // VertexConsumer consumer =
+            // bufferSource.getBuffer(RenderType.entityTranslucent(TEXTURE_OVERLAY));
+            VertexConsumer consumer =
+                    bufferSource.getBuffer(
+                            RenderHelper.CustomerRenderType.magicNoCull(TEXTURE_OVERLAY));
             {
                 poseStack.pushPose();
                 float expansion = Mth.clampedLerp(1.2f, 0, f / (lifetime));
                 poseStack.mulPose(Axis.YP.rotationDegrees(f * 5));
                 poseStack.scale(expansion, 1, expansion);
                 poseStack.mulPose(Axis.YP.rotationDegrees(45));
-                this.body.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
+                this.body.render(
+                        poseStack,
+                        consumer,
+                        LightTexture.FULL_BRIGHT,
+                        OverlayTexture.NO_OVERLAY,
+                        1,
+                        1,
+                        1,
+                        alpha);
                 poseStack.popPose();
             }
-            //Render core
-            consumer = bufferSource.getBuffer(RenderHelper.CustomerRenderType.darkGlow(TEXTURE_CORE));
-            //consumer = bufferSource.getBuffer(EldritchBlastRenderType.eldritchBlast(TEXTURE_CORE));
+            // Render core
+            consumer =
+                    bufferSource.getBuffer(RenderHelper.CustomerRenderType.darkGlow(TEXTURE_CORE));
+            // consumer =
+            // bufferSource.getBuffer(EldritchBlastRenderType.eldritchBlast(TEXTURE_CORE));
             {
                 poseStack.pushPose();
                 float expansion = Mth.clampedLerp(1, 0, f / (lifetime - 5));
                 poseStack.scale(expansion, 1, expansion);
                 poseStack.mulPose(Axis.YP.rotationDegrees(f * -10));
-                this.body.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                this.body.render(
+                        poseStack,
+                        consumer,
+                        LightTexture.FULL_BRIGHT,
+                        OverlayTexture.NO_OVERLAY,
+                        1,
+                        1,
+                        1,
+                        1);
                 poseStack.popPose();
             }
         }
-
 
         poseStack.popPose();
 

@@ -29,14 +29,16 @@ import java.util.List;
 import java.util.Optional;
 
 public class BlizzardSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "blizzard");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "blizzard");
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(22)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(22)
+                    .build();
 
     public BlizzardSpell() {
         this.manaCostPerLevel = 10;
@@ -49,9 +51,12 @@ public class BlizzardSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.duration", Utils.timeFromTicks(getDurationTicks(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.duration",
+                        Utils.timeFromTicks(getDurationTicks(spellLevel, caster), 1)));
     }
 
     @Override
@@ -80,27 +85,35 @@ public class BlizzardSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .15f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 spawn = null;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             var target = castTargetingData.getTarget((ServerLevel) level);
             if (target != null) {
                 spawn = target.position();
             }
         }
         if (spawn == null) {
-            spawn = RaycastBuilder.begin(level, entity)
-                    .range(32)
-                    .checkForBlocks(true)
-                    .bbInflation(.15f)
-                    .build()
-                    .getLocation();
+            spawn =
+                    RaycastBuilder.begin(level, entity)
+                            .range(32)
+                            .checkForBlocks(true)
+                            .bbInflation(.15f)
+                            .build()
+                            .getLocation();
         }
         spawn = Utils.moveToRelativeGroundLevel(level, spawn, 6);
         int duration = getDurationTicks(spellLevel, entity);

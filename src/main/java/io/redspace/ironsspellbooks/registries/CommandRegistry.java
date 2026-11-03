@@ -12,19 +12,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 
-
-
-
-
-
-
 public class CommandRegistry {
     @SuppressWarnings("unchecked")
-
-    public static void onCommandsRegister(CommandDispatcher<CommandSourceStack> commandDispatcher, CommandBuildContext commandBuildContext, Commands.CommandSelection selection) {
-
-
-
+    public static void onCommandsRegister(
+            CommandDispatcher<CommandSourceStack> commandDispatcher,
+            CommandBuildContext commandBuildContext,
+            Commands.CommandSelection selection) {
 
         CreateScrollCommand.register(commandDispatcher);
         CreateSpellBookCommand.register(commandDispatcher);
@@ -42,10 +35,26 @@ public class CommandRegistry {
             ClearSpellSelectionCommand.register(commandDispatcher);
             IronsDebugCommand.register(commandDispatcher);
             GenerateSiteData.register(commandDispatcher);
-            commandDispatcher.register((LiteralArgumentBuilder<CommandSourceStack>) ((LiteralArgumentBuilder) LiteralArgumentBuilder.literal("it")).executes(source -> ((CommandSourceStack) source.getSource()).getPlayer().openMenu(new SimpleMenuProvider(
-                    (i, inventory, player) ->
-                            new InscriptionTableMenu(i, inventory, ContainerLevelAccess.NULL), Component.translatable("block.irons_spellbooks.inscription_table")
-            )).orElse(0)));
+            commandDispatcher.register(
+                    (LiteralArgumentBuilder<CommandSourceStack>)
+                            ((LiteralArgumentBuilder) LiteralArgumentBuilder.literal("it"))
+                                    .executes(
+                                            source ->
+                                                    ((CommandSourceStack) source.getSource())
+                                                            .getPlayer()
+                                                            .openMenu(
+                                                                    new SimpleMenuProvider(
+                                                                            (i,
+                                                                                    inventory,
+                                                                                    player) ->
+                                                                                    new InscriptionTableMenu(
+                                                                                            i,
+                                                                                            inventory,
+                                                                                            ContainerLevelAccess
+                                                                                                    .NULL),
+                                                                            Component.translatable(
+                                                                                    "block.irons_spellbooks.inscription_table")))
+                                                            .orElse(0)));
         }
     }
 }

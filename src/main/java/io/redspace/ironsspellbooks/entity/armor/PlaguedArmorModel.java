@@ -9,7 +9,6 @@ public class PlaguedArmorModel extends GeoModel<PlaguedArmorItem> {
 
     public PlaguedArmorModel() {
         super();
-
     }
 
     @Override
@@ -24,12 +23,13 @@ public class PlaguedArmorModel extends GeoModel<PlaguedArmorItem> {
 
     @Override
     public ResourceLocation getAnimationResource(PlaguedArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
-//    public static String listOfBonesToString(List<IBone> list){
-//        String s = "";
-//        for (IBone o:list)
-//            s += o.getName()+", ";
-//        return s;
-//    }
+    //    public static String listOfBonesToString(List<IBone> list){
+    //        String s = "";
+    //        for (IBone o:list)
+    //            s += o.getName()+", ";
+    //        return s;
+    //    }
 }

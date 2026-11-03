@@ -14,14 +14,14 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class PoisonBreathProjectile extends AbstractConeProjectile {
-    public PoisonBreathProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level) {
+    public PoisonBreathProjectile(
+            EntityType<? extends AbstractConeProjectile> entityType, Level level) {
         super(entityType, level);
     }
 
     public PoisonBreathProjectile(Level level, LivingEntity entity) {
         super(EntityRegistry.POISON_BREATH_PROJECTILE.get(), level, entity);
     }
-
 
     @Override
     public void spawnParticles() {
@@ -44,20 +44,36 @@ public class PoisonBreathProjectile extends AbstractConeProjectile {
             double oz = Math.random() * 2 * offset - offset;
 
             double angularness = .8;
-            Vec3 randomVec = new Vec3(Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness).normalize();
+            Vec3 randomVec =
+                    new Vec3(
+                                    Math.random() * 2 * angularness - angularness,
+                                    Math.random() * 2 * angularness - angularness,
+                                    Math.random() * 2 * angularness - angularness)
+                            .normalize();
             Vec3 result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
-            level().addParticle(random.nextFloat() < .25f ? ParticleHelper.ACID_BUBBLE : ParticleHelper.ACID, x + ox, y + oy, z + oz, result.x, result.y, result.z);
+            level().addParticle(
+                            random.nextFloat() < .25f
+                                    ? ParticleHelper.ACID_BUBBLE
+                                    : ParticleHelper.ACID,
+                            x + ox,
+                            y + oy,
+                            z + oz,
+                            result.x,
+                            result.y,
+                            result.z);
         }
-
-
     }
 
     @Override
     protected void onHitEntity(EntityHitResult entityHitResult) {
-        //irons_spellbooks.LOGGER.debug("ConeOfColdProjectile.onHitEntity: {}", entityHitResult.getEntity().getName().getString());
+        // irons_spellbooks.LOGGER.debug("ConeOfColdProjectile.onHitEntity: {}",
+        // entityHitResult.getEntity().getName().getString());
         var entity = entityHitResult.getEntity();
-        if (DamageSources.applyDamage(entity, damage, SpellRegistry.POISON_BREATH_SPELL.get().getDamageSource(this, getOwner())) && entity instanceof LivingEntity livingEntity)
+        if (DamageSources.applyDamage(
+                        entity,
+                        damage,
+                        SpellRegistry.POISON_BREATH_SPELL.get().getDamageSource(this, getOwner()))
+                && entity instanceof LivingEntity livingEntity)
             livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0));
     }
-
 }

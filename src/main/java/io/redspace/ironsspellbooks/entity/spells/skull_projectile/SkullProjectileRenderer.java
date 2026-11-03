@@ -23,7 +23,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class SkullProjectileRenderer extends EntityRenderer<AbstractMagicProjectile> {
 
-    public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "skull_model"), "main");
+    public static final ModelLayerLocation MODEL_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "skull_model"), "main");
 
     private final ModelPart model;
     private final ResourceLocation textureLocation;
@@ -38,21 +40,42 @@ public class SkullProjectileRenderer extends EntityRenderer<AbstractMagicProject
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F), PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "head",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F),
+                PartPose.ZERO);
         return LayerDefinition.create(meshdefinition, 32, 32);
     }
 
-    public void render(AbstractMagicProjectile entity, float pEntityYaw, float pPartialTicks, PoseStack poseStack, MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(
+            AbstractMagicProjectile entity,
+            float pEntityYaw,
+            float pPartialTicks,
+            PoseStack poseStack,
+            MultiBufferSource pBuffer,
+            int pPackedLight) {
         poseStack.pushPose();
-        Vec3 motion = entity.deltaMovementOld.add(entity.getDeltaMovement().subtract(entity.deltaMovementOld).scale(pPartialTicks));
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        Vec3 motion =
+                entity.deltaMovementOld.add(
+                        entity.getDeltaMovement()
+                                .subtract(entity.deltaMovementOld)
+                                .scale(pPartialTicks));
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
         poseStack.scale(-1.0F, -1.0F, 1.0F);
 
-
-        VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.entityCutout(getTextureLocation(entity)));
+        VertexConsumer vertexconsumer =
+                pBuffer.getBuffer(RenderType.entityCutout(getTextureLocation(entity)));
         model.render(poseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         super.render(entity, pEntityYaw, pPartialTicks, poseStack, pBuffer, pPackedLight);

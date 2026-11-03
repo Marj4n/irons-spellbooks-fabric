@@ -16,31 +16,31 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class BoneVaultBlock extends VaultBlock {
-//    public static final MapCodec<BoneVaultBlock> CODEC = simpleCodec(BoneVaultBlock::new);
+    //    public static final MapCodec<BoneVaultBlock> CODEC = simpleCodec(BoneVaultBlock::new);
 
     public BoneVaultBlock() {
-        super(/*properties*/);
+        super(/*properties*/ );
     }
 
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public @NotNull MapCodec<VaultBlock> codec() {
-//        return (MapCodec<VaultBlock>) (Object) CODEC;
-//    }
+    //    @SuppressWarnings("unchecked")
+    //    @Override
+    //    public @NotNull MapCodec<VaultBlock> codec() {
+    //        return (MapCodec<VaultBlock>) (Object) CODEC;
+    //    }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         var entity = new VaultBlockEntity(blockPos, blockState);
-        var config = new VaultConfig(
-                IronsSpellbooks.id("chests/catacombs/dead_king_vault"),
-                4.0,
-                4.5,
-                new ItemStack(ItemRegistry.BONE_KEY.get()),
-                Optional.empty(),
-                PlayerDetector.INCLUDING_CREATIVE_PLAYERS,
-                PlayerDetector.EntitySelector.SELECT_FROM_LEVEL
-        );
+        var config =
+                new VaultConfig(
+                        IronsSpellbooks.id("chests/catacombs/dead_king_vault"),
+                        4.0,
+                        4.5,
+                        new ItemStack(ItemRegistry.BONE_KEY.get()),
+                        Optional.empty(),
+                        PlayerDetector.INCLUDING_CREATIVE_PLAYERS,
+                        PlayerDetector.EntitySelector.SELECT_FROM_LEVEL);
         entity.setConfig(config);
         return entity;
     }

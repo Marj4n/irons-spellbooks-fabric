@@ -4,7 +4,9 @@ import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 
 /** Mutable spell lifecycle event dispatched synchronously through Fabric. */
 public abstract class SpellEvent extends BaseEvent {
-    public boolean isCancelable() { return false; }
+    public boolean isCancelable() {
+        return false;
+    }
 
     @Override
     public void setCanceled(boolean canceled) {
@@ -15,5 +17,7 @@ public abstract class SpellEvent extends BaseEvent {
     }
 
     @Override
-    public final void sendEvent() { SpellEvents.EVENT.invoker().accept(this); }
+    public final void sendEvent() {
+        SpellEvents.EVENT.invoker().accept(this);
+    }
 }

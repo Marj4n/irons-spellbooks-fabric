@@ -17,9 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-
 public class WitherSkullProjectile extends AbstractMagicProjectile {
-    public WitherSkullProjectile(EntityType<? extends AbstractMagicProjectile> pEntityType, Level pLevel) {
+    public WitherSkullProjectile(
+            EntityType<? extends AbstractMagicProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.setNoGravity(true);
         this.setExplosionRadius(2);
@@ -50,9 +50,7 @@ public class WitherSkullProjectile extends AbstractMagicProjectile {
     }
 
     @Override
-    public void impactParticles(double x, double y, double z) {
-
-    }
+    public void impactParticles(double x, double y, double z) {}
 
     @Override
     public float getSpeed() {
@@ -67,9 +65,14 @@ public class WitherSkullProjectile extends AbstractMagicProjectile {
     @Override
     protected void onHit(@NotNull HitResult hitResult) {
         if (!this.level().isClientSide) {
-            Entity directHit = hitResult instanceof EntityHitResult entityHitResult ? entityHitResult.getEntity() : null;
-            var entities = level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
-            var damageSource = SpellRegistry.WITHER_SKULL_SPELL.get().getDamageSource(this, getOwner());
+            Entity directHit =
+                    hitResult instanceof EntityHitResult entityHitResult
+                            ? entityHitResult.getEntity()
+                            : null;
+            var entities =
+                    level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            var damageSource =
+                    SpellRegistry.WITHER_SKULL_SPELL.get().getDamageSource(this, getOwner());
             for (Entity entity : entities) {
                 if (entity == directHit) {
                     DamageSources.applyDamage(entity, damage, damageSource);
@@ -77,13 +80,26 @@ public class WitherSkullProjectile extends AbstractMagicProjectile {
                     double distanceSqr = entity.distanceToSqr(hitResult.getLocation());
                     if (distanceSqr < explosionRadius * explosionRadius && canHitEntity(entity)) {
                         float entityRadius = explosionRadius + entity.getBbWidth();
-                        float damage = (float) (this.damage * (1 - distanceSqr / (entityRadius * entityRadius)));
+                        float damage =
+                                (float)
+                                        (this.damage
+                                                * (1
+                                                        - distanceSqr
+                                                                / (entityRadius * entityRadius)));
                         DamageSources.applyDamage(entity, damage, damageSource);
                     }
                 }
             }
 
-            this.level().explode(this, this.getX(), this.getY(), this.getZ(), 0.0F, false, Level.ExplosionInteraction.NONE);
+            this.level()
+                    .explode(
+                            this,
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            0.0F,
+                            false,
+                            Level.ExplosionInteraction.NONE);
             this.discardHelper(hitResult);
         }
     }

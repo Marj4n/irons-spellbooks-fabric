@@ -29,22 +29,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class SculkTentaclesSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "sculk_tentacles");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "sculk_tentacles");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRings(spellLevel, caster) * 1.3f, 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRings(spellLevel, caster) * 1.3f, 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
-            .setMaxLevel(4)
-            .setCooldownSeconds(30)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
+                    .setMaxLevel(4)
+                    .setCooldownSeconds(30)
+                    .build();
 
     public SculkTentaclesSpell() {
         this.manaCostPerLevel = 50;
@@ -80,41 +85,63 @@ public class SculkTentaclesSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .15f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         int rings = getRings(spellLevel, entity);
         int count = 2;
         Vec3 center = null;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             var target = castTargetingData.getTarget((ServerLevel) level);
-            if (target != null)
-                center = target.position();
+            if (target != null) center = target.position();
         }
         if (center == null) {
-            center = RaycastBuilder.begin(level, entity)
-                    .range(48)
-                    .checkForBlocks(true)
-                    .bbInflation(.15f)
-                    .build()
-                    .getLocation();
+            center =
+                    RaycastBuilder.begin(level, entity)
+                            .range(48)
+                            .checkForBlocks(true)
+                            .bbInflation(.15f)
+                            .build()
+                            .getLocation();
             center = Utils.moveToRelativeGroundLevel(level, center, 6);
         }
-        level.playSound(entity instanceof Player player ? player : null, center.x, center.y, center.z, SoundRegistry.VOID_TENTACLES_FINISH.get(), SoundSource.AMBIENT, 1, 1);
+        level.playSound(
+                entity instanceof Player player ? player : null,
+                center.x,
+                center.y,
+                center.z,
+                SoundRegistry.VOID_TENTACLES_FINISH.get(),
+                SoundSource.AMBIENT,
+                1,
+                1);
 
         for (int r = 0; r < rings; r++) {
             float tentacles = count + r * 2;
             for (int i = 0; i < tentacles; i++) {
-                Vec3 random = new Vec3(Utils.getRandomScaled(1), Utils.getRandomScaled(1), Utils.getRandomScaled(1));
-                Vec3 spawn = center.add(new Vec3(0, 0, 1.3 * (r + 1)).yRot(((6.281f / tentacles) * i))).add(random);
+                Vec3 random =
+                        new Vec3(
+                                Utils.getRandomScaled(1),
+                                Utils.getRandomScaled(1),
+                                Utils.getRandomScaled(1));
+                Vec3 spawn =
+                        center.add(new Vec3(0, 0, 1.3 * (r + 1)).yRot(((6.281f / tentacles) * i)))
+                                .add(random);
 
                 spawn = Utils.moveToRelativeGroundLevel(level, spawn, 8);
                 if (!level.getBlockState(BlockPos.containing(spawn).below()).isAir()) {
-                    VoidTentacle tentacle = new VoidTentacle(level, entity, getDamage(spellLevel, entity));
+                    VoidTentacle tentacle =
+                            new VoidTentacle(level, entity, getDamage(spellLevel, entity));
                     tentacle.moveTo(spawn);
                     tentacle.setYRot(Utils.random.nextInt(360));
                     level.addFreshEntity(tentacle);

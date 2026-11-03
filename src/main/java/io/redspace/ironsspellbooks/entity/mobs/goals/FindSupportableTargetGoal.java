@@ -8,18 +8,24 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 
 import java.util.function.Predicate;
 
-public class FindSupportableTargetGoal<M extends Mob & SupportMob> extends NearestAttackableTargetGoal<LivingEntity> {
+public class FindSupportableTargetGoal<M extends Mob & SupportMob>
+        extends NearestAttackableTargetGoal<LivingEntity> {
     SupportMob supportMob;
 
-    public FindSupportableTargetGoal(M pMob, Class pTargetType, boolean pMustSee, Predicate<LivingEntity> pTargetPredicate) {
+    public FindSupportableTargetGoal(
+            M pMob, Class pTargetType, boolean pMustSee, Predicate<LivingEntity> pTargetPredicate) {
         super(pMob, pTargetType, 40, pMustSee, false, pTargetPredicate);
         this.supportMob = pMob;
-        this.targetConditions = TargetingConditions.forNonCombat().range(this.getFollowDistance() * 2).selector(pTargetPredicate);
+        this.targetConditions =
+                TargetingConditions.forNonCombat()
+                        .range(this.getFollowDistance() * 2)
+                        .selector(pTargetPredicate);
     }
 
     @Override
     public void start() {
-        //IronsSpellbooks.LOGGER.debug("FindSupportableTargetGoal starting: {}", this.target.getName().getString());
+        // IronsSpellbooks.LOGGER.debug("FindSupportableTargetGoal starting: {}",
+        // this.target.getName().getString());
         super.start();
         this.supportMob.setSupportTarget(this.target);
         this.mob.setTarget(null);
@@ -27,7 +33,9 @@ public class FindSupportableTargetGoal<M extends Mob & SupportMob> extends Neare
 
     @Override
     public boolean canContinueToUse() {
-        return this.supportMob.getSupportTarget() != null && (mob.tickCount % 20 != 0 || targetConditions.test(this.mob, this.supportMob.getSupportTarget()));
+        return this.supportMob.getSupportTarget() != null
+                && (mob.tickCount % 20 != 0
+                        || targetConditions.test(this.mob, this.supportMob.getSupportTarget()));
     }
 
     @Override

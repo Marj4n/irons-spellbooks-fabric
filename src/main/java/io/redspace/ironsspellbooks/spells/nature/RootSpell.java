@@ -32,17 +32,21 @@ public class RootSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.hp", Utils.stringTruncation(getRootHealth(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getDuration(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.hp",
+                        Utils.stringTruncation(getRootHealth(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(35)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(35)
+                    .build();
 
     public RootSpell() {
         this.manaCostPerLevel = 3;
@@ -78,13 +82,20 @@ public class RootSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f);
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             LivingEntity target = castTargetingData.getTarget((ServerLevel) level);
             if (target != null && !target.getType().is(ModTags.CANT_ROOT)) {
                 Vec3 spawn = target.position();
@@ -111,5 +122,4 @@ public class RootSpell extends AbstractSpell {
     private float getRootHealth(int spellLevel, LivingEntity entity) {
         return 40 * getEntityPowerMultiplier(entity);
     }
-
 }

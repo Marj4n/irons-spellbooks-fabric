@@ -27,20 +27,26 @@ import java.util.List;
 import java.util.Optional;
 
 public class FangStrikeSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "fang_strike");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "fang_strike");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.fang_count", getCount(spellLevel, caster)),
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.fang_count", getCount(spellLevel, caster)),
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(5)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(5)
+                    .build();
 
     public FangStrikeSpell() {
         this.manaCostPerLevel = 3;
@@ -71,7 +77,12 @@ public class FangStrikeSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 forward = entity.getForward().multiply(1, 0, 1).normalize();
         Vec3 start = entity.getEyePosition().add(forward.scale(1.5));
 
@@ -80,7 +91,16 @@ public class FangStrikeSpell extends AbstractSpell {
             spawn = new Vec3(spawn.x, getGroundLevel(world, spawn, 8), spawn.z);
             if (!world.getBlockState(BlockPos.containing(spawn).below()).isAir()) {
                 int delay = i / 3;
-                ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, (entity.getYRot() - 90) * Mth.DEG_TO_RAD, delay, entity, getDamage(spellLevel, entity));
+                ExtendedEvokerFang fang =
+                        new ExtendedEvokerFang(
+                                world,
+                                spawn.x,
+                                spawn.y,
+                                spawn.z,
+                                (entity.getYRot() - 90) * Mth.DEG_TO_RAD,
+                                delay,
+                                entity,
+                                getDamage(spellLevel, entity));
                 world.addFreshEntity(fang);
             }
         }
@@ -91,12 +111,20 @@ public class FangStrikeSpell extends AbstractSpell {
         if (!level.getBlockState(BlockPos.containing(start)).isAir()) {
             for (int i = 0; i < maxSteps; i++) {
                 start = start.add(0, 1, 0);
-                if (level.getBlockState(BlockPos.containing(start)).isAir())
-                    break;
+                if (level.getBlockState(BlockPos.containing(start)).isAir()) break;
             }
         }
-        //Vec3 upper = level.clip(new ClipContext(start, start.add(0, maxSteps, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
-        Vec3 lower = level.clip(new ClipContext(start, start.add(0, maxSteps * -2, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
+        // Vec3 upper = level.clip(new ClipContext(start, start.add(0, maxSteps, 0),
+        // ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
+        Vec3 lower =
+                level.clip(
+                                new ClipContext(
+                                        start,
+                                        start.add(0, maxSteps * -2, 0),
+                                        ClipContext.Block.COLLIDER,
+                                        ClipContext.Fluid.NONE,
+                                        null))
+                        .getLocation();
         return (int) lower.y;
     }
 

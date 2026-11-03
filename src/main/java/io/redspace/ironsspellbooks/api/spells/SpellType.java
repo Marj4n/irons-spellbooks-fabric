@@ -1,36 +1,36 @@
-//package io.redspace.ironsspellbooks.api.spells;
+// package io.redspace.ironsspellbooks.api.spells;
 //
-//import com.google.common.util.concurrent.AtomicDouble;
-//import io.redspace.ironsspellbooks.IronsSpellbooks;
-//import io.redspace.ironsspellbooks.config.ServerConfigs;
-//import io.redspace.ironsspellbooks.damage.DamageSources;
-//import io.redspace.ironsspellbooks.spells.NoneSpell;
-//import io.redspace.ironsspellbooks.api.spells.SchoolType;
-//import io.redspace.ironsspellbooks.api.spells.SpellRarity;
-//import io.redspace.ironsspellbooks.spells.blood.*;
-//import io.redspace.ironsspellbooks.spells.ender.*;
-//import io.redspace.ironsspellbooks.spells.evocation.*;
-//import io.redspace.ironsspellbooks.spells.fire.*;
-//import io.redspace.ironsspellbooks.spells.holy.*;
-//import io.redspace.ironsspellbooks.spells.ice.*;
-//import io.redspace.ironsspellbooks.spells.lightning.*;
-//import io.redspace.ironsspellbooks.spells.poison.*;
-//import io.redspace.ironsspellbooks.spells.void_school.AbyssalShroudSpell;
-//import io.redspace.ironsspellbooks.spells.void_school.BlackHoleSpell;
-//import io.redspace.ironsspellbooks.spells.void_school.VoidTentaclesSpell;
-//import net.minecraft.network.chat.Component;
-//import net.minecraft.network.chat.MutableComponent;
-//import net.minecraft.resources.ResourceLocation;
-//import net.minecraft.world.damagesource.DamageSource;
-//import net.minecraft.world.entity.Entity;
-//import net.minecraft.world.item.UseAnim;
+// import com.google.common.util.concurrent.AtomicDouble;
+// import io.redspace.ironsspellbooks.IronsSpellbooks;
+// import io.redspace.ironsspellbooks.config.ServerConfigs;
+// import io.redspace.ironsspellbooks.damage.DamageSources;
+// import io.redspace.ironsspellbooks.spells.NoneSpell;
+// import io.redspace.ironsspellbooks.api.spells.SchoolType;
+// import io.redspace.ironsspellbooks.api.spells.SpellRarity;
+// import io.redspace.ironsspellbooks.spells.blood.*;
+// import io.redspace.ironsspellbooks.spells.ender.*;
+// import io.redspace.ironsspellbooks.spells.evocation.*;
+// import io.redspace.ironsspellbooks.spells.fire.*;
+// import io.redspace.ironsspellbooks.spells.holy.*;
+// import io.redspace.ironsspellbooks.spells.ice.*;
+// import io.redspace.ironsspellbooks.spells.lightning.*;
+// import io.redspace.ironsspellbooks.spells.poison.*;
+// import io.redspace.ironsspellbooks.spells.void_school.AbyssalShroudSpell;
+// import io.redspace.ironsspellbooks.spells.void_school.BlackHoleSpell;
+// import io.redspace.ironsspellbooks.spells.void_school.VoidTentaclesSpell;
+// import net.minecraft.network.chat.Component;
+// import net.minecraft.network.chat.MutableComponent;
+// import net.minecraft.resources.ResourceLocation;
+// import net.minecraft.world.damagesource.DamageSource;
+// import net.minecraft.world.entity.Entity;
+// import net.minecraft.world.item.UseAnim;
 //
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.HashMap;
-//import java.util.List;
+// import java.util.ArrayList;
+// import java.util.Arrays;
+// import java.util.HashMap;
+// import java.util.List;
 //
-//public enum SpellType {
+// public enum SpellType {
 //    /**
 //     * When adding spell, add:
 //     * Spell Type
@@ -138,9 +138,16 @@
 //
 //    public CastType getCastType() {
 //        return switch (this) {
-//            case FIREBALL_SPELL, WISP_SPELL, FANG_STRIKE_SPELL, FANG_WARD_SPELL, SUMMON_VEX_SPELL, RAISE_DEAD_SPELL, GREATER_HEAL_SPELL, CHAIN_CREEPER_SPELL, INVISIBILITY_SPELL, SUMMON_POLAR_BEAR_SPELL, BLESSING_OF_LIFE_SPELL, FORTIFY_SPELL, VOID_TENTACLES_SPELL, SUMMON_HORSE_SPELL, ICE_BLOCK_SPELL, POISON_SPLASH_SPELL, BLIGHT_SPELL, ROOT_SPELL, HEALING_CIRCLE_SPELL, SUNBEAM_SPELL, LIGHTNING_LANCE_SPELL, MAGIC_ARROW_SPELL, POISON_ARROW_SPELL, ACID_ORB_SPELL, BLACK_HOLE_SPELL, MAGMA_BOMB_SPELL, GUST_SPELL ->
+//            case FIREBALL_SPELL, WISP_SPELL, FANG_STRIKE_SPELL, FANG_WARD_SPELL, SUMMON_VEX_SPELL,
+// RAISE_DEAD_SPELL, GREATER_HEAL_SPELL, CHAIN_CREEPER_SPELL, INVISIBILITY_SPELL,
+// SUMMON_POLAR_BEAR_SPELL, BLESSING_OF_LIFE_SPELL, FORTIFY_SPELL, VOID_TENTACLES_SPELL,
+// SUMMON_HORSE_SPELL, ICE_BLOCK_SPELL, POISON_SPLASH_SPELL, BLIGHT_SPELL, ROOT_SPELL,
+// HEALING_CIRCLE_SPELL, SUNBEAM_SPELL, LIGHTNING_LANCE_SPELL, MAGIC_ARROW_SPELL,
+// POISON_ARROW_SPELL, ACID_ORB_SPELL, BLACK_HOLE_SPELL, MAGMA_BOMB_SPELL, GUST_SPELL ->
 //                    CastType.LONG;
-//            case ELECTROCUTE_SPELL, CONE_OF_COLD_SPELL, FIRE_BREATH_SPELL, WALL_OF_FIRE_SPELL, CLOUD_OF_REGENERATION_SPELL, RAY_OF_SIPHONING_SPELL, BLAZE_STORM_SPELL, DRAGON_BREATH_SPELL, POISON_BREATH_SPELL, STARFALL_SPELL ->
+//            case ELECTROCUTE_SPELL, CONE_OF_COLD_SPELL, FIRE_BREATH_SPELL, WALL_OF_FIRE_SPELL,
+// CLOUD_OF_REGENERATION_SPELL, RAY_OF_SIPHONING_SPELL, BLAZE_STORM_SPELL, DRAGON_BREATH_SPELL,
+// POISON_BREATH_SPELL, STARFALL_SPELL ->
 //                    CastType.CONTINUOUS;
 //            default -> CastType.INSTANT;
 //        };
@@ -153,22 +160,35 @@
 //        };
 //    }
 //
-//    //private static final SpellType[] FIRE_SPELLS = {FIREBALL_SPELL, BURNING_DASH_SPELL, FIREBOLT_SPELL, FIRE_BREATH_SPELL, WALL_OF_FIRE_SPELL, BLAZE_STORM_SPELL};
-//    //private static final SpellType[] ICE_SPELLS = {CONE_OF_COLD_SPELL, ICICLE_SPELL, FROST_STEP_SPELL, FROSTBITE_SPELL, SUMMON_POLAR_BEAR_SPELL, ICE_BLOCK_SPELL};
-//    //private static final SpellType[] LIGHTNING_SPELLS = {ELECTROCUTE_SPELL, LIGHTNING_LANCE_SPELL, LIGHTNING_BOLT_SPELL, ASCENSION_SPELL, CHARGE_SPELL};
-//    //private static final SpellType[] HOLY_SPELLS = {HEAL_SPELL, ANGEL_WING_SPELL, WISP_SPELL, GREATER_HEAL_SPELL, CLOUD_OF_REGENERATION_SPELL, BLESSING_OF_LIFE_SPELL, FORTIFY_SPELL};
-//    //private static final SpellType[] ENDER_SPELLS = {TELEPORT_SPELL, MAGIC_MISSILE_SPELL, EVASION_SPELL, MAGIC_ARROW_SPELL, DRAGON_BREATH_SPELL, COUNTERSPELL_SPELL};
-//    //private static final SpellType[] BLOOD_SPELLS = {BLOOD_SLASH_SPELL, HEARTSTOP_SPELL, RAISE_DEAD_SPELL, WITHER_SKULL_SPELL, RAY_OF_SIPHONING_SPELL, BLOOD_STEP_SPELL, BlOOD_NEEDLES_SPELL, ACUPUNCTURE_SPELL};
-//    //private static final SpellType[] EVOCATION_SPELLS = {SUMMON_VEX_SPELL, FIRECRACKER_SPELL, SUMMON_HORSE_SPELL, SHIELD_SPELL, FANG_STRIKE_SPELL, FANG_WARD_SPELL, LOB_CREEPER_SPELL, CHAIN_CREEPER_SPELL, INVISIBILITY_SPELL, SPECTRAL_HAMMER_SPELL};
-//    //private static final SpellType[] VOID_SPELLS = {ABYSSAL_SHROUD_SPELL, VOID_TENTACLES_SPELL, BLACK_HOLE_SPELL};
-//    //private static final SpellType[] POISON_SPELLS = {POISON_BREATH_SPELL, POISON_ARROW_SPELL, POISON_SPLASH_SPELL, ACID_ORB_SPELL, SPIDER_ASPECT_SPELL, BLIGHT_SPELL, ROOT_SPELL};
+//    //private static final SpellType[] FIRE_SPELLS = {FIREBALL_SPELL, BURNING_DASH_SPELL,
+// FIREBOLT_SPELL, FIRE_BREATH_SPELL, WALL_OF_FIRE_SPELL, BLAZE_STORM_SPELL};
+//    //private static final SpellType[] ICE_SPELLS = {CONE_OF_COLD_SPELL, ICICLE_SPELL,
+// FROST_STEP_SPELL, FROSTBITE_SPELL, SUMMON_POLAR_BEAR_SPELL, ICE_BLOCK_SPELL};
+//    //private static final SpellType[] LIGHTNING_SPELLS = {ELECTROCUTE_SPELL,
+// LIGHTNING_LANCE_SPELL, LIGHTNING_BOLT_SPELL, ASCENSION_SPELL, CHARGE_SPELL};
+//    //private static final SpellType[] HOLY_SPELLS = {HEAL_SPELL, ANGEL_WING_SPELL, WISP_SPELL,
+// GREATER_HEAL_SPELL, CLOUD_OF_REGENERATION_SPELL, BLESSING_OF_LIFE_SPELL, FORTIFY_SPELL};
+//    //private static final SpellType[] ENDER_SPELLS = {TELEPORT_SPELL, MAGIC_MISSILE_SPELL,
+// EVASION_SPELL, MAGIC_ARROW_SPELL, DRAGON_BREATH_SPELL, COUNTERSPELL_SPELL};
+//    //private static final SpellType[] BLOOD_SPELLS = {BLOOD_SLASH_SPELL, HEARTSTOP_SPELL,
+// RAISE_DEAD_SPELL, WITHER_SKULL_SPELL, RAY_OF_SIPHONING_SPELL, BLOOD_STEP_SPELL,
+// BlOOD_NEEDLES_SPELL, ACUPUNCTURE_SPELL};
+//    //private static final SpellType[] EVOCATION_SPELLS = {SUMMON_VEX_SPELL, FIRECRACKER_SPELL,
+// SUMMON_HORSE_SPELL, SHIELD_SPELL, FANG_STRIKE_SPELL, FANG_WARD_SPELL, LOB_CREEPER_SPELL,
+// CHAIN_CREEPER_SPELL, INVISIBILITY_SPELL, SPECTRAL_HAMMER_SPELL};
+//    //private static final SpellType[] VOID_SPELLS = {ABYSSAL_SHROUD_SPELL, VOID_TENTACLES_SPELL,
+// BLACK_HOLE_SPELL};
+//    //private static final SpellType[] POISON_SPELLS = {POISON_BREATH_SPELL, POISON_ARROW_SPELL,
+// POISON_SPLASH_SPELL, ACID_ORB_SPELL, SPIDER_ASPECT_SPELL, BLIGHT_SPELL, ROOT_SPELL};
 //
 //    public AbstractSpell getSpellForType(int level) {
 //        return getSpellForType.get(level);
 //    }
 //
-//    public static float getRarityMapped(float levelMin, float levelMax, float rarityMin, float rarityMax, float levelToMap) {
-//        return rarityMin + ((levelToMap - levelMin) * (rarityMax - rarityMin)) / (levelMax - levelMin);
+//    public static float getRarityMapped(float levelMin, float levelMax, float rarityMin, float
+// rarityMax, float levelToMap) {
+//        return rarityMin + ((levelToMap - levelMin) * (rarityMax - rarityMin)) / (levelMax -
+// levelMin);
 //    }
 //
 //    private void initializeRarityWeights() {
@@ -178,7 +198,8 @@
 //                int maxRarity = getMaxRarity();
 //                List<Double> rarityRawConfig = SpellRarity.getRawRarityConfig();
 //                List<Double> rarityConfig = SpellRarity.getRarityConfig();
-//                //IronsSpellbooks.LOGGER.debug("rarityRawConfig: {} rarityConfig:{}, {}, {}", rarityRawConfig.size(), rarityConfig.size(), this.hashCode(), this.name());
+//                //IronsSpellbooks.LOGGER.debug("rarityRawConfig: {} rarityConfig:{}, {}, {}",
+// rarityRawConfig.size(), rarityConfig.size(), this.hashCode(), this.name());
 //
 //                List<Double> rarityRawWeights;
 //                if (minRarity != 0) {
@@ -186,7 +207,8 @@
 //
 //                    var subList = rarityRawConfig.subList(minRarity, maxRarity + 1);
 //                    double subtotal = subList.stream().reduce(0d, Double::sum);
-//                    rarityRawWeights = subList.stream().map(item -> ((item / subtotal) * (1 - subtotal)) + item).toList();
+//                    rarityRawWeights = subList.stream().map(item -> ((item / subtotal) * (1 -
+// subtotal)) + item).toList();
 //
 //                    var counter = new AtomicDouble();
 //                    rarityWeights = new ArrayList<>();
@@ -212,7 +234,8 @@
 //            return SpellRarity.values()[getMinRarity()];
 //        double percentOfMaxLevel = (double) level / (double) maxLevel;
 //
-//        //irons_spellbooks.LOGGER.debug("getRarity: {} {} {} {} {} {}", this.toString(), rarityRawWeights, rarityWeights, percentOfMaxLevel, minRarity, maxRarity);
+//        //irons_spellbooks.LOGGER.debug("getRarity: {} {} {} {} {} {}", this.toString(),
+// rarityRawWeights, rarityWeights, percentOfMaxLevel, minRarity, maxRarity);
 //
 //        int lookupOffset = maxRarity + 1 - rarityWeights.size();
 //
@@ -240,12 +263,15 @@
 //            return 1;
 //        }
 //
-//        //irons_spellbooks.LOGGER.debug("getMinLevelForRarity: {} {} {} {} {} {} {}", this.toString(), rarity, rarityRawWeights, rarityWeights, maxLevel, minRarity, maxRarity);
+//        //irons_spellbooks.LOGGER.debug("getMinLevelForRarity: {} {} {} {} {} {} {}",
+// this.toString(), rarity, rarityRawWeights, rarityWeights, maxLevel, minRarity, maxRarity);
 //        return (int) (rarityWeights.get(rarity.getValue() - (1 + minRarity)) * maxLevel) + 1;
 //
 //
 /// /        int lookupOffset = maxRarity + 1 - rarityWeights.size();
-/// /        irons_spellbooks.LOGGER.debug("getMinLevelForRarity: {} {} {} {} {} {} {} {}", this.toString(), rarity, rarityRawWeights, rarityWeights, maxLevel, minRarity, maxRarity, lookupOffset);
+/// /        irons_spellbooks.LOGGER.debug("getMinLevelForRarity: {} {} {} {} {} {} {} {}",
+// this.toString(), rarity, rarityRawWeights, rarityWeights, maxLevel, minRarity, maxRarity,
+// lookupOffset);
 /// /        int index = rarity.getValue() - lookupOffset;
 /// /
 /// /        if (index < 0) {
@@ -294,7 +320,8 @@
 //
 //
 //    public static List<SpellType> getSpellsFromSchool(SchoolType school) {
-//        return Arrays.stream(SpellType.values()).filter(spellType -> spellType.getSchoolType() == school && spellType.isEnabled() && spellType != NONE_SPELL).toList();
+//        return Arrays.stream(SpellType.values()).filter(spellType -> spellType.getSchoolType() ==
+// school && spellType.isEnabled() && spellType != NONE_SPELL).toList();
 ////        return spellsForSchool.getOrDefault(school, List.of(NONE_SPELL));
 //    }
 //
@@ -315,7 +342,8 @@
 //    }
 //
 ////    public ResourceLocation getResourceLocation() {
-////        return new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/spell_icons/" + this.getId() + ".png");
+////        return new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/spell_icons/" +
+// this.getId() + ".png");
 ////    }
 //
 //    public DamageSource getDamageSource() {
@@ -349,4 +377,4 @@
 //        AbstractSpell get(int level);
 //    }
 //
-//}
+// }

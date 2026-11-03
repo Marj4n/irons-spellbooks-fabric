@@ -11,7 +11,15 @@ public class DragonFireParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
     private final boolean mirrored;
 
-    public DragonFireParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public DragonFireParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
 
         this.xd = xd;
@@ -57,9 +65,15 @@ public class DragonFireParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new DragonFireParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }

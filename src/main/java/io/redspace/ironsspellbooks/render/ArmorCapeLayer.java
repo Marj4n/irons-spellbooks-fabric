@@ -35,31 +35,48 @@ public class ArmorCapeLayer extends RenderLayer<LivingEntity, HumanoidModel<Livi
     private ModelPart cape;
 
     private Consumer<PoseStack> bodyTransformer;
-    public static ModelLayerLocation ARMOR_CAPE_LAYER = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "armor_cape"), "main");
+    public static ModelLayerLocation ARMOR_CAPE_LAYER =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "armor_cape"), "main");
 
     public ArmorCapeLayer(RenderLayerParent<LivingEntity, HumanoidModel<LivingEntity>> pRenderer) {
         super(pRenderer);
-        this.cape = Minecraft.getInstance().getEntityModels().bakeLayer(ARMOR_CAPE_LAYER).getChild("cape");
-        this.bodyTransformer = (poseStack) -> this.getParentModel().body.translateAndRotate(poseStack);
+        this.cape =
+                Minecraft.getInstance()
+                        .getEntityModels()
+                        .bakeLayer(ARMOR_CAPE_LAYER)
+                        .getChild("cape");
+        this.bodyTransformer =
+                (poseStack) -> this.getParentModel().body.translateAndRotate(poseStack);
     }
 
-    public ArmorCapeLayer(RenderLayerParent<LivingEntity, HumanoidModel<LivingEntity>> pRenderer, Consumer<PoseStack> bodyTransformer) {
+    public ArmorCapeLayer(
+            RenderLayerParent<LivingEntity, HumanoidModel<LivingEntity>> pRenderer,
+            Consumer<PoseStack> bodyTransformer) {
         this(pRenderer);
         this.bodyTransformer = bodyTransformer;
     }
-
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
         partdefinition.addOrReplaceChild(
                 "cape",
-                CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, 0.0F, -1.0F, 10.0F, 16.0F, 1.0F, CubeDeformation.NONE, 1.0F, 0.5F),
-                PartPose.offset(0.0F, 0.0F, 0.0F)
-        );
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(
+                                -5.0F,
+                                0.0F,
+                                -1.0F,
+                                10.0F,
+                                16.0F,
+                                1.0F,
+                                CubeDeformation.NONE,
+                                1.0F,
+                                0.5F),
+                PartPose.offset(0.0F, 0.0F, 0.0F));
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
-
 
     public void render(
             PoseStack pPoseStack,
@@ -71,11 +88,13 @@ public class ArmorCapeLayer extends RenderLayer<LivingEntity, HumanoidModel<Livi
             float pPartialTicks,
             float pAgeInTicks,
             float pNetHeadYaw,
-            float pHeadPitch
-    ) {
+            float pHeadPitch) {
         if (shouldRender(livingEntity)) {
-            var texture = ((IArmorCapeProvider) livingEntity.getItemBySlot(EquipmentSlot.CHEST).getItem()).getCapeResourceLocation();
-            IArmorCapeProvider.CapeData capeData = ((MagicData.IExtendedEntity) livingEntity).irons_spellbooks$getCapData();
+            var texture =
+                    ((IArmorCapeProvider) livingEntity.getItemBySlot(EquipmentSlot.CHEST).getItem())
+                            .getCapeResourceLocation();
+            IArmorCapeProvider.CapeData capeData =
+                    ((MagicData.IExtendedEntity) livingEntity).irons_spellbooks$getCapData();
             int lastTick = capeData.lastTick;
             if (lastTick != livingEntity.tickCount) {
                 capeData.moveCloak(livingEntity);
@@ -83,9 +102,18 @@ public class ArmorCapeLayer extends RenderLayer<LivingEntity, HumanoidModel<Livi
             }
             pPoseStack.pushPose();
             pPoseStack.translate(0.0F, 0.0F, 0.125F);
-            double d0 = Mth.lerp((double) pPartialTicks, capeData.xCloakO, capeData.xCloak) - Mth.lerp((double) pPartialTicks, livingEntity.xo, livingEntity.getX());
-            double d1 = Mth.lerp((double) pPartialTicks, capeData.yCloakO, capeData.yCloak) - Mth.lerp((double) pPartialTicks, livingEntity.yo, livingEntity.getY());
-            double d2 = Mth.lerp((double) pPartialTicks, capeData.zCloakO, capeData.zCloak) - Mth.lerp((double) pPartialTicks, livingEntity.zo, livingEntity.getZ());
+            double d0 =
+                    Mth.lerp((double) pPartialTicks, capeData.xCloakO, capeData.xCloak)
+                            - Mth.lerp(
+                                    (double) pPartialTicks, livingEntity.xo, livingEntity.getX());
+            double d1 =
+                    Mth.lerp((double) pPartialTicks, capeData.yCloakO, capeData.yCloak)
+                            - Mth.lerp(
+                                    (double) pPartialTicks, livingEntity.yo, livingEntity.getY());
+            double d2 =
+                    Mth.lerp((double) pPartialTicks, capeData.zCloakO, capeData.zCloak)
+                            - Mth.lerp(
+                                    (double) pPartialTicks, livingEntity.zo, livingEntity.getZ());
             float f = Mth.rotLerp(pPartialTicks, livingEntity.yBodyRotO, livingEntity.yBodyRot);
             double d3 = (double) Mth.sin(f * (float) (Math.PI / 180.0));
             double d4 = (double) (-Mth.cos(f * (float) (Math.PI / 180.0)));
@@ -100,7 +128,15 @@ public class ArmorCapeLayer extends RenderLayer<LivingEntity, HumanoidModel<Livi
             }
 
             float f4 = Mth.lerp(pPartialTicks, capeData.oBob, capeData.bob);
-            f1 += Mth.sin(Mth.lerp(pPartialTicks, livingEntity.walkDistO, livingEntity.walkDist) * 6.0F) * 32.0F * f4;
+            f1 +=
+                    Mth.sin(
+                                    Mth.lerp(
+                                                    pPartialTicks,
+                                                    livingEntity.walkDistO,
+                                                    livingEntity.walkDist)
+                                            * 6.0F)
+                            * 32.0F
+                            * f4;
             if (livingEntity.isCrouching()) {
                 f1 += 25.0F;
                 this.cape.z = 1.4F;
@@ -113,7 +149,8 @@ public class ArmorCapeLayer extends RenderLayer<LivingEntity, HumanoidModel<Livi
             pPoseStack.mulPose(Axis.XP.rotationDegrees(6.0F + f2 / 2.0F + f1));
             pPoseStack.mulPose(Axis.ZP.rotationDegrees(f3 / 2.0F));
             pPoseStack.mulPose(Axis.YP.rotationDegrees(180.0F - f3 / 2.0F));
-            VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.entityCutoutNoCull(texture));
+            VertexConsumer vertexconsumer =
+                    pBuffer.getBuffer(RenderType.entityCutoutNoCull(texture));
             this.cape.render(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY);
             pPoseStack.popPose();
         }
@@ -128,6 +165,7 @@ public class ArmorCapeLayer extends RenderLayer<LivingEntity, HumanoidModel<Livi
     }
 
     private boolean hasPlayerCape(LivingEntity livingEntity) {
-        return livingEntity instanceof AbstractClientPlayer player && player.getCloakTextureLocation() != null;
+        return livingEntity instanceof AbstractClientPlayer player
+                && player.getCloakTextureLocation() != null;
     }
 }

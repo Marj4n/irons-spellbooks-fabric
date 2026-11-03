@@ -46,7 +46,8 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
         var damageSource = SpellRegistry.EARTHQUAKE_SPELL.get().getDamageSource(this, getOwner());
         DamageSources.ignoreNextKnockback(target);
         if (target.hurt(damageSource, getDamage())) {
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, slownessAmplifier));
+            target.addEffect(
+                    new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, slownessAmplifier));
             target.setDeltaMovement(target.getDeltaMovement().add(0, .5, 0));
             target.hurtMarked = true;
         }
@@ -69,9 +70,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     }
 
     @Override
-    public void ambientParticles() {
-
-    }
+    public void ambientParticles() {}
 
     int waveAnim = -1;
 
@@ -82,12 +81,14 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
             createScreenShake();
         }
         if (tickCount % 20 == 1) {
-            this.playSound(SoundRegistry.EARTHQUAKE_LOOP.get(), 2f, .9f + random.nextFloat() * .15f);
+            this.playSound(
+                    SoundRegistry.EARTHQUAKE_LOOP.get(), 2f, .9f + random.nextFloat() * .15f);
         }
         if (tickCount % reapplicationDelay == 1) {
-            //aligns with damage tick
+            // aligns with damage tick
             waveAnim = 0;
-            this.playSound(SoundRegistry.EARTHQUAKE_IMPACT.get(), 1.5f, .9f + random.nextFloat() * .2f);
+            this.playSound(
+                    SoundRegistry.EARTHQUAKE_IMPACT.get(), 1.5f, .9f + random.nextFloat() * .2f);
         }
         if (!level().isClientSide) {
             var radius = this.getRadius();
@@ -95,7 +96,9 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
             int intensity = Math.min((int) (radius * radius * .09f), 15);
             for (int i = 0; i < intensity; i++) {
                 Vec3 vec3 = this.position().add(uniformlyDistributedPointInRadius(radius));
-                BlockPos blockPos = BlockPos.containing(Utils.moveToRelativeGroundLevel(level, vec3, 4)).below();
+                BlockPos blockPos =
+                        BlockPos.containing(Utils.moveToRelativeGroundLevel(level, vec3, 4))
+                                .below();
                 Utils.createTremorBlock(level, blockPos, .1f + random.nextFloat() * .2f);
             }
             if (waveAnim >= 0) {
@@ -103,18 +106,22 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
                 int blocks = Mth.clamp((int) circumference, 0, 250);
                 float anglePerBlock = 360f / blocks;
                 for (int i = 0; i < blocks; i++) {
-                    Vec3 vec3 = new Vec3(
-                            waveAnim * Mth.cos(anglePerBlock * i),
-                            0,
-                            waveAnim * Mth.sin(anglePerBlock * i)
-                    );
-                    BlockPos blockPos = BlockPos.containing(Utils.moveToRelativeGroundLevel(level, position().add(vec3), 4)).below();
+                    Vec3 vec3 =
+                            new Vec3(
+                                    waveAnim * Mth.cos(anglePerBlock * i),
+                                    0,
+                                    waveAnim * Mth.sin(anglePerBlock * i));
+                    BlockPos blockPos =
+                            BlockPos.containing(
+                                            Utils.moveToRelativeGroundLevel(
+                                                    level, position().add(vec3), 4))
+                                    .below();
                     Utils.createTremorBlock(level, blockPos, .1f + random.nextFloat() * .2f);
                 }
                 if (waveAnim++ >= radius) {
                     waveAnim = -1;
                     if (tickCount + reapplicationDelay >= duration) {
-                        //end ourselves smoothly with the last bang instead of timing out awkwardly
+                        // end ourselves smoothly with the last bang instead of timing out awkwardly
                         this.discard();
                     }
                 }
@@ -132,10 +139,11 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
         return new Vec3(0, 5, 0);
     }
 
-
     protected void createScreenShake() {
         if (!this.level().isClientSide && !this.isRemoved()) {
-            this.cameraShakeData = new CameraShakeData(level(), this.duration - this.tickCount, this.position(), 15);
+            this.cameraShakeData =
+                    new CameraShakeData(
+                            level(), this.duration - this.tickCount, this.position(), 15);
             CameraShakeManager.addCameraShake(cameraShakeData);
         }
     }
@@ -143,11 +151,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     protected Vec3 uniformlyDistributedPointInRadius(float r) {
         var distance = r * (1 - this.random.nextFloat() * this.random.nextFloat());
         var theta = this.random.nextFloat() * 6.282f; // two pi :nerd:
-        return new Vec3(
-                distance * Mth.cos(theta),
-                .2f,
-                distance * Mth.sin(theta)
-        );
+        return new Vec3(distance * Mth.cos(theta), .2f, distance * Mth.sin(theta));
     }
 
     @Override
@@ -183,7 +187,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     protected void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.slownessAmplifier = pCompound.getInt("Slowness");
-        //IronsSpellbooks.LOGGER.debug("EarthquakeAoe readAdditionalSaveData");
+        // IronsSpellbooks.LOGGER.debug("EarthquakeAoe readAdditionalSaveData");
         createScreenShake();
     }
 }

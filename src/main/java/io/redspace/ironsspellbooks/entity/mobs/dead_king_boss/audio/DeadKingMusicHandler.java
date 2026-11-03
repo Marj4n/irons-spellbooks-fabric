@@ -35,11 +35,21 @@ public class DeadKingMusicHandler implements IMusicHandler {
         this.entityid = boss.getId();
         this.soundManager = Minecraft.getInstance().getSoundManager();
         stage = DeadKingBoss.Phases.values()[boss.getPhase()];
-        beginSound = new FadeableSoundInstance(SoundRegistry.DEAD_KING_MUSIC_INTRO.get(), SOUND_SOURCE, false);
-        firstPhaseMelody = new FadeableSoundInstance(SoundRegistry.DEAD_KING_FIRST_PHASE_MELODY.get(), SOUND_SOURCE, true);
-        firstPhaseAccent = new FadeableSoundInstance(SoundRegistry.DEAD_KING_FIRST_PHASE_ACCENT_01.get(), SOUND_SOURCE, false);
-        secondPhaseMelody = new FadeableSoundInstance(SoundRegistry.DEAD_KING_SECOND_PHASE_MELODY_ALT.get(), SOUND_SOURCE, true);
-        transitionMusic = new FadeableSoundInstance(SoundRegistry.DEAD_KING_SUSPENSE.get(), SOUND_SOURCE, false);
+        beginSound =
+                new FadeableSoundInstance(
+                        SoundRegistry.DEAD_KING_MUSIC_INTRO.get(), SOUND_SOURCE, false);
+        firstPhaseMelody =
+                new FadeableSoundInstance(
+                        SoundRegistry.DEAD_KING_FIRST_PHASE_MELODY.get(), SOUND_SOURCE, true);
+        firstPhaseAccent =
+                new FadeableSoundInstance(
+                        SoundRegistry.DEAD_KING_FIRST_PHASE_ACCENT_01.get(), SOUND_SOURCE, false);
+        secondPhaseMelody =
+                new FadeableSoundInstance(
+                        SoundRegistry.DEAD_KING_SECOND_PHASE_MELODY_ALT.get(), SOUND_SOURCE, true);
+        transitionMusic =
+                new FadeableSoundInstance(
+                        SoundRegistry.DEAD_KING_SUSPENSE.get(), SOUND_SOURCE, false);
     }
 
     @Override
@@ -74,14 +84,16 @@ public class DeadKingMusicHandler implements IMusicHandler {
         switch (bossPhase) {
             case FirstPhase -> {
                 if (!hasPlayedIntro) {
-                    //soundManager.isActive() seems to be delayed, so we do additional ms check
-                    if (!soundManager.isActive(beginSound) || lastMilisPlayed + INTRO_LENGTH_MILIS < System.currentTimeMillis()) {
+                    // soundManager.isActive() seems to be delayed, so we do additional ms check
+                    if (!soundManager.isActive(beginSound)
+                            || lastMilisPlayed + INTRO_LENGTH_MILIS < System.currentTimeMillis()) {
                         hasPlayedIntro = true;
                         layers.remove(beginSound);
                         initFirstPhase();
                     }
-                } else if (lastMilisPlayed + FIRST_PHASE_MELODY_LENGTH_MILIS * 2 < System.currentTimeMillis()) {
-                    //play accent every other time
+                } else if (lastMilisPlayed + FIRST_PHASE_MELODY_LENGTH_MILIS * 2
+                        < System.currentTimeMillis()) {
+                    // play accent every other time
                     playAccent(firstPhaseAccent);
                 }
             }
@@ -112,7 +124,10 @@ public class DeadKingMusicHandler implements IMusicHandler {
     }
 
     private void addLayer(FadeableSoundInstance soundInstance) {
-        layers.stream().filter((sound) -> sound.isStopped() || !soundManager.isActive(sound)).toList().forEach(layers::remove);
+        layers.stream()
+                .filter((sound) -> sound.isStopped() || !soundManager.isActive(sound))
+                .toList()
+                .forEach(layers::remove);
         soundManager.play(soundInstance);
         layers.add(soundInstance);
     }
@@ -134,16 +149,21 @@ public class DeadKingMusicHandler implements IMusicHandler {
     @Override
     public void triggerResume() {
         if (Minecraft.getInstance().level != null) {
-            //Object reference could have changed, update it if it is the same entity
-            this.boss = Minecraft.getInstance().level.getEntity(entityid) instanceof DeadKingBoss deadKingBoss ? deadKingBoss : this.boss;
+            // Object reference could have changed, update it if it is the same entity
+            this.boss =
+                    Minecraft.getInstance().level.getEntity(entityid)
+                                    instanceof DeadKingBoss deadKingBoss
+                            ? deadKingBoss
+                            : this.boss;
         }
         if (!this.boss.isRemoved()) {
-            layers.forEach((sound) -> {
-                sound.triggerStart();
-                if (!soundManager.isActive(sound)) {
-                    soundManager.play(sound);
-                }
-            });
+            layers.forEach(
+                    (sound) -> {
+                        sound.triggerStart();
+                        if (!soundManager.isActive(sound)) {
+                            soundManager.play(sound);
+                        }
+                    });
         }
     }
 

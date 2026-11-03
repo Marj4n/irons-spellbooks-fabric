@@ -14,7 +14,6 @@ import net.minecraft.world.phys.Vec3;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-
 @Environment(EnvType.CLIENT)
 public class AngelWingsModel<T extends LivingEntity> extends AgeableListModel<T> {
     private final ModelPart rightWing;
@@ -22,7 +21,8 @@ public class AngelWingsModel<T extends LivingEntity> extends AgeableListModel<T>
 
     public static final String MAIN = "main";
     public static final String ANGEL_WINGS = "angel_wings";
-    public static ModelLayerLocation ANGEL_WINGS_LAYER = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, ANGEL_WINGS), MAIN);
+    public static ModelLayerLocation ANGEL_WINGS_LAYER =
+            new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, ANGEL_WINGS), MAIN);
 
     public AngelWingsModel(ModelPart pRoot) {
         this.leftWing = pRoot.getChild("left_wing");
@@ -33,8 +33,19 @@ public class AngelWingsModel<T extends LivingEntity> extends AgeableListModel<T>
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
         CubeDeformation cubedeformation = new CubeDeformation(1.0F);
-        partdefinition.addOrReplaceChild("left_wing", CubeListBuilder.create().texOffs(22, 0).addBox(-10.0F, 0.0F, 0.0F, 10.0F, 20.0F, 2.0F, cubedeformation), PartPose.offsetAndRotation(5.0F, 0.0F, 0.0F, 0.2617994F, 0.0F, -0.2617994F));
-        partdefinition.addOrReplaceChild("right_wing", CubeListBuilder.create().texOffs(22, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 10.0F, 20.0F, 2.0F, cubedeformation), PartPose.offsetAndRotation(-5.0F, 0.0F, 0.0F, 0.2617994F, 0.0F, 0.2617994F));
+        partdefinition.addOrReplaceChild(
+                "left_wing",
+                CubeListBuilder.create()
+                        .texOffs(22, 0)
+                        .addBox(-10.0F, 0.0F, 0.0F, 10.0F, 20.0F, 2.0F, cubedeformation),
+                PartPose.offsetAndRotation(5.0F, 0.0F, 0.0F, 0.2617994F, 0.0F, -0.2617994F));
+        partdefinition.addOrReplaceChild(
+                "right_wing",
+                CubeListBuilder.create()
+                        .texOffs(22, 0)
+                        .mirror()
+                        .addBox(0.0F, 0.0F, 0.0F, 10.0F, 20.0F, 2.0F, cubedeformation),
+                PartPose.offsetAndRotation(-5.0F, 0.0F, 0.0F, 0.2617994F, 0.0F, 0.2617994F));
         return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
@@ -49,7 +60,13 @@ public class AngelWingsModel<T extends LivingEntity> extends AgeableListModel<T>
     /**
      * Sets this entity's model rotation angles
      */
-    public void setupAnim(T pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+    public void setupAnim(
+            T pEntity,
+            float pLimbSwing,
+            float pLimbSwingAmount,
+            float pAgeInTicks,
+            float pNetHeadYaw,
+            float pHeadPitch) {
         float f = 0.2617994F;
         float f1 = -0.2617994F;
         float f2 = 0.0F;

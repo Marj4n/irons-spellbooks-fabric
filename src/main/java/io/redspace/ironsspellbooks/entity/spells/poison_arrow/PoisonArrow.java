@@ -28,7 +28,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class PoisonArrow extends AbstractMagicProjectile {
-    private static final EntityDataAccessor<Boolean> IN_GROUND = SynchedEntityData.defineId(PoisonArrow.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IN_GROUND =
+            SynchedEntityData.defineId(PoisonArrow.class, EntityDataSerializers.BOOLEAN);
 
     public PoisonArrow(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -52,7 +53,7 @@ public class PoisonArrow extends AbstractMagicProjectile {
         }
         if (!inGround) {
             super.tick();
-            //IronsSpellbooks.LOGGER.debug("Poison Arrow Flying!! {}", inGround);
+            // IronsSpellbooks.LOGGER.debug("Poison Arrow Flying!! {}", inGround);
         } else {
             if (tickCount > EXPIRE_TIME) {
                 discard();
@@ -60,19 +61,17 @@ public class PoisonArrow extends AbstractMagicProjectile {
             }
             if (shouldFall()) {
                 inGround = false;
-                //IronsSpellbooks.LOGGER.debug("This side thinks we should fall {}", getDeltaMovement());
+                // IronsSpellbooks.LOGGER.debug("This side thinks we should fall {}",
+                // getDeltaMovement());
                 this.setDeltaMovement(getDeltaMovement().normalize().scale(0.05f));
-
             }
         }
-
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(IN_GROUND, false);
-
     }
 
     public void setAoeDamage(float damage) {
@@ -84,7 +83,9 @@ public class PoisonArrow extends AbstractMagicProjectile {
     }
 
     private boolean shouldFall() {
-        return this.inGround && this.level().noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
+        return this.inGround
+                && this.level()
+                        .noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
     }
 
     @Override
@@ -101,17 +102,20 @@ public class PoisonArrow extends AbstractMagicProjectile {
             createPoisonCloud(pResult.getLocation());
         }
 
-        //IronsSpellbooks.LOGGER.debug("Poison Arrow onHitBlock: {}", inGround);
+        // IronsSpellbooks.LOGGER.debug("Poison Arrow onHitBlock: {}", inGround);
 
     }
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
-        if (level().isClientSide)
-            return;
+        if (level().isClientSide) return;
         Entity entity = entityHitResult.getEntity();
-        boolean hit = DamageSources.applyDamage(entity, getDamage(), SpellRegistry.POISON_ARROW_SPELL.get().getDamageSource(this, getOwner()));
-        //TODO: add evasion and stuff. Also do this for all other projectiles?
+        boolean hit =
+                DamageSources.applyDamage(
+                        entity,
+                        getDamage(),
+                        SpellRegistry.POISON_ARROW_SPELL.get().getDamageSource(this, getOwner()));
+        // TODO: add evasion and stuff. Also do this for all other projectiles?
         boolean ignore = entity.getType() == EntityType.ENDERMAN;
         if (hit) {
             if (!ignore) {
@@ -126,8 +130,6 @@ public class PoisonArrow extends AbstractMagicProjectile {
             this.setYRot(this.getYRot() + 180.0F);
             this.yRotO += 180.0F;
         }
-
-
     }
 
     @Override
@@ -166,7 +168,8 @@ public class PoisonArrow extends AbstractMagicProjectile {
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.ACID, x, y, z, 15, .03, .03, .03, 0.2, true);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.ACID, x, y, z, 15, .03, .03, .03, 0.2, true);
     }
 
     @Override

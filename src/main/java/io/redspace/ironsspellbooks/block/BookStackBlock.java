@@ -19,23 +19,37 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 
 public class BookStackBlock extends HorizontalDirectionalBlock {
-//    public static final MapCodec<BookStackBlock> CODEC = simpleCodec((p)->new BookStackBlock());
-//
-//    @Override
-//    public MapCodec<BookStackBlock> codec() {
-//        return CODEC;
-//    }
+    //    public static final MapCodec<BookStackBlock> CODEC = simpleCodec((p)->new
+    // BookStackBlock());
+    //
+    //    @Override
+    //    public MapCodec<BookStackBlock> codec() {
+    //        return CODEC;
+    //    }
     public static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 8, 13);
 
     public BookStackBlock() {
-        super(Properties.of().mapColor(DyeColor.WHITE).noOcclusion().pushReaction(PushReaction.DESTROY).sound(
-                new SoundType(1, 1, SoundEvents.BOOK_PUT, SoundEvents.WOOL_STEP, SoundEvents.BOOK_PUT, SoundEvents.WOOL_HIT, SoundEvents.BOOK_PAGE_TURN)
-        ).strength(0.2F));
+        super(
+                Properties.of()
+                        .mapColor(DyeColor.WHITE)
+                        .noOcclusion()
+                        .pushReaction(PushReaction.DESTROY)
+                        .sound(
+                                new SoundType(
+                                        1,
+                                        1,
+                                        SoundEvents.BOOK_PUT,
+                                        SoundEvents.WOOL_STEP,
+                                        SoundEvents.BOOK_PUT,
+                                        SoundEvents.WOOL_HIT,
+                                        SoundEvents.BOOK_PAGE_TURN))
+                        .strength(0.2F));
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
     }
 
@@ -53,5 +67,4 @@ public class BookStackBlock extends HorizontalDirectionalBlock {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
-
 }

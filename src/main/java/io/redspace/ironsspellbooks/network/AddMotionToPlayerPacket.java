@@ -42,12 +42,9 @@ public class AddMotionToPlayerPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-        });
-        if(preserveMomentum)
-            Minecraft.getInstance().player.push(x,y,z);
-        else
-            Minecraft.getInstance().player.setDeltaMovement(x,y,z);
+        ctx.enqueueWork(() -> {});
+        if (preserveMomentum) Minecraft.getInstance().player.push(x, y, z);
+        else Minecraft.getInstance().player.setDeltaMovement(x, y, z);
         return true;
     }
 }

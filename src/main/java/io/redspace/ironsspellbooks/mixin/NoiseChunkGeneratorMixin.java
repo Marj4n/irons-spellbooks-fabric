@@ -20,16 +20,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class NoiseChunkGeneratorMixin {
 
     @Inject(method = "createNoiseChunk", at = @At("RETURN"))
-    void irons_spellbooks$detectAquifers(ChunkAccess chunk, StructureManager structureManager, Blender blender, RandomState random, CallbackInfoReturnable<NoiseChunk> cir) {
+    void irons_spellbooks$detectAquifers(
+            ChunkAccess chunk,
+            StructureManager structureManager,
+            Blender blender,
+            RandomState random,
+            CallbackInfoReturnable<NoiseChunk> cir) {
         if (ServerConfigs.SPEC.isLoaded() && !ServerConfigs.AQUIFER_DETECTION.get()) {
             return;
         }
         IExtendedNoiseChunk noisechunk = (IExtendedNoiseChunk) cir.getReturnValue();
-        var starts = structureManager.startsForStructure(chunk.getPos(), structure -> AquiferHelper.getOrCacheStructures(structureManager).contains(structure));
-        if (!starts.isEmpty()
-        ) {
-            BoundingBox[] boundingBoxes = starts.stream().flatMap(s -> s.getPieces().stream()).map(StructurePiece::getBoundingBox).toArray(BoundingBox[]::new);
-            noisechunk.irons_spellbooks$setAquifierStatus(new IExtendedNoiseChunk.AquifierNuke(boundingBoxes));
+        var starts =
+                structureManager.startsForStructure(
+                        chunk.getPos(),
+                        structure ->
+                                AquiferHelper.getOrCacheStructures(structureManager)
+                                        .contains(structure));
+        if (!starts.isEmpty()) {
+            BoundingBox[] boundingBoxes =
+                    starts.stream()
+                            .flatMap(s -> s.getPieces().stream())
+                            .map(StructurePiece::getBoundingBox)
+                            .toArray(BoundingBox[]::new);
+            noisechunk.irons_spellbooks$setAquifierStatus(
+                    new IExtendedNoiseChunk.AquifierNuke(boundingBoxes));
         }
     }
 }

@@ -184,65 +184,116 @@ import static io.redspace.ironsspellbooks.render.EnergySwirlLayer.EVASION_TEXTUR
 
 public class ClientSetup {
     public static void registerDimensionEffects() {
-        net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry.registerDimensionEffects(IronsSpellbooks.id("pocket_dimension"), new PocketDimensionEffects());
+        net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry
+                .registerDimensionEffects(
+                        IronsSpellbooks.id("pocket_dimension"), new PocketDimensionEffects());
     }
 
-    public static void registerDyeables(net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry<net.minecraft.world.level.ItemLike, net.minecraft.client.color.item.ItemColor> event) {
+    public static void registerDyeables(
+            net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry<
+                            net.minecraft.world.level.ItemLike,
+                            net.minecraft.client.color.item.ItemColor>
+                    event) {
         // Wizard Armor (default blue)
-        BiFunction<ItemStack, Integer, Integer> imlazy = (stack, defaultColor) -> {
-            CompoundTag compoundtag = stack.hasTag() ? stack.getTagElement("display") : null;
-            return compoundtag != null && compoundtag.contains("color", 99) ? compoundtag.getInt("color") : defaultColor;
-        };
+        BiFunction<ItemStack, Integer, Integer> imlazy =
+                (stack, defaultColor) -> {
+                    CompoundTag compoundtag =
+                            stack.hasTag() ? stack.getTagElement("display") : null;
+                    return compoundtag != null && compoundtag.contains("color", 99)
+                            ? compoundtag.getInt("color")
+                            : defaultColor;
+                };
         event.register(
                 (stack, layer) -> layer > 0 ? -1 : imlazy.apply(stack, 0xFFb8e5f3),
-                ItemRegistry.WIZARD_BOOTS.get(), ItemRegistry.WIZARD_LEGGINGS.get(), ItemRegistry.WIZARD_CHESTPLATE.get(), ItemRegistry.WIZARD_HELMET.get(), ItemRegistry.WIZARD_HAT.get());
+                ItemRegistry.WIZARD_BOOTS.get(),
+                ItemRegistry.WIZARD_LEGGINGS.get(),
+                ItemRegistry.WIZARD_CHESTPLATE.get(),
+                ItemRegistry.WIZARD_HELMET.get(),
+                ItemRegistry.WIZARD_HAT.get());
         // Netherite Armor (default red)
         event.register(
                 (stack, layer) -> layer > 0 ? -1 : imlazy.apply(stack, 0xFF8c4141),
-                ItemRegistry.NETHERITE_MAGE_BOOTS.get(), ItemRegistry.NETHERITE_MAGE_LEGGINGS.get(), ItemRegistry.NETHERITE_MAGE_CHESTPLATE.get(), ItemRegistry.NETHERITE_MAGE_HELMET.get());
+                ItemRegistry.NETHERITE_MAGE_BOOTS.get(),
+                ItemRegistry.NETHERITE_MAGE_LEGGINGS.get(),
+                ItemRegistry.NETHERITE_MAGE_CHESTPLATE.get(),
+                ItemRegistry.NETHERITE_MAGE_HELMET.get());
     }
 
     public static void onRegisterLayers() {
-        //LayerDefinition basicHumanLayer = LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64);
+        // LayerDefinition basicHumanLayer =
+        // LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64);
 
-        //See LayerDefinitions.createRoots
-        LayerDefinition energyOverlayLayer = LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 64);
+        // See LayerDefinitions.createRoots
+        LayerDefinition energyOverlayLayer =
+                LayerDefinition.create(
+                        HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 64);
 
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(ShieldModel.LAYER_LOCATION, ShieldModel::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(AcidOrbRenderer.MODEL_LAYER_LOCATION, AcidOrbRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(GustRenderer.MODEL_LAYER_LOCATION, GustRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(RayOfFrostRenderer.MODEL_LAYER_LOCATION, RayOfFrostRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(EldritchBlastRenderer.MODEL_LAYER_LOCATION, EldritchBlastRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(FireballRenderer.MODEL_LAYER_LOCATION, FireballRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(FireboltRenderer.MODEL_LAYER_LOCATION, FireboltRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(GuidingBoltRenderer.MODEL_LAYER_LOCATION, GuidingBoltRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(IcicleRenderer.MODEL_LAYER_LOCATION, IcicleRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(ShieldTrimModel.LAYER_LOCATION, ShieldTrimModel::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(AngelWingsModel.ANGEL_WINGS_LAYER, AngelWingsModel::createLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(EnergySwirlLayer.Vanilla.ENERGY_LAYER, () -> energyOverlayLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(BallLightningRenderer.MODEL_LAYER_LOCATION, BallLightningRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(SkullProjectileRenderer.MODEL_LAYER_LOCATION, SkullProjectileRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(ArmorCapeLayer.ARMOR_CAPE_LAYER, ArmorCapeLayer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(IceSpikeRenderer.IceSpikeModel.LAYER_LOCATION, IceSpikeRenderer.IceSpikeModel::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(IceTombRenderer.IceTombModel.LAYER_LOCATION, IceTombRenderer.IceTombModel::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(PyriumStaffHeadModel.LAYER_LOCATION, PyriumStaffHeadModel::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(PyriumStaffOrbModel.LAYER_LOCATION, PyriumStaffOrbModel::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(DeadKingSoulRenderer.MODEL_LAYER_LOCATION, DeadKingSoulRenderer::createBodyLayer);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(DeadKingSoulRenderer.CROWN_CUBE_LAYER_LOCATION, DeadKingSoulRenderer::createCrownCubeLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                ShieldModel.LAYER_LOCATION, ShieldModel::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                AcidOrbRenderer.MODEL_LAYER_LOCATION, AcidOrbRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                GustRenderer.MODEL_LAYER_LOCATION, GustRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                RayOfFrostRenderer.MODEL_LAYER_LOCATION, RayOfFrostRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                EldritchBlastRenderer.MODEL_LAYER_LOCATION, EldritchBlastRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                FireballRenderer.MODEL_LAYER_LOCATION, FireballRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                FireboltRenderer.MODEL_LAYER_LOCATION, FireboltRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                GuidingBoltRenderer.MODEL_LAYER_LOCATION, GuidingBoltRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                IcicleRenderer.MODEL_LAYER_LOCATION, IcicleRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                ShieldTrimModel.LAYER_LOCATION, ShieldTrimModel::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                AngelWingsModel.ANGEL_WINGS_LAYER, AngelWingsModel::createLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                EnergySwirlLayer.Vanilla.ENERGY_LAYER, () -> energyOverlayLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                BallLightningRenderer.MODEL_LAYER_LOCATION, BallLightningRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                SkullProjectileRenderer.MODEL_LAYER_LOCATION,
+                SkullProjectileRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                ArmorCapeLayer.ARMOR_CAPE_LAYER, ArmorCapeLayer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                IceSpikeRenderer.IceSpikeModel.LAYER_LOCATION,
+                IceSpikeRenderer.IceSpikeModel::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                IceTombRenderer.IceTombModel.LAYER_LOCATION,
+                IceTombRenderer.IceTombModel::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                PyriumStaffHeadModel.LAYER_LOCATION, PyriumStaffHeadModel::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                PyriumStaffOrbModel.LAYER_LOCATION, PyriumStaffOrbModel::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                DeadKingSoulRenderer.MODEL_LAYER_LOCATION, DeadKingSoulRenderer::createBodyLayer);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(
+                DeadKingSoulRenderer.CROWN_CUBE_LAYER_LOCATION,
+                DeadKingSoulRenderer::createCrownCubeLayer);
     }
 
     public static void registerMenuScreen() {
-        MenuScreens.register(MenuRegistry.INSCRIPTION_TABLE_MENU.get(), InscriptionTableScreen::new);
+        MenuScreens.register(
+                MenuRegistry.INSCRIPTION_TABLE_MENU.get(), InscriptionTableScreen::new);
         MenuScreens.register(MenuRegistry.SCROLL_FORGE_MENU.get(), ScrollForgeScreen::new);
         MenuScreens.register(MenuRegistry.ARCANE_ANVIL_MENU.get(), ArcaneAnvilScreen::new);
     }
 
     public static void replaceRenderers() {
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityType.SMALL_FIREBALL, (context) -> new ReplacedFireballRenderer(context, 0.75f, .75f));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityType.FIREBALL, (context) -> new ReplacedFireballRenderer(context, 1.25f, 3f));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityType.SMALL_FIREBALL,
+                (context) -> new ReplacedFireballRenderer(context, 0.75f, .75f));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityType.FIREBALL, (context) -> new ReplacedFireballRenderer(context, 1.25f, 3f));
     }
 
-    public static void registerRenderers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<String, EntityRenderer<? extends Player>> skins) {
+    public static void registerRenderers(
+            Map<EntityType<?>, EntityRenderer<?>> renderers,
+            Map<String, EntityRenderer<? extends Player>> skins) {
         addLayerToPlayerSkin(skins, "default");
         addLayerToPlayerSkin(skins, "slim");
         for (Map.Entry<EntityType<?>, EntityRenderer<?>> entry : renderers.entrySet()) {
@@ -258,208 +309,403 @@ public class ClientSetup {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void addLayerToPlayerSkin(Map<String, EntityRenderer<? extends Player>> skins, String skinName) {
+    private static void addLayerToPlayerSkin(
+            Map<String, EntityRenderer<? extends Player>> skins, String skinName) {
         EntityRenderer<? extends Player> render = skins.get(skinName);
         if (render instanceof LivingEntityRenderer livingRenderer) {
             livingRenderer.addLayer(new EchoingStrikesHologramLayer.Vanilla(livingRenderer));
             livingRenderer.addLayer(new AngelWingsLayer<>(livingRenderer));
             livingRenderer.addLayer(new ArmorCapeLayer(livingRenderer));
-            livingRenderer.addLayer(new EnergySwirlLayer.Vanilla(livingRenderer, EVASION_TEXTURE, MobEffectRegistry.EVASION));
-            livingRenderer.addLayer(new EnergySwirlLayer.Vanilla(livingRenderer, CHARGE_TEXTURE, MobEffectRegistry.CHARGED));
+            livingRenderer.addLayer(
+                    new EnergySwirlLayer.Vanilla(
+                            livingRenderer, EVASION_TEXTURE, MobEffectRegistry.EVASION));
+            livingRenderer.addLayer(
+                    new EnergySwirlLayer.Vanilla(
+                            livingRenderer, CHARGE_TEXTURE, MobEffectRegistry.CHARGED));
             livingRenderer.addLayer(new ChargeSpellLayer.Vanilla<>(livingRenderer));
             livingRenderer.addLayer(new GlowingEyesLayer.Vanilla<>(livingRenderer));
             livingRenderer.addLayer(new SpellTargetingLayer.Vanilla<>(livingRenderer));
         }
 
-
-    /*.valu((entityType)->{
+        /*.valu((entityType)->{
             if(entityType. instanceof EntityType<LivingEntity> livingType)
             if(event.getRenderer(entityType) instanceof EntityRenderer<? extends LivingEntity> livingRenderer)
                 livingRenderer.addlayer
         });*/
-//        EntityRenderer<? extends LivingEntity> genericRender = event.getRenderer()
-        //EntityRenderer<? extends AbstractSpellCastingMob> renderer = event.getRenderer(EntityRegistry.PYROMANCER.get());
+        //        EntityRenderer<? extends LivingEntity> genericRender = event.getRenderer()
+        // EntityRenderer<? extends AbstractSpellCastingMob> renderer =
+        // event.getRenderer(EntityRegistry.PYROMANCER.get());
     }
 
     public static void rendererRegister() {
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.MAGIC_MISSILE_PROJECTILE.get(), MagicMissileRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.CONE_OF_COLD_PROJECTILE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.BLOOD_SLASH_PROJECTILE.get(), BloodSlashRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ELECTROCUTE_PROJECTILE.get(), ElectrocuteRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIREBOLT_PROJECTILE.get(), FireboltRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ICICLE_PROJECTILE.get(), IcicleRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIRE_BREATH_PROJECTILE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.POISON_BREATH_PROJECTILE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.DRAGON_BREATH_PROJECTILE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.DEBUG_WIZARD.get(), (renderManager) -> new DebugWizardRenderer(renderManager));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.PYROMANCER.get(), PyromancerRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.APOTHECARIST.get(), ApothecaristRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.NECROMANCER.get(), NecromancerRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SPECTRAL_STEED.get(), SpectralSteedRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SHIELD_ENTITY.get(), ShieldRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.WALL_OF_FIRE_ENTITY.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.WISP.get(), WispRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SPECTRAL_HAMMER.get(), SpectralHammerRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SUMMONED_VEX.get(), VexRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SUMMONED_ZOMBIE.get(), SummonedZombieMultiRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SUMMONED_SKELETON.get(), SummonedSkeletonMultiRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.LIGHTNING_LANCE_PROJECTILE.get(), LightningLanceRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.WITHER_SKULL_PROJECTILE.get(), (context) -> new SkullProjectileRenderer(context, IronsSpellbooks.id("textures/entity/wither_skull.png")));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.CREEPER_HEAD_PROJECTILE.get(), (context) -> new SkullProjectileRenderer(context, IronsSpellbooks.id("textures/entity/creeper_head.png")));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.MAGIC_ARROW_PROJECTILE.get(), MagicArrowRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIRE_ARROW_PROJECTILE.get(), FireArrowRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIERY_DAGGER_PROJECTILE.get(), FieryDaggerRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIRE_ERUPTION_AOE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FROZEN_HUMANOID.get(), FrozenHumanoidRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SMALL_FIREBALL_PROJECTILE.get(), (context) -> new FireballRenderer(context, 0.75f));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.COMET.get(), (context) -> new CometRenderer(context, 0.75f));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.MAGIC_FIREBALL.get(), (context) -> new FireballRenderer(context, 1.25f));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SUMMONED_POLAR_BEAR.get(), PolarBearRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.DEAD_KING.get(), DeadKingRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.DEAD_KING_CORPSE.get(), DeadKingRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.DEAD_KING_SOUL.get(), DeadKingSoulRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ARCHEVOKER.get(), ArchevokerRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.KEEPER.get(), KeeperRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SCULK_TENTACLE.get(), VoidTentacleRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ROOT.get(), RootRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ICE_BLOCK_PROJECTILE.get(), IceBlockRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.CRYOMANCER.get(), CryomancerRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.POISON_CLOUD.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SUNBEAM.get(), SunbeamRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.DRAGON_BREATH_POOL.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.POISON_ARROW.get(), PoisonArrowRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.POISON_SPLASH.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ACID_ORB.get(), AcidOrbRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.BLACK_HOLE.get(), BlackHoleRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.BLOOD_NEEDLE.get(), BloodNeedleRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIRE_FIELD.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIRE_BOMB.get(), MagmaBallRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.TARGET_AREA_ENTITY.get(), TargetAreaRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.HEALING_AOE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.PRIEST.get(), PriestRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.GUIDING_BOLT.get(), GuidingBoltRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.GUST_COLLIDER.get(), GustRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.CHAIN_LIGHTNING.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.DEVOUR_JAW.get(), DevourJawRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIREFLY_SWARM.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.EARTHQUAKE_AOE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.BLIZZARD_AOE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FALLING_BLOCK.get(), VisualFallingBlockRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.RAY_OF_FROST_VISUAL_ENTITY.get(), RayOfFrostRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ELDRITCH_BLAST_VISUAL_ENTITY.get(), EldritchBlastRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.PORTAL.get(), PortalRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SMALL_MAGIC_ARROW.get(), SmallMagicArrowRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ARROW_VOLLEY_ENTITY.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.STOMP_AOE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ECHOING_STRIKE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.LIGHTNING_STRIKE.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.CULTIST.get(), CultistRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.BALL_LIGHTNING.get(), BallLightningRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ICE_SPIKE.get(), IceSpikeRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FIRE_BOSS.get(), FireBossRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.CURSED_ARMOR_STAND.get(), CursedArmorStandRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.THUNDERSTEP_PROJECTILE.get(), ThunderstepProjectileRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SUMMONED_SWORD.get(), (e) -> new SummonedSwordRenderer(e, SummonedSwordModel::new));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SUMMONED_CLAYMORE.get(), (e) -> new SummonedSwordRenderer(e, SummonedClaymoreModel::new));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SUMMONED_RAPIER.get(), (e) -> new SummonedSwordRenderer(e, SummonedRapierModel::new));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ICE_SPIDER.get(), IceSpiderRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ICE_TOMB.get(), IceTombRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FROST_FIELD.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SNOWBALL.get(), SnowballRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.THROWN_SPEAR.get(), ThrownSpearRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.THROWN_ITEM.get(), ThrownItemRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.OMINOUS_FIRE_ORB.get(), OminousFireOrbRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.UNDEAD_RIFT.get(), UndeadRiftRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.FANG_SWIRL.get(), NoopRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ARCANE_SHACKLE.get(), ArcaneShackleRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ENDER_CHAIN.get(), EnderChainRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ECHOING_SWORD.get(), c -> new MagicSwordRenderer<>(c, EchoingSwordModel::new));
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.ECHOING_ARROW.get(), EchoingMagicArrowRenderer::new);
-        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(EntityRegistry.SCAPEGOAT.get(), ScapegoatRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.MAGIC_MISSILE_PROJECTILE.get(), MagicMissileRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.CONE_OF_COLD_PROJECTILE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.BLOOD_SLASH_PROJECTILE.get(), BloodSlashRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ELECTROCUTE_PROJECTILE.get(), ElectrocuteRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIREBOLT_PROJECTILE.get(), FireboltRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ICICLE_PROJECTILE.get(), IcicleRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIRE_BREATH_PROJECTILE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.POISON_BREATH_PROJECTILE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.DRAGON_BREATH_PROJECTILE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.DEBUG_WIZARD.get(),
+                (renderManager) -> new DebugWizardRenderer(renderManager));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.PYROMANCER.get(), PyromancerRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.APOTHECARIST.get(), ApothecaristRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.NECROMANCER.get(), NecromancerRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SPECTRAL_STEED.get(), SpectralSteedRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SHIELD_ENTITY.get(), ShieldRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.WALL_OF_FIRE_ENTITY.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.WISP.get(), WispRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SPECTRAL_HAMMER.get(), SpectralHammerRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SUMMONED_VEX.get(), VexRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SUMMONED_ZOMBIE.get(), SummonedZombieMultiRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SUMMONED_SKELETON.get(), SummonedSkeletonMultiRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.LIGHTNING_LANCE_PROJECTILE.get(), LightningLanceRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.WITHER_SKULL_PROJECTILE.get(),
+                (context) ->
+                        new SkullProjectileRenderer(
+                                context, IronsSpellbooks.id("textures/entity/wither_skull.png")));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.CREEPER_HEAD_PROJECTILE.get(),
+                (context) ->
+                        new SkullProjectileRenderer(
+                                context, IronsSpellbooks.id("textures/entity/creeper_head.png")));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.MAGIC_ARROW_PROJECTILE.get(), MagicArrowRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIRE_ARROW_PROJECTILE.get(), FireArrowRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIERY_DAGGER_PROJECTILE.get(), FieryDaggerRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIRE_ERUPTION_AOE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FROZEN_HUMANOID.get(), FrozenHumanoidRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SMALL_FIREBALL_PROJECTILE.get(),
+                (context) -> new FireballRenderer(context, 0.75f));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.COMET.get(), (context) -> new CometRenderer(context, 0.75f));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.MAGIC_FIREBALL.get(),
+                (context) -> new FireballRenderer(context, 1.25f));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SUMMONED_POLAR_BEAR.get(), PolarBearRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.DEAD_KING.get(), DeadKingRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.DEAD_KING_CORPSE.get(), DeadKingRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.DEAD_KING_SOUL.get(), DeadKingSoulRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ARCHEVOKER.get(), ArchevokerRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.KEEPER.get(), KeeperRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SCULK_TENTACLE.get(), VoidTentacleRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ROOT.get(), RootRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ICE_BLOCK_PROJECTILE.get(), IceBlockRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.CRYOMANCER.get(), CryomancerRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.POISON_CLOUD.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SUNBEAM.get(), SunbeamRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.DRAGON_BREATH_POOL.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.POISON_ARROW.get(), PoisonArrowRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.POISON_SPLASH.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ACID_ORB.get(), AcidOrbRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.BLACK_HOLE.get(), BlackHoleRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.BLOOD_NEEDLE.get(), BloodNeedleRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIRE_FIELD.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIRE_BOMB.get(), MagmaBallRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.TARGET_AREA_ENTITY.get(), TargetAreaRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.HEALING_AOE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.PRIEST.get(), PriestRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.GUIDING_BOLT.get(), GuidingBoltRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.GUST_COLLIDER.get(), GustRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.CHAIN_LIGHTNING.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.DEVOUR_JAW.get(), DevourJawRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIREFLY_SWARM.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.EARTHQUAKE_AOE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.BLIZZARD_AOE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FALLING_BLOCK.get(), VisualFallingBlockRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.RAY_OF_FROST_VISUAL_ENTITY.get(), RayOfFrostRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ELDRITCH_BLAST_VISUAL_ENTITY.get(), EldritchBlastRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.PORTAL.get(), PortalRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SMALL_MAGIC_ARROW.get(), SmallMagicArrowRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ARROW_VOLLEY_ENTITY.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.STOMP_AOE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ECHOING_STRIKE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.LIGHTNING_STRIKE.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.CULTIST.get(), CultistRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.BALL_LIGHTNING.get(), BallLightningRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ICE_SPIKE.get(), IceSpikeRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FIRE_BOSS.get(), FireBossRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.CURSED_ARMOR_STAND.get(), CursedArmorStandRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.THUNDERSTEP_PROJECTILE.get(), ThunderstepProjectileRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SUMMONED_SWORD.get(),
+                (e) -> new SummonedSwordRenderer(e, SummonedSwordModel::new));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SUMMONED_CLAYMORE.get(),
+                (e) -> new SummonedSwordRenderer(e, SummonedClaymoreModel::new));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SUMMONED_RAPIER.get(),
+                (e) -> new SummonedSwordRenderer(e, SummonedRapierModel::new));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ICE_SPIDER.get(), IceSpiderRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ICE_TOMB.get(), IceTombRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FROST_FIELD.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SNOWBALL.get(), SnowballRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.THROWN_SPEAR.get(), ThrownSpearRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.THROWN_ITEM.get(), ThrownItemRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.OMINOUS_FIRE_ORB.get(), OminousFireOrbRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.UNDEAD_RIFT.get(), UndeadRiftRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.FANG_SWIRL.get(), NoopRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ARCANE_SHACKLE.get(), ArcaneShackleRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ENDER_CHAIN.get(), EnderChainRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ECHOING_SWORD.get(),
+                c -> new MagicSwordRenderer<>(c, EchoingSwordModel::new));
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.ECHOING_ARROW.get(), EchoingMagicArrowRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(
+                EntityRegistry.SCAPEGOAT.get(), ScapegoatRenderer::new);
 
-        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(BlockRegistry.SCROLL_FORGE_TILE.get(), ScrollForgeRenderer::new);
-        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(BlockRegistry.PEDESTAL_TILE.get(), PedestalRenderer::new);
-        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(BlockRegistry.ALCHEMIST_CAULDRON_TILE.get(), AlchemistCauldronRenderer::new);
-        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(BlockRegistry.PORTAL_FRAME_BLOCK_ENTITY.get(), PortalFrameRenderer::new);
-        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(BlockRegistry.TRIAL_SPAWNER_BLOCK_ENTITY.get(), TrialSpawnerRenderer::new);
-        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(BlockRegistry.VAULT_BLOCK_ENTITY.get(), VaultRenderer::new);
-        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(BlockRegistry.TYROS_STATUE_BLOCK_ENTITY.get(), TyrosStatueBlockRenderer::new);
-
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+                BlockRegistry.SCROLL_FORGE_TILE.get(), ScrollForgeRenderer::new);
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+                BlockRegistry.PEDESTAL_TILE.get(), PedestalRenderer::new);
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+                BlockRegistry.ALCHEMIST_CAULDRON_TILE.get(), AlchemistCauldronRenderer::new);
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+                BlockRegistry.PORTAL_FRAME_BLOCK_ENTITY.get(), PortalFrameRenderer::new);
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+                BlockRegistry.TRIAL_SPAWNER_BLOCK_ENTITY.get(), TrialSpawnerRenderer::new);
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+                BlockRegistry.VAULT_BLOCK_ENTITY.get(), VaultRenderer::new);
+        net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(
+                BlockRegistry.TYROS_STATUE_BLOCK_ENTITY.get(), TyrosStatueBlockRenderer::new);
     }
 
-    public static void registerParticles(net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry event) {
+    public static void registerParticles(
+            net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry event) {
         event.register(ParticleRegistry.WISP_PARTICLE.get(), WispParticle.Provider::new);
         event.register(ParticleRegistry.BLOOD_PARTICLE.get(), BloodParticle.Provider::new);
-        event.register(ParticleRegistry.BLOOD_GROUND_PARTICLE.get(), BloodGroundParticle.Provider::new);
+        event.register(
+                ParticleRegistry.BLOOD_GROUND_PARTICLE.get(), BloodGroundParticle.Provider::new);
         event.register(ParticleRegistry.SNOWFLAKE_PARTICLE.get(), SnowflakeParticle.Provider::new);
-        event.register(ParticleRegistry.ELECTRICITY_PARTICLE.get(), ElectricityParticle.Provider::new);
-        event.register(ParticleRegistry.UNSTABLE_ENDER_PARTICLE.get(), UnstableEnderParticle.Provider::new);
-        event.register(ParticleRegistry.DRAGON_FIRE_PARTICLE.get(), DragonFireParticle.Provider::new);
+        event.register(
+                ParticleRegistry.ELECTRICITY_PARTICLE.get(), ElectricityParticle.Provider::new);
+        event.register(
+                ParticleRegistry.UNSTABLE_ENDER_PARTICLE.get(),
+                UnstableEnderParticle.Provider::new);
+        event.register(
+                ParticleRegistry.DRAGON_FIRE_PARTICLE.get(), DragonFireParticle.Provider::new);
         event.register(ParticleRegistry.FIRE_PARTICLE.get(), FireParticle.Provider::new);
         event.register(ParticleRegistry.EMBER_PARTICLE.get(), EmberParticle.Provider::new);
         event.register(ParticleRegistry.SIPHON_PARTICLE.get(), SiphonParticle.Provider::new);
         event.register(ParticleRegistry.FOG_PARTICLE.get(), FogParticle.Provider::new);
         event.register(ParticleRegistry.SHOCKWAVE_PARTICLE.get(), ShockwaveParticle.Provider::new);
         event.register(ParticleRegistry.ACID_PARTICLE.get(), AcidParticle.Provider::new);
-        event.register(ParticleRegistry.ACID_BUBBLE_PARTICLE.get(), AcidBubbleParticle.Provider::new);
+        event.register(
+                ParticleRegistry.ACID_BUBBLE_PARTICLE.get(), AcidBubbleParticle.Provider::new);
         event.register(ParticleRegistry.ZAP_PARTICLE.get(), ZapParticle.Provider::new);
         event.register(ParticleRegistry.FIREFLY_PARTICLE.get(), FireflyParticle.Provider::new);
         event.register(ParticleRegistry.RING_SMOKE_PARTICLE.get(), RingSmokeParticle.Provider::new);
-        event.register(ParticleRegistry.PORTAL_FRAME_PARTICLE.get(), PortalFrameParticle.Provider::new);
+        event.register(
+                ParticleRegistry.PORTAL_FRAME_PARTICLE.get(), PortalFrameParticle.Provider::new);
         event.register(ParticleRegistry.BLASTWAVE_PARTICLE.get(), BlastwaveParticle.Provider::new);
         event.register(ParticleRegistry.SPARK_PARTICLE.get(), SparkParticle.Provider::new);
         event.register(ParticleRegistry.SNOW_DUST.get(), SnowDustParticle.Provider::new);
         event.register(ParticleRegistry.CLEANSE_PARTICLE.get(), CleanseParticle.Provider::new);
-        event.register(ParticleRegistry.FLAME_STRIKE_PARTICLE.get(), FlameStrikeParticle.Provider::new);
-        event.register(ParticleRegistry.EMBEROUS_ASH_PARTICLE.get(), EmberousAshParticle.Provider::new);
-        event.register(ParticleRegistry.FIERY_SMOKE_PARTICLE.get(), FierySmokeParticle.Provider::new);
-        event.register(ParticleRegistry.ENDER_SLASH_PARTICLE.get(), EnderSlashParticle.Provider::new);
+        event.register(
+                ParticleRegistry.FLAME_STRIKE_PARTICLE.get(), FlameStrikeParticle.Provider::new);
+        event.register(
+                ParticleRegistry.EMBEROUS_ASH_PARTICLE.get(), EmberousAshParticle.Provider::new);
+        event.register(
+                ParticleRegistry.FIERY_SMOKE_PARTICLE.get(), FierySmokeParticle.Provider::new);
+        event.register(
+                ParticleRegistry.ENDER_SLASH_PARTICLE.get(), EnderSlashParticle.Provider::new);
         event.register(ParticleRegistry.TRACE_PARTICLE.get(), TraceParticle.Provider::new);
-        event.register(ParticleRegistry.SOULFIRE_RAY_PARTICLE.get(), SoulfireRayParticle.Provider::new);
+        event.register(
+                ParticleRegistry.SOULFIRE_RAY_PARTICLE.get(), SoulfireRayParticle.Provider::new);
         event.register(ParticleRegistry.SOUL_FIRE_PARTICLE.get(), DragonFireParticle.Provider::new);
-        event.register(ParticleRegistry.TRIAL_OMEN_PARTICLE.get(), FadingTrialOmenSpellParticle.Provider::new);
-        event.register(ParticleRegistry.TINTED_BUBBLE_POP_PARTICLE.get(), TintedBubblePopParticle.Provider::new);
+        event.register(
+                ParticleRegistry.TRIAL_OMEN_PARTICLE.get(),
+                FadingTrialOmenSpellParticle.Provider::new);
+        event.register(
+                ParticleRegistry.TINTED_BUBBLE_POP_PARTICLE.get(),
+                TintedBubblePopParticle.Provider::new);
 
-        event.register(ParticleRegistry.FALLING_BLOCK_PARTICLE.get(), new FallingBlockParticle.Provider());
+        event.register(
+                ParticleRegistry.FALLING_BLOCK_PARTICLE.get(), new FallingBlockParticle.Provider());
         event.register(ParticleRegistry.SWIRLING_PARTICLE.get(), new SwirlingParticle.Provider());
-        event.register(ParticleRegistry.FALLING_SPARKLE_PARTICLE.get(), FallingSparkleParticle.Provider::new);
+        event.register(
+                ParticleRegistry.FALLING_SPARKLE_PARTICLE.get(),
+                FallingSparkleParticle.Provider::new);
     }
 
     public static void clientSetup() {
-        //Item Properties
+        // Item Properties
         {
             // Allow use of attack damage attribute in client spell tooltips
             Attributes.ATTACK_DAMAGE.setSyncable(true);
             // Instantiate client side abstraction
-            MinecraftInstanceHelper.instance = new IMinecraftInstanceHelper() {
-                @Nullable
-                @Override
-                public Player player() {
-                    return Minecraft.getInstance().player;
-                }
-            };
+            MinecraftInstanceHelper.instance =
+                    new IMinecraftInstanceHelper() {
+                        @Nullable
+                        @Override
+                        public Player player() {
+                            return Minecraft.getInstance().player;
+                        }
+                    };
             // Register Item Properties
-            ItemProperties.register(ItemRegistry.WAYWARD_COMPASS.get(), new ResourceLocation("angle"),
-                    new CompassItemPropertyFunction((level, itemStack, entity) -> WaywardCompass.getCatacombsLocation(entity, itemStack.getOrCreateTag())));
-            ItemProperties.register(ItemRegistry.AUTOLOADER_CROSSBOW.get(), new ResourceLocation("pull"), (itemStack, clientLevel, livingEntity, i) -> CrossbowItem.isCharged(itemStack) ? 0.0F : AutoloaderCrossbow.getLoadingTicks(itemStack) / (float) AutoloaderCrossbow.getChargeDuration(itemStack));
-            ItemProperties.register(ItemRegistry.AUTOLOADER_CROSSBOW.get(), new ResourceLocation("pulling"), (itemStack, clientLevel, livingEntity, i) -> AutoloaderCrossbow.isLoading(itemStack) && !CrossbowItem.isCharged(itemStack) ? 1.0F : 0.0F);
-            ItemProperties.register(ItemRegistry.AUTOLOADER_CROSSBOW.get(), new ResourceLocation("charged"), (itemStack, clientLevel, livingEntity, i) -> livingEntity != null && CrossbowItem.isCharged(itemStack) ? 1.0F : 0.0F);
-            ItemProperties.register(ItemRegistry.AUTOLOADER_CROSSBOW.get(), new ResourceLocation("firework"), (itemStack, clientLevel, livingEntity, i) -> livingEntity != null && CrossbowItem.isCharged(itemStack) && CrossbowItem.containsChargedProjectile(itemStack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F);
-            ItemProperties.register(ItemRegistry.WIZARD_HELMET.get(), IronsSpellbooks.id("hat"), (itemStack, clientLevel, livingEntity, i)
-                    -> ClothingVariantHelper.getClothingVariantOrElse(itemStack, "").equals("hat") ? 1.0f : 0f);
+            ItemProperties.register(
+                    ItemRegistry.WAYWARD_COMPASS.get(),
+                    new ResourceLocation("angle"),
+                    new CompassItemPropertyFunction(
+                            (level, itemStack, entity) ->
+                                    WaywardCompass.getCatacombsLocation(
+                                            entity, itemStack.getOrCreateTag())));
+            ItemProperties.register(
+                    ItemRegistry.AUTOLOADER_CROSSBOW.get(),
+                    new ResourceLocation("pull"),
+                    (itemStack, clientLevel, livingEntity, i) ->
+                            CrossbowItem.isCharged(itemStack)
+                                    ? 0.0F
+                                    : AutoloaderCrossbow.getLoadingTicks(itemStack)
+                                            / (float)
+                                                    AutoloaderCrossbow.getChargeDuration(
+                                                            itemStack));
+            ItemProperties.register(
+                    ItemRegistry.AUTOLOADER_CROSSBOW.get(),
+                    new ResourceLocation("pulling"),
+                    (itemStack, clientLevel, livingEntity, i) ->
+                            AutoloaderCrossbow.isLoading(itemStack)
+                                            && !CrossbowItem.isCharged(itemStack)
+                                    ? 1.0F
+                                    : 0.0F);
+            ItemProperties.register(
+                    ItemRegistry.AUTOLOADER_CROSSBOW.get(),
+                    new ResourceLocation("charged"),
+                    (itemStack, clientLevel, livingEntity, i) ->
+                            livingEntity != null && CrossbowItem.isCharged(itemStack)
+                                    ? 1.0F
+                                    : 0.0F);
+            ItemProperties.register(
+                    ItemRegistry.AUTOLOADER_CROSSBOW.get(),
+                    new ResourceLocation("firework"),
+                    (itemStack, clientLevel, livingEntity, i) ->
+                            livingEntity != null
+                                            && CrossbowItem.isCharged(itemStack)
+                                            && CrossbowItem.containsChargedProjectile(
+                                                    itemStack, Items.FIREWORK_ROCKET)
+                                    ? 1.0F
+                                    : 0.0F);
+            ItemProperties.register(
+                    ItemRegistry.WIZARD_HELMET.get(),
+                    IronsSpellbooks.id("hat"),
+                    (itemStack, clientLevel, livingEntity, i) ->
+                            ClothingVariantHelper.getClothingVariantOrElse(itemStack, "")
+                                            .equals("hat")
+                                    ? 1.0f
+                                    : 0f);
 
-            ItemProperties.register(ItemRegistry.TWILIGHT_GALE.get(), new ResourceLocation("throwing"), (p_234996_, p_234997_, p_234998_, p_234999_) -> p_234998_ != null && p_234998_.isUsingItem() && p_234998_.getUseItem() == p_234996_ ? 1.0F : 0.0F
-            );
+            ItemProperties.register(
+                    ItemRegistry.TWILIGHT_GALE.get(),
+                    new ResourceLocation("throwing"),
+                    (p_234996_, p_234997_, p_234998_, p_234999_) ->
+                            p_234998_ != null
+                                            && p_234998_.isUsingItem()
+                                            && p_234998_.getUseItem() == p_234996_
+                                    ? 1.0F
+                                    : 0.0F);
             // Register Fog mob effects
-            FogRenderer.MOB_EFFECT_FOG.add(new PlanarSightEffect.EcholocationBlindnessFogFunction());
+            FogRenderer.MOB_EFFECT_FOG.add(
+                    new PlanarSightEffect.EcholocationBlindnessFogFunction());
             // Register Curio renderers for vanilla spellbooks
-            ItemRegistry.getIronsItems().stream().filter(item -> item.get() instanceof SpellBook).forEach((item) -> TrinketRendererRegistry.registerRenderer(item.get(), new SpellBookCurioRenderer()));
+            ItemRegistry.getIronsItems().stream()
+                    .filter(item -> item.get() instanceof SpellBook)
+                    .forEach(
+                            (item) ->
+                                    TrinketRendererRegistry.registerRenderer(
+                                            item.get(), new SpellBookCurioRenderer()));
             // Init player animation stuff
             AnimationHelper.initializePlayerAnimationFactory();
         }
     }
 
-    public static void registerSpecialModels(net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.Context event) {
+    public static void registerSpecialModels(
+            net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.Context event) {
         for (SchoolType schoolType : SchoolRegistry.REGISTRY.get()) {
             event.addModels((AffinityRingRenderer.getAffinityRingModelLocation(schoolType)));
             event.addModels((ScrollModel.getScrollModelLocation(schoolType)));
@@ -470,8 +716,10 @@ public class ClientSetup {
         event.addModels((IronsSpellbooks.id("item/stone_scythe")));
     }
 
-    public static BakedModel replaceItemModels(BakedModel model,
-            net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier.AfterBake.Context context) {
+    public static BakedModel replaceItemModels(
+            BakedModel model,
+            net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier.AfterBake.Context
+                    context) {
         var id = context.id();
         if (id.equals(new ModelResourceLocation(IronsSpellbooks.id("scroll"), "inventory"))) {
             return new ScrollModel(model, context.loader());

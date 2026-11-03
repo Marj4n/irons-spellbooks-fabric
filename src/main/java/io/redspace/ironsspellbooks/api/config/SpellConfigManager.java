@@ -25,18 +25,14 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.player.Player;
 
-
-
-
-
 import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 
-
-public class SpellConfigManager extends SimpleJsonResourceReloadListener implements net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener {
+public class SpellConfigManager extends SimpleJsonResourceReloadListener
+        implements net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener {
 
     /*
      * API Accessible
@@ -52,7 +48,8 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
     /**
      * @return The spell's active configuration value for this world, or the parameter's default if none is defined.
      */
-    public static <T> T getSpellConfigValue(AbstractSpell spell, SpellConfigParameter<T> parameterType) {
+    public static <T> T getSpellConfigValue(
+            AbstractSpell spell, SpellConfigParameter<T> parameterType) {
         if (!INSTANCE.config.containsKey(spell)) {
             return parameterType.defaultValue().get();
         }
@@ -62,34 +59,45 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
     /**
      * @return The spell's default preset configuration value for this parameter, or the parameter's default if none is defined.
      */
-    public static <T> T getSpellDefaultConfigValue(AbstractSpell spell, SpellConfigParameter<T> parameterType) {
+    public static <T> T getSpellDefaultConfigValue(
+            AbstractSpell spell, SpellConfigParameter<T> parameterType) {
         if (!INSTANCE.config.containsKey(spell)) {
             return parameterType.defaultValue().get();
         }
-        return INSTANCE.config.get(spell).getDefaultValue(parameterType).orElse(parameterType.defaultValue().get());
+        return INSTANCE.config
+                .get(spell)
+                .getDefaultValue(parameterType)
+                .orElse(parameterType.defaultValue().get());
     }
 
     /*
      * Implementation
      */
     private final Gson gson;
-    @Nullable
-    private Map<ResourceLocation, JsonElement> datapackOverride = null;
+    @Nullable private Map<ResourceLocation, JsonElement> datapackOverride = null;
+
     /**
      * A non-sparse map containing all spells and their fully defined config holders
      */
     private ImmutableMap<AbstractSpell, SpellConfigHolder> config = ImmutableMap.of();
 
     @Override
-    public ResourceLocation getFabricId() { return IronsSpellbooks.id("spell_config"); }
+    public ResourceLocation getFabricId() {
+        return IronsSpellbooks.id("spell_config");
+    }
 
     public SpellConfigManager() {
-        super(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), "irons_spellbooks_spell_config");
+        super(
+                new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(),
+                "irons_spellbooks_spell_config");
         this.gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected void apply(
+            Map<ResourceLocation, JsonElement> object,
+            ResourceManager resourceManager,
+            ProfilerFiller profiler) {
         if (!object.isEmpty()) {
             Map<ResourceLocation, JsonElement> data = new HashMap<>(object.size());
             for (var entry : object.entrySet()) {
@@ -106,7 +114,6 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
         handleServerConfigUpdate();
     }
 
-
     public void handleServerConfigUpdate() {
         registerConfigParameterTypes();
         initiateDefaultFiles(gson);
@@ -122,8 +129,8 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
         buildConfigManager(toJson(packet.data), false);
     }
 
-
-    public static void onDatapackSync(net.minecraft.server.level.ServerPlayer player, boolean joined) {
+    public static void onDatapackSync(
+            net.minecraft.server.level.ServerPlayer player, boolean joined) {
         var server = player.getServer();
         boolean noErrors = true;
         if (INSTANCE.dirty) {
@@ -132,22 +139,34 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
                 noErrors = INSTANCE.buildConfigManager(INSTANCE.datapackOverride, true);
                 INSTANCE.datapackOverride = null;
             } else {
-                noErrors = INSTANCE.buildConfigManager(INSTANCE.toJson(getConfigFiles(resolveConfigDirectory(server))), true);
+                noErrors =
+                        INSTANCE.buildConfigManager(
+                                INSTANCE.toJson(getConfigFiles(resolveConfigDirectory(server))),
+                                true);
             }
         }
         if (INSTANCE.config != null) {
             if (player != null) {
                 // individual player sync (such as logging in)
-                PacketDistributor.sendToPlayer(player, new SyncJsonConfigPacket(INSTANCE.createNetworkData()));
+                PacketDistributor.sendToPlayer(
+                        player, new SyncJsonConfigPacket(INSTANCE.createNetworkData()));
                 if (!noErrors) {
-                    player.displayClientMessage(Component.translatable("commands.irons_spellbooks.config_load_errors").withStyle(ChatFormatting.RED), false);
+                    player.displayClientMessage(
+                            Component.translatable("commands.irons_spellbooks.config_load_errors")
+                                    .withStyle(ChatFormatting.RED),
+                            false);
                 }
             } else {
                 // global sync (such as /reload command)
-                PacketDistributor.sendToAllPlayers(new SyncJsonConfigPacket(INSTANCE.createNetworkData()));
+                PacketDistributor.sendToAllPlayers(
+                        new SyncJsonConfigPacket(INSTANCE.createNetworkData()));
                 if (!noErrors) {
                     for (Player p : server.getPlayerList().getPlayers()) {
-                        p.displayClientMessage(Component.translatable("commands.irons_spellbooks.config_load_errors").withStyle(ChatFormatting.RED), false);
+                        p.displayClientMessage(
+                                Component.translatable(
+                                                "commands.irons_spellbooks.config_load_errors")
+                                        .withStyle(ChatFormatting.RED),
+                                false);
                     }
                 }
             }
@@ -157,7 +176,10 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
     }
 
     private static File resolveConfigDirectory(MinecraftServer server) {
-        return net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve(SUBCONFIG_FOLDER).toFile();
+        return net.fabricmc.loader.api.FabricLoader.getInstance()
+                .getConfigDir()
+                .resolve(SUBCONFIG_FOLDER)
+                .toFile();
     }
 
     private static byte[] readBytes(File file) {
@@ -171,7 +193,7 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
             return sb.toString().replaceAll("[ \n]", "").getBytes(StandardCharsets.UTF_8);
         } catch (Exception e) {
             IronsSpellbooks.LOGGER.error("Failed to read config file: {}", e);
-            return new byte[]{};
+            return new byte[] {};
         }
     }
 
@@ -199,27 +221,39 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
             for (File namespacedDir : namespacedDirectories) {
                 if (namespacedDir.isDirectory()) {
                     String namespace = namespacedDir.getName();
-                    // use the topmost directory as the namespace. traverse and ignore all other subdirectories. use endpoint filename as spellid.
+                    // use the topmost directory as the namespace. traverse and ignore all other
+                    // subdirectories. use endpoint filename as spellid.
                     List<File> entries = expandAllJsonFiles(namespacedDir);
                     for (File entry : entries) {
                         String spellName = entry.getName().split("\\.")[0];
                         ResourceLocation spellId = new ResourceLocation(namespace, spellName);
                         if (SpellRegistry.REGISTRY.get().containsKey(spellId)) {
                             if (files.containsKey(spellId)) {
-                                IronsSpellbooks.LOGGER.warn("Duplicate spell config for spell {}! Overriding config.", spellId);
+                                IronsSpellbooks.LOGGER.warn(
+                                        "Duplicate spell config for spell {}! Overriding config.",
+                                        spellId);
                             }
                             files.put(spellId, readBytes(entry));
                         } else {
-                            IronsSpellbooks.LOGGER.warn("Unknown Spell for Configuration file \"{}:{}\", will be ignored!", namespace, spellName);
+                            IronsSpellbooks.LOGGER.warn(
+                                    "Unknown Spell for Configuration file \"{}:{}\", will be ignored!",
+                                    namespace,
+                                    spellName);
                         }
                     }
-                } else if (namespacedDir.getName().endsWith(".json") && !namespacedDir.getName().equals("global_config.json")) {
-                    IronsSpellbooks.LOGGER.warn("Spell Configuration file \"{}\", outside of namespaced directory, will be ignored!", namespacedDir.getName());
+                } else if (namespacedDir.getName().endsWith(".json")
+                        && !namespacedDir.getName().equals("global_config.json")) {
+                    IronsSpellbooks.LOGGER.warn(
+                            "Spell Configuration file \"{}\", outside of namespaced directory, will be ignored!",
+                            namespacedDir.getName());
                 }
             }
         }
         if (!files.isEmpty()) {
-            IronsSpellbooks.LOGGER.info("Read {} spell config files ({} ms)", files.size(), System.currentTimeMillis() - milis);
+            IronsSpellbooks.LOGGER.info(
+                    "Read {} spell config files ({} ms)",
+                    files.size(),
+                    System.currentTimeMillis() - milis);
         }
         return files;
     }
@@ -229,12 +263,13 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
         for (var entry : config.entrySet()) {
             JsonObject json = entry.getValue().toJson(gson);
             if (!json.asMap().isEmpty()) {
-                data.put(entry.getKey().getSpellResource(), json.toString().getBytes(StandardCharsets.UTF_8));
+                data.put(
+                        entry.getKey().getSpellResource(),
+                        json.toString().getBytes(StandardCharsets.UTF_8));
             }
         }
         return data;
     }
-
 
     public static final Set<SpellConfigParameter<?>> ALL_TYPES = new HashSet<>();
     private static boolean registered = false;
@@ -251,21 +286,25 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
             ALL_TYPES.add(SpellConfigParameter.ALLOW_CRAFTING);
             ALL_TYPES.add(SpellConfigParameter.MANA_MULTIPLIER);
             ALL_TYPES.add(SpellConfigParameter.POWER_MULTIPLIER);
-            org.marj4n.irons_spellbooks.events.SpellEvents.post(new RegisterConfigParametersEvent(ALL_TYPES::add));
+            org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                    new RegisterConfigParametersEvent(ALL_TYPES::add));
         }
     }
 
-
     private Map<ResourceLocation, JsonElement> toJson(Map<ResourceLocation, byte[]> filestreams) {
         Map<ResourceLocation, JsonElement> configEntries = new HashMap<>();
-        for (var entry : filestreams.entrySet()/*JsonElement elem : array*/) {
+        for (var entry : filestreams.entrySet() /*JsonElement elem : array*/) {
             var id = entry.getKey();
             var file = entry.getValue();
             try {
-                JsonObject obj = gson.fromJson(new InputStreamReader(new ByteArrayInputStream(file)), JsonObject.class);
+                JsonObject obj =
+                        gson.fromJson(
+                                new InputStreamReader(new ByteArrayInputStream(file)),
+                                JsonObject.class);
                 configEntries.put(id, obj);
             } catch (Exception e) {
-                IronsSpellbooks.LOGGER.error("Failed to parse config file \"{}\": {}", id, e.getMessage());
+                IronsSpellbooks.LOGGER.error(
+                        "Failed to parse config file \"{}\": {}", id, e.getMessage());
             }
         }
         return configEntries;
@@ -276,18 +315,20 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
      * @return <code>true</code> if all entries loaded successfully. <code>false</code> if any entries had errors loading
      */
     @SuppressWarnings("unchecked")
-    private <T> boolean buildConfigManager(Map<ResourceLocation, JsonElement> configEntries, boolean applyGlobalConfig) {
+    private <T> boolean buildConfigManager(
+            Map<ResourceLocation, JsonElement> configEntries, boolean applyGlobalConfig) {
         boolean hasErrors = false;
         ImmutableMap.Builder<AbstractSpell, SpellConfigHolder> builder = ImmutableMap.builder();
         DynamicOps<JsonElement> registryops = JsonOps.INSTANCE;
 
-        Map<SpellConfigParameter<?>, Object> globalValues = applyGlobalConfig ?
-                readGlobalConfig(registryops) : Collections.emptyMap();
+        Map<SpellConfigParameter<?>, Object> globalValues =
+                applyGlobalConfig ? readGlobalConfig(registryops) : Collections.emptyMap();
         for (AbstractSpell spell : SpellRegistry.REGISTRY.get()) {
             // Manually build defaults from static data object
             SpellConfigHolder config = new SpellConfigHolder();
             DefaultConfig raw = spell.getDefaultConfig();
-            config.setDefaultValue(SpellConfigParameter.SCHOOL, SchoolRegistry.getSchool(raw.schoolResource));
+            config.setDefaultValue(
+                    SpellConfigParameter.SCHOOL, SchoolRegistry.getSchool(raw.schoolResource));
             config.setDefaultValue(SpellConfigParameter.MIN_RARITY, raw.minRarity);
             config.setDefaultValue(SpellConfigParameter.MAX_LEVEL, raw.maxLevel);
             config.setDefaultValue(SpellConfigParameter.ENABLED, raw.enabled);
@@ -303,16 +344,26 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
                         Optional<JsonElement> elem = resolveJsonElement(spellId, paramType, json);
                         if (elem.isPresent()) {
                             try {
-                                T decoded = paramType.datatype().decode(registryops, elem.get()).getOrThrow(false, IronsSpellbooks.LOGGER::error).getFirst();
+                                T decoded =
+                                        paramType
+                                                .datatype()
+                                                .decode(registryops, elem.get())
+                                                .getOrThrow(false, IronsSpellbooks.LOGGER::error)
+                                                .getFirst();
                                 config.set(paramType, decoded);
                             } catch (Exception e) {
-                                IronsSpellbooks.LOGGER.error("Parsing error loading spell config \"{}\" value for \"{}\": {}", spellId, paramType.key(), e.getLocalizedMessage());
+                                IronsSpellbooks.LOGGER.error(
+                                        "Parsing error loading spell config \"{}\" value for \"{}\": {}",
+                                        spellId,
+                                        paramType.key(),
+                                        e.getLocalizedMessage());
                                 hasErrors = true;
                             }
                         }
                     }
                 } catch (IllegalStateException e) {
-                    IronsSpellbooks.LOGGER.error("Parsing error loading spell config {}: {}", spellId, e);
+                    IronsSpellbooks.LOGGER.error(
+                            "Parsing error loading spell config {}: {}", spellId, e);
                     hasErrors = true;
                 }
             }
@@ -326,9 +377,11 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
             builder.put(spell, config);
         }
         config = builder.build();
-        // Second pass for events. Allows for full context (can reference existing default and modified config values)
+        // Second pass for events. Allows for full context (can reference existing default and
+        // modified config values)
         for (AbstractSpell spell : SpellRegistry.REGISTRY.get()) {
-            org.marj4n.irons_spellbooks.events.SpellEvents.post(new ModifyDefaultConfigValuesEvent(spell, config.get(spell)));
+            org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                    new ModifyDefaultConfigValuesEvent(spell, config.get(spell)));
         }
         return !hasErrors;
     }
@@ -360,9 +413,13 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
             return Pair.of(false, globalConfig);
         }
         JsonObject json = new JsonObject();
-        json.addProperty("_comment1", "Global spell configuration. Values here apply to ALL spells as fallback defaults.");
+        json.addProperty(
+                "_comment1",
+                "Global spell configuration. Values here apply to ALL spells as fallback defaults.");
         json.addProperty("_comment2", "Per-spell config files OVERRIDE these values");
-        json.addProperty("_comment3", "Hint: /ironsSpellbooks config list to shows all available parameter keys.");
+        json.addProperty(
+                "_comment3",
+                "Hint: /ironsSpellbooks config list to shows all available parameter keys.");
         try (FileWriter writer = new FileWriter(globalConfig)) {
             gson.toJson(json, writer);
             return Pair.of(true, globalConfig);
@@ -373,7 +430,8 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
     }
 
     @SuppressWarnings("unchecked")
-    private Map<SpellConfigParameter<?>, Object> readGlobalConfig(DynamicOps<JsonElement> registryops) {
+    private Map<SpellConfigParameter<?>, Object> readGlobalConfig(
+            DynamicOps<JsonElement> registryops) {
         Map<SpellConfigParameter<?>, Object> result = new HashMap<>();
         File globalFile = getSpellConfigDir().toPath().resolve(GLOBAL_CONFIG_FILE).toFile();
         if (!globalFile.exists()) {
@@ -387,15 +445,24 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
                 Optional<JsonElement> elem = resolveJsonElement(globalId, paramType, json);
                 if (elem.isPresent()) {
                     try {
-                        var decoded = paramType.datatype().decode(registryops, elem.get()).getOrThrow(false, IronsSpellbooks.LOGGER::error).getFirst();
+                        var decoded =
+                                paramType
+                                        .datatype()
+                                        .decode(registryops, elem.get())
+                                        .getOrThrow(false, IronsSpellbooks.LOGGER::error)
+                                        .getFirst();
                         result.put(paramType, decoded);
                     } catch (Exception e) {
-                        IronsSpellbooks.LOGGER.error("Parsing error in global config for \"{}\": {}", paramType.key(), e.getLocalizedMessage());
+                        IronsSpellbooks.LOGGER.error(
+                                "Parsing error in global config for \"{}\": {}",
+                                paramType.key(),
+                                e.getLocalizedMessage());
                     }
                 }
             }
             if (!result.isEmpty()) {
-                IronsSpellbooks.LOGGER.info("Loaded {} global spell config parameters", result.size());
+                IronsSpellbooks.LOGGER.info(
+                        "Loaded {} global spell config parameters", result.size());
             }
         } catch (Exception e) {
             IronsSpellbooks.LOGGER.error("Failed to read global config: {}", e.getMessage());
@@ -403,13 +470,19 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
         return result;
     }
 
-    private static Optional<JsonElement> resolveJsonElement(ResourceLocation spellId, SpellConfigParameter<?> dataType, JsonObject parent) {
+    private static Optional<JsonElement> resolveJsonElement(
+            ResourceLocation spellId, SpellConfigParameter<?> dataType, JsonObject parent) {
         if (parent.has(dataType.key().toString())) {
             return Optional.of(parent.get(dataType.key().toString()));
         } else if (parent.has(dataType.key().getPath())) {
             if (!dataType.key().getNamespace().equals("irons_spellbooks")) {
-                // Allow use of just path for irons_spellbooks namespaced entries. Give warning when other mods try to do it
-                IronsSpellbooks.LOGGER.warn("Config for {} has ambiguous entry \"{}\", adapting to \"{}\"", spellId, dataType.key().getPath(), dataType.key());
+                // Allow use of just path for irons_spellbooks namespaced entries. Give warning when
+                // other mods try to do it
+                IronsSpellbooks.LOGGER.warn(
+                        "Config for {} has ambiguous entry \"{}\", adapting to \"{}\"",
+                        spellId,
+                        dataType.key().getPath(),
+                        dataType.key());
             }
             return Optional.of(parent.get(dataType.key().getPath()));
         } else {
@@ -419,25 +492,36 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
 
     public static <T> Pair<Boolean, File> createExampleConfig(Gson gson, File file) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("_comment1", "Config Files must be placed in a directory labeled with their mod id, and the file name must match the spell id!");
-        jsonObject.addProperty("_comment2", "For global config: /config/irons_spellbooks_spell_config/<mod_id>/<spell_id>.json");
-        jsonObject.addProperty("_comment3", "For datapacks: /data/<mod_id>/irons_spellbooks_spell_config/<spell_id>.json");
+        jsonObject.addProperty(
+                "_comment1",
+                "Config Files must be placed in a directory labeled with their mod id, and the file name must match the spell id!");
+        jsonObject.addProperty(
+                "_comment2",
+                "For global config: /config/irons_spellbooks_spell_config/<mod_id>/<spell_id>.json");
+        jsonObject.addProperty(
+                "_comment3",
+                "For datapacks: /data/<mod_id>/irons_spellbooks_spell_config/<spell_id>.json");
         for (SpellConfigParameter<?> _param : SpellConfigManager.ALL_TYPES) {
             SpellConfigParameter<T> param = (SpellConfigParameter<T>) _param;
             Codec<T> codec = param.datatype();
-            DataResult<JsonElement> result = codec.encodeStart(JsonOps.INSTANCE, param.defaultValue().get());
-            jsonObject.add(param.key().toString(), gson.toJsonTree(result.getOrThrow(false, IronsSpellbooks.LOGGER::error)));
+            DataResult<JsonElement> result =
+                    codec.encodeStart(JsonOps.INSTANCE, param.defaultValue().get());
+            jsonObject.add(
+                    param.key().toString(),
+                    gson.toJsonTree(result.getOrThrow(false, IronsSpellbooks.LOGGER::error)));
         }
         try (FileWriter writer = new FileWriter(file)) {
             gson.toJson(jsonObject, writer);
             return Pair.of(true, file);
         } catch (IOException e) {
-            IronsSpellbooks.LOGGER.error("Failed to write default config file {}: {}", file.getPath(), e.getMessage());
+            IronsSpellbooks.LOGGER.error(
+                    "Failed to write default config file {}: {}", file.getPath(), e.getMessage());
             return Pair.of(false, null);
         }
     }
 
-    public static <T> Pair<Boolean, File> generateSpellConfigFile(Gson gson, AbstractSpell spell, boolean full, boolean override) {
+    public static <T> Pair<Boolean, File> generateSpellConfigFile(
+            Gson gson, AbstractSpell spell, boolean full, boolean override) {
         ResourceLocation resourceLocation = spell.getSpellResource();
         try {
             File spellConfigDir = getSpellConfigDir();
@@ -445,7 +529,8 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
             if (!modDir.exists()) {
                 modDir.mkdir();
             }
-            File spellConfig = modDir.toPath().resolve(resourceLocation.getPath() + ".json").toFile();
+            File spellConfig =
+                    modDir.toPath().resolve(resourceLocation.getPath() + ".json").toFile();
             if (spellConfig.exists() && !override) {
                 return Pair.of(false, spellConfig);
             }
@@ -455,8 +540,14 @@ public class SpellConfigManager extends SimpleJsonResourceReloadListener impleme
                     // fill file with spell's default values
                     SpellConfigParameter<T> param = (SpellConfigParameter<T>) _param;
                     Codec<T> codec = param.datatype();
-                    DataResult<JsonElement> result = codec.encodeStart(JsonOps.INSTANCE, SpellConfigManager.getSpellDefaultConfigValue(spell, param));
-                    json.add(param.key().toString(), gson.toJsonTree(result.getOrThrow(false, IronsSpellbooks.LOGGER::error)));
+                    DataResult<JsonElement> result =
+                            codec.encodeStart(
+                                    JsonOps.INSTANCE,
+                                    SpellConfigManager.getSpellDefaultConfigValue(spell, param));
+                    json.add(
+                            param.key().toString(),
+                            gson.toJsonTree(
+                                    result.getOrThrow(false, IronsSpellbooks.LOGGER::error)));
                 }
             }
             try (FileWriter writer = new FileWriter(spellConfig)) {

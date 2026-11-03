@@ -25,10 +25,11 @@ public class QuickCastPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer serverPlayer = ctx.getSender();
-            Utils.serverSideInitiateQuickCast(serverPlayer, slot);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ServerPlayer serverPlayer = ctx.getSender();
+                    Utils.serverSideInitiateQuickCast(serverPlayer, slot);
+                });
         return true;
     }
 }

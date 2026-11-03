@@ -15,9 +15,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class AnvilMenuMixin extends ItemCombinerMenu {
     @Shadow @Final private DataSlot cost;
     @Shadow private int repairItemCountCost;
-    protected AnvilMenuMixin(MenuType<?> type, int id, Inventory inventory, ContainerLevelAccess access) {
+
+    protected AnvilMenuMixin(
+            MenuType<?> type, int id, Inventory inventory, ContainerLevelAccess access) {
         super(type, id, inventory, access);
     }
+
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
     private void ironsSpellbooks$shrivingRecipe(CallbackInfo ci) {
         if (inputSlots.getItem(1).is(ItemRegistry.SHRIVING_STONE.get())) {

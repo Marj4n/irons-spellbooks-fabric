@@ -33,7 +33,10 @@ public class GenericOwnerHurtTargetGoal extends TargetGoal {
             this.ownerLastHurt = owner.getLastHurtMob();
             int i = owner.getLastHurtMobTimestamp();
 
-            return i != this.timestamp && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT) && !(this.ownerLastHurt instanceof IMagicSummon summon && summon.getSummoner() == owner);
+            return i != this.timestamp
+                    && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT)
+                    && !(this.ownerLastHurt instanceof IMagicSummon summon
+                            && summon.getSummoner() == owner);
         }
     }
 

@@ -12,17 +12,37 @@ import net.minecraft.commands.Commands;
 public class LearnCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        LiteralCommandNode<CommandSourceStack> command = dispatcher.register(Commands.literal("learnSpell")
-                .requires((p) -> p.hasPermission(2))
-                .then(Commands.literal("forget_all")
-                        .executes((context) -> forgetAll(context.getSource())))
-                .then(Commands.literal("learn_all")
-                        .executes((context) -> learnAll(context.getSource())))
-                .then(Commands.literal("learn").then(Commands.argument("spell", SpellArgument.spellArgument()).executes((commandContext) -> {
-                    return learn(commandContext.getSource(), commandContext.getArgument("spell", String.class));
-                })))
-
-        );
+        LiteralCommandNode<CommandSourceStack> command =
+                dispatcher.register(
+                        Commands.literal("learnSpell")
+                                .requires((p) -> p.hasPermission(2))
+                                .then(
+                                        Commands.literal("forget_all")
+                                                .executes(
+                                                        (context) ->
+                                                                forgetAll(context.getSource())))
+                                .then(
+                                        Commands.literal("learn_all")
+                                                .executes(
+                                                        (context) -> learnAll(context.getSource())))
+                                .then(
+                                        Commands.literal("learn")
+                                                .then(
+                                                        Commands.argument(
+                                                                        "spell",
+                                                                        SpellArgument
+                                                                                .spellArgument())
+                                                                .executes(
+                                                                        (commandContext) -> {
+                                                                            return learn(
+                                                                                    commandContext
+                                                                                            .getSource(),
+                                                                                    commandContext
+                                                                                            .getArgument(
+                                                                                                    "spell",
+                                                                                                    String
+                                                                                                            .class));
+                                                                        }))));
     }
 
     private static int forgetAll(CommandSourceStack source) {
@@ -34,7 +54,9 @@ public class LearnCommand {
         int i = 0;
         for (AbstractSpell spell : SpellRegistry.getEnabledSpells()) {
             if (spell.requiresLearning() && !spell.isLearned(source.getPlayer())) {
-                MagicData.getPlayerMagicData(source.getPlayer()).getSyncedData().learnSpell(spell, false);
+                MagicData.getPlayerMagicData(source.getPlayer())
+                        .getSyncedData()
+                        .learnSpell(spell, false);
             }
         }
         MagicData.getPlayerMagicData(source.getPlayer()).getSyncedData().doSync();

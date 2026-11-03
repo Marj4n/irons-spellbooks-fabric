@@ -13,35 +13,51 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public class TintedBubblePopParticleOptions implements ParticleOptions {
-    public static final MapCodec<TintedBubblePopParticleOptions> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
-            instance.group(
-                    BlockPos.CODEC.fieldOf("pos").forGetter(TintedBubblePopParticleOptions::cauldronPos)
-            ).apply(instance, TintedBubblePopParticleOptions::new)
-    );
+    public static final MapCodec<TintedBubblePopParticleOptions> MAP_CODEC =
+            RecordCodecBuilder.mapCodec(
+                    instance ->
+                            instance.group(
+                                            BlockPos.CODEC
+                                                    .fieldOf("pos")
+                                                    .forGetter(
+                                                            TintedBubblePopParticleOptions
+                                                                    ::cauldronPos))
+                                    .apply(instance, TintedBubblePopParticleOptions::new));
 
-    public static final Codec<TintedBubblePopParticleOptions> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(
-                    BlockPos.CODEC.fieldOf("pos").forGetter(TintedBubblePopParticleOptions::cauldronPos)
-            ).apply(instance, TintedBubblePopParticleOptions::new)
-    );
+    public static final Codec<TintedBubblePopParticleOptions> CODEC =
+            RecordCodecBuilder.create(
+                    instance ->
+                            instance.group(
+                                            BlockPos.CODEC
+                                                    .fieldOf("pos")
+                                                    .forGetter(
+                                                            TintedBubblePopParticleOptions
+                                                                    ::cauldronPos))
+                                    .apply(instance, TintedBubblePopParticleOptions::new));
 
-    public static final ParticleOptions.Deserializer<TintedBubblePopParticleOptions> DESERIALIZER = new ParticleOptions.Deserializer<>() {
-        @Override
-        public @NotNull TintedBubblePopParticleOptions fromCommand(@NotNull ParticleType<TintedBubblePopParticleOptions> type, @NotNull StringReader reader) throws CommandSyntaxException {
-            reader.expect(' ');
-            int x = reader.readInt();
-            reader.expect(' ');
-            int y = reader.readInt();
-            reader.expect(' ');
-            int z = reader.readInt();
-            return new TintedBubblePopParticleOptions(new BlockPos(x, y, z));
-        }
+    public static final ParticleOptions.Deserializer<TintedBubblePopParticleOptions> DESERIALIZER =
+            new ParticleOptions.Deserializer<>() {
+                @Override
+                public @NotNull TintedBubblePopParticleOptions fromCommand(
+                        @NotNull ParticleType<TintedBubblePopParticleOptions> type,
+                        @NotNull StringReader reader)
+                        throws CommandSyntaxException {
+                    reader.expect(' ');
+                    int x = reader.readInt();
+                    reader.expect(' ');
+                    int y = reader.readInt();
+                    reader.expect(' ');
+                    int z = reader.readInt();
+                    return new TintedBubblePopParticleOptions(new BlockPos(x, y, z));
+                }
 
-        @Override
-        public @NotNull TintedBubblePopParticleOptions fromNetwork(@NotNull ParticleType<TintedBubblePopParticleOptions> type, @NotNull FriendlyByteBuf buf) {
-            return new TintedBubblePopParticleOptions(buf.readBlockPos());
-        }
-    };
+                @Override
+                public @NotNull TintedBubblePopParticleOptions fromNetwork(
+                        @NotNull ParticleType<TintedBubblePopParticleOptions> type,
+                        @NotNull FriendlyByteBuf buf) {
+                    return new TintedBubblePopParticleOptions(buf.readBlockPos());
+                }
+            };
 
     private final BlockPos cauldronPos;
 

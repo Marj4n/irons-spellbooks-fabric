@@ -25,7 +25,8 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
+public class SummonedVex extends Vex
+        implements IMagicSummon, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
     public SummonedVex(EntityType<? extends Vex> pEntityType, Level pLevel) {
         super(EntityRegistry.SUMMONED_VEX.get(), pLevel);
         xpReward = 0;
@@ -44,7 +45,8 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
     public void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(4, new VexChargeAttackGoal());
-        this.goalSelector.addGoal(7, new GenericFollowOwnerGoal(this, this::getSummoner, .65f, 35, 10, true, 50));
+        this.goalSelector.addGoal(
+                7, new GenericFollowOwnerGoal(this, this::getSummoner, .65f, 35, 10, true, 50));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
         this.goalSelector.addGoal(16, new VexRandomMoveGoal());
@@ -52,7 +54,10 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(3, new GenericCopyOwnerTargetGoal(this, this::getSummoner));
-        this.targetSelector.addGoal(4, (new GenericHurtByTargetGoal(this, (entity) -> entity == getSummoner())).setAlertOthers());
+        this.targetSelector.addGoal(
+                4,
+                (new GenericHurtByTargetGoal(this, (entity) -> entity == getSummoner()))
+                        .setAlertOthers());
         this.targetSelector.addGoal(5, new GenericProtectOwnerTargetGoal(this, this::getSummoner));
     }
 
@@ -63,13 +68,15 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
 
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        return Utils.doMeleeAttack(this, pEntity, SpellRegistry.SUMMON_VEX_SPELL.get().getDamageSource(this, getSummoner()));
+        return Utils.doMeleeAttack(
+                this,
+                pEntity,
+                SpellRegistry.SUMMON_VEX_SPELL.get().getDamageSource(this, getSummoner()));
     }
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (shouldIgnoreDamage(pSource))
-            return false;
+        if (shouldIgnoreDamage(pSource)) return false;
         return super.hurt(pSource, pAmount);
     }
 
@@ -101,7 +108,18 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
 
     public void onUnSummon() {
         if (!level().isClientSide) {
-            MagicManager.spawnParticles(level(), ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleTypes.POOF,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    25,
+                    .4,
+                    .8,
+                    .4,
+                    .03,
+                    false);
             setRemoved(RemovalReason.DISCARDED);
         }
     }
@@ -122,7 +140,10 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
          */
         public boolean canUse() {
             LivingEntity livingentity = SummonedVex.this.getTarget();
-            if (livingentity != null && livingentity.isAlive() && !SummonedVex.this.getMoveControl().hasWanted() && SummonedVex.this.random.nextInt(reducedTickDelay(7)) == 0) {
+            if (livingentity != null
+                    && livingentity.isAlive()
+                    && !SummonedVex.this.getMoveControl().hasWanted()
+                    && SummonedVex.this.random.nextInt(reducedTickDelay(7)) == 0) {
                 return SummonedVex.this.distanceToSqr(livingentity) > 4.0D;
             } else {
                 return false;
@@ -133,7 +154,10 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
          * Returns whether an in-progress EntityAIBase should continue executing
          */
         public boolean canContinueToUse() {
-            return SummonedVex.this.getMoveControl().hasWanted() && SummonedVex.this.isCharging() && SummonedVex.this.getTarget() != null && SummonedVex.this.getTarget().isAlive();
+            return SummonedVex.this.getMoveControl().hasWanted()
+                    && SummonedVex.this.isCharging()
+                    && SummonedVex.this.getTarget() != null
+                    && SummonedVex.this.getTarget().isAlive();
         }
 
         /**
@@ -174,10 +198,10 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
                     double d0 = SummonedVex.this.distanceToSqr(livingentity);
                     if (d0 < 9.0D) {
                         Vec3 vec3 = livingentity.getEyePosition();
-                        SummonedVex.this.moveControl.setWantedPosition(vec3.x, vec3.y, vec3.z, 1.0D);
+                        SummonedVex.this.moveControl.setWantedPosition(
+                                vec3.x, vec3.y, vec3.z, 1.0D);
                     }
                 }
-
             }
         }
     }
@@ -195,7 +219,8 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
          * method as well.
          */
         public boolean canUse() {
-            return !SummonedVex.this.getMoveControl().hasWanted() && SummonedVex.this.random.nextInt(reducedTickDelay(7)) == 0;
+            return !SummonedVex.this.getMoveControl().hasWanted()
+                    && SummonedVex.this.random.nextInt(reducedTickDelay(7)) == 0;
         }
 
         /**
@@ -215,16 +240,30 @@ public class SummonedVex extends Vex implements IMagicSummon, org.marj4n.irons_s
             }
 
             for (int i = 0; i < 3; ++i) {
-                BlockPos blockpos1 = blockpos.offset(SummonedVex.this.random.nextInt(15) - 7, SummonedVex.this.random.nextInt(11) - 5, SummonedVex.this.random.nextInt(15) - 7);
+                BlockPos blockpos1 =
+                        blockpos.offset(
+                                SummonedVex.this.random.nextInt(15) - 7,
+                                SummonedVex.this.random.nextInt(11) - 5,
+                                SummonedVex.this.random.nextInt(15) - 7);
                 if (SummonedVex.this.level().isEmptyBlock(blockpos1)) {
-                    SummonedVex.this.moveControl.setWantedPosition((double) blockpos1.getX() + 0.5D, (double) blockpos1.getY() + 0.5D, (double) blockpos1.getZ() + 0.5D, 0.25D);
+                    SummonedVex.this.moveControl.setWantedPosition(
+                            (double) blockpos1.getX() + 0.5D,
+                            (double) blockpos1.getY() + 0.5D,
+                            (double) blockpos1.getZ() + 0.5D,
+                            0.25D);
                     if (SummonedVex.this.getTarget() == null) {
-                        SummonedVex.this.getLookControl().setLookAt((double) blockpos1.getX() + 0.5D, (double) blockpos1.getY() + 0.5D, (double) blockpos1.getZ() + 0.5D, 180.0F, 20.0F);
+                        SummonedVex.this
+                                .getLookControl()
+                                .setLookAt(
+                                        (double) blockpos1.getX() + 0.5D,
+                                        (double) blockpos1.getY() + 0.5D,
+                                        (double) blockpos1.getZ() + 0.5D,
+                                        180.0F,
+                                        20.0F);
                     }
                     break;
                 }
             }
-
         }
     }
 }

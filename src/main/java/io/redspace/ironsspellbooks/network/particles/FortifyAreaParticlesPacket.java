@@ -8,7 +8,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class FortifyAreaParticlesPacket implements CustomPacketPayload {
     private Vec3 pos;
 
@@ -39,9 +38,10 @@ public class FortifyAreaParticlesPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientSpellCastHelper.handleClientsideFortifyAreaParticles(pos);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientSpellCastHelper.handleClientsideFortifyAreaParticles(pos);
+                });
         return true;
     }
 }

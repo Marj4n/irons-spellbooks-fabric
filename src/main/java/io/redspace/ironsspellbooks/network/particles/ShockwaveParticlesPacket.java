@@ -20,7 +20,9 @@ public class ShockwaveParticlesPacket implements CustomPacketPayload {
     public ShockwaveParticlesPacket(Vec3 pos, float radius, ParticleType particleType) {
         this.pos = pos;
         this.radius = radius;
-        this.particleName = Objects.requireNonNull(BuiltInRegistries.PARTICLE_TYPE.getKey(particleType)).toString();
+        this.particleName =
+                Objects.requireNonNull(BuiltInRegistries.PARTICLE_TYPE.getKey(particleType))
+                        .toString();
     }
 
     public ShockwaveParticlesPacket(FriendlyByteBuf buf) {
@@ -48,16 +50,18 @@ public class ShockwaveParticlesPacket implements CustomPacketPayload {
         buf.writeDouble(vec3.z);
     }
 
-
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            try {
-                var type = BuiltInRegistries.PARTICLE_TYPE.get(new ResourceLocation(particleName));
-                ClientSpellCastHelper.handleClientboundShockwaveParticle(pos, radius, type);
-            } catch (Exception ignored) {
-            }
-        });
+        ctx.enqueueWork(
+                () -> {
+                    try {
+                        var type =
+                                BuiltInRegistries.PARTICLE_TYPE.get(
+                                        new ResourceLocation(particleName));
+                        ClientSpellCastHelper.handleClientboundShockwaveParticle(pos, radius, type);
+                    } catch (Exception ignored) {
+                    }
+                });
         return true;
     }
 }

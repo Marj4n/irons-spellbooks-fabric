@@ -6,7 +6,6 @@ import io.redspace.ironsspellbooks.gui.overlays.RecastOverlay;
 import io.redspace.ironsspellbooks.gui.overlays.SpellBarOverlay;
 import net.minecraftforge.common.ForgeConfigSpec;
 
-
 public class ClientConfigs {
 
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
@@ -22,7 +21,8 @@ public class ClientConfigs {
     public static final ForgeConfigSpec.ConfigValue<Boolean> ENABLE_BOSS_MUSIC;
     public static final ForgeConfigSpec.ConfigValue<ManaBarOverlay.Anchor> MANA_BAR_ANCHOR;
     public static final ForgeConfigSpec.ConfigValue<ManaBarOverlay.Display> MANA_BAR_DISPLAY;
-    public static final ForgeConfigSpec.ConfigValue<ManaBarOverlay.Display> SPELL_BAR_DISPLAY; //reusing same enum
+    public static final ForgeConfigSpec.ConfigValue<ManaBarOverlay.Display>
+            SPELL_BAR_DISPLAY; // reusing same enum
     public static final ForgeConfigSpec.ConfigValue<Integer> SPELL_BAR_Y_OFFSET;
     public static final ForgeConfigSpec.ConfigValue<Integer> SPELL_BAR_X_OFFSET;
     public static final ForgeConfigSpec.ConfigValue<SpellBarOverlay.Anchor> SPELL_BAR_ANCHOR;
@@ -40,26 +40,42 @@ public class ClientConfigs {
     public static final ForgeConfigSpec SPEC;
 
     static {
-        BUILDER.comment("##############################################################################################");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##   ATTENTION: These are client configs. For gameplay settings, go to the SERVER CONFIGS   ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##                                                                                          ##");
-        BUILDER.comment("##############################################################################################");
+        BUILDER.comment(
+                "##############################################################################################");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##   ATTENTION: These are client configs. For gameplay settings, go to the SERVER CONFIGS   ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##                                                                                          ##");
+        BUILDER.comment(
+                "##############################################################################################");
         BUILDER.comment("");
 
         BUILDER.push("UI");
         BUILDER.push("ManaBar");
-        BUILDER.comment("By default (Contextual), the mana bar only appears when you are holding a magic item or are not at max mana.");
+        BUILDER.comment(
+                "By default (Contextual), the mana bar only appears when you are holding a magic item or are not at max mana.");
         MANA_BAR_DISPLAY = BUILDER.defineEnum("manaBarDisplay", ManaBarOverlay.Display.Contextual);
         BUILDER.comment("Used to adjust mana bar's position (11 is one full hunger bar up).");
         MANA_BAR_X_OFFSET = BUILDER.define("manaBarXOffset", 0);
@@ -70,7 +86,8 @@ public class ClientConfigs {
         MANA_TEXT_Y_OFFSET = BUILDER.define("manaTextYOffset", 0);
         BUILDER.pop();
         BUILDER.push("SpellBar");
-        BUILDER.comment("By default (Always), the spell bar always shows the spells in your equipped spellbook. Contextual will hide them when not in use.");
+        BUILDER.comment(
+                "By default (Always), the spell bar always shows the spells in your equipped spellbook. Contextual will hide them when not in use.");
         SPELL_BAR_DISPLAY = BUILDER.defineEnum("spellBarDisplay", ManaBarOverlay.Display.Always);
         BUILDER.comment("Used to adjust spell bar's position.");
         SPELL_BAR_X_OFFSET = BUILDER.define("spellBarXOffset", 0);
@@ -83,8 +100,12 @@ public class ClientConfigs {
         RECAST_Y_OFFSET = BUILDER.define("recastYOffset", 0);
         BUILDER.pop();
         BUILDER.push("SpellWheel");
-        SPELL_WHEEL_CONSISTENT_SIZE = BUILDER.comment("Whether to Spell Wheel size ignores the Gui scale option").define("ignoreGuiScale", false);
-        SPELL_WHEEL_SCALE = BUILDER.comment("If ignoreGuiScale is enabled, apply this multiplier to its size").define("ignoreGuiScaleSizeMultiplier", 1.0);
+        SPELL_WHEEL_CONSISTENT_SIZE =
+                BUILDER.comment("Whether to Spell Wheel size ignores the Gui scale option")
+                        .define("ignoreGuiScale", false);
+        SPELL_WHEEL_SCALE =
+                BUILDER.comment("If ignoreGuiScale is enabled, apply this multiplier to its size")
+                        .define("ignoreGuiScaleSizeMultiplier", 1.0);
         BUILDER.pop();
         BUILDER.pop();
 
@@ -95,7 +116,8 @@ public class ClientConfigs {
         BUILDER.pop();
 
         BUILDER.push("Renderers");
-        BUILDER.comment("By default, both fireballs are replaced with an enhanced model used by fire spells.");
+        BUILDER.comment(
+                "By default, both fireballs are replaced with an enhanced model used by fire spells.");
         REPLACE_GHAST_FIREBALL = BUILDER.define("replaceGhastFireballs", true);
         REPLACE_BLAZE_FIREBALL = BUILDER.define("replaceBlazeFireballs", true);
         BUILDER.pop();
@@ -105,17 +127,23 @@ public class ClientConfigs {
         BUILDER.pop();
 
         BUILDER.push("Misc");
-        SHIELD_PARTICLE_COLLISIONS = BUILDER.comment("Whether shield spells can collide with particles. Can affect performance. Default: true")
-                .define("shieldParticleCollisions", true);
-        REDUCE_TRIAL_OMEN_PARTICLE = BUILDER.comment("Whether Trial Omen Effect particles should be reduced while in first person. Default: true")
-                .define("reduceTrialOmenParticles", true);
+        SHIELD_PARTICLE_COLLISIONS =
+                BUILDER.comment(
+                                "Whether shield spells can collide with particles. Can affect performance. Default: true")
+                        .define("shieldParticleCollisions", true);
+        REDUCE_TRIAL_OMEN_PARTICLE =
+                BUILDER.comment(
+                                "Whether Trial Omen Effect particles should be reduced while in first person. Default: true")
+                        .define("reduceTrialOmenParticles", true);
         BUILDER.pop();
 
         BUILDER.push("Summons");
-        SUMMONS_GLOW = BUILDER.comment("Whether owned summons appear glowing to yourself. Default: true")
-                .define("ownedSummonsGlow", true);
-        SUMMONS_GLOW_HEX_COLOR = BUILDER.comment("Hex Color Value of owned summons glow outline. Default: 0xAAFFAA")
-                .define("summonGlowColor", "0xAAFFAA");
+        SUMMONS_GLOW =
+                BUILDER.comment("Whether owned summons appear glowing to yourself. Default: true")
+                        .define("ownedSummonsGlow", true);
+        SUMMONS_GLOW_HEX_COLOR =
+                BUILDER.comment("Hex Color Value of owned summons glow outline. Default: 0xAAFFAA")
+                        .define("summonGlowColor", "0xAAFFAA");
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -127,7 +155,9 @@ public class ClientConfigs {
         try {
             summonGlowColor = Integer.decode(SUMMONS_GLOW_HEX_COLOR.get());
         } catch (Exception ignored) {
-            IronsSpellbooks.LOGGER.warn("Failed to parse summonGlowColor \"{}\", reverting to default", SUMMONS_GLOW_HEX_COLOR.get());
+            IronsSpellbooks.LOGGER.warn(
+                    "Failed to parse summonGlowColor \"{}\", reverting to default",
+                    SUMMONS_GLOW_HEX_COLOR.get());
             summonGlowColor = 0xAAFFAA;
         }
     }

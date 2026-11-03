@@ -29,22 +29,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class FrostwaveSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "frostwave");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "frostwave");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 2))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getDuration(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(45)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(45)
+                    .build();
 
     public FrostwaveSpell() {
         this.manaCostPerLevel = 5;
@@ -75,19 +80,59 @@ public class FrostwaveSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float radius = getRadius(spellLevel, entity);
-        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(SchoolRegistry.ICE.get().getTargetingColor(), radius), entity.getX(), entity.getY() + .165f, entity.getZ(), 1, 0, 0, 0, 0, true);
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new ShockwaveParticlesPacket(new Vec3(entity.getX(), entity.getY() + .165f, entity.getZ()), radius, ParticleRegistry.SNOWFLAKE_PARTICLE.get()));
-        level.getEntities(entity, entity.getBoundingBox().inflate(radius, 4, radius), (target) ->
-                        !DamageSources.isFriendlyFireBetween(target, entity)
-                        && Utils.hasLineOfSight(level, entity, target, true))
-                .forEach(target -> {
-            if (target instanceof LivingEntity livingEntity && livingEntity.distanceToSqr(entity) < radius * radius) {
-                livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.CHILLED.get(), getDuration(spellLevel, entity)));
-                MagicManager.spawnParticles(level, ParticleHelper.SNOWFLAKE, livingEntity.getX(), livingEntity.getY() + livingEntity.getBbHeight() * .5f, livingEntity.getZ(), 50, livingEntity.getBbWidth() * .5f, livingEntity.getBbHeight() * .5f, livingEntity.getBbWidth() * .5f, .03, false);
-            }
-        });
+        MagicManager.spawnParticles(
+                level,
+                new BlastwaveParticleOptions(SchoolRegistry.ICE.get().getTargetingColor(), radius),
+                entity.getX(),
+                entity.getY() + .165f,
+                entity.getZ(),
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                entity,
+                new ShockwaveParticlesPacket(
+                        new Vec3(entity.getX(), entity.getY() + .165f, entity.getZ()),
+                        radius,
+                        ParticleRegistry.SNOWFLAKE_PARTICLE.get()));
+        level.getEntities(
+                        entity,
+                        entity.getBoundingBox().inflate(radius, 4, radius),
+                        (target) ->
+                                !DamageSources.isFriendlyFireBetween(target, entity)
+                                        && Utils.hasLineOfSight(level, entity, target, true))
+                .forEach(
+                        target -> {
+                            if (target instanceof LivingEntity livingEntity
+                                    && livingEntity.distanceToSqr(entity) < radius * radius) {
+                                livingEntity.addEffect(
+                                        new MobEffectInstance(
+                                                MobEffectRegistry.CHILLED.get(),
+                                                getDuration(spellLevel, entity)));
+                                MagicManager.spawnParticles(
+                                        level,
+                                        ParticleHelper.SNOWFLAKE,
+                                        livingEntity.getX(),
+                                        livingEntity.getY() + livingEntity.getBbHeight() * .5f,
+                                        livingEntity.getZ(),
+                                        50,
+                                        livingEntity.getBbWidth() * .5f,
+                                        livingEntity.getBbHeight() * .5f,
+                                        livingEntity.getBbWidth() * .5f,
+                                        .03,
+                                        false);
+                            }
+                        });
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 

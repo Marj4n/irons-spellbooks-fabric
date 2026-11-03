@@ -19,8 +19,6 @@ public class PyriumStaffItem extends StaffItem {
 
     @Override
     public void initializeClient(Consumer<NativeClientItemExtensions> consumer) {
-        consumer.accept(
-                new PyriumStaffClientExtensions()
-        );
+        consumer.accept(new PyriumStaffClientExtensions());
     }
 }

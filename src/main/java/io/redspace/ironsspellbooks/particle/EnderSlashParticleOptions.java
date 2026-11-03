@@ -20,7 +20,8 @@ public class EnderSlashParticleOptions implements ParticleOptions {
     public final float yu;
     public final float zu;
 
-    public EnderSlashParticleOptions(float xf, float yf, float zf, float xu, float yu, float zu, float scale) {
+    public EnderSlashParticleOptions(
+            float xf, float yf, float zf, float xu, float yu, float zu, float scale) {
         this.scale = scale;
         this.xf = xf;
         this.yf = yf;
@@ -30,42 +31,116 @@ public class EnderSlashParticleOptions implements ParticleOptions {
         this.zu = zu;
     }
 
-//    public static StreamCodec<? super ByteBuf, EnderSlashParticleOptions> STREAM_CODEC = StreamCodec.of(
-//            (buf, option) -> {
-//                buf.writeFloat(option.xf);
-//                buf.writeFloat(option.yf);
-//                buf.writeFloat(option.zf);
-//                buf.writeFloat(option.xu);
-//                buf.writeFloat(option.yu);
-//                buf.writeFloat(option.zu);
-//                buf.writeFloat(option.scale);
-//            },
-//            (buf) -> new EnderSlashParticleOptions(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat())
-//    );
+    //    public static StreamCodec<? super ByteBuf, EnderSlashParticleOptions> STREAM_CODEC =
+    // StreamCodec.of(
+    //            (buf, option) -> {
+    //                buf.writeFloat(option.xf);
+    //                buf.writeFloat(option.yf);
+    //                buf.writeFloat(option.zf);
+    //                buf.writeFloat(option.xu);
+    //                buf.writeFloat(option.yu);
+    //                buf.writeFloat(option.zu);
+    //                buf.writeFloat(option.scale);
+    //            },
+    //            (buf) -> new EnderSlashParticleOptions(buf.readFloat(), buf.readFloat(),
+    // buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat())
+    //    );
 
-    public static MapCodec<EnderSlashParticleOptions> MAP_CODEC = RecordCodecBuilder.mapCodec(object ->
-            object.group(
-                    Codec.FLOAT.fieldOf("xf").forGetter(p -> ((EnderSlashParticleOptions) p).xf),
-                    Codec.FLOAT.fieldOf("yf").forGetter(p -> ((EnderSlashParticleOptions) p).yf),
-                    Codec.FLOAT.fieldOf("zf").forGetter(p -> ((EnderSlashParticleOptions) p).zf),
-                    Codec.FLOAT.fieldOf("xu").forGetter(p -> ((EnderSlashParticleOptions) p).xu),
-                    Codec.FLOAT.fieldOf("yu").forGetter(p -> ((EnderSlashParticleOptions) p).yu),
-                    Codec.FLOAT.fieldOf("zu").forGetter(p -> ((EnderSlashParticleOptions) p).zu),
-                    Codec.FLOAT.fieldOf("scale").forGetter(p -> ((EnderSlashParticleOptions) p).scale)
-            ).apply(object, EnderSlashParticleOptions::new
-            ));
+    public static MapCodec<EnderSlashParticleOptions> MAP_CODEC =
+            RecordCodecBuilder.mapCodec(
+                    object ->
+                            object.group(
+                                            Codec.FLOAT
+                                                    .fieldOf("xf")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .xf),
+                                            Codec.FLOAT
+                                                    .fieldOf("yf")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .yf),
+                                            Codec.FLOAT
+                                                    .fieldOf("zf")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .zf),
+                                            Codec.FLOAT
+                                                    .fieldOf("xu")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .xu),
+                                            Codec.FLOAT
+                                                    .fieldOf("yu")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .yu),
+                                            Codec.FLOAT
+                                                    .fieldOf("zu")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .zu),
+                                            Codec.FLOAT
+                                                    .fieldOf("scale")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .scale))
+                                    .apply(object, EnderSlashParticleOptions::new));
 
-    public static Codec<EnderSlashParticleOptions> CODEC = RecordCodecBuilder.create(object ->
-            object.group(
-                    Codec.FLOAT.fieldOf("xf").forGetter(p -> ((EnderSlashParticleOptions) p).xf),
-                    Codec.FLOAT.fieldOf("yf").forGetter(p -> ((EnderSlashParticleOptions) p).yf),
-                    Codec.FLOAT.fieldOf("zf").forGetter(p -> ((EnderSlashParticleOptions) p).zf),
-                    Codec.FLOAT.fieldOf("xu").forGetter(p -> ((EnderSlashParticleOptions) p).xu),
-                    Codec.FLOAT.fieldOf("yu").forGetter(p -> ((EnderSlashParticleOptions) p).yu),
-                    Codec.FLOAT.fieldOf("zu").forGetter(p -> ((EnderSlashParticleOptions) p).zu),
-                    Codec.FLOAT.fieldOf("scale").forGetter(p -> ((EnderSlashParticleOptions) p).scale)
-            ).apply(object, EnderSlashParticleOptions::new
-            ));
+    public static Codec<EnderSlashParticleOptions> CODEC =
+            RecordCodecBuilder.create(
+                    object ->
+                            object.group(
+                                            Codec.FLOAT
+                                                    .fieldOf("xf")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .xf),
+                                            Codec.FLOAT
+                                                    .fieldOf("yf")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .yf),
+                                            Codec.FLOAT
+                                                    .fieldOf("zf")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .zf),
+                                            Codec.FLOAT
+                                                    .fieldOf("xu")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .xu),
+                                            Codec.FLOAT
+                                                    .fieldOf("yu")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .yu),
+                                            Codec.FLOAT
+                                                    .fieldOf("zu")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .zu),
+                                            Codec.FLOAT
+                                                    .fieldOf("scale")
+                                                    .forGetter(
+                                                            p ->
+                                                                    ((EnderSlashParticleOptions) p)
+                                                                            .scale))
+                                    .apply(object, EnderSlashParticleOptions::new));
 
     public @NotNull ParticleType<EnderSlashParticleOptions> getType() {
         return ParticleRegistry.ENDER_SLASH_PARTICLE.get();
@@ -87,13 +162,33 @@ public class EnderSlashParticleOptions implements ParticleOptions {
         return "";
     }
 
-    public static final ParticleOptions.Deserializer<EnderSlashParticleOptions> DESERIALIZER = new ParticleOptions.Deserializer<EnderSlashParticleOptions>() {
-        public @NotNull EnderSlashParticleOptions fromCommand(@NotNull ParticleType<EnderSlashParticleOptions> p_123689_, @NotNull StringReader reader) throws CommandSyntaxException {
-            return new EnderSlashParticleOptions(reader.readFloat(), reader.readFloat(), reader.readFloat(), reader.readFloat(), reader.readFloat(), reader.readFloat(), reader.readFloat());
-        }
+    public static final ParticleOptions.Deserializer<EnderSlashParticleOptions> DESERIALIZER =
+            new ParticleOptions.Deserializer<EnderSlashParticleOptions>() {
+                public @NotNull EnderSlashParticleOptions fromCommand(
+                        @NotNull ParticleType<EnderSlashParticleOptions> p_123689_,
+                        @NotNull StringReader reader)
+                        throws CommandSyntaxException {
+                    return new EnderSlashParticleOptions(
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat(),
+                            reader.readFloat());
+                }
 
-        public @NotNull EnderSlashParticleOptions fromNetwork(@NotNull ParticleType<EnderSlashParticleOptions> p_123692_, @NotNull FriendlyByteBuf buf) {
-            return new EnderSlashParticleOptions(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
-        }
-    };
+                public @NotNull EnderSlashParticleOptions fromNetwork(
+                        @NotNull ParticleType<EnderSlashParticleOptions> p_123692_,
+                        @NotNull FriendlyByteBuf buf) {
+                    return new EnderSlashParticleOptions(
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat(),
+                            buf.readFloat());
+                }
+            };
 }

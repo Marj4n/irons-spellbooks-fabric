@@ -27,13 +27,20 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity> {
         this.itemRenderer = context.getItemRenderer();
     }
 
-    public void render(VaultBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(
+            VaultBlockEntity blockEntity,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         if (VaultBlockEntity.Client.shouldDisplayActiveEffects(blockEntity.getSharedData())) {
             Level level = blockEntity.getLevel();
             if (level != null) {
                 ItemStack itemstack = blockEntity.getSharedData().getDisplayItem();
                 if (!itemstack.isEmpty()) {
-                    this.random.setSeed(0/*(long)ItemEntityRenderer.getSeedForItemStack(itemstack)*/);
+                    this.random.setSeed(
+                            0 /*(long)ItemEntityRenderer.getSeedForItemStack(itemstack)*/);
                     VaultClientData vaultclientdata = blockEntity.getClientData();
                     renderItemInside(
                             partialTick,
@@ -45,8 +52,7 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity> {
                             this.itemRenderer,
                             vaultclientdata.previousSpin(),
                             vaultclientdata.currentSpin(),
-                            this.random
-                    );
+                            this.random);
                 }
             }
         }
@@ -62,20 +68,33 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity> {
             ItemRenderer itemRenderer,
             float previousSpin,
             float currentSpin,
-            RandomSource random
-    ) {
+            RandomSource random) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.4F, 0.5F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(Mth.rotLerp(partialTick, previousSpin, currentSpin)));
+        poseStack.mulPose(
+                Axis.YP.rotationDegrees(Mth.rotLerp(partialTick, previousSpin, currentSpin)));
         renderMultipleFromCount(itemRenderer, poseStack, buffer, packedLight, item, random, level);
         poseStack.popPose();
     }
 
     public static void renderMultipleFromCount(
-            ItemRenderer itemRenderer, PoseStack poseStack, MultiBufferSource buffer, int packedLight, ItemStack item, RandomSource random, Level level
-    ) {
+            ItemRenderer itemRenderer,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight,
+            ItemStack item,
+            RandomSource random,
+            Level level) {
         BakedModel bakedmodel = itemRenderer.getModel(item, level, null, 0);
-        renderMultipleFromCount(itemRenderer, poseStack, buffer, packedLight, item, bakedmodel, bakedmodel.isGui3d(), random);
+        renderMultipleFromCount(
+                itemRenderer,
+                poseStack,
+                buffer,
+                packedLight,
+                item,
+                bakedmodel,
+                bakedmodel.isGui3d(),
+                random);
     }
 
     static int getRenderedAmount(int count) {
@@ -98,8 +117,7 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity> {
             ItemStack item,
             BakedModel model,
             boolean isGui3d,
-            RandomSource random
-    ) {
+            RandomSource random) {
         int i = getRenderedAmount(item.getCount());
         float f = model.getTransforms().ground.scale.x();
         float f1 = model.getTransforms().ground.scale.y();
@@ -111,7 +129,8 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity> {
             poseStack.translate(f3, f4, f5);
         }
 
-        boolean shouldSpread = false;//net.neoforged.neoforge.client.extensions.common.NativeClientItemExtensions.of(item).shouldSpreadAsEntity(item);
+        boolean shouldSpread =
+                false; // net.neoforged.neoforge.client.extensions.common.NativeClientItemExtensions.of(item).shouldSpreadAsEntity(item);
         for (int j = 0; j < i; j++) {
             poseStack.pushPose();
             if (j > 0 && shouldSpread) {
@@ -127,7 +146,15 @@ public class VaultRenderer implements BlockEntityRenderer<VaultBlockEntity> {
                 }
             }
 
-            itemRenderer.render(item, ItemDisplayContext.GROUND, false, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, model);
+            itemRenderer.render(
+                    item,
+                    ItemDisplayContext.GROUND,
+                    false,
+                    poseStack,
+                    buffer,
+                    packedLight,
+                    OverlayTexture.NO_OVERLAY,
+                    model);
             poseStack.popPose();
             if (!isGui3d) {
                 poseStack.translate(0.0F * f, 0.0F * f1, 0.09375F * f2);

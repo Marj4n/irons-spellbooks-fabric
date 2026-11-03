@@ -31,7 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 public class DeadKingSoulEntity extends Entity implements AntiMagicSusceptible {
-    private static final EntityDataAccessor<Vector3f> DATA_RESPAWN_POS = SynchedEntityData.defineId(DeadKingSoulEntity.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Vector3f> DATA_RESPAWN_POS =
+            SynchedEntityData.defineId(DeadKingSoulEntity.class, EntityDataSerializers.VECTOR3);
     private static final double MOVE_PER_TICK = .12;
 
     public DeadKingSoulEntity(EntityType<?> type, Level level) {
@@ -66,21 +67,47 @@ public class DeadKingSoulEntity extends Entity implements AntiMagicSusceptible {
     }
 
     @Override
-    public @NotNull InteractionResult interactAt(@NotNull Player player, @NotNull Vec3 vec, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult interactAt(
+            @NotNull Player player, @NotNull Vec3 vec, @NotNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isAtSpawn() && itemStack.is(ModTags.DEAD_KING_RESPAWNABLE)) {
             if (player.level() instanceof ServerLevel serverLevel) {
                 if (!player.getAbilities().instabuild) {
-                    Vec3 particlePos = player.getEyePosition().add(player.getForward()).subtract(0, 0.3, 0);
-                    MagicManager.spawnParticles(serverLevel, new ItemParticleOption(ParticleTypes.ITEM, itemStack), particlePos.x, particlePos.y, particlePos.z, 9, .15, .15, .15, 0.08, false);
+                    Vec3 particlePos =
+                            player.getEyePosition().add(player.getForward()).subtract(0, 0.3, 0);
+                    MagicManager.spawnParticles(
+                            serverLevel,
+                            new ItemParticleOption(ParticleTypes.ITEM, itemStack),
+                            particlePos.x,
+                            particlePos.y,
+                            particlePos.z,
+                            9,
+                            .15,
+                            .15,
+                            .15,
+                            0.08,
+                            false);
                     itemStack.shrink(1);
                     player.setItemInHand(hand, itemStack);
                 }
                 this.playSound(SoundEvents.DECORATED_POT_SHATTER, 2, 0.75f);
                 this.playSound(SoundEvents.ELDER_GUARDIAN_CURSE, 2, 0.75f);
-                MagicManager.spawnParticles(level(), ParticleTypes.SCULK_SOUL, getX(), getY(), getZ(), 50, .1, .1, .1, 0.3, false);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleTypes.SCULK_SOUL,
+                        getX(),
+                        getY(),
+                        getZ(),
+                        50,
+                        .1,
+                        .1,
+                        .1,
+                        0.3,
+                        false);
 
-                DeadKingCorpseEntity deadKingCorpseEntity = new DeadKingCorpseEntity(EntityRegistry.DEAD_KING_CORPSE.get(), serverLevel);
+                DeadKingCorpseEntity deadKingCorpseEntity =
+                        new DeadKingCorpseEntity(
+                                EntityRegistry.DEAD_KING_CORPSE.get(), serverLevel);
                 deadKingCorpseEntity.moveTo(this.position());
                 float f = player.getYRot() + 180;
                 // set the y rot dammit
@@ -117,15 +144,14 @@ public class DeadKingSoulEntity extends Entity implements AntiMagicSusceptible {
                 Vec3 speed = Utils.getRandomVec3(0.05);
                 speed = speed.add(0, 0.05, 0);
                 level().addParticle(
-                        ParticleHelper.SOUL_FIRE,
-                        true,
-                        getX() + offset.x,
-                        getY() + halfWidth + offset.y,
-                        getZ() + offset.z,
-                        speed.x,
-                        speed.y,
-                        speed.z
-                );
+                                ParticleHelper.SOUL_FIRE,
+                                true,
+                                getX() + offset.x,
+                                getY() + halfWidth + offset.y,
+                                getZ() + offset.z,
+                                speed.x,
+                                speed.y,
+                                speed.z);
             }
         }
         if (!isAtSpawn()) {
@@ -138,7 +164,8 @@ public class DeadKingSoulEntity extends Entity implements AntiMagicSusceptible {
     }
 
     public boolean isAtSpawn() {
-        return getRespawnPos().equals(Vec3.ZERO) || getRespawnPos().subtract(position()).lengthSqr() < 0.1 * 0.1;
+        return getRespawnPos().equals(Vec3.ZERO)
+                || getRespawnPos().subtract(position()).lengthSqr() < 0.1 * 0.1;
     }
 
     @Override
@@ -150,7 +177,7 @@ public class DeadKingSoulEntity extends Entity implements AntiMagicSusceptible {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        if(!getRespawnPos().equals(Vec3.ZERO)) {
+        if (!getRespawnPos().equals(Vec3.ZERO)) {
             compound.put("RespawnPos", NBT.writeVec3Pos(getRespawnPos()));
         }
     }
@@ -158,7 +185,18 @@ public class DeadKingSoulEntity extends Entity implements AntiMagicSusceptible {
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
         this.playSound(SoundRegistry.APPLY_EFFECT_BAD_OMEN.get(), 2f, 1f);
-        MagicManager.spawnParticles(level(), ParticleHelper.SOUL_FIRE, getX(), getY(), getZ(), 50, .1, .1, .1, 0.3, false);
+        MagicManager.spawnParticles(
+                level(),
+                ParticleHelper.SOUL_FIRE,
+                getX(),
+                getY(),
+                getZ(),
+                50,
+                .1,
+                .1,
+                .1,
+                0.3,
+                false);
         this.discard();
     }
 }

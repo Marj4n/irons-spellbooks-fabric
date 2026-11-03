@@ -23,19 +23,54 @@ public class SpectralHammerRenderer extends GeoLivingEntityRenderer<SpectralHamm
     }
 
     @Override
-    public void preRender(PoseStack poseStack, SpectralHammer animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float r, float g, float b, float a) {
+    public void preRender(
+            PoseStack poseStack,
+            SpectralHammer animatable,
+            BakedGeoModel model,
+            @Nullable MultiBufferSource bufferSource,
+            @Nullable VertexConsumer buffer,
+            boolean isReRender,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            float r,
+            float g,
+            float b,
+            float a) {
         poseStack.scale(2, 2, 2);
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, r, g, b, a);
+        super.preRender(
+                poseStack,
+                animatable,
+                model,
+                bufferSource,
+                buffer,
+                isReRender,
+                partialTick,
+                packedLight,
+                packedOverlay,
+                r,
+                g,
+                b,
+                a);
     }
 
     @Override
-    public RenderType getRenderType(SpectralHammer animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+    public RenderType getRenderType(
+            SpectralHammer animatable,
+            ResourceLocation texture,
+            @Nullable MultiBufferSource bufferSource,
+            float partialTick) {
         Vec2 vec2 = getEnergySwirlOffset(animatable, partialTick);
         return RenderType.energySwirl(texture, vec2.x, vec2.y);
     }
 
     private static float shittyNoise(float f) {
-        return (float) (Math.sin(f / 4) + 2 * Math.sin(f / 3) + 3 * Math.sin(f / 2) + 4 * Math.sin(f)) * .25f;
+        return (float)
+                        (Math.sin(f / 4)
+                                + 2 * Math.sin(f / 3)
+                                + 3 * Math.sin(f / 2)
+                                + 4 * Math.sin(f))
+                * .25f;
     }
 
     public static Vec2 getEnergySwirlOffset(SpectralHammer entity, float partialTicks, int offset) {
@@ -46,5 +81,4 @@ public class SpectralHammerRenderer extends GeoLivingEntityRenderer<SpectralHamm
     public static Vec2 getEnergySwirlOffset(SpectralHammer entity, float partialTicks) {
         return getEnergySwirlOffset(entity, partialTicks, 0);
     }
-
 }

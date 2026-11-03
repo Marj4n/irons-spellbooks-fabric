@@ -32,24 +32,29 @@ import java.util.List;
 import java.util.Optional;
 
 public class RaiseHellSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "raise_hell");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "raise_hell");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", getDamageText(spellLevel, caster)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.recast_count", getRecastCount(spellLevel, caster))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage", getDamageText(spellLevel, caster)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.recast_count", getRecastCount(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(25)
-            .setAllowCrafting(false)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(25)
+                    .setAllowCrafting(false)
+                    .build();
 
     @Override
     public boolean allowLooting() {
@@ -71,7 +76,7 @@ public class RaiseHellSpell extends AbstractSpell {
 
     @Override
     public int getEffectiveCastTime(int spellLevel, @Nullable LivingEntity entity) {
-        //due to melee animation timing, we do not want cast time attribute to affect this spell
+        // due to melee animation timing, we do not want cast time attribute to affect this spell
         return getCastTime(spellLevel);
     }
 
@@ -106,20 +111,48 @@ public class RaiseHellSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        // cooldown check prevents long-cast timing from extending past recast duration and making a zero-cooldown exploit
-        if (!playerMagicData.getPlayerCooldowns().isOnCooldown(this) && !playerMagicData.getPlayerRecasts().hasRecastForSpell(getSpellId())) {
-            playerMagicData.getPlayerRecasts().addRecast(new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), 80, castSource, null), playerMagicData);
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        // cooldown check prevents long-cast timing from extending past recast duration and making a
+        // zero-cooldown exploit
+        if (!playerMagicData.getPlayerCooldowns().isOnCooldown(this)
+                && !playerMagicData.getPlayerRecasts().hasRecastForSpell(getSpellId())) {
+            playerMagicData
+                    .getPlayerRecasts()
+                    .addRecast(
+                            new RecastInstance(
+                                    getSpellId(),
+                                    spellLevel,
+                                    getRecastCount(spellLevel, entity),
+                                    80,
+                                    castSource,
+                                    null),
+                            playerMagicData);
         }
         float radius = getRadius(spellLevel, entity);
         float range = 1.7f;
-        Vec3 hitLocation = Utils.moveToRelativeGroundLevel(level, Utils.raycastForBlock(level, entity.getEyePosition(), entity.getEyePosition().add(entity.getForward().multiply(range, 0, range)), ClipContext.Fluid.NONE).getLocation(), 4);
+        Vec3 hitLocation =
+                Utils.moveToRelativeGroundLevel(
+                        level,
+                        Utils.raycastForBlock(
+                                        level,
+                                        entity.getEyePosition(),
+                                        entity.getEyePosition()
+                                                .add(entity.getForward().multiply(range, 0, range)),
+                                        ClipContext.Fluid.NONE)
+                                .getLocation(),
+                        4);
         FireEruptionAoe aoe = new FireEruptionAoe(level, radius);
         aoe.setOwner(entity);
         aoe.setDamage(getDamage(spellLevel, entity));
         aoe.moveTo(hitLocation);
         level.addFreshEntity(aoe);
-        CameraShakeManager.addCameraShake(new CameraShakeData(level, 20 + (int) radius, hitLocation, radius * 2 + 5));
+        CameraShakeManager.addCameraShake(
+                new CameraShakeData(level, 20 + (int) radius, hitLocation, radius * 2 + 5));
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
@@ -159,14 +192,30 @@ public class RaiseHellSpell extends AbstractSpell {
         for (int i = 0; i < 2; i++) {
             Vec3 pos = vec3.add(Utils.getRandomVec3(entity.getBbHeight() * 2));
             Vec3 motion = vec3.subtract(pos).scale(0.10f);
-            entity.level().addParticle(ParticleHelper.EMBERS, pos.x, pos.y, pos.z, motion.x, motion.y, motion.z);
+            entity.level()
+                    .addParticle(
+                            ParticleHelper.EMBERS,
+                            pos.x,
+                            pos.y,
+                            pos.z,
+                            motion.x,
+                            motion.y,
+                            motion.z);
         }
     }
 
     @Override
     public boolean shouldAIStopCasting(int spellLevel, Mob mob, LivingEntity target) {
         float range = getRadius(spellLevel, mob) * 1.1f;
-        // stop casting if we are more than 0.5 blocks off the ground, or target is outside spell radius
-        return Utils.raycastForBlock(mob.level(), mob.position(), mob.position().subtract(0, 0.5, 0), ClipContext.Fluid.NONE).getType() == HitResult.Type.MISS || target.distanceToSqr(mob) > range * range;
+        // stop casting if we are more than 0.5 blocks off the ground, or target is outside spell
+        // radius
+        return Utils.raycastForBlock(
+                                        mob.level(),
+                                        mob.position(),
+                                        mob.position().subtract(0, 0.5, 0),
+                                        ClipContext.Fluid.NONE)
+                                .getType()
+                        == HitResult.Type.MISS
+                || target.distanceToSqr(mob) > range * range;
     }
 }

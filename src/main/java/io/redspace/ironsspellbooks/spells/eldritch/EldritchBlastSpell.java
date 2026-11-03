@@ -32,21 +32,28 @@ import java.util.List;
 import java.util.Optional;
 
 public class EldritchBlastSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "eldritch_blast");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(15)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "eldritch_blast");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(15)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.blast_count", (int) (getRecastCount(spellLevel, caster))),
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.blast_count",
+                        (int) (getRecastCount(spellLevel, caster))),
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getRange(spellLevel, caster), 1)));
     }
 
     public EldritchBlastSpell() {
@@ -88,24 +95,57 @@ public class EldritchBlastSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         if (!playerMagicData.getPlayerRecasts().hasRecastForSpell(getSpellId())) {
-            playerMagicData.getPlayerRecasts().addRecast(new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), 80, castSource, null), playerMagicData);
+            playerMagicData
+                    .getPlayerRecasts()
+                    .addRecast(
+                            new RecastInstance(
+                                    getSpellId(),
+                                    spellLevel,
+                                    getRecastCount(spellLevel, entity),
+                                    80,
+                                    castSource,
+                                    null),
+                            playerMagicData);
         }
 
-        var hitResult = RaycastBuilder.begin(level, entity)
-                .range(getRange(spellLevel, entity))
-                .checkForBlocks(true)
-                .bbInflation(.15f)
-                .build();
-        level.addFreshEntity(new EldritchBlastVisualEntity(level, entity.getEyePosition().subtract(0, .75f, 0), hitResult.getLocation(), entity));
+        var hitResult =
+                RaycastBuilder.begin(level, entity)
+                        .range(getRange(spellLevel, entity))
+                        .checkForBlocks(true)
+                        .bbInflation(.15f)
+                        .build();
+        level.addFreshEntity(
+                new EldritchBlastVisualEntity(
+                        level,
+                        entity.getEyePosition().subtract(0, .75f, 0),
+                        hitResult.getLocation(),
+                        entity));
         if (hitResult.getType() == HitResult.Type.ENTITY) {
             Entity target = ((EntityHitResult) hitResult).getEntity();
             if (target.canBeHitByProjectile()) {
-                DamageSources.applyDamage(target, getDamage(spellLevel, entity), getDamageSource(entity));
+                DamageSources.applyDamage(
+                        target, getDamage(spellLevel, entity), getDamageSource(entity));
             }
         }
-        MagicManager.spawnParticles(level, ParticleHelper.UNSTABLE_ENDER, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, 50, 0, 0, 0, .3, false);
+        MagicManager.spawnParticles(
+                level,
+                ParticleHelper.UNSTABLE_ENDER,
+                hitResult.getLocation().x,
+                hitResult.getLocation().y,
+                hitResult.getLocation().z,
+                50,
+                0,
+                0,
+                0,
+                .3,
+                false);
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 

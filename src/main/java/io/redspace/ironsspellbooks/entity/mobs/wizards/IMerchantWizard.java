@@ -14,7 +14,11 @@ import java.util.function.Consumer;
  */
 public interface IMerchantWizard extends Merchant {
 
-    default void serializeMerchant(CompoundTag pCompound, @Nullable MerchantOffers offers, long lastRestockGameTime, int numberOfRestocksToday) {
+    default void serializeMerchant(
+            CompoundTag pCompound,
+            @Nullable MerchantOffers offers,
+            long lastRestockGameTime,
+            int numberOfRestocksToday) {
         if (offers != null && !offers.isEmpty()) {
             pCompound.put("Offers", offers.createTag());
         }
@@ -60,22 +64,22 @@ public interface IMerchantWizard extends Merchant {
          */
         long timeToNextRestock = getLastRestockGameTime() + 12000L;
         long currentGameTime = level().getGameTime();
-        //If total game time has exceeded one half day, we can restock.
+        // If total game time has exceeded one half day, we can restock.
         boolean hasDayElapsed = currentGameTime > timeToNextRestock;
 
         long currentDayTime = level().getDayTime();
         if (getLastRestockCheckDayTime() > 0L) {
             long lastRestockDay = getLastRestockCheckDayTime() / 24000L;
             long currentDay = currentDayTime / 24000L;
-            //Or, if day time is accurate, and a whole day has passed, we can also restock.
+            // Or, if day time is accurate, and a whole day has passed, we can also restock.
             hasDayElapsed |= currentDay > lastRestockDay;
         } else {
-            //Make our day time accurate again
+            // Make our day time accurate again
             setLastRestockCheckDayTime(currentDayTime);
         }
 
         if (hasDayElapsed) {
-            //update times
+            // update times
             setLastRestockCheckDayTime(currentDayTime);
             setRestocksToday(0);
         }
@@ -111,9 +115,7 @@ public interface IMerchantWizard extends Merchant {
     }
 
     @Override
-    default void overrideXp(int pXp) {
-
-    }
+    default void overrideXp(int pXp) {}
 
     @Override
     default boolean showProgressBar() {

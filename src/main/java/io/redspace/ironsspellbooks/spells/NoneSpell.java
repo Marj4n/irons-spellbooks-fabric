@@ -30,7 +30,7 @@ public class NoneSpell extends AbstractSpell {
 
     @Override
     public DefaultConfig getDefaultConfig() {
-        //This class is not discoverable, so this shouldn't ever be accessed :)
+        // This class is not discoverable, so this shouldn't ever be accessed :)
         return null;
     }
 
@@ -50,6 +50,10 @@ public class NoneSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-    }
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {}
 }

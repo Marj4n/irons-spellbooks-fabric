@@ -17,9 +17,11 @@ public class LurkerRing extends PassiveAbilityCurio {
 
     @Override
     public Component getDescription(ItemStack stack) {
-        return Component.literal(" ").append(Component.translatable(this.getDescriptionId() + ".desc",
-                (int) ((MULTIPLIER - 1) * 100)
-        )).withStyle(descriptionStyle);
+        return Component.literal(" ")
+                .append(
+                        Component.translatable(
+                                this.getDescriptionId() + ".desc", (int) ((MULTIPLIER - 1) * 100)))
+                .withStyle(descriptionStyle);
     }
 
     @Override
@@ -30,7 +32,9 @@ public class LurkerRing extends PassiveAbilityCurio {
     public static void handleAbility(LivingDamageEvent event) {
         var RING = ((LurkerRing) ItemRegistry.LURKER_RING.get());
         if (event.getSource().getEntity() instanceof ServerPlayer attackingPlayer) {
-            if (attackingPlayer.isInvisible() && RING.isEquippedBy(attackingPlayer) && RING.tryProcCooldown(attackingPlayer)) {
+            if (attackingPlayer.isInvisible()
+                    && RING.isEquippedBy(attackingPlayer)
+                    && RING.tryProcCooldown(attackingPlayer)) {
                 event.setAmount(event.getAmount() * MULTIPLIER);
             }
         }

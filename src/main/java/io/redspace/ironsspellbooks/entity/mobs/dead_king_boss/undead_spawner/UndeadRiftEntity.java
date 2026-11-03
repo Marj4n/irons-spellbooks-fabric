@@ -23,7 +23,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class UndeadRiftEntity extends Entity implements IMagicSummon, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
+public class UndeadRiftEntity extends Entity
+        implements IMagicSummon, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
     public UndeadRiftEntity(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
@@ -68,10 +69,27 @@ public class UndeadRiftEntity extends Entity implements IMagicSummon, org.marj4n
             Vec3 center = this.getBoundingBox().getCenter();
             for (int i = 0; i < 8; i++) {
                 level().addParticle(
-                        new SwirlingParticleOptions(ParticleTypes.SMOKE, this.getForward().scale(-1), new Vec3(0, 1, 0),
-                                new Vec3(1.9f + random.nextFloat() * .2f, 0.8f + random.nextFloat() * .15f, 1 + (random.nextFloat() + random.nextFloat()) / 2f * 15),
-                                new Vec3(random.nextFloat() * .035f, random.nextFloat() * .035f, 0)),
-                                center.x, center.y, center.z, 0, 0, 0);
+                                new SwirlingParticleOptions(
+                                        ParticleTypes.SMOKE,
+                                        this.getForward().scale(-1),
+                                        new Vec3(0, 1, 0),
+                                        new Vec3(
+                                                1.9f + random.nextFloat() * .2f,
+                                                0.8f + random.nextFloat() * .15f,
+                                                1
+                                                        + (random.nextFloat() + random.nextFloat())
+                                                                / 2f
+                                                                * 15),
+                                        new Vec3(
+                                                random.nextFloat() * .035f,
+                                                random.nextFloat() * .035f,
+                                                0)),
+                                center.x,
+                                center.y,
+                                center.z,
+                                0,
+                                0,
+                                0);
             }
         }
     }
@@ -79,19 +97,44 @@ public class UndeadRiftEntity extends Entity implements IMagicSummon, org.marj4n
     private void vanish() {
         discard();
         Vec3 pos = this.position();
-        MagicManager.spawnParticles(level(), ParticleTypes.LARGE_SMOKE, pos.x, pos.y + 1, pos.z, 25, 0.1, 0.3, 0.1, 0.1, false);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundRegistry.TRIAL_SPAWNER_SPAWN_MOB.get(), SoundSource.HOSTILE, 2f, 0.5f);
+        MagicManager.spawnParticles(
+                level(),
+                ParticleTypes.LARGE_SMOKE,
+                pos.x,
+                pos.y + 1,
+                pos.z,
+                25,
+                0.1,
+                0.3,
+                0.1,
+                0.1,
+                false);
+        level().playSound(
+                        null,
+                        pos.x,
+                        pos.y,
+                        pos.z,
+                        SoundRegistry.TRIAL_SPAWNER_SPAWN_MOB.get(),
+                        SoundSource.HOSTILE,
+                        2f,
+                        0.5f);
     }
 
     private void doSummon() {
         boolean isSkeleton = random.nextDouble() < .3;
-        Monster undead = isSkeleton ?
-                new SummonedSkeleton(level(), false) :
-                new SummonedZombie(level(), false);
+        Monster undead =
+                isSkeleton
+                        ? new SummonedSkeleton(level(), false)
+                        : new SummonedZombie(level(), false);
         equip(undead, generateEquipment());
         undead.moveTo(this.position().add(0, 0.1, 0));
         undead.setYRot(this.getYRot());
-        undead.finalizeSpawn((ServerLevel) level(), level().getCurrentDifficultyAt(undead.getOnPos()), MobSpawnType.MOB_SUMMONED, null, null);
+        undead.finalizeSpawn(
+                (ServerLevel) level(),
+                level().getCurrentDifficultyAt(undead.getOnPos()),
+                MobSpawnType.MOB_SUMMONED,
+                null,
+                null);
         SummonManager.setDuration(undead, 5 * 60 * 20);
         var owner = getSummoner();
         if (owner != null) {
@@ -105,9 +148,36 @@ public class UndeadRiftEntity extends Entity implements IMagicSummon, org.marj4n
         undead.setDeltaMovement(this.getForward().add(0, 0.5, 0).scale(0.25));
         level().addFreshEntity(undead);
         Vec3 pos = this.position();
-        MagicManager.spawnParticles(level(), ParticleTypes.SMOKE, pos.x, pos.y + 1, pos.z, 25, 0.1, 0.3, 0.1, 0.1, false);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundRegistry.TRIAL_SPAWNER_SPAWN_MOB.get(), SoundSource.HOSTILE, 2f, 1.0f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.VEX_AMBIENT, SoundSource.HOSTILE, 2f, 0.75f);
+        MagicManager.spawnParticles(
+                level(),
+                ParticleTypes.SMOKE,
+                pos.x,
+                pos.y + 1,
+                pos.z,
+                25,
+                0.1,
+                0.3,
+                0.1,
+                0.1,
+                false);
+        level().playSound(
+                        null,
+                        pos.x,
+                        pos.y,
+                        pos.z,
+                        SoundRegistry.TRIAL_SPAWNER_SPAWN_MOB.get(),
+                        SoundSource.HOSTILE,
+                        2f,
+                        1.0f);
+        level().playSound(
+                        null,
+                        pos.x,
+                        pos.y,
+                        pos.z,
+                        SoundEvents.VEX_AMBIENT,
+                        SoundSource.HOSTILE,
+                        2f,
+                        0.75f);
     }
 
     private void equip(Mob mob, ItemStack[] equipment) {
@@ -124,9 +194,21 @@ public class UndeadRiftEntity extends Entity implements IMagicSummon, org.marj4n
     }
 
     private ItemStack[] generateEquipment() {
-        Item[] leather = {Items.LEATHER_BOOTS, Items.LEATHER_LEGGINGS, Items.LEATHER_CHESTPLATE, Items.LEATHER_HELMET};
-        Item[] chain = {Items.CHAINMAIL_BOOTS, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_HELMET};
-        Item[] iron = {Items.IRON_BOOTS, Items.IRON_LEGGINGS, Items.IRON_CHESTPLATE, Items.IRON_HELMET};
+        Item[] leather = {
+            Items.LEATHER_BOOTS,
+            Items.LEATHER_LEGGINGS,
+            Items.LEATHER_CHESTPLATE,
+            Items.LEATHER_HELMET
+        };
+        Item[] chain = {
+            Items.CHAINMAIL_BOOTS,
+            Items.CHAINMAIL_LEGGINGS,
+            Items.CHAINMAIL_CHESTPLATE,
+            Items.CHAINMAIL_HELMET
+        };
+        Item[] iron = {
+            Items.IRON_BOOTS, Items.IRON_LEGGINGS, Items.IRON_CHESTPLATE, Items.IRON_HELMET
+        };
         ItemStack[] armor = new ItemStack[4];
         /*
         Generate random number "power" [0,3) to select armor options
@@ -170,9 +252,7 @@ public class UndeadRiftEntity extends Entity implements IMagicSummon, org.marj4n
     }
 
     @Override
-    protected void defineSynchedData() {
-
-    }
+    protected void defineSynchedData() {}
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
@@ -190,6 +270,6 @@ public class UndeadRiftEntity extends Entity implements IMagicSummon, org.marj4n
 
     @Override
     public void onUnSummon() {
-        //todo: implement
+        // todo: implement
     }
 }

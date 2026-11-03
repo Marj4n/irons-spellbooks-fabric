@@ -34,7 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlackHole extends Projectile implements AntiMagicSusceptible {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(BlackHole.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_RADIUS =
+            SynchedEntityData.defineId(BlackHole.class, EntityDataSerializers.FLOAT);
 
     public BlackHole(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -48,8 +49,7 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
     List<Entity> trackingEntities = new ArrayList<>();
 
     @Override
-    public void onAntiMagic(MagicData playerMagicData) {
-    }
+    public void onAntiMagic(MagicData playerMagicData) {}
 
     public void refreshDimensions() {
         double d0 = this.getX();
@@ -58,7 +58,6 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
         super.refreshDimensions();
         this.setPos(d0, d1, d2);
     }
-
 
     private float damage;
     private int duration = 20 * 15 * 2;
@@ -92,8 +91,7 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
     public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
-            if (getRadius() < .1f)
-                this.discard();
+            if (getRadius() < .1f) this.discard();
         }
 
         super.onSyncedDataUpdated(pKey);
@@ -122,11 +120,9 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
         this.tickCount = pCompound.getInt("Age");
         this.damage = pCompound.getFloat("Damage");
         this.duration = pCompound.getInt("Duration");
-        if (pCompound.getInt("Radius") > 0)
-            this.setRadius(pCompound.getFloat("Radius"));
+        if (pCompound.getInt("Radius") > 0) this.setRadius(pCompound.getFloat("Radius"));
 
         super.readAdditionalSaveData(pCompound);
-
     }
 
     @Override
@@ -137,7 +133,8 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
         this.zo = getZ();
         setPos(position().add(getDeltaMovement()));
         int update = Math.max((int) (getRadius() / 2), 2);
-        // only query entities at low rate, especially with large hitboxes, and reuse a cached result instead
+        // only query entities at low rate, especially with large hitboxes, and reuse a cached
+        // result instead
         if (tickCount % update == 0) {
             updateTrackingEntities();
         }
@@ -152,7 +149,10 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
 
     private void handleGravity(Vec3 center, float radius, boolean hitTick) {
         for (Entity entity : trackingEntities) {
-            if (entity != getOwner() && !DamageSources.isFriendlyFireBetween(getOwner(), entity) && !entity.isSpectator() && !(entity instanceof BlackHole)) {
+            if (entity != getOwner()
+                    && !DamageSources.isFriendlyFireBetween(getOwner(), entity)
+                    && !entity.isSpectator()
+                    && !(entity instanceof BlackHole)) {
                 float distance = (float) center.distanceTo(entity.position());
                 if (distance > radius) {
                     continue;
@@ -161,11 +161,19 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
                 float scale = f * f * f * f * .25f;
                 float resistance = Utils.clampedKnockbackResistanceFactor(entity, .3f, 1f);
                 float bossResistance = entity.getType().is(Tags.EntityTypes.BOSSES) ? 0.5f : 1f;
-                Vec3 diff = center.subtract(entity.position()).scale(scale * resistance * bossResistance);
+                Vec3 diff =
+                        center.subtract(entity.position())
+                                .scale(scale * resistance * bossResistance);
                 entity.push(diff.x, diff.y, diff.z);
                 double dmgRadius = Math.min(2.0, radius / 5.0);
-                if (damage > 0 && hitTick && distance < dmgRadius * dmgRadius && canHitEntity(entity)) {
-                    DamageSources.applyDamage(entity, damage, SpellRegistry.BLACK_HOLE_SPELL.get().getDamageSource(this, getOwner()));
+                if (damage > 0
+                        && hitTick
+                        && distance < dmgRadius * dmgRadius
+                        && canHitEntity(entity)) {
+                    DamageSources.applyDamage(
+                            entity,
+                            damage,
+                            SpellRegistry.BLACK_HOLE_SPELL.get().getDamageSource(this, getOwner()));
                 }
                 entity.fallDistance = 0;
             }
@@ -179,14 +187,17 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
             do {
                 Vec3 dir = Utils.getRandomVec3(1).normalize();
                 Vec3 pick = dir.scale(radius * 1.25);
-                blockHit = Utils.raycastForBlock(level(), center, center.add(pick), ClipContext.Fluid.NONE);
+                blockHit =
+                        Utils.raycastForBlock(
+                                level(), center, center.add(pick), ClipContext.Fluid.NONE);
                 if (blockHit.getType() != HitResult.Type.MISS) {
                     var blockpos = blockHit.getBlockPos();
                     if (level().getBlockEntity(blockpos) == null) {
                         BlockState state = level().getBlockState(blockpos);
                         level().setBlockAndUpdate(blockpos, Blocks.AIR.defaultBlockState());
                         Vec3 spawn = blockpos.getCenter().subtract(dir.scale(1.5));
-                        FallingBlockEntity fallingBlockEntity = new FallingBlockEntity(level(), spawn.x, spawn.y, spawn.z, state);
+                        FallingBlockEntity fallingBlockEntity =
+                                new FallingBlockEntity(level(), spawn.x, spawn.y, spawn.z, state);
                         fallingBlockEntity.setDeltaMovement(dir.scale(-.1));
                         level().addFreshEntity(fallingBlockEntity);
                     }
@@ -201,15 +212,37 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
             if (tickCount > duration) {
                 this.discard();
                 this.playSound(SoundRegistry.BLACK_HOLE_CAST.get(), getRadius() / 2f, 1);
-                MagicManager.spawnParticles(level(), ParticleHelper.UNSTABLE_ENDER, getX(), getY() + getRadius(), getZ(), 200, 1, 1, 1, 1, true);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleHelper.UNSTABLE_ENDER,
+                        getX(),
+                        getY() + getRadius(),
+                        getZ(),
+                        200,
+                        1,
+                        1,
+                        1,
+                        1,
+                        true);
                 for (Entity entity : trackingEntities) {
                     if (entity.distanceToSqr(center) < 9) {
-                        entity.setDeltaMovement(entity.getDeltaMovement().add(entity.position().subtract(center).normalize().scale(0.5f)));
+                        entity.setDeltaMovement(
+                                entity.getDeltaMovement()
+                                        .add(
+                                                entity.position()
+                                                        .subtract(center)
+                                                        .normalize()
+                                                        .scale(0.5f)));
                         entity.hurtMarked = true;
                     }
                 }
-            } else if ((tickCount - 1) % loopSoundDurationInTicks == 0 && (duration < loopSoundDurationInTicks || tickCount + loopSoundDurationInTicks < duration)) {
-                this.playSound(SoundRegistry.BLACK_HOLE_LOOP.get(), getRadius() / 3f, .9f + Utils.random.nextFloat() * .2f);
+            } else if ((tickCount - 1) % loopSoundDurationInTicks == 0
+                    && (duration < loopSoundDurationInTicks
+                            || tickCount + loopSoundDurationInTicks < duration)) {
+                this.playSound(
+                        SoundRegistry.BLACK_HOLE_LOOP.get(),
+                        getRadius() / 3f,
+                        .9f + Utils.random.nextFloat() * .2f);
             }
         }
     }

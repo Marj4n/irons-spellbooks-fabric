@@ -5,9 +5,16 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.List;
 
-public record ScrollForgeRecipe(List<ItemStack> inkInputs, Ingredient paperInput, Ingredient focusInput,
-                                List<ItemStack> scrollOutputs) {
-    public ScrollForgeRecipe(List<ItemStack> inkInputs, Ingredient paperInput, Ingredient focusInput, List<ItemStack> scrollOutputs) {
+public record ScrollForgeRecipe(
+        List<ItemStack> inkInputs,
+        Ingredient paperInput,
+        Ingredient focusInput,
+        List<ItemStack> scrollOutputs) {
+    public ScrollForgeRecipe(
+            List<ItemStack> inkInputs,
+            Ingredient paperInput,
+            Ingredient focusInput,
+            List<ItemStack> scrollOutputs) {
         this.inkInputs = List.copyOf(inkInputs);
         this.paperInput = paperInput;
         this.focusInput = focusInput;
@@ -15,7 +22,10 @@ public record ScrollForgeRecipe(List<ItemStack> inkInputs, Ingredient paperInput
     }
 
     public boolean isValid() {
-        if (inkInputs.isEmpty() || scrollOutputs.isEmpty() || paperInput.isEmpty() || focusInput.isEmpty()) {
+        if (inkInputs.isEmpty()
+                || scrollOutputs.isEmpty()
+                || paperInput.isEmpty()
+                || focusInput.isEmpty()) {
             return false;
         }
 

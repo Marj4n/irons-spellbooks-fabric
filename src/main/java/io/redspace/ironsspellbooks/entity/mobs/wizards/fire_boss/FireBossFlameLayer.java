@@ -21,21 +21,39 @@ import software.bernie.geckolib.util.RenderUtils;
 
 @Environment(EnvType.CLIENT)
 public class FireBossFlameLayer extends GeoRenderLayer<AbstractSpellCastingMob> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/fire_boss/tyros_flame.png");
-    private static final ResourceLocation TEXTURE_OMINOUS = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/fire_boss/ominous_tyros_flame.png");
+    private static final ResourceLocation TEXTURE =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID, "textures/entity/fire_boss/tyros_flame.png");
+    private static final ResourceLocation TEXTURE_OMINOUS =
+            new ResourceLocation(
+                    IronsSpellbooks.MODID, "textures/entity/fire_boss/ominous_tyros_flame.png");
 
     public FireBossFlameLayer(GeoEntityRenderer entityRendererIn) {
         super(entityRendererIn);
     }
 
     @Override
-    public void renderForBone(PoseStack poseStack, AbstractSpellCastingMob animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        if (bone.getName().equals(PartNames.HEAD) && animatable instanceof FireBossEntity fireBossEntity && fireBossEntity.isSoulMode()) {
+    public void renderForBone(
+            PoseStack poseStack,
+            AbstractSpellCastingMob animatable,
+            GeoBone bone,
+            RenderType renderType,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay) {
+        if (bone.getName().equals(PartNames.HEAD)
+                && animatable instanceof FireBossEntity fireBossEntity
+                && fireBossEntity.isSoulMode()) {
             poseStack.pushPose();
             poseStack.mulPose(Axis.YP.rotationDegrees(45f));
             RenderUtils.translateToPivotPoint(poseStack, bone);
             poseStack.scale(1 / 2f, 1 / 2f, 1 / 2f);
-            VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutout(fireBossEntity.isOminous() ? TEXTURE_OMINOUS : TEXTURE));
+            VertexConsumer consumer =
+                    bufferSource.getBuffer(
+                            RenderType.entityCutout(
+                                    fireBossEntity.isOminous() ? TEXTURE_OMINOUS : TEXTURE));
             Matrix4f poseMatrix = poseStack.last().pose();
 
             int anim = (animatable.tickCount / ticksPerFrame) % frameCount;
@@ -44,13 +62,38 @@ public class FireBossFlameLayer extends GeoRenderLayer<AbstractSpellCastingMob> 
             float halfsqrt2 = 0.7071f;
             for (int i = 0; i < 4; i++) {
                 poseStack.mulPose(Axis.YP.rotationDegrees(90f));
-                consumer.vertex(poseMatrix, 0, 0, -halfsqrt2).color(255, 255, 255, 255).uv(0f, uvMax).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f).endVertex();
-                consumer.vertex(poseMatrix, 0, 1, -halfsqrt2).color(255, 255, 255, 255).uv(0f, uvMin).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f).endVertex();
-                consumer.vertex(poseMatrix, 0, 1, halfsqrt2).color(255, 255, 255, 255).uv(1f, uvMin).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f).endVertex();
-                consumer.vertex(poseMatrix, 0, 0, halfsqrt2).color(255, 255, 255, 255).uv(1f, uvMax).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f).endVertex();
+                consumer.vertex(poseMatrix, 0, 0, -halfsqrt2)
+                        .color(255, 255, 255, 255)
+                        .uv(0f, uvMax)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                        .uv2(LightTexture.FULL_BRIGHT)
+                        .normal(0f, 1f, 0f)
+                        .endVertex();
+                consumer.vertex(poseMatrix, 0, 1, -halfsqrt2)
+                        .color(255, 255, 255, 255)
+                        .uv(0f, uvMin)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                        .uv2(LightTexture.FULL_BRIGHT)
+                        .normal(0f, 1f, 0f)
+                        .endVertex();
+                consumer.vertex(poseMatrix, 0, 1, halfsqrt2)
+                        .color(255, 255, 255, 255)
+                        .uv(1f, uvMin)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                        .uv2(LightTexture.FULL_BRIGHT)
+                        .normal(0f, 1f, 0f)
+                        .endVertex();
+                consumer.vertex(poseMatrix, 0, 0, halfsqrt2)
+                        .color(255, 255, 255, 255)
+                        .uv(1f, uvMax)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY)
+                        .uv2(LightTexture.FULL_BRIGHT)
+                        .normal(0f, 1f, 0f)
+                        .endVertex();
             }
             poseStack.popPose();
-            //fixme: this is scary but it seems swapping the texture changes it for the base model's cubes rendered after this layer. revert it to what was passed in
+            // fixme: this is scary but it seems swapping the texture changes it for the base
+            // model's cubes rendered after this layer. revert it to what was passed in
             bufferSource.getBuffer(renderType);
         }
     }

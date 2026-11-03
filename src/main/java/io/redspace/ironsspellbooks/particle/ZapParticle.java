@@ -36,7 +36,15 @@ public class ZapParticle extends TextureSheetParticle {
 
     Vec3 destination;
 
-    ZapParticle(ClientLevel pLevel, double pX, double pY, double pZ, double xd, double yd, double zd, ZapParticleOption options) {
+    ZapParticle(
+            ClientLevel pLevel,
+            double pX,
+            double pY,
+            double pZ,
+            double xd,
+            double yd,
+            double zd,
+            ZapParticleOption options) {
         super(pLevel, pX, pY, pZ, 0, 0, 0);
         this.setSize(1, 1);
         this.quadSize = 1f;
@@ -58,8 +66,7 @@ public class ZapParticle extends TextureSheetParticle {
         return new Vec3(
                 (2f * random.nextFloat() - 1f) * scale,
                 (2f * random.nextFloat() - 1f) * scale,
-                (2f * random.nextFloat() - 1f) * scale
-        );
+                (2f * random.nextFloat() - 1f) * scale);
     }
 
     private void setRGBA(float r, float g, float b, float a) {
@@ -91,7 +98,12 @@ public class ZapParticle extends TextureSheetParticle {
         renderLightningPass(consumer, poseStack, partialTick, 0.25f, chanceToBranch);
     }
 
-    private void renderLightningPass(VertexConsumer consumer, PoseStack poseStack, float partialTick, float tubeWidth, float chanceToBranch) {
+    private void renderLightningPass(
+            VertexConsumer consumer,
+            PoseStack poseStack,
+            float partialTick,
+            float tubeWidth,
+            float chanceToBranch) {
         RandomSource randomSource = RandomSource.create((age + lifetime) * 3456798L);
         Vec3 start = Vec3.ZERO;
         Vec3 end = destination.subtract(new Vec3(this.x, this.y, this.z));
@@ -103,22 +115,52 @@ public class ZapParticle extends TextureSheetParticle {
             Vec3 wiggle = randomOffset(randomSource, .2f);
             Vec3 segmentEnd = start.add(direction.scale(distancePerSegment)).add(wiggle);
 
-            drawLightningBeam(consumer, poseStack, partialTick, start, segmentEnd, tubeWidth, chanceToBranch, randomSource);
+            drawLightningBeam(
+                    consumer,
+                    poseStack,
+                    partialTick,
+                    start,
+                    segmentEnd,
+                    tubeWidth,
+                    chanceToBranch,
+                    randomSource);
 
             start = segmentEnd;
         }
     }
 
-    private void drawLightningBeam(VertexConsumer consumer, PoseStack poseStack, float partialTick, Vec3 start, Vec3 end, float tubeWidth, float chanceToBranch, RandomSource randomSource) {
+    private void drawLightningBeam(
+            VertexConsumer consumer,
+            PoseStack poseStack,
+            float partialTick,
+            Vec3 start,
+            Vec3 end,
+            float tubeWidth,
+            float chanceToBranch,
+            RandomSource randomSource) {
         drawTube(consumer, poseStack, partialTick, start, end, tubeWidth);
 
         if (randomSource.nextFloat() < chanceToBranch) {
             Vec3 branch = randomOffset(randomSource, 1f).add(end);
-            drawLightningBeam(consumer, poseStack, partialTick, end, branch, tubeWidth, chanceToBranch * .5f, randomSource);
+            drawLightningBeam(
+                    consumer,
+                    poseStack,
+                    partialTick,
+                    end,
+                    branch,
+                    tubeWidth,
+                    chanceToBranch * .5f,
+                    randomSource);
         }
     }
 
-    private void drawTube(VertexConsumer consumer, PoseStack poseStack, float partialTick, Vec3 start, Vec3 end, float width) {
+    private void drawTube(
+            VertexConsumer consumer,
+            PoseStack poseStack,
+            float partialTick,
+            Vec3 start,
+            Vec3 end,
+            float width) {
         Vec3 delta = end.subtract(start);
         float length = (float) delta.length();
         if (length <= 1e-6f) {
@@ -134,16 +176,37 @@ public class ZapParticle extends TextureSheetParticle {
         poseStack.popPose();
     }
 
-    private void drawHull(Vec3 from, Vec3 to, float width, float height, PoseStack poseStack, VertexConsumer consumer, float partialTick) {
+    private void drawHull(
+            Vec3 from,
+            Vec3 to,
+            float width,
+            float height,
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            float partialTick) {
         poseStack.pushPose();
         for (int i = 0; i < 4; i++) {
-            drawQuad(from.subtract(0, height * .5f, 0), to.subtract(0, height * .5f, 0), width, 0, poseStack.last(), consumer, partialTick);
+            drawQuad(
+                    from.subtract(0, height * .5f, 0),
+                    to.subtract(0, height * .5f, 0),
+                    width,
+                    0,
+                    poseStack.last(),
+                    consumer,
+                    partialTick);
             poseStack.mulPose(Axis.ZP.rotation(Mth.HALF_PI));
         }
         poseStack.popPose();
     }
 
-    private void drawQuad(Vec3 from, Vec3 to, float width, float height, PoseStack.Pose pose, VertexConsumer consumer, float partialTick) {
+    private void drawQuad(
+            Vec3 from,
+            Vec3 to,
+            float width,
+            float height,
+            PoseStack.Pose pose,
+            VertexConsumer consumer,
+            float partialTick) {
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
         float halfWidth = width * .5f;
@@ -153,10 +216,42 @@ public class ZapParticle extends TextureSheetParticle {
         int g = (int) (this.gCol * 255);
         int b = (int) (this.bCol * 255);
         int a = (int) (this.alpha * 255);
-        consumer.vertex(poseMatrix, (float) from.x - halfWidth, (float) from.y - halfHeight, (float) from.z).uv(getU1(), getV1()).color(r, g, b, a).uv2(light).endVertex();
-        consumer.vertex(poseMatrix, (float) from.x + halfWidth, (float) from.y + halfHeight, (float) from.z).uv(getU1(), getV0()).color(r, g, b, a).uv2(light).endVertex();
-        consumer.vertex(poseMatrix, (float) to.x + halfWidth, (float) to.y + halfHeight, (float) to.z).uv(getU0(), getV0()).color(r, g, b, a).uv2(light).endVertex();
-        consumer.vertex(poseMatrix, (float) to.x - halfWidth, (float) to.y - halfHeight, (float) to.z).uv(getU0(), getV1()).color(r, g, b, a).uv2(light).endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) from.x - halfWidth,
+                        (float) from.y - halfHeight,
+                        (float) from.z)
+                .uv(getU1(), getV1())
+                .color(r, g, b, a)
+                .uv2(light)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) from.x + halfWidth,
+                        (float) from.y + halfHeight,
+                        (float) from.z)
+                .uv(getU1(), getV0())
+                .color(r, g, b, a)
+                .uv2(light)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) to.x + halfWidth,
+                        (float) to.y + halfHeight,
+                        (float) to.z)
+                .uv(getU0(), getV0())
+                .color(r, g, b, a)
+                .uv2(light)
+                .endVertex();
+        consumer.vertex(
+                        poseMatrix,
+                        (float) to.x - halfWidth,
+                        (float) to.y - halfHeight,
+                        (float) to.z)
+                .uv(getU0(), getV1())
+                .color(r, g, b, a)
+                .uv2(light)
+                .endVertex();
     }
 
     @NotNull
@@ -165,25 +260,27 @@ public class ZapParticle extends TextureSheetParticle {
         return PARTICLE_EMISSIVE;
     }
 
-    public static ParticleRenderType PARTICLE_EMISSIVE = new ParticleRenderType() {
-        public void begin(BufferBuilder p_107455_, TextureManager p_107456_) {
-            RenderSystem.depthMask(true);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.enableBlend();
-            RenderSystem.disableCull();
-            RenderSystem.setShader(GameRenderer::getParticleShader);
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-            p_107455_.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
+    public static ParticleRenderType PARTICLE_EMISSIVE =
+            new ParticleRenderType() {
+                public void begin(BufferBuilder p_107455_, TextureManager p_107456_) {
+                    RenderSystem.depthMask(true);
+                    RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
+                    RenderSystem.enableBlend();
+                    RenderSystem.disableCull();
+                    RenderSystem.setShader(GameRenderer::getParticleShader);
+                    RenderSystem.blendFunc(
+                            GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+                    p_107455_.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+                }
 
-        public void end(Tesselator p_107458_) {
-            p_107458_.end();
-        }
+                public void end(Tesselator p_107458_) {
+                    p_107458_.end();
+                }
 
-        public String toString() {
-            return "PARTICLE_EMISSIVE";
-        }
-    };
+                public String toString() {
+                    return "PARTICLE_EMISSIVE";
+                }
+            };
 
     @Override
     protected int getLightColor(float pPartialTick) {
@@ -198,12 +295,19 @@ public class ZapParticle extends TextureSheetParticle {
             this.sprite = pSprite;
         }
 
-        public Particle createParticle(@NotNull ZapParticleOption options, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
+        public Particle createParticle(
+                @NotNull ZapParticleOption options,
+                @NotNull ClientLevel pLevel,
+                double pX,
+                double pY,
+                double pZ,
+                double pXSpeed,
+                double pYSpeed,
+                double pZSpeed) {
             var particle = new ZapParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, options);
             particle.pickSprite(this.sprite);
             particle.setAlpha(1.0F);
             return particle;
         }
     }
-
 }

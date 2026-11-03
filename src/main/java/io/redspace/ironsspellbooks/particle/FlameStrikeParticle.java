@@ -20,7 +20,16 @@ public class FlameStrikeParticle extends TextureSheetParticle {
     private final boolean mirror, vertical;
     private final Vector3f[] localVertices;
 
-    FlameStrikeParticle(ClientLevel pLevel, double pX, double pY, double pZ, SpriteSet spriteSet, double xd, double yd, double zd, FlameStrikeParticleOptions options) {
+    FlameStrikeParticle(
+            ClientLevel pLevel,
+            double pX,
+            double pY,
+            double pZ,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd,
+            FlameStrikeParticleOptions options) {
         super(pLevel, pX, pY, pZ, 0, 0, 0);
 
         this.xd = xd;
@@ -61,16 +70,23 @@ public class FlameStrikeParticle extends TextureSheetParticle {
         for (int i = 1; i < particleCount - 1; i++) {
             float t = i / (float) particleCount;
             float u = 1 - t;
-            //bezier curve interpolation
+            // bezier curve interpolation
             Vec3 localPos =
-                    vec3Copy(localVertices[1]).scale(u * u * u).add(
-                            vec3Copy(localVertices[2]).scale(3 * u * u * t).add(
-                                    vec3Copy(localVertices[3]).scale(3 * u * t * t).add(
-                                            vec3Copy(localVertices[0]).scale(t * t * t)
-                                    )
-                            )
-                    ).scale(this.quadSize * .75f).add(Utils.getRandomVec3(0.3));
-            level.addParticle(ParticleHelper.EMBERS, x + localPos.x, y + localPos.y, z + localPos.z, 0, 0, 0);
+                    vec3Copy(localVertices[1])
+                            .scale(u * u * u)
+                            .add(
+                                    vec3Copy(localVertices[2])
+                                            .scale(3 * u * u * t)
+                                            .add(
+                                                    vec3Copy(localVertices[3])
+                                                            .scale(3 * u * t * t)
+                                                            .add(
+                                                                    vec3Copy(localVertices[0])
+                                                                            .scale(t * t * t))))
+                            .scale(this.quadSize * .75f)
+                            .add(Utils.getRandomVec3(0.3));
+            level.addParticle(
+                    ParticleHelper.EMBERS, x + localPos.x, y + localPos.y, z + localPos.z, 0, 0, 0);
         }
     }
 
@@ -94,7 +110,13 @@ public class FlameStrikeParticle extends TextureSheetParticle {
             primary = forward;
             secondary = up;
         }
-        Vector3f[] vertices = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
+        Vector3f[] vertices =
+                new Vector3f[] {
+                    new Vector3f(-1.0F, -1.0F, 0.0F),
+                    new Vector3f(-1.0F, 1.0F, 0.0F),
+                    new Vector3f(1.0F, 1.0F, 0.0F),
+                    new Vector3f(1.0F, -1.0F, 0.0F)
+                };
         for (int i = 0; i < 4; i++) {
             float x = (float) (primary.x * vertices[i].x + secondary.x * vertices[i].y);
             float y = (float) (primary.y * vertices[i].x + secondary.y * vertices[i].y);
@@ -113,7 +135,8 @@ public class FlameStrikeParticle extends TextureSheetParticle {
 
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTick) {
-        boolean mirrored = !this.mirror; // based on animation, we actually want the default to be mirrored
+        boolean mirrored =
+                !this.mirror; // based on animation, we actually want the default to be mirrored
         Vec3 vec3 = camera.getPosition();
         float f = (float) (Mth.lerp(partialTick, this.xo, this.x) - vec3.x());
         float f1 = (float) (Mth.lerp(partialTick, this.yo, this.y) - vec3.y());
@@ -126,20 +149,37 @@ public class FlameStrikeParticle extends TextureSheetParticle {
             vertices[i].add(f, f1, f2);
         }
         int j = this.getLightColor(partialTick);
-        this.makeCornerVertex(buffer, vertices[0], this.getU1(), mirrored ? this.getV0() : this.getV1(), j);
-        this.makeCornerVertex(buffer, vertices[1], this.getU1(), mirrored ? this.getV1() : this.getV0(), j);
-        this.makeCornerVertex(buffer, vertices[2], this.getU0(), mirrored ? this.getV1() : this.getV0(), j);
-        this.makeCornerVertex(buffer, vertices[3], this.getU0(), mirrored ? this.getV0() : this.getV1(), j);
-        //backface
-        this.makeCornerVertex(buffer, vertices[3], this.getU0(), mirrored ? this.getV0() : this.getV1(), j);
-        this.makeCornerVertex(buffer, vertices[2], this.getU0(), mirrored ? this.getV1() : this.getV0(), j);
-        this.makeCornerVertex(buffer, vertices[1], this.getU1(), mirrored ? this.getV1() : this.getV0(), j);
-        this.makeCornerVertex(buffer, vertices[0], this.getU1(), mirrored ? this.getV0() : this.getV1(), j);
-
+        this.makeCornerVertex(
+                buffer, vertices[0], this.getU1(), mirrored ? this.getV0() : this.getV1(), j);
+        this.makeCornerVertex(
+                buffer, vertices[1], this.getU1(), mirrored ? this.getV1() : this.getV0(), j);
+        this.makeCornerVertex(
+                buffer, vertices[2], this.getU0(), mirrored ? this.getV1() : this.getV0(), j);
+        this.makeCornerVertex(
+                buffer, vertices[3], this.getU0(), mirrored ? this.getV0() : this.getV1(), j);
+        // backface
+        this.makeCornerVertex(
+                buffer, vertices[3], this.getU0(), mirrored ? this.getV0() : this.getV1(), j);
+        this.makeCornerVertex(
+                buffer, vertices[2], this.getU0(), mirrored ? this.getV1() : this.getV0(), j);
+        this.makeCornerVertex(
+                buffer, vertices[1], this.getU1(), mirrored ? this.getV1() : this.getV0(), j);
+        this.makeCornerVertex(
+                buffer, vertices[0], this.getU1(), mirrored ? this.getV0() : this.getV1(), j);
     }
 
-    private void makeCornerVertex(VertexConsumer pConsumer, Vector3f pVec3f, float p_233996_, float p_233997_, int p_233998_) {
-        pConsumer.vertex(pVec3f.x(), pVec3f.y(), pVec3f.z()).uv(p_233996_, p_233997_).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(p_233998_).endVertex();
+    private void makeCornerVertex(
+            VertexConsumer pConsumer,
+            Vector3f pVec3f,
+            float p_233996_,
+            float p_233997_,
+            int p_233998_) {
+        pConsumer
+                .vertex(pVec3f.x(), pVec3f.y(), pVec3f.z())
+                .uv(p_233996_, p_233997_)
+                .color(this.rCol, this.gCol, this.bCol, this.alpha)
+                .uv2(p_233998_)
+                .endVertex();
     }
 
     @NotNull
@@ -161,12 +201,21 @@ public class FlameStrikeParticle extends TextureSheetParticle {
             this.sprite = pSprite;
         }
 
-        public Particle createParticle(@NotNull FlameStrikeParticleOptions options, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            FlameStrikeParticle shriekparticle = new FlameStrikeParticle(pLevel, pX, pY, pZ, sprite, pXSpeed, pYSpeed, pZSpeed, options);
+        public Particle createParticle(
+                @NotNull FlameStrikeParticleOptions options,
+                @NotNull ClientLevel pLevel,
+                double pX,
+                double pY,
+                double pZ,
+                double pXSpeed,
+                double pYSpeed,
+                double pZSpeed) {
+            FlameStrikeParticle shriekparticle =
+                    new FlameStrikeParticle(
+                            pLevel, pX, pY, pZ, sprite, pXSpeed, pYSpeed, pZSpeed, options);
             shriekparticle.setSpriteFromAge(this.sprite);
             shriekparticle.setAlpha(1.0F);
             return shriekparticle;
         }
     }
-
 }

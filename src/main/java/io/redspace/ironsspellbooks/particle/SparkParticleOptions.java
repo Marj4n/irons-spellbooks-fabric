@@ -51,26 +51,39 @@ public class SparkParticleOptions implements ParticleOptions {
     }
 
     public String writeToString() {
-        return String.format(Locale.ROOT, "%s %.2f %.2f", this.color.x(), this.color.y(), this.color.z());
+        return String.format(
+                Locale.ROOT, "%s %.2f %.2f", this.color.x(), this.color.y(), this.color.z());
     }
 
     public Vector3f getColor() {
         return this.color;
     }
 
-    public static final Codec<SparkParticleOptions> CODEC = RecordCodecBuilder.create(
-            (p_175793_) -> p_175793_.group(ExtraCodecs.VECTOR3F.fieldOf("color").forGetter((p_175797_) -> p_175797_.color)
-            ).apply(p_175793_, SparkParticleOptions::new));
+    public static final Codec<SparkParticleOptions> CODEC =
+            RecordCodecBuilder.create(
+                    (p_175793_) ->
+                            p_175793_
+                                    .group(
+                                            ExtraCodecs.VECTOR3F
+                                                    .fieldOf("color")
+                                                    .forGetter((p_175797_) -> p_175797_.color))
+                                    .apply(p_175793_, SparkParticleOptions::new));
+
     @SuppressWarnings("deprecation")
-    public static final ParticleOptions.Deserializer<SparkParticleOptions> DESERIALIZER = new ParticleOptions.Deserializer<SparkParticleOptions>() {
-        public @NotNull SparkParticleOptions fromCommand(@NotNull ParticleType<SparkParticleOptions> p_123689_, @NotNull StringReader p_123690_) throws CommandSyntaxException {
-            Vector3f vector3f = readVector3f(p_123690_);
-            return new SparkParticleOptions(vector3f);
-        }
+    public static final ParticleOptions.Deserializer<SparkParticleOptions> DESERIALIZER =
+            new ParticleOptions.Deserializer<SparkParticleOptions>() {
+                public @NotNull SparkParticleOptions fromCommand(
+                        @NotNull ParticleType<SparkParticleOptions> p_123689_,
+                        @NotNull StringReader p_123690_)
+                        throws CommandSyntaxException {
+                    Vector3f vector3f = readVector3f(p_123690_);
+                    return new SparkParticleOptions(vector3f);
+                }
 
-        public @NotNull SparkParticleOptions fromNetwork(@NotNull ParticleType<SparkParticleOptions> p_123692_, @NotNull FriendlyByteBuf p_123693_) {
-            return new SparkParticleOptions(readVector3f(p_123693_));
-        }
-    };
-
+                public @NotNull SparkParticleOptions fromNetwork(
+                        @NotNull ParticleType<SparkParticleOptions> p_123692_,
+                        @NotNull FriendlyByteBuf p_123693_) {
+                    return new SparkParticleOptions(readVector3f(p_123693_));
+                }
+            };
 }

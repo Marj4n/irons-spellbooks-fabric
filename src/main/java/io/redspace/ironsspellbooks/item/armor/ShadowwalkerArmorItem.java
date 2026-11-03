@@ -9,7 +9,10 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 public class ShadowwalkerArmorItem extends ImbuableChestplateArmorItem implements IDisableJacket {
     public ShadowwalkerArmorItem(ArmorItem.Type slot, Properties settings) {
-        super(ExtendedArmorMaterials.SHADOWWALKER, slot, settings/*, schoolAttributes(AttributeRegistry.ENDER_SPELL_POWER)*/);
+        super(
+                ExtendedArmorMaterials.SHADOWWALKER,
+                slot,
+                settings /*, schoolAttributes(AttributeRegistry.ENDER_SPELL_POWER)*/);
     }
 
     @Override

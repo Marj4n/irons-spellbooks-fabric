@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.spells.nature;
 
-
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
@@ -34,17 +33,20 @@ public class StompSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.distance", getRange(spellLevel, caster))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.distance", getRange(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(16)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(16)
+                    .build();
 
     public StompSpell() {
         this.manaCostPerLevel = 10;
@@ -71,7 +73,7 @@ public class StompSpell extends AbstractSpell {
 
     @Override
     public int getEffectiveCastTime(int spellLevel, @Nullable LivingEntity entity) {
-        //due to animation timing, we do not want cast time attribute to affect this spell
+        // due to animation timing, we do not want cast time attribute to affect this spell
         return getCastTime(spellLevel);
     }
 
@@ -86,15 +88,34 @@ public class StompSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        Vec3 spawn = Utils.moveToRelativeGroundLevel(level, entity.getEyePosition().add(entity.getForward().multiply(1f, 0, 1f)), 1);
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        Vec3 spawn =
+                Utils.moveToRelativeGroundLevel(
+                        level,
+                        entity.getEyePosition().add(entity.getForward().multiply(1f, 0, 1f)),
+                        1);
         var bpos = BlockPos.containing(spawn);
-        ((ServerLevel) level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(bpos)), spawn.x, spawn.y, spawn.z, 40, 0.0D, 0.0D, 0.0D, (double) 0.20 + 0.05F * spellLevel);
+        ((ServerLevel) level)
+                .sendParticles(
+                        new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(bpos)),
+                        spawn.x,
+                        spawn.y,
+                        spawn.z,
+                        40,
+                        0.0D,
+                        0.0D,
+                        0.0D,
+                        (double) 0.20 + 0.05F * spellLevel);
 
         var stomp = new StompAoe(level, getRange(spellLevel, entity), entity.getYRot());
         stomp.moveTo(spawn);
         stomp.setDamage(getDamage(spellLevel, entity));
-        //explosion radius used for knockback
+        // explosion radius used for knockback
         stomp.setExplosionRadius(getEntityPowerMultiplier(entity));
         stomp.setOwner(entity);
         level.addFreshEntity(stomp);

@@ -25,14 +25,28 @@ public class BeardifierMixin /*implements IExtendedBeardifier*/ {
             remap = false,
             at = @At(value = "HEAD"),
             cancellable = true)
-    private static void irons_spellbooks$injectCustomTerrainAdaptation(ChunkPos pChunkPos, ObjectList<Beardifier.Rigid> list, int i, int j, ObjectList<JigsawJunction> junctions, StructureStart p_223936_, CallbackInfo ci) {
+    private static void irons_spellbooks$injectCustomTerrainAdaptation(
+            ChunkPos pChunkPos,
+            ObjectList<Beardifier.Rigid> list,
+            int i,
+            int j,
+            ObjectList<JigsawJunction> junctions,
+            StructureStart p_223936_,
+            CallbackInfo ci) {
         for (StructurePiece structurepiece : p_223936_.getPieces()) {
             if (structurepiece instanceof PoolElementStructurePiece poolelementstructurepiece) {
-                if (poolelementstructurepiece.getElement() instanceof IndividualTerrainStructurePoolElement ironElement) {
+                if (poolelementstructurepiece.getElement()
+                        instanceof IndividualTerrainStructurePoolElement ironElement) {
                     if (structurepiece.isCloseToChunk(pChunkPos, 12)) {
-                        StructureTemplatePool.Projection structuretemplatepool$projection = ironElement.getProjection();
-                        if (structuretemplatepool$projection == StructureTemplatePool.Projection.RIGID) {
-                            list.add(new Beardifier.Rigid(poolelementstructurepiece.getBoundingBox(), ironElement.getTerrainAdjustment(), ironElement.getGroundLevelDelta()));
+                        StructureTemplatePool.Projection structuretemplatepool$projection =
+                                ironElement.getProjection();
+                        if (structuretemplatepool$projection
+                                == StructureTemplatePool.Projection.RIGID) {
+                            list.add(
+                                    new Beardifier.Rigid(
+                                            poolelementstructurepiece.getBoundingBox(),
+                                            ironElement.getTerrainAdjustment(),
+                                            ironElement.getGroundLevelDelta()));
                         }
                         ci.cancel();
                     }

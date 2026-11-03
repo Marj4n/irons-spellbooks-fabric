@@ -8,11 +8,19 @@ import net.fabricmc.api.Environment;
 
 public class BloodGroundParticle extends TextureSheetParticle {
 
-    public BloodGroundParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public BloodGroundParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
 
-        //this.friction = 1.0f;
+        // this.friction = 1.0f;
         this.xd = xd;
         this.yd = yd;
         this.zd = zd;
@@ -30,7 +38,6 @@ public class BloodGroundParticle extends TextureSheetParticle {
     @Override
     public void tick() {
         super.tick();
-
     }
 
     @Override
@@ -46,9 +53,15 @@ public class BloodGroundParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new BloodGroundParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }

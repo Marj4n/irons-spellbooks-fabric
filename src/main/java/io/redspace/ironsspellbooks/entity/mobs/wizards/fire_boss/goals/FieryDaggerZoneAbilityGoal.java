@@ -15,7 +15,9 @@ public class FieryDaggerZoneAbilityGoal extends AnimatedActionGoal<FireBossEntit
 
     @Override
     protected boolean canStartAction() {
-        return mob.onGround() && mob.getTarget() != null && mob.distanceToSqr(mob.getTarget()) > 6 * 6;
+        return mob.onGround()
+                && mob.getTarget() != null
+                && mob.distanceToSqr(mob.getTarget()) > 6 * 6;
     }
 
     @Override
@@ -51,7 +53,10 @@ public class FieryDaggerZoneAbilityGoal extends AnimatedActionGoal<FireBossEntit
     protected void doAction() {
         var target = mob.getTarget();
         if (target != null) {
-            mob.playSound(SoundRegistry.FIERY_DAGGER_THROW.get(), 2f, Utils.random.nextIntBetweenInclusive(80, 110) * .01f);
+            mob.playSound(
+                    SoundRegistry.FIERY_DAGGER_THROW.get(),
+                    2f,
+                    Utils.random.nextIntBetweenInclusive(80, 110) * .01f);
 
             Vec3 start = mob.getEyePosition();
             Vec3 targetPos = target.position();
@@ -77,9 +82,10 @@ public class FieryDaggerZoneAbilityGoal extends AnimatedActionGoal<FireBossEntit
                 // y(t) = -1/2(g)(t^2) + v0*t
                 // => v0 = [y1 + 1/2(g)(t1^2)]/t1
                 double y1 = aim.y - start.y;
-                double g = 0.05;//dagger.getGravity();
+                double g = 0.05; // dagger.getGravity();
                 double verticalSpeed = (y1 + 0.5 * g * ticks * ticks) / ticks;
-                Vec3 trajectory = horizontal.normalize().scale(horizontalSpeed).add(0, verticalSpeed, 0);
+                Vec3 trajectory =
+                        horizontal.normalize().scale(horizontalSpeed).add(0, verticalSpeed, 0);
                 dagger.setDeltaMovement(trajectory);
                 mob.level().addFreshEntity(dagger);
             }

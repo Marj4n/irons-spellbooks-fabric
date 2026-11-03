@@ -12,16 +12,34 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingRenderMixin {
-    @Inject(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-            at = @At("HEAD"), cancellable = true)
-    private void irons_spellbooks$beforeRender(LivingEntity entity, float yaw, float partialTick,
-            PoseStack poseStack, MultiBufferSource buffers, int light, CallbackInfo ci) {
+    @Inject(
+            method =
+                    "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+            at = @At("HEAD"),
+            cancellable = true)
+    private void irons_spellbooks$beforeRender(
+            LivingEntity entity,
+            float yaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            int light,
+            CallbackInfo ci) {
         if (ClientPlayerEvents.beforeLivingRender(entity)) ci.cancel();
     }
-    @Inject(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+
+    @Inject(
+            method =
+                    "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
             at = @At("RETURN"))
-    private void irons_spellbooks$afterRender(LivingEntity entity, float yaw, float partialTick,
-            PoseStack poseStack, MultiBufferSource buffers, int light, CallbackInfo ci) {
+    private void irons_spellbooks$afterRender(
+            LivingEntity entity,
+            float yaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            int light,
+            CallbackInfo ci) {
         ClientPlayerEvents.afterLivingRender(entity, poseStack, buffers, partialTick);
     }
 }

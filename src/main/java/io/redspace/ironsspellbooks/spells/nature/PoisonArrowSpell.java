@@ -20,19 +20,25 @@ import java.util.List;
 import java.util.Optional;
 
 public class PoisonArrowSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "poison_arrow");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(15)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "poison_arrow");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(15)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getArrowDamage(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getAOEDamage(spellLevel, caster), 1)));
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getArrowDamage(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.aoe_damage",
+                        Utils.stringTruncation(getAOEDamage(spellLevel, caster), 1)));
     }
 
     public PoisonArrowSpell() {
@@ -69,9 +75,21 @@ public class PoisonArrowSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         PoisonArrow magicArrow = new PoisonArrow(level, entity);
-        magicArrow.setPos(entity.position().add(0, entity.getEyeHeight() - magicArrow.getBoundingBox().getYsize() * .5f, 0).add(entity.getForward()));
+        magicArrow.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight()
+                                        - magicArrow.getBoundingBox().getYsize() * .5f,
+                                0)
+                        .add(entity.getForward()));
         magicArrow.shoot(entity.getLookAngle());
         magicArrow.setDamage(getArrowDamage(spellLevel, entity));
         magicArrow.setAoeDamage(getAOEDamage(spellLevel, entity));
@@ -96,5 +114,4 @@ public class PoisonArrowSpell extends AbstractSpell {
     public AnimationHolder getCastFinishAnimation() {
         return AnimationHolder.none();
     }
-
 }

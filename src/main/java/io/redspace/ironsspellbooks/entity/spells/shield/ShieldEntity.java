@@ -32,11 +32,10 @@ public class ShieldEntity extends AbstractShieldEntity {
         subEntities = new ShieldPart[width * height];
         subPositions = new Vec3[width * height];
         this.setHealth(10);
-        //this.setXRot(45);
-        //this.setYRot(45);
+        // this.setXRot(45);
+        // this.setYRot(45);
         LIFETIME = 20 * 20;
         createShield();
-
     }
 
     public ShieldEntity(Level level, float health) {
@@ -46,12 +45,16 @@ public class ShieldEntity extends AbstractShieldEntity {
 
     @Override
     protected void createShield() {
-        //Ironsspellbooks.logger.debug("ShieldEntity.createShield");
+        // Ironsspellbooks.logger.debug("ShieldEntity.createShield");
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 int i = x * height + y;
                 subEntities[i] = new ShieldPart(this, "part" + (i + 1), 0.5F, 0.5F, true);
-                subPositions[i] = new Vec3((x - width / 2f) * .5f + .25f, (y - height / 2f) * .5f, 0);//.xRot(getXRot()).yRot(getYRot());
+                subPositions[i] =
+                        new Vec3(
+                                (x - width / 2f) * .5f + .25f,
+                                (y - height / 2f) * .5f,
+                                0); // .xRot(getXRot()).yRot(getYRot());
             }
         }
     }
@@ -68,8 +71,27 @@ public class ShieldEntity extends AbstractShieldEntity {
         if (!this.isInvulnerableTo(source)) {
             this.setHealth(this.getHealth() - amount);
             if (!level().isClientSide && location != null) {
-                MagicManager.spawnParticles(level(), ParticleTypes.ELECTRIC_SPARK, location.x, location.y, location.z, 30, .1, .1, .1, .5, false);
-                level().playSound(null, location.x, location.y, location.z, SoundRegistry.FORCE_IMPACT.get(), SoundSource.NEUTRAL, .8f, 1f);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleTypes.ELECTRIC_SPARK,
+                        location.x,
+                        location.y,
+                        location.z,
+                        30,
+                        .1,
+                        .1,
+                        .1,
+                        .5,
+                        false);
+                level().playSound(
+                                null,
+                                location.x,
+                                location.y,
+                                location.z,
+                                SoundRegistry.FORCE_IMPACT.get(),
+                                SoundSource.NEUTRAL,
+                                .8f,
+                                1f);
             }
         }
     }
@@ -81,17 +103,29 @@ public class ShieldEntity extends AbstractShieldEntity {
             destroy();
         } else if (++age > LIFETIME) {
             if (!this.level().isClientSide) {
-                level().playSound(null, getX(), getY(), getZ(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.NEUTRAL, 1, 1.4f);
+                level().playSound(
+                                null,
+                                getX(),
+                                getY(),
+                                getZ(),
+                                SoundEvents.RESPAWN_ANCHOR_SET_SPAWN,
+                                SoundSource.NEUTRAL,
+                                1,
+                                1.4f);
             }
             discard();
         } else {
             for (int i = 0; i < subEntities.length; i++) {
                 var subEntity = subEntities[i];
 
-                Vec3 pos = subPositions[i].xRot(Mth.DEG_TO_RAD * -this.getXRot()).yRot(Mth.DEG_TO_RAD * -this.getYRot()).add(this.position());
+                Vec3 pos =
+                        subPositions[i]
+                                .xRot(Mth.DEG_TO_RAD * -this.getXRot())
+                                .yRot(Mth.DEG_TO_RAD * -this.getYRot())
+                                .add(this.position());
                 subEntity.setPos(pos);
-                //subEntity.setDeltaMovement(newVector);
-                //var vec3 = new Vec3(subEntity.getX(), subEntity.getY(), subEntity.getZ());
+                // subEntity.setDeltaMovement(newVector);
+                // var vec3 = new Vec3(subEntity.getX(), subEntity.getY(), subEntity.getZ());
                 subEntity.xo = pos.x;
                 subEntity.yo = pos.y;
                 subEntity.zo = pos.z;
@@ -110,7 +144,15 @@ public class ShieldEntity extends AbstractShieldEntity {
     @Override
     protected void destroy() {
         if (!this.level().isClientSide) {
-            level().playSound(null, getX(), getY(), getZ(), SoundEvents.GLASS_BREAK, SoundSource.NEUTRAL, 2, .65f);
+            level().playSound(
+                            null,
+                            getX(),
+                            getY(),
+                            getZ(),
+                            SoundEvents.GLASS_BREAK,
+                            SoundSource.NEUTRAL,
+                            2,
+                            .65f);
         }
         super.destroy();
     }

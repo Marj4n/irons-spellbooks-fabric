@@ -13,12 +13,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import io.github.fabricators_of_create.porting_lib.entity.IEntityAdditionalSpawnData;
 
-
-
 public class EldritchBlastVisualEntity extends Entity implements IEntityAdditionalSpawnData {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
 
     public static final int lifetime = 8;
@@ -28,9 +27,7 @@ public class EldritchBlastVisualEntity extends Entity implements IEntityAddition
     }
 
     @Override
-    protected void defineSynchedData() {
-
-    }
+    protected void defineSynchedData() {}
 
     public float distance;
 
@@ -48,7 +45,8 @@ public class EldritchBlastVisualEntity extends Entity implements IEntityAddition
                 var forward = getForward();
                 for (float i = 1; i < distance; i += .5f) {
                     Vec3 pos = position().add(forward.scale(i));
-                    level().addParticle(ParticleTypes.SMOKE, false, pos.x, pos.y + .5, pos.z, 0, 0, 0);
+                    level().addParticle(
+                                    ParticleTypes.SMOKE, false, pos.x, pos.y + .5, pos.z, 0, 0, 0);
                 }
             }
         } else if (tickCount > lifetime) {
@@ -67,15 +65,10 @@ public class EldritchBlastVisualEntity extends Entity implements IEntityAddition
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-
-    }
+    protected void readAdditionalSaveData(CompoundTag pCompound) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-
-    }
-
+    protected void addAdditionalSaveData(CompoundTag pCompound) {}
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buffer) {

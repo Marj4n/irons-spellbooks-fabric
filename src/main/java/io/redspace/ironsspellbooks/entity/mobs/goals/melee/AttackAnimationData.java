@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class AttackAnimationData {
 
-    //public final int id;
+    // public final int id;
     public final int lengthInTicks;
     public final String animationId;
     public final Int2ObjectOpenHashMap<AttackKeyframe> attacks;
@@ -21,17 +21,28 @@ public class AttackAnimationData {
         this.attacks = new Int2ObjectOpenHashMap<>();
         this.canCancel = false;
         for (int i : attackTimestamps) {
-            attacks.put(i, new AttackKeyframe(i, new Vec3(0, 0, .45f)/*, Vec2.ONE, 1f*/));
+            attacks.put(i, new AttackKeyframe(i, new Vec3(0, 0, .45f) /*, Vec2.ONE, 1f*/));
         }
         this.areaAttackThreshold = Optional.empty();
         this.rangeMultiplier = 1f;
     }
 
-    public AttackAnimationData(String animationId, int lengthInTicks, boolean canCancel, Optional<Float> areaAttackThreshold, Int2ObjectOpenHashMap<AttackKeyframe> attacks) {
+    public AttackAnimationData(
+            String animationId,
+            int lengthInTicks,
+            boolean canCancel,
+            Optional<Float> areaAttackThreshold,
+            Int2ObjectOpenHashMap<AttackKeyframe> attacks) {
         this(animationId, lengthInTicks, canCancel, areaAttackThreshold, attacks, 1f);
     }
 
-    public AttackAnimationData(String animationId, int lengthInTicks, boolean canCancel, Optional<Float> areaAttackThreshold, Int2ObjectOpenHashMap<AttackKeyframe> attacks, float rangeMultiplier) {
+    public AttackAnimationData(
+            String animationId,
+            int lengthInTicks,
+            boolean canCancel,
+            Optional<Float> areaAttackThreshold,
+            Int2ObjectOpenHashMap<AttackKeyframe> attacks,
+            float rangeMultiplier) {
         this.animationId = animationId;
         this.lengthInTicks = lengthInTicks;
         this.attacks = attacks;
@@ -111,7 +122,13 @@ public class AttackAnimationData {
         }
 
         public AttackAnimationData build() {
-            return new AttackAnimationData(animationId, lengthInTicks, canCancel, areaAttackThreshold, attacks, rangeMultiplier);
+            return new AttackAnimationData(
+                    animationId,
+                    lengthInTicks,
+                    canCancel,
+                    areaAttackThreshold,
+                    attacks,
+                    rangeMultiplier);
         }
     }
 }

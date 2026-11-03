@@ -12,10 +12,16 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 public class GoldCrownArmorItem extends ExtendedArmorItem {
     public GoldCrownArmorItem(ArmorItem.Type slot, Properties settings) {
-        super(ExtendedArmorMaterials.DEV, slot, settings,
-                new AttributeContainer(AttributeRegistry.MAX_MANA, 9900, AttributeModifier.Operation.ADDITION),
-                new AttributeContainer(AttributeRegistry.COOLDOWN_REDUCTION, 0.90, AttributeModifier.Operation.MULTIPLY_BASE)
-        );
+        super(
+                ExtendedArmorMaterials.DEV,
+                slot,
+                settings,
+                new AttributeContainer(
+                        AttributeRegistry.MAX_MANA, 9900, AttributeModifier.Operation.ADDITION),
+                new AttributeContainer(
+                        AttributeRegistry.COOLDOWN_REDUCTION,
+                        0.90,
+                        AttributeModifier.Operation.MULTIPLY_BASE));
     }
 
     @Override

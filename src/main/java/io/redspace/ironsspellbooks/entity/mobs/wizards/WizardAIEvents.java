@@ -23,28 +23,51 @@ public class WizardAIEvents {
     public static void onBlockUsed(InteractionEvents.RightClickBlock event) {
         var blockstate = event.getLevel().getBlockState(event.getHitVec().getBlockPos());
         if (blockstate.is(ModTags.GUARDED_BY_WIZARDS)) {
-            //If the block being guarded can hold a loot table, we only anger if it does. (Ie you looted a chest of theirs, versus opening a generic chest while in their vicinity)
-            if (!(event.getLevel().getBlockEntity(event.getPos()) instanceof RandomizableContainerBlockEntity randomizableContainerBlockEntity) || randomizableContainerBlockEntity.lootTable != null) {
+            // If the block being guarded can hold a loot table, we only anger if it does. (Ie you
+            // looted a chest of theirs, versus opening a generic chest while in their vicinity)
+            if (!(event.getLevel().getBlockEntity(event.getPos())
+                            instanceof
+                            RandomizableContainerBlockEntity randomizableContainerBlockEntity)
+                    || randomizableContainerBlockEntity.lootTable != null) {
                 angerNearbyWizards(event.getEntity(), 1, false, true);
             }
         }
     }
 
-    public static void angerNearbyWizards(Player player, int angerLevel, boolean requireLineOfSight, boolean blockRelated) {
+    public static void angerNearbyWizards(
+            Player player, int angerLevel, boolean requireLineOfSight, boolean blockRelated) {
         if (player.getAbilities().instabuild) {
             return;
         }
-        List<NeutralWizard> list = player.level().getEntitiesOfClass(NeutralWizard.class, player.getBoundingBox().inflate(16.0D));
-        list.stream().filter((neutralWizard) -> (neutralWizard.guardsBlocks() || !blockRelated) && (!requireLineOfSight || BehaviorUtils.canSee(neutralWizard, player))).forEach((neutralWizard) -> {
-            neutralWizard.increaseAngerLevel(player, angerLevel, true);
-            neutralWizard.setPersistentAngerTarget(player.getUUID());
-            if (blockRelated && player instanceof ServerPlayer serverPlayer) {
-                var advancement = serverPlayer.serverLevel().getServer().getAdvancements().getAdvancement(IronsSpellbooks.id("irons_spellbooks/steal_from_wizard"));
-                if (advancement != null) {
-                    serverPlayer.getAdvancements().award(advancement, "anger_wizard");
-                }
-            }
-        });
+        List<NeutralWizard> list =
+                player.level()
+                        .getEntitiesOfClass(
+                                NeutralWizard.class, player.getBoundingBox().inflate(16.0D));
+        list.stream()
+                .filter(
+                        (neutralWizard) ->
+                                (neutralWizard.guardsBlocks() || !blockRelated)
+                                        && (!requireLineOfSight
+                                                || BehaviorUtils.canSee(neutralWizard, player)))
+                .forEach(
+                        (neutralWizard) -> {
+                            neutralWizard.increaseAngerLevel(player, angerLevel, true);
+                            neutralWizard.setPersistentAngerTarget(player.getUUID());
+                            if (blockRelated && player instanceof ServerPlayer serverPlayer) {
+                                var advancement =
+                                        serverPlayer
+                                                .serverLevel()
+                                                .getServer()
+                                                .getAdvancements()
+                                                .getAdvancement(
+                                                        IronsSpellbooks.id(
+                                                                "irons_spellbooks/steal_from_wizard"));
+                                if (advancement != null) {
+                                    serverPlayer
+                                            .getAdvancements()
+                                            .award(advancement, "anger_wizard");
+                                }
+                            }
+                        });
     }
-
 }

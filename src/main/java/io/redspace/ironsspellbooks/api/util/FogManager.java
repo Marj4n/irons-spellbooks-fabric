@@ -27,8 +27,7 @@ public class FogManager {
         return last;
     }
 
-    public record FogEvent(Optional<Vector3f> color, boolean fullbright) {
-    }
+    public record FogEvent(Optional<Vector3f> color, boolean fullbright) {}
 
     public static void createEvent(Entity entity, FogEvent event) {
         createEvent(entity.level().dimension(), entity.getUUID(), event);
@@ -43,7 +42,8 @@ public class FogManager {
     }
 
     public static void stopEvent(UUID id) {
-        // while we only create events per-dimension, if something in any dimension calls for a specific uuid to be cancelled, we cancel it
+        // while we only create events per-dimension, if something in any dimension calls for a
+        // specific uuid to be cancelled, we cancel it
         for (FogManager manager : FOG_MANAGERS.values()) {
             if (manager.fogEvents.containsKey(id)) {
                 manager.lastEvent = manager.fogEvents.remove(id);
@@ -63,11 +63,16 @@ public class FogManager {
     }
 
     @Environment(EnvType.CLIENT)
-    public static void fog(io.github.fabricators_of_create.porting_lib.event.client.FogEvents.ColorData event, float partialTick) {
+    public static void fog(
+            io.github.fabricators_of_create.porting_lib.event.client.FogEvents.ColorData event,
+            float partialTick) {
         if (Minecraft.getInstance().player != null) {
             var manager = getManagerFor(Minecraft.getInstance().player.level().dimension());
             if (!manager.fogEvents.isEmpty() || manager.lastEvent != null) {
-                FogEvent fogEvent = manager.fogEvents.isEmpty() ? manager.lastEvent : lastEntry(manager.fogEvents).getValue();
+                FogEvent fogEvent =
+                        manager.fogEvents.isEmpty()
+                                ? manager.lastEvent
+                                : lastEntry(manager.fogEvents).getValue();
                 float fogRed, fogGreen, fogBlue;
                 if (fogEvent.color.isPresent()) {
                     fogRed = fogEvent.color.get().x;

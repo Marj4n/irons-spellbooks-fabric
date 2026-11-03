@@ -27,14 +27,14 @@ import javax.annotation.Nonnull;
 public class ScrollForgeTile extends BlockEntity implements MenuProvider, Clearable {
     private ScrollForgeMenu menu;
 
-    private final NativeItemInventory itemHandler = new NativeItemInventory(4) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            updateMenuSlots(slot);
-            setChanged();
-        }
-    };
-
+    private final NativeItemInventory itemHandler =
+            new NativeItemInventory(4) {
+                @Override
+                protected void onContentsChanged(int slot) {
+                    updateMenuSlots(slot);
+                    setChanged();
+                }
+            };
 
     public ScrollForgeTile(BlockPos pWorldPosition, BlockState pBlockState) {
         super(BlockRegistry.SCROLL_FORGE_TILE.get(), pWorldPosition, pBlockState);
@@ -43,7 +43,8 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider, Cleara
     private void updateMenuSlots(int slot) {
         if (menu != null && level != null) {
             menu.onSlotsChanged(slot);
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+            level.sendBlockUpdated(
+                    worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
     }
 
@@ -63,7 +64,7 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider, Cleara
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-        //TODO: only allow one player to access at a time?
+        // TODO: only allow one player to access at a time?
         menu = new ScrollForgeMenu(containerId, inventory, this);
         return menu;
     }
@@ -72,18 +73,17 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider, Cleara
         menu.setRecipeSpell(SpellRegistry.getSpell(spellId));
     }
 
-//    @Override
-//    public void onLoad() {
-//        super.onLoad();
-//        lazyItemHandler = LazyOptional.of(() -> itemHandler);
-//        irons_spellbooks.LOGGER.debug("ScrollForgeTile.chunkOnLoad: {}", itemHandler.getSlots());
-//
-//    }
-
+    //    @Override
+    //    public void onLoad() {
+    //        super.onLoad();
+    //        lazyItemHandler = LazyOptional.of(() -> itemHandler);
+    //        irons_spellbooks.LOGGER.debug("ScrollForgeTile.chunkOnLoad: {}",
+    // itemHandler.getSlots());
+    //
+    //    }
 
     public void drops() {
-        SimpleContainer simpleContainer
-                = new SimpleContainer(itemHandler.getSlots());
+        SimpleContainer simpleContainer = new SimpleContainer(itemHandler.getSlots());
         for (int i = 0; i < itemHandler.getSlots() - 1; i++) {
             simpleContainer.setItem(i, itemHandler.getStackInSlot(i));
         }
@@ -93,7 +93,7 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider, Cleara
 
     @Override
     public void load(CompoundTag nbt) {
-        //irons_spellbooks.LOGGER.debug("ScrollForgeTile.loadingFromNBT: {}", nbt);
+        // irons_spellbooks.LOGGER.debug("ScrollForgeTile.loadingFromNBT: {}", nbt);
         super.load(nbt);
         if (nbt.contains("inventory")) {
             itemHandler.deserializeNBT(nbt.getCompound("inventory"));
@@ -102,7 +102,7 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider, Cleara
 
     @Override
     protected void saveAdditional(@Nonnull CompoundTag tag) {
-        //irons_spellbooks.LOGGER.debug("saveAdditional tag:{}", tag);
+        // irons_spellbooks.LOGGER.debug("saveAdditional tag:{}", tag);
         super.saveAdditional(tag);
         tag.put("inventory", itemHandler.serializeNBT());
     }
@@ -111,43 +111,48 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider, Cleara
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
         tag.put("inventory", itemHandler.serializeNBT());
-        //irons_spellbooks.LOGGER.debug("getUpdateTag tag:{}", tag);
+        // irons_spellbooks.LOGGER.debug("getUpdateTag tag:{}", tag);
         return tag;
     }
 
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         var packet = ClientboundBlockEntityDataPacket.create(this);
-        //irons_spellbooks.LOGGER.debug("getUpdatePacket: packet.getTag:{}", packet.getTag());
+        // irons_spellbooks.LOGGER.debug("getUpdatePacket: packet.getTag:{}", packet.getTag());
         return packet;
     }
 
-//    public static void tick(Level pLevel, BlockPos pPos, BlockState pState, InscriptionTableTile pBlockEntity) {
-//        if(hasRecipe(pBlockEntity) && hasNotReachedStackLimit(pBlockEntity)) {
-//            craftItem(pBlockEntity);
-//        }
-//    }
-//
-//    private static void craftItem(GemCuttingStationBlockEntity entity) {
-//        entity.itemHandler.extractItem(0, 1, false);
-//        entity.itemHandler.extractItem(1, 1, false);
-//        entity.itemHandler.getStackInSlot(2).hurt(1, new Random(), null);
-//
-//        entity.itemHandler.setStackInSlot(3, new ItemStack(ModItems.CITRINE.get(),
-//                entity.itemHandler.getStackInSlot(3).getCount() + 1));
-//    }
-//
-//    private static boolean hasRecipe(GemCuttingStationBlockEntity entity) {
-//        boolean hasItemInWaterSlot = PotionUtils.getPotion(entity.itemHandler.getStackInSlot(0)) == Potions.WATER;
-//        boolean hasItemInFirstSlot = entity.itemHandler.getStackInSlot(1).getItem() == ModItems.RAW_CITRINE.get();
-//        boolean hasItemInSecondSlot = entity.itemHandler.getStackInSlot(2).getItem() == ModItems.GEM_CUTTER_TOOL.get();
-//
-//        return hasItemInWaterSlot && hasItemInFirstSlot && hasItemInSecondSlot;
-//    }
-//
-//    private static boolean hasNotReachedStackLimit(GemCuttingStationBlockEntity entity) {
-//        return entity.itemHandler.getStackInSlot(3).getCount() < entity.itemHandler.getStackInSlot(3).getMaxStackSize();
-//    }
+    //    public static void tick(Level pLevel, BlockPos pPos, BlockState pState,
+    // InscriptionTableTile pBlockEntity) {
+    //        if(hasRecipe(pBlockEntity) && hasNotReachedStackLimit(pBlockEntity)) {
+    //            craftItem(pBlockEntity);
+    //        }
+    //    }
+    //
+    //    private static void craftItem(GemCuttingStationBlockEntity entity) {
+    //        entity.itemHandler.extractItem(0, 1, false);
+    //        entity.itemHandler.extractItem(1, 1, false);
+    //        entity.itemHandler.getStackInSlot(2).hurt(1, new Random(), null);
+    //
+    //        entity.itemHandler.setStackInSlot(3, new ItemStack(ModItems.CITRINE.get(),
+    //                entity.itemHandler.getStackInSlot(3).getCount() + 1));
+    //    }
+    //
+    //    private static boolean hasRecipe(GemCuttingStationBlockEntity entity) {
+    //        boolean hasItemInWaterSlot =
+    // PotionUtils.getPotion(entity.itemHandler.getStackInSlot(0)) == Potions.WATER;
+    //        boolean hasItemInFirstSlot = entity.itemHandler.getStackInSlot(1).getItem() ==
+    // ModItems.RAW_CITRINE.get();
+    //        boolean hasItemInSecondSlot = entity.itemHandler.getStackInSlot(2).getItem() ==
+    // ModItems.GEM_CUTTER_TOOL.get();
+    //
+    //        return hasItemInWaterSlot && hasItemInFirstSlot && hasItemInSecondSlot;
+    //    }
+    //
+    //    private static boolean hasNotReachedStackLimit(GemCuttingStationBlockEntity entity) {
+    //        return entity.itemHandler.getStackInSlot(3).getCount() <
+    // entity.itemHandler.getStackInSlot(3).getMaxStackSize();
+    //    }
 
     public void clearContent() {
         for (int i = 0; i < itemHandler.getSlots(); i++) {

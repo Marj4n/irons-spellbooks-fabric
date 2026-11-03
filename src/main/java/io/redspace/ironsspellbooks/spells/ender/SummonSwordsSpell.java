@@ -32,23 +32,28 @@ import java.util.List;
 import java.util.Optional;
 
 public class SummonSwordsSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "summon_swords");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "summon_swords");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
                 Component.translatable("ui.irons_spellbooks.summon_count", 3),
-                Component.translatable("ui.irons_spellbooks.percent_damage", (int) (100 + getDamageBonus(spellLevel, caster) * 100)),
-                Component.translatable("ui.irons_spellbooks.percent_health", (int) (100 + getHealthBonus(spellLevel, caster) * 100))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.percent_damage",
+                        (int) (100 + getDamageBonus(spellLevel, caster) * 100)),
+                Component.translatable(
+                        "ui.irons_spellbooks.percent_health",
+                        (int) (100 + getHealthBonus(spellLevel, caster) * 100)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(150)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(150)
+                    .build();
 
     public SummonSwordsSpell() {
         this.manaCostPerLevel = 15;
@@ -99,9 +104,15 @@ public class SummonSwordsSpell extends AbstractSpell {
     }
 
     @Override
-    public void onRecastFinished(ServerPlayer serverPlayer, RecastInstance recastInstance, RecastResult recastResult, ICastDataSerializable castDataSerializable) {
-        if (SummonManager.recastFinishedHelper(serverPlayer, recastInstance, recastResult, castDataSerializable)) {
-            super.onRecastFinished(serverPlayer, recastInstance, recastResult, castDataSerializable);
+    public void onRecastFinished(
+            ServerPlayer serverPlayer,
+            RecastInstance recastInstance,
+            RecastResult recastResult,
+            ICastDataSerializable castDataSerializable) {
+        if (SummonManager.recastFinishedHelper(
+                serverPlayer, recastInstance, recastResult, castDataSerializable)) {
+            super.onRecastFinished(
+                    serverPlayer, recastInstance, recastResult, castDataSerializable);
         }
     }
 
@@ -111,31 +122,60 @@ public class SummonSwordsSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         var recasts = playerMagicData.getPlayerRecasts();
         if (!recasts.hasRecastForSpell(this)) {
             SummonedEntitiesCastData summonedEntitiesCastData = new SummonedEntitiesCastData();
             int summonTime = 20 * 60 * 10;
-            AttributeModifier healthModifier = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("spell_power_health_bonus")), "spell_power_health_bonus", getHealthBonus(spellLevel, entity), AttributeModifier.Operation.MULTIPLY_TOTAL);
-            AttributeModifier damageModifier = new AttributeModifier(AttributeHelper.uuidFromId(IronsSpellbooks.id("spell_power_damage_bonus")), "spell_power_damage_bonus", getDamageBonus(spellLevel, entity), AttributeModifier.Operation.MULTIPLY_TOTAL);
+            AttributeModifier healthModifier =
+                    new AttributeModifier(
+                            AttributeHelper.uuidFromId(
+                                    IronsSpellbooks.id("spell_power_health_bonus")),
+                            "spell_power_health_bonus",
+                            getHealthBonus(spellLevel, entity),
+                            AttributeModifier.Operation.MULTIPLY_TOTAL);
+            AttributeModifier damageModifier =
+                    new AttributeModifier(
+                            AttributeHelper.uuidFromId(
+                                    IronsSpellbooks.id("spell_power_damage_bonus")),
+                            "spell_power_damage_bonus",
+                            getDamageBonus(spellLevel, entity),
+                            AttributeModifier.Operation.MULTIPLY_TOTAL);
 
             SummonedWeaponEntity claymore = new SummonedClaymoreEntity(world, entity);
             SummonedWeaponEntity rapier = new SummonedRapierEntity(world, entity);
             SummonedWeaponEntity sword = new SummonedSwordEntity(world, entity);
 
             List<SummonedWeaponEntity> weapons = List.of(claymore, rapier, sword);
-            weapons.forEach(weapon -> {
-                weapon.moveTo(entity.position().add(0, 1.2, 0).add(Utils.getRandomVec3(1)));
-                weapon.getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(damageModifier);
-                weapon.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(healthModifier);
-                weapon.setHealth(weapon.getMaxHealth());
-                var event  = new SpellSummonEvent<>(entity, weapon, this.spellId, spellLevel);
-                org.marj4n.irons_spellbooks.events.SpellEvents.post(event);
-                var creature = event.getCreature();
-                world.addFreshEntity(creature);
-                SummonManager.initSummon(entity, creature, summonTime, summonedEntitiesCastData);
-            });
-            RecastInstance recastInstance = new RecastInstance(this.getSpellId(), spellLevel, getRecastCount(spellLevel, entity), summonTime, castSource, summonedEntitiesCastData);
+            weapons.forEach(
+                    weapon -> {
+                        weapon.moveTo(entity.position().add(0, 1.2, 0).add(Utils.getRandomVec3(1)));
+                        weapon.getAttribute(Attributes.ATTACK_DAMAGE)
+                                .addPermanentModifier(damageModifier);
+                        weapon.getAttribute(Attributes.MAX_HEALTH)
+                                .addPermanentModifier(healthModifier);
+                        weapon.setHealth(weapon.getMaxHealth());
+                        var event =
+                                new SpellSummonEvent<>(entity, weapon, this.spellId, spellLevel);
+                        org.marj4n.irons_spellbooks.events.SpellEvents.post(event);
+                        var creature = event.getCreature();
+                        world.addFreshEntity(creature);
+                        SummonManager.initSummon(
+                                entity, creature, summonTime, summonedEntitiesCastData);
+                    });
+            RecastInstance recastInstance =
+                    new RecastInstance(
+                            this.getSpellId(),
+                            spellLevel,
+                            getRecastCount(spellLevel, entity),
+                            summonTime,
+                            castSource,
+                            summonedEntitiesCastData);
             recasts.addRecast(recastInstance, playerMagicData);
         }
 

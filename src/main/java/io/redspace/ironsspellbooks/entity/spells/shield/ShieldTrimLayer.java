@@ -13,19 +13,42 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class ShieldTrimLayer extends RenderLayer<ShieldEntity, ShieldModel> {
-    private static final ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/shield/shield_trim.png");
+    private static final ResourceLocation TEXTURE =
+            IronsSpellbooks.id("textures/entity/shield/shield_trim.png");
     private final ShieldTrimModel model;
 
-    public ShieldTrimLayer(RenderLayerParent<ShieldEntity, ShieldModel> renderer, EntityRendererProvider.Context context) {
+    public ShieldTrimLayer(
+            RenderLayerParent<ShieldEntity, ShieldModel> renderer,
+            EntityRendererProvider.Context context) {
         super(renderer);
         this.model = new ShieldTrimModel(context.bakeLayer(ShieldTrimModel.LAYER_LOCATION));
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ShieldEntity entity, float pLimbSwing, float pLimbSwingAmount, float partialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+    public void render(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            ShieldEntity entity,
+            float pLimbSwing,
+            float pLimbSwingAmount,
+            float partialTicks,
+            float pAgeInTicks,
+            float pNetHeadYaw,
+            float pHeadPitch) {
         var offset = ShieldRenderer.getEnergySwirlOffset(entity, partialTicks, 3456);
-        //VertexConsumer consumer = bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity), offset.x, offset.y));
+        // VertexConsumer consumer =
+        // bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity), offset.x,
+        // offset.y));
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.energySwirl(TEXTURE, 0, 0));
-        model.renderToBuffer(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, .65f, .65f, .65f, 1f);
+        model.renderToBuffer(
+                poseStack,
+                consumer,
+                LightTexture.FULL_BRIGHT,
+                OverlayTexture.NO_OVERLAY,
+                .65f,
+                .65f,
+                .65f,
+                1f);
     }
 }

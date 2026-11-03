@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.mobs.frozen_humanoid;
 
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.render.IExtendedSimpleTexture;
@@ -16,10 +15,13 @@ import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
-public class FrozenHumanoidRenderer extends LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>> {
+public class FrozenHumanoidRenderer
+        extends LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>> {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/frozen_humanoid.png");
-    private static final ResourceLocation TEXTURE_ALT = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/frozen_humanoid_alt.png");
+    private static final ResourceLocation TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/frozen_humanoid.png");
+    private static final ResourceLocation TEXTURE_ALT =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/frozen_humanoid_alt.png");
     final EntityModel<LivingEntity> originalModel;
 
     public FrozenHumanoidRenderer(EntityRendererProvider.Context context) {
@@ -30,29 +32,47 @@ public class FrozenHumanoidRenderer extends LivingEntityRenderer<LivingEntity, E
     boolean rectangular = false;
 
     @Override
-    public void render(LivingEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void render(
+            LivingEntity entity,
+            float entityYaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight) {
         LivingEntity entityToRender = entity;
         this.rectangular = false;
-        if (entity instanceof FrozenHumanoid frozenHumanoid && frozenHumanoid.entityToCopy != null) {
+        if (entity instanceof FrozenHumanoid frozenHumanoid
+                && frozenHumanoid.entityToCopy != null) {
             var fakeEntity = frozenHumanoid.entityToCopy.create(Minecraft.getInstance().level);
-            EntityRenderer<?> entityRenderer = fakeEntity == null ? null : Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(fakeEntity);
+            EntityRenderer<?> entityRenderer =
+                    fakeEntity == null
+                            ? null
+                            : Minecraft.getInstance()
+                                    .getEntityRenderDispatcher()
+                                    .getRenderer(fakeEntity);
             if (fakeEntity instanceof LivingEntity livingFakeEntity) {
                 FrozenHumanoid.copyEntityVisualProperties(livingFakeEntity, entity);
                 entityToRender = livingFakeEntity;
             }
             if (entityRenderer instanceof LivingEntityRenderer<?, ?> renderer) {
                 this.model = (EntityModel<LivingEntity>) renderer.getModel();
-                var texturelocation = ((LivingEntityRenderer) renderer).getTextureLocation(fakeEntity);
-                var texture = Minecraft.getInstance().getTextureManager().getTexture(texturelocation);
+                var texturelocation =
+                        ((LivingEntityRenderer) renderer).getTextureLocation(fakeEntity);
+                var texture =
+                        Minecraft.getInstance().getTextureManager().getTexture(texturelocation);
                 if (texture instanceof SimpleTexture) {
-                    this.rectangular = ((IExtendedSimpleTexture) texture).irons_spellbooks$isRectangular();
+                    this.rectangular =
+                            ((IExtendedSimpleTexture) texture).irons_spellbooks$isRectangular();
                 }
             }
         }
         try {
             super.render(entityToRender, entityYaw, partialTicks, poseStack, buffer, packedLight);
         } catch (Exception e) {
-            IronsSpellbooks.LOGGER.error("Failed to render Ice Shadow of {}: {}", ((FrozenHumanoid) entity).entityToCopy, e.getMessage());
+            IronsSpellbooks.LOGGER.error(
+                    "Failed to render Ice Shadow of {}: {}",
+                    ((FrozenHumanoid) entity).entityToCopy,
+                    e.getMessage());
             ((FrozenHumanoid) entity).entityToCopy = null;
         }
         this.rectangular = false;
@@ -75,5 +95,4 @@ public class FrozenHumanoidRenderer extends LivingEntityRenderer<LivingEntity, E
     protected float getBob(LivingEntity pLivingBase, float pPartialTick) {
         return 0;
     }
-
 }

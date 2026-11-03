@@ -24,19 +24,31 @@ public class ChargeSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDurationTicks(spellLevel, caster), 1)),
-                Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpeed(spellLevel, caster), 0), Component.translatable("attribute.name.generic.movement_speed")),
-                Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentAttackDamage(spellLevel, caster), 0), Component.translatable("attribute.name.generic.attack_damage")),
-                Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpellPower(spellLevel, caster), 0), Component.translatable("attribute.irons_spellbooks.lightning_spell_power"))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getDurationTicks(spellLevel, caster), 1)),
+                Component.translatable(
+                        "attribute.modifier.plus.1",
+                        Utils.stringTruncation(getPercentSpeed(spellLevel, caster), 0),
+                        Component.translatable("attribute.name.generic.movement_speed")),
+                Component.translatable(
+                        "attribute.modifier.plus.1",
+                        Utils.stringTruncation(getPercentAttackDamage(spellLevel, caster), 0),
+                        Component.translatable("attribute.name.generic.attack_damage")),
+                Component.translatable(
+                        "attribute.modifier.plus.1",
+                        Utils.stringTruncation(getPercentSpellPower(spellLevel, caster), 0),
+                        Component.translatable(
+                                "attribute.irons_spellbooks.lightning_spell_power")));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
-            .setMaxLevel(3)
-            .setCooldownSeconds(40)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
+                    .setMaxLevel(3)
+                    .setCooldownSeconds(40)
+                    .build();
 
     public ChargeSpell() {
         this.manaCostPerLevel = 25;
@@ -62,10 +74,21 @@ public class ChargeSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
 
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.CHARGED.get(),
-                getDurationTicks(spellLevel, entity), spellLevel - 1, false, false, true));
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.CHARGED.get(),
+                        getDurationTicks(spellLevel, entity),
+                        spellLevel - 1,
+                        false,
+                        false,
+                        true));
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
@@ -82,7 +105,7 @@ public class ChargeSpell extends AbstractSpell {
         return spellLevel * ChargeEffect.SPELL_POWER_PER_LEVEL * 100;
     }
 
-    private int getDurationTicks(int spellLevel, LivingEntity entity){
+    private int getDurationTicks(int spellLevel, LivingEntity entity) {
         return (int) (30 * 20 * getEntityPowerMultiplier(entity));
     }
 

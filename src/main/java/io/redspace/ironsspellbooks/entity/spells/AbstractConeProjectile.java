@@ -18,33 +18,41 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractConeProjectile extends Projectile implements NoKnockbackProjectile, io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity {
+public abstract class AbstractConeProjectile extends Projectile
+        implements NoKnockbackProjectile,
+                io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity {
     protected static final int FAILSAFE_EXPIRE_TIME = 20 * 20;
     protected int age;
     protected float damage;
     protected boolean dealDamageActive = true;
     protected final ConePart[] subEntities;
 
-    public AbstractConeProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level, LivingEntity entity) {
+    public AbstractConeProjectile(
+            EntityType<? extends AbstractConeProjectile> entityType,
+            Level level,
+            LivingEntity entity) {
         this(entityType, level);
         setOwner(entity);
     }
 
-    public AbstractConeProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level) {
+    public AbstractConeProjectile(
+            EntityType<? extends AbstractConeProjectile> entityType, Level level) {
         super(entityType, level);
         this.noPhysics = true;
         this.blocksBuilding = false;
 
-        //TODO: dynamically generate cone parts based off of input for overall cone length/width
-        this.subEntities = new ConePart[]{
-                new ConePart(this, "part1", 1.0F, 1.0F),
-                new ConePart(this, "part2", 2.5F, 1.5F),
-                new ConePart(this, "part3", 3.5F, 2.0F),
-                new ConePart(this, "part4", 4.5F, 3.0F)
-        };
-        //Ironsspellbooks.logger.debug("AbstractConeProjectile: Creating sub-entities");
+        // TODO: dynamically generate cone parts based off of input for overall cone length/width
+        this.subEntities =
+                new ConePart[] {
+                    new ConePart(this, "part1", 1.0F, 1.0F),
+                    new ConePart(this, "part2", 2.5F, 1.5F),
+                    new ConePart(this, "part3", 3.5F, 2.0F),
+                    new ConePart(this, "part4", 4.5F, 3.0F)
+                };
+        // Ironsspellbooks.logger.debug("AbstractConeProjectile: Creating sub-entities");
 
-        //this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
+        // this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Forge: Fix
+        // MC-158205: Make sure part ids are successors of parent mob id
     }
 
     @Override
@@ -75,8 +83,10 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
     @Override
     public void setId(int id) {
         super.setId(id);
-        for (int i = 0; i < this.subEntities.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
-            this.subEntities[i].setId(id + i + 1);
+        for (int i = 0;
+                i < this.subEntities.length;
+                i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
+        this.subEntities[i].setId(id + i + 1);
     }
 
     public void setDamage(float damage) {
@@ -84,8 +94,7 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
     }
 
     @Override
-    protected void defineSynchedData() {
-    }
+    protected void defineSynchedData() {}
 
     protected static Vec3 rayTrace(Entity owner) {
         float f = owner.getXRot();
@@ -104,11 +113,11 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
         super.tick();
 
         if (++age > FAILSAFE_EXPIRE_TIME) {
-            //This exists in case there is any bug with removing the cone onCastComplete
+            // This exists in case there is any bug with removing the cone onCastComplete
             discard();
         }
 
-        //TODO: try this instead of the ray trace
+        // TODO: try this instead of the ray trace
         /*
         So. This is what vectors are for.
         The player has a vector that is their "front" called "LookVec" (Search the EntityPlayer class).
@@ -124,7 +133,7 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
             this.setYRot(owner.getYRot());
             this.yRotO = getYRot();
             this.xRotO = getXRot();
-            //setDeltaMovement(ownerEyePos);
+            // setDeltaMovement(ownerEyePos);
 
             double scale = 1;
 
@@ -132,7 +141,8 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
                 var subEntity = subEntities[i];
 
                 double distance = 1 + (i * scale * subEntity.getDimensions(null).width / 2);
-                Vec3 newVector = ownerEyePos.add(rayTraceVector.multiply(distance, distance, distance));
+                Vec3 newVector =
+                        ownerEyePos.add(rayTraceVector.multiply(distance, distance, distance));
                 subEntity.setPos(newVector);
                 subEntity.setDeltaMovement(newVector);
                 var vec3 = new Vec3(subEntity.getX(), subEntity.getY(), subEntity.getZ());
@@ -149,7 +159,8 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
         if (!level().isClientSide) {
             if (dealDamageActive) {
                 for (Entity entity : getSubEntityCollisions()) {
-                    //irons_spellbooks.LOGGER.debug("ConeOfColdHit : {}", entity.getName().getString());
+                    // irons_spellbooks.LOGGER.debug("ConeOfColdHit : {}",
+                    // entity.getName().getString());
                     onHitEntity(new EntityHitResult(entity));
                 }
                 dealDamageActive = false;
@@ -157,7 +168,6 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
         } else {
             spawnParticles();
         }
-
     }
 
     public void setDealDamageActive() {
@@ -170,9 +180,13 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
             collisions.addAll(level().getEntities(conepart, conepart.getBoundingBox()));
         }
 
-        return collisions.stream().filter(target ->
-                target != getOwner() && target instanceof LivingEntity && Utils.hasLineOfSight(level(), this, target, true)
-        ).collect(Collectors.toSet());
+        return collisions.stream()
+                .filter(
+                        target ->
+                                target != getOwner()
+                                        && target instanceof LivingEntity
+                                        && Utils.hasLineOfSight(level(), this, target, true))
+                .collect(Collectors.toSet());
     }
 
     @Override

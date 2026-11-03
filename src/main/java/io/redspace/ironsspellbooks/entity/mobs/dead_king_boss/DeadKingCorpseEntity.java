@@ -37,7 +37,8 @@ import software.bernie.geckolib.core.object.PlayState;
 public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
     DeadKingAmbienceSoundManager ambienceSoundManager;
 
-    private final static EntityDataAccessor<Boolean> TRIGGERED = SynchedEntityData.defineId(DeadKingCorpseEntity.class, EntityDataSerializers.BOOLEAN);
+    private final static EntityDataAccessor<Boolean> TRIGGERED =
+            SynchedEntityData.defineId(DeadKingCorpseEntity.class, EntityDataSerializers.BOOLEAN);
     private int currentAnimTime;
     private final int animLength = 20 * 15;
 
@@ -89,30 +90,62 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
                     boss.yBodyRot = f;
                     boss.yBodyRotO = f;
                     boss.setSpawnPos(boss.position());
-                    boss.finalizeSpawn((ServerLevel) level(), level().getCurrentDifficultyAt(boss.getOnPos()), MobSpawnType.TRIGGERED, null, null);
+                    boss.finalizeSpawn(
+                            (ServerLevel) level(),
+                            level().getCurrentDifficultyAt(boss.getOnPos()),
+                            MobSpawnType.TRIGGERED,
+                            null,
+                            null);
                     boss.setPersistenceRequired();
                     level().addFreshEntity(boss);
-                    MagicManager.spawnParticles(level(), ParticleTypes.SCULK_SOUL, position().x, position().y + 2.5, position().z, 80, .2, .2, .2, .25, true);
-                    level().playSound(null, getX(), getY(), getZ(), SoundRegistry.DEAD_KING_SPAWN.get(), SoundSource.MASTER, 20, 1);
+                    MagicManager.spawnParticles(
+                            level(),
+                            ParticleTypes.SCULK_SOUL,
+                            position().x,
+                            position().y + 2.5,
+                            position().z,
+                            80,
+                            .2,
+                            .2,
+                            .2,
+                            .25,
+                            true);
+                    level().playSound(
+                                    null,
+                                    getX(),
+                                    getY(),
+                                    getZ(),
+                                    SoundRegistry.DEAD_KING_SPAWN.get(),
+                                    SoundSource.MASTER,
+                                    20,
+                                    1);
                     discard();
                 }
             } else {
                 resurrectParticles();
             }
         } else if (level().isClientSide) {
-            //Ambience sound handling
+            // Ambience sound handling
             if (tickCount % 40 == 0) {
-                MinecraftInstanceHelper.ifPlayerPresent(player -> {
-                    //Local player who we want to play music to
-                    float yRot = this.getYRot();
-                    Vec3 musicCenter = this.position().add(-15 * Mth.sin(yRot * Mth.DEG_TO_RAD), 0, 15 * Mth.cos(yRot * Mth.DEG_TO_RAD));
-                    if (musicCenter.distanceToSqr(player.position()) < DeadKingAmbienceSoundInstance.SOUND_RANGE_SQR) {
-                        if (ambienceSoundManager == null) {
-                            ambienceSoundManager = new DeadKingAmbienceSoundManager(musicCenter);
-                        }
-                        ambienceSoundManager.trigger();
-                    }
-                });
+                MinecraftInstanceHelper.ifPlayerPresent(
+                        player -> {
+                            // Local player who we want to play music to
+                            float yRot = this.getYRot();
+                            Vec3 musicCenter =
+                                    this.position()
+                                            .add(
+                                                    -15 * Mth.sin(yRot * Mth.DEG_TO_RAD),
+                                                    0,
+                                                    15 * Mth.cos(yRot * Mth.DEG_TO_RAD));
+                            if (musicCenter.distanceToSqr(player.position())
+                                    < DeadKingAmbienceSoundInstance.SOUND_RANGE_SQR) {
+                                if (ambienceSoundManager == null) {
+                                    ambienceSoundManager =
+                                            new DeadKingAmbienceSoundManager(musicCenter);
+                                }
+                                ambienceSoundManager.trigger();
+                            }
+                        });
             }
         }
     }
@@ -122,18 +155,31 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
         float rot = currentAnimTime * 12 + (1 + f * 15);
         float height = f * 4 + (.4f * Mth.sin(currentAnimTime * 30 * Mth.DEG_TO_RAD) * f * f);
         float distance = Mth.clamp(Utils.smoothstep(0, 1.15f, f * 3), 0, 1.15f);
-        Vec3 pos = new Vec3(0, 0, distance).yRot(rot * Mth.DEG_TO_RAD).add(0, height, 0).add(position());
+        Vec3 pos =
+                new Vec3(0, 0, distance)
+                        .yRot(rot * Mth.DEG_TO_RAD)
+                        .add(0, height, 0)
+                        .add(position());
 
         level().addParticle(ParticleTypes.SCULK_SOUL, pos.x, pos.y, pos.z, 0, 0, 0);
         float radius = 4;
         if (random.nextFloat() < f * 1.5f) {
-            Vec3 random = position().add(new Vec3(
-                    (this.random.nextFloat() * 2 - 1) * radius,
-                    3.5 + (this.random.nextFloat() * 2 - 1) * radius,
-                    (this.random.nextFloat() * 2 - 1) * radius
-            ));
+            Vec3 random =
+                    position()
+                            .add(
+                                    new Vec3(
+                                            (this.random.nextFloat() * 2 - 1) * radius,
+                                            3.5 + (this.random.nextFloat() * 2 - 1) * radius,
+                                            (this.random.nextFloat() * 2 - 1) * radius));
             Vec3 motion = position().subtract(random).scale(.04f);
-            level().addParticle(ParticleTypes.SCULK_SOUL, random.x, random.y, random.z, motion.x, motion.y, motion.z);
+            level().addParticle(
+                            ParticleTypes.SCULK_SOUL,
+                            random.x,
+                            random.y,
+                            random.z,
+                            motion.x,
+                            motion.y,
+                            motion.z);
         }
     }
 
@@ -162,7 +208,15 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
 
     public void trigger() {
         if (!triggered()) {
-            level().playSound(null, getX(), getY(), getZ(), SoundRegistry.DEAD_KING_RESURRECT.get(), SoundSource.AMBIENT, 2, 1);
+            level().playSound(
+                            null,
+                            getX(),
+                            getY(),
+                            getZ(),
+                            SoundRegistry.DEAD_KING_RESURRECT.get(),
+                            SoundSource.AMBIENT,
+                            2,
+                            1);
             this.entityData.set(TRIGGERED, true);
             if (this.ambienceSoundManager != null) {
                 ambienceSoundManager.triggerStop();
@@ -183,8 +237,8 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
     /**
      * GeckoLib
      **/
-
     private final RawAnimation idle = RawAnimation.begin().thenLoop("dead_king_rest");
+
     private final RawAnimation rise = RawAnimation.begin().thenPlay("dead_king_rise");
 
     @Override

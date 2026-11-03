@@ -35,18 +35,26 @@ public class OakskinSpell extends AbstractSpell {
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage_reduction", Utils.stringTruncation(getPercentDamage(spellLevel, caster), 0)),
-                Component.translatable("attribute.modifier.take.1", Utils.stringTruncation(OakskinEffect.SLOWNESS_MAGNITUDE * 100, 0), Component.translatable("attribute.name.generic.movement_speed")).withStyle(ChatFormatting.RED),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage_reduction",
+                        Utils.stringTruncation(getPercentDamage(spellLevel, caster), 0)),
+                Component.translatable(
+                                "attribute.modifier.take.1",
+                                Utils.stringTruncation(OakskinEffect.SLOWNESS_MAGNITUDE * 100, 0),
+                                Component.translatable("attribute.name.generic.movement_speed"))
+                        .withStyle(ChatFormatting.RED),
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(90)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(90)
+                    .build();
 
     public OakskinSpell() {
         this.manaCostPerLevel = 10;
@@ -82,13 +90,26 @@ public class OakskinSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         // clear side effects from oakskin elixir
         entity.removeEffect(MobEffectRegistry.OAKSKIN.get());
         OakskinData.remove(entity);
         // apply buff
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.OAKSKIN.get(), (int) (getSpellPower(spellLevel, entity) * 20), getAmplifier(spellLevel, entity), false, false, true));
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new OakskinParticlesPacket((entity.position())));
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.OAKSKIN.get(),
+                        (int) (getSpellPower(spellLevel, entity) * 20),
+                        getAmplifier(spellLevel, entity),
+                        false,
+                        false,
+                        true));
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                entity, new OakskinParticlesPacket((entity.position())));
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 

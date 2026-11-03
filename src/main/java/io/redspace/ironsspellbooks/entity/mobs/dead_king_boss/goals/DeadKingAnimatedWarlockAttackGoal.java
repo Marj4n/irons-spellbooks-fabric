@@ -18,7 +18,11 @@ import net.minecraft.world.phys.Vec3;
 public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     final DeadKingBoss deadKing;
 
-    public DeadKingAnimatedWarlockAttackGoal(DeadKingBoss abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval) {
+    public DeadKingAnimatedWarlockAttackGoal(
+            DeadKingBoss abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval) {
         super(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
         deadKing = abstractSpellCastingMob;
         nextAttack = randomizeNextAttack(0);
@@ -29,7 +33,12 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
      * Deprecated 1.20.1 API compat. Range no longer affects this goal, it is instead derived from entity via {@link WarlockAttackGoal#meleeRange()}
      */
     @Deprecated(forRemoval = true)
-    public DeadKingAnimatedWarlockAttackGoal(DeadKingBoss abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval, float range) {
+    public DeadKingAnimatedWarlockAttackGoal(
+            DeadKingBoss abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval,
+            float range) {
         this(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
     }
 
@@ -46,15 +55,18 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     @Override
     protected void handleAttackLogic(double distanceSquared) {
         var meleeRange = meleeRange();
-        if (meleeAnimTimer < 0 && (!wantsToMelee || distanceSquared > meleeRange * meleeRange || spellCastingMob.isCasting())) {
+        if (meleeAnimTimer < 0
+                && (!wantsToMelee
+                        || distanceSquared > meleeRange * meleeRange
+                        || spellCastingMob.isCasting())) {
             super.handleAttackLogic(distanceSquared);
             return;
         }
-        //Handling Animation hit frames
+        // Handling Animation hit frames
         mob.getLookControl().setLookAt(target);
         deadKing.isMeleeing = meleeAnimTimer > 0;
         if (meleeAnimTimer > 0) {
-            //We are currently attacking and are in a melee animation
+            // We are currently attacking and are in a melee animation
             forceFaceTarget();
             meleeAnimTimer--;
             if (currentAttack.data.isHitFrame(meleeAnimTimer - 4)) {
@@ -67,45 +79,76 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
                 Vec3 lunge = target.position().subtract(mob.position()).normalize().scale(.35f);
                 mob.push(lunge.x, lunge.y, lunge.z);
                 if (currentAttack == DeadKingBoss.AttackType.SLAM) {
-                    Vec3 slamPos = mob.position().add(mob.getForward().multiply(1, 0, 1).normalize().scale(2.5f));
+                    Vec3 slamPos =
+                            mob.position()
+                                    .add(
+                                            mob.getForward()
+                                                    .multiply(1, 0, 1)
+                                                    .normalize()
+                                                    .scale(2.5f));
                     Vec3 bbHalf = new Vec3(meleeRange, meleeRange, meleeRange).scale(.3);
                     float damage = (float) mob.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5f;
-                    mob.level().getEntitiesOfClass(LivingEntity.class, new AABB(slamPos.subtract(bbHalf), slamPos.add(bbHalf))).forEach((entity) -> {
-                        if (entity.isPickable() && !DamageSources.isFriendlyFireBetween(mob, entity)) {
-                            entity.hurt(mob.level().damageSources().mobAttack(mob), damage);
-                            var impulse = (slamPos.subtract(entity.position()).add(0, 0.75, 0)).normalize().scale(Mth.lerp(entity.distanceToSqr(mob.position()) / (meleeRange * meleeRange), 2, .5));
-                            entity.setDeltaMovement(entity.getDeltaMovement().add(impulse));
-                            entity.hurtMarked = true;
-                            if (entity instanceof Player player && player.isBlocking()) {
-                                player.disableShield(true);
-                            }
-                        }
-                    });
+                    mob.level()
+                            .getEntitiesOfClass(
+                                    LivingEntity.class,
+                                    new AABB(slamPos.subtract(bbHalf), slamPos.add(bbHalf)))
+                            .forEach(
+                                    (entity) -> {
+                                        if (entity.isPickable()
+                                                && !DamageSources.isFriendlyFireBetween(
+                                                        mob, entity)) {
+                                            entity.hurt(
+                                                    mob.level().damageSources().mobAttack(mob),
+                                                    damage);
+                                            var impulse =
+                                                    (slamPos.subtract(entity.position())
+                                                                    .add(0, 0.75, 0))
+                                                            .normalize()
+                                                            .scale(
+                                                                    Mth.lerp(
+                                                                            entity.distanceToSqr(
+                                                                                            mob
+                                                                                                    .position())
+                                                                                    / (meleeRange
+                                                                                            * meleeRange),
+                                                                            2,
+                                                                            .5));
+                                            entity.setDeltaMovement(
+                                                    entity.getDeltaMovement().add(impulse));
+                                            entity.hurtMarked = true;
+                                            if (entity instanceof Player player
+                                                    && player.isBlocking()) {
+                                                player.disableShield(true);
+                                            }
+                                        }
+                                    });
                 } else {
-                    if (distanceSquared <= meleeRange * meleeRange && Utils.hasLineOfSight(mob.level(), mob, target, true)) {
+                    if (distanceSquared <= meleeRange * meleeRange
+                            && Utils.hasLineOfSight(mob.level(), mob, target, true)) {
                         boolean flag = this.mob.doHurtTarget(target);
                         target.invulnerableTime = 0;
                         if (flag) {
-                            if (currentAttack.data.isSingleHit() && ((mob.getRandom().nextFloat() < .75f) || target.isBlocking())) {
-                                //Attack again! combos!
+                            if (currentAttack.data.isSingleHit()
+                                    && ((mob.getRandom().nextFloat() < .75f)
+                                            || target.isBlocking())) {
+                                // Attack again! combos!
                                 queueCombo = randomizeNextAttack(0);
                             }
                         }
                     }
                 }
-
             }
         } else if (queueCombo != null && target != null && !target.isDeadOrDying()) {
             nextAttack = queueCombo;
             queueCombo = null;
             doMeleeAction();
         } else if (meleeAnimTimer == 0) {
-            //Reset animations/attack
+            // Reset animations/attack
             nextAttack = randomizeNextAttack((float) distanceSquared);
             resetMeleeAttackInterval(distanceSquared);
             meleeAnimTimer = -1;
         } else {
-            //Handling attack delay
+            // Handling attack delay
             if (distanceSquared < meleeRange * meleeRange * 1.2 * 1.2) {
                 if (hasLineOfSight && --this.meleeAttackDelay == 0) {
                     doMeleeAction();
@@ -117,11 +160,15 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     }
 
     private DeadKingBoss.AttackType randomizeNextAttack(float distanceSquared) {
-        return mob.getRandom().nextFloat() < .3f ? DeadKingBoss.AttackType.SLAM : DeadKingBoss.AttackType.DOUBLE_SWING;
-        //float chanceToSlam = Math.max(0.8f, .8f + .1f * mob.level.getEntities(mob, mob.getBoundingBox().expandTowards(mob.getForward().scale(2)).inflate(1), (e) -> !DamageSources.isFriendlyFireBetween(mob, e)).size());
-        //return chanceToSlam < mob.getRandom().nextFloat() ? DeadKingBoss.AttackType.SLAM : DeadKingBoss.AttackType.DOUBLE_SWING;
+        return mob.getRandom().nextFloat() < .3f
+                ? DeadKingBoss.AttackType.SLAM
+                : DeadKingBoss.AttackType.DOUBLE_SWING;
+        // float chanceToSlam = Math.max(0.8f, .8f + .1f * mob.level.getEntities(mob,
+        // mob.getBoundingBox().expandTowards(mob.getForward().scale(2)).inflate(1), (e) ->
+        // !DamageSources.isFriendlyFireBetween(mob, e)).size());
+        // return chanceToSlam < mob.getRandom().nextFloat() ? DeadKingBoss.AttackType.SLAM :
+        // DeadKingBoss.AttackType.DOUBLE_SWING;
     }
-
 
     private void forceFaceTarget() {
         double d0 = target.getX() - mob.getX();
@@ -134,12 +181,13 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
 
     @Override
     protected void doMeleeAction() {
-        //anim duration
+        // anim duration
         currentAttack = nextAttack;
         if (currentAttack != null) {
             this.mob.swing(InteractionHand.MAIN_HAND);
             meleeAnimTimer = currentAttack.data.lengthInTicks;
-            PacketDistributor.sendToPlayersTrackingEntity(deadKing, new SyncAnimationPacket<>(currentAttack.toString(), deadKing));
+            PacketDistributor.sendToPlayersTrackingEntity(
+                    deadKing, new SyncAnimationPacket<>(currentAttack.toString(), deadKing));
         }
     }
 
@@ -152,7 +200,13 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
             this.mob.getNavigation().stop();
         } else if (distanceSquared > meleeRange * meleeRange) {
             if (deadKing.isPhase(DeadKingBoss.Phases.FinalPhase)) {
-                this.mob.getMoveControl().setWantedPosition(this.target.position().x, this.target.position().y, this.target.position().z, this.speedModifier);
+                this.mob
+                        .getMoveControl()
+                        .setWantedPosition(
+                                this.target.position().x,
+                                this.target.position().y,
+                                this.target.position().z,
+                                this.speedModifier);
             } else {
                 this.mob.getNavigation().moveTo(this.target, this.speedModifier * 1.3f);
             }
@@ -164,7 +218,10 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
                 }
             }
             float strafeDir = strafingClockwise ? 1f : -1f;
-            var strafeForwards = .5f * meleeMoveSpeedModifier * (4 * distanceSquared > meleeRange * meleeRange ? 1.5f : -1);
+            var strafeForwards =
+                    .5f
+                            * meleeMoveSpeedModifier
+                            * (4 * distanceSquared > meleeRange * meleeRange ? 1.5f : -1);
             mob.getMoveControl().strafe(strafeForwards, (float) (this.speedModifier * strafeDir));
         }
     }
@@ -187,7 +244,9 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     }
 
     public void playSwingSound() {
-        mob.playSound(SoundRegistry.DEAD_KING_SWING.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        mob.playSound(
+                SoundRegistry.DEAD_KING_SWING.get(),
+                1,
+                Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
-
 }

@@ -40,10 +40,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEntity, IEntityAdditionalSpawnData {
+public class IceBlockProjectile extends AbstractMagicProjectile
+        implements GeoEntity, IEntityAdditionalSpawnData {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
 
     private UUID targetUUID;
@@ -74,7 +76,6 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEn
             this.targetUUID = pOwner.getUUID();
             this.cachedTarget = pOwner;
         }
-
     }
 
     @Nullable
@@ -113,43 +114,63 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEn
     @Override
     public void trailParticles() {
         for (int i = 0; i < 1; i++) {
-            Vec3 random = new Vec3(
-                    Utils.getRandomScaled(this.getBbWidth() * .5f),
-                    0,
-                    Utils.getRandomScaled(this.getBbWidth() * .5f)
-            );
-            level().addParticle(ParticleTypes.SNOWFLAKE, getX() + random.x, getY(), getZ() + random.z, 0, -.05, 0);
+            Vec3 random =
+                    new Vec3(
+                            Utils.getRandomScaled(this.getBbWidth() * .5f),
+                            0,
+                            Utils.getRandomScaled(this.getBbWidth() * .5f));
+            level().addParticle(
+                            ParticleTypes.SNOWFLAKE,
+                            getX() + random.x,
+                            getY(),
+                            getZ() + random.z,
+                            0,
+                            -.05,
+                            0);
         }
     }
 
     private void doFallingDamage(Entity target) {
-        if (level().isClientSide)
-            return;
-        if (!canHitEntity(target) || victims.contains(target))
-            return;
-        boolean flag = DamageSources.applyDamage(target, getDamage() / 2, SpellRegistry.ICE_BLOCK_SPELL.get().getDamageSource(this, getOwner()));
+        if (level().isClientSide) return;
+        if (!canHitEntity(target) || victims.contains(target)) return;
+        boolean flag =
+                DamageSources.applyDamage(
+                        target,
+                        getDamage() / 2,
+                        SpellRegistry.ICE_BLOCK_SPELL.get().getDamageSource(this, getOwner()));
         if (flag) {
             victims.add(target);
         }
-        //Ironsspellbooks.logger.debug("IceBlockProjectile.doFallingDamage: {}", target.getName().getString());
+        // Ironsspellbooks.logger.debug("IceBlockProjectile.doFallingDamage: {}",
+        // target.getName().getString());
 
     }
 
     private void doImpactDamage() {
         float explosionRadius = 3.5f;
-        level().getEntities(this, this.getBoundingBox().inflate(explosionRadius)).forEach((entity) -> {
-            if (canHitEntity(entity)) {
-                double distance = entity.distanceToSqr(position());
-                if (distance < explosionRadius * explosionRadius) {
-                    double p = (1 - Math.pow(Math.sqrt(distance) / (explosionRadius), 3));
-                    float damage = (float) (this.damage * p);
-                    //Ironsspellbooks.logger.debug("IceBlockProjectile.doImpactDamage distance: {} p: {}", Math.sqrt(distance), p);
+        level().getEntities(this, this.getBoundingBox().inflate(explosionRadius))
+                .forEach(
+                        (entity) -> {
+                            if (canHitEntity(entity)) {
+                                double distance = entity.distanceToSqr(position());
+                                if (distance < explosionRadius * explosionRadius) {
+                                    double p =
+                                            (1
+                                                    - Math.pow(
+                                                            Math.sqrt(distance) / (explosionRadius),
+                                                            3));
+                                    float damage = (float) (this.damage * p);
+                                    // Ironsspellbooks.logger.debug("IceBlockProjectile.doImpactDamage distance: {} p: {}", Math.sqrt(distance), p);
 
-                    DamageSources.applyDamage(entity, damage, SpellRegistry.ICE_BLOCK_SPELL.get().getDamageSource(this, getOwner()));
-                }
-            }
-
-        });
+                                    DamageSources.applyDamage(
+                                            entity,
+                                            damage,
+                                            SpellRegistry.ICE_BLOCK_SPELL
+                                                    .get()
+                                                    .getDamageSource(this, getOwner()));
+                                }
+                            }
+                        });
     }
 
     @Override
@@ -160,14 +181,22 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEn
         } else {
             handleFalling();
         }
-        //handle target tracking
+        // handle target tracking
         var target = getTarget();
         if (target != null) {
             Vec3 diff = target.position().subtract(this.position());
             var distance = diff.horizontalDistanceSqr();
             var factor = Mth.clamp(distance / 16.0, 0, 1);
             if (diff.horizontalDistanceSqr() > 0.1) {
-                this.setDeltaMovement(getDeltaMovement().add(diff.multiply(1, 0, 1).normalize().scale(.025f * ((airTime <= 0 ? 2 : 1) + factor * 2))));
+                this.setDeltaMovement(
+                        getDeltaMovement()
+                                .add(
+                                        diff.multiply(1, 0, 1)
+                                                .normalize()
+                                                .scale(
+                                                        .025f
+                                                                * ((airTime <= 0 ? 2 : 1)
+                                                                        + factor * 2))));
             }
         }
         if (noPhysics) {
@@ -188,7 +217,12 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEn
             }
         } else {
             if (airTime % 3 == 0) {
-                HitResult ground = Utils.raycastForBlock(level(), position(), position().subtract(0, 3.5, 0), ClipContext.Fluid.ANY);
+                HitResult ground =
+                        Utils.raycastForBlock(
+                                level(),
+                                position(),
+                                position().subtract(0, 3.5, 0),
+                                ClipContext.Fluid.ANY);
                 if (ground.getType() == HitResult.Type.MISS) {
                     tooHigh = true;
                 }
@@ -208,15 +242,17 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEn
 
     private void handleFalling() {
         this.setDeltaMovement(getDeltaMovement().add(0, -.15, 0));
-        //server logic only
+        // server logic only
         if (!level().isClientSide) {
             if (onGround()) {
                 doImpactDamage();
-                playSound(SoundRegistry.ICE_BLOCK_IMPACT.get(), 2.5f, .8f + random.nextFloat() * .4f);
+                playSound(
+                        SoundRegistry.ICE_BLOCK_IMPACT.get(), 2.5f, .8f + random.nextFloat() * .4f);
                 impactParticles(getX(), getY(), getZ());
                 discard();
             } else {
-                level().getEntities(this, getBoundingBox().inflate(0.35)).forEach(this::doFallingDamage);
+                level().getEntities(this, getBoundingBox().inflate(0.35))
+                        .forEach(this::doFallingDamage);
             }
         }
     }
@@ -228,13 +264,14 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEn
 
     @Override
     public void setXRot(float pXRot) {
-//        IronsSpellbooks.LOGGER.debug("IceBlockProjectile: Something is trying to set my x rot! Ignoring.");
-        //super.setXRot(pXRot);
+        //        IronsSpellbooks.LOGGER.debug("IceBlockProjectile: Something is trying to set my x
+        // rot! Ignoring.");
+        // super.setXRot(pXRot);
     }
 
     @Override
     public void setYRot(float pYRot) {
-//        super.setYRot(pYRot);
+        //        super.setYRot(pYRot);
     }
 
     @Override
@@ -249,13 +286,15 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEn
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleTypes.SNOWFLAKE, x, y, z, 50, .8, .1, .8, 0.2, false);
-        MagicManager.spawnParticles(level(), ParticleHelper.SNOWFLAKE, x, y, z, 25, .5, .1, .5, 0.3, false);
+        MagicManager.spawnParticles(
+                level(), ParticleTypes.SNOWFLAKE, x, y, z, 50, .8, .1, .8, 0.2, false);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.SNOWFLAKE, x, y, z, 25, .5, .1, .5, 0.3, false);
     }
 
     @Override
     public float getSpeed() {
-        //unused
+        // unused
         return 0;
     }
 
@@ -265,8 +304,7 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements GeoEn
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
-    }
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {}
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {

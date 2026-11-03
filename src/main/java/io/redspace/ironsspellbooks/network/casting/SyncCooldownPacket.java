@@ -28,9 +28,10 @@ public class SyncCooldownPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientMagicData.getCooldowns().addCooldown(spellId, duration);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientMagicData.getCooldowns().addCooldown(spellId, duration);
+                });
         return true;
     }
 }

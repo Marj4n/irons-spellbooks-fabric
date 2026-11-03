@@ -10,7 +10,8 @@ import net.minecraft.world.damagesource.DamageType;
 
 public class ISSDamageTypes {
     public static ResourceKey<DamageType> register(String name) {
-        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(IronsSpellbooks.MODID, name));
+        return ResourceKey.create(
+                Registries.DAMAGE_TYPE, new ResourceLocation(IronsSpellbooks.MODID, name));
     }
 
     // Spell School Related
@@ -32,22 +33,90 @@ public class ISSDamageTypes {
     public static final ResourceKey<DamageType> POISON_CLOUD = register("poison_cloud");
 
     public static void bootstrap(BootstapContext<DamageType> context) {
-        context.register(FIRE_MAGIC, new DamageType(FIRE_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(ICE_MAGIC, new DamageType(ICE_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(LIGHTNING_MAGIC, new DamageType(LIGHTNING_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(HOLY_MAGIC, new DamageType(HOLY_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(ENDER_MAGIC, new DamageType(ENDER_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(BLOOD_MAGIC, new DamageType(BLOOD_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(EVOCATION_MAGIC, new DamageType(EVOCATION_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(ELDRITCH_MAGIC, new DamageType(ELDRITCH_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(NATURE_MAGIC, new DamageType(NATURE_MAGIC.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
+        context.register(
+                FIRE_MAGIC,
+                new DamageType(
+                        FIRE_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                ICE_MAGIC,
+                new DamageType(
+                        ICE_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                LIGHTNING_MAGIC,
+                new DamageType(
+                        LIGHTNING_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                HOLY_MAGIC,
+                new DamageType(
+                        HOLY_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                ENDER_MAGIC,
+                new DamageType(
+                        ENDER_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                BLOOD_MAGIC,
+                new DamageType(
+                        BLOOD_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                EVOCATION_MAGIC,
+                new DamageType(
+                        EVOCATION_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                ELDRITCH_MAGIC,
+                new DamageType(
+                        ELDRITCH_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                NATURE_MAGIC,
+                new DamageType(
+                        NATURE_MAGIC.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
 
-        context.register(CAULDRON, new DamageType(CAULDRON.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(HEARTSTOP, new DamageType(HEARTSTOP.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(DRAGON_BREATH_POOL, new DamageType(DRAGON_BREATH_POOL.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(FIRE_FIELD, new DamageType(FIRE_FIELD.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
-        context.register(POISON_CLOUD, new DamageType(POISON_CLOUD.location().getPath(), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0f));
+        context.register(
+                CAULDRON,
+                new DamageType(
+                        CAULDRON.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                HEARTSTOP,
+                new DamageType(
+                        HEARTSTOP.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                DRAGON_BREATH_POOL,
+                new DamageType(
+                        DRAGON_BREATH_POOL.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                FIRE_FIELD,
+                new DamageType(
+                        FIRE_FIELD.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
+        context.register(
+                POISON_CLOUD,
+                new DamageType(
+                        POISON_CLOUD.location().getPath(),
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0f));
     }
 }
-
-

@@ -18,8 +18,10 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public class MagicMissileRenderer extends EntityRenderer<MagicMissileProjectile> {
-    private static final ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/magic_missile/magic_missile.png");
-    private static final ResourceLocation FLARE = IronsSpellbooks.id("textures/entity/lens_flare.png");
+    private static final ResourceLocation TEXTURE =
+            IronsSpellbooks.id("textures/entity/magic_missile/magic_missile.png");
+    private static final ResourceLocation FLARE =
+            IronsSpellbooks.id("textures/entity/lens_flare.png");
     private final ModelPart body;
 
     public MagicMissileRenderer(Context context) {
@@ -29,17 +31,37 @@ public class MagicMissileRenderer extends EntityRenderer<MagicMissileProjectile>
     }
 
     @Override
-    public void render(MagicMissileProjectile entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            MagicMissileProjectile entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         Vec3 motion = entity.getDeltaMovement();
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
         poseStack.scale(0.35f, 0.35f, 0.35f);
 
         VertexConsumer consumer = bufferSource.getBuffer(renderType(getTextureLocation(entity)));
-        this.body.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, .8f, .8f, .8f, 1f);
+        this.body.render(
+                poseStack,
+                consumer,
+                LightTexture.FULL_BRIGHT,
+                OverlayTexture.NO_OVERLAY,
+                .8f,
+                .8f,
+                .8f,
+                1f);
 
         poseStack.popPose();
 
@@ -53,12 +75,36 @@ public class MagicMissileRenderer extends EntityRenderer<MagicMissileProjectile>
         poseStack.mulPose(Axis.YP.rotationDegrees(90f));
         poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTicks) * 15));
         consumer = bufferSource.getBuffer(RenderType.entityTranslucent(FLARE));
-//        int unpackedlight = Math.max(LightTexture.block(light), LightTexture.sky(light));
-//        int blowout = (int) Mth.lerp(unpackedlight / 15f, 0, 180);
-        consumer.vertex(poseMatrix, 0, -1, -1).color(255, 180, 255, 255).uv(0f, 1f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, 0, 1, -1).color(255, 180, 255, 255).uv(0f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, 0, 1, 1).color(255, 180, 255, 255).uv(1f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f).endVertex();
-        consumer.vertex(poseMatrix, 0, -1, 1).color(255, 180, 255, 255).uv(1f, 1f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(0f, 1f, 0f).endVertex();
+        //        int unpackedlight = Math.max(LightTexture.block(light), LightTexture.sky(light));
+        //        int blowout = (int) Mth.lerp(unpackedlight / 15f, 0, 180);
+        consumer.vertex(poseMatrix, 0, -1, -1)
+                .color(255, 180, 255, 255)
+                .uv(0f, 1f)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .normal(0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(poseMatrix, 0, 1, -1)
+                .color(255, 180, 255, 255)
+                .uv(0f, 0f)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .normal(0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(poseMatrix, 0, 1, 1)
+                .color(255, 180, 255, 255)
+                .uv(1f, 0f)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .normal(0f, 1f, 0f)
+                .endVertex();
+        consumer.vertex(poseMatrix, 0, -1, 1)
+                .color(255, 180, 255, 255)
+                .uv(1f, 1f)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(LightTexture.FULL_BRIGHT)
+                .normal(0f, 1f, 0f)
+                .endVertex();
         poseStack.popPose();
         super.render(entity, yaw, partialTicks, poseStack, bufferSource, light);
     }
@@ -71,5 +117,4 @@ public class MagicMissileRenderer extends EntityRenderer<MagicMissileProjectile>
     public ResourceLocation getTextureLocation(MagicMissileProjectile entity) {
         return TEXTURE;
     }
-
 }

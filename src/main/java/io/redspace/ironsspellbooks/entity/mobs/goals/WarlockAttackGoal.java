@@ -6,7 +6,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
-
 import java.util.List;
 
 public class WarlockAttackGoal extends WizardAttackGoal {
@@ -20,6 +19,7 @@ public class WarlockAttackGoal extends WizardAttackGoal {
     protected int meleeAttackIntervalMin;
     protected int meleeAttackIntervalMax;
     protected int meleeAttackDelay = -1;
+
     @Deprecated(forRemoval = true)
     protected float meleeRange;
 
@@ -27,12 +27,21 @@ public class WarlockAttackGoal extends WizardAttackGoal {
      * Deprecated 1.20.1 API compat. Range no longer affects this goal, it is instead derived from entity via {@link WarlockAttackGoal#meleeRange()}
      */
     @Deprecated(forRemoval = true)
-    public WarlockAttackGoal(IMagicEntity abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval, float range) {
+    public WarlockAttackGoal(
+            IMagicEntity abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval,
+            float range) {
         this(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
         this.meleeRange = range;
     }
 
-    public WarlockAttackGoal(IMagicEntity abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval) {
+    public WarlockAttackGoal(
+            IMagicEntity abstractSpellCastingMob,
+            double pSpeedModifier,
+            int minAttackInterval,
+            int maxAttackInterval) {
         super(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
         this.meleeDecisionTime = mob.getRandom().nextIntBetweenInclusive(80, 200);
         this.meleeBiasMin = .25f;
@@ -54,17 +63,22 @@ public class WarlockAttackGoal extends WizardAttackGoal {
     }
 
     public float meleeRange() {
-        return (float) (mob.getAttributeValue(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH) * mob.getScale());
+        return (float)
+                (mob.getAttributeValue(
+                                io.github.fabricators_of_create.porting_lib.attributes
+                                        .PortingLibAttributes.ENTITY_REACH)
+                        * mob.getScale());
     }
 
     protected float meleeBias() {
         return Mth.clampedLerp(meleeBiasMin, meleeBiasMax, mob.getHealth() / mob.getMaxHealth());
     }
 
-//    private boolean isCurrentPathValid() {
-//        var path = this.mob.getNavigation().getPath();
-//        return path != null && path.getEndNode() != null && path.getEndNode().asVec3().distanceToSqr(target.position()) < 20;
-//    }
+    //    private boolean isCurrentPathValid() {
+    //        var path = this.mob.getNavigation().getPath();
+    //        return path != null && path.getEndNode() != null &&
+    // path.getEndNode().asVec3().distanceToSqr(target.position()) < 20;
+    //    }
 
     @Override
     protected void doMovement(double distanceSquared) {
@@ -81,13 +95,17 @@ public class WarlockAttackGoal extends WizardAttackGoal {
             float speed = (float) movementSpeed();
             if (distanceSquared > meleeRange * meleeRange) {
                 mob.setXxa(0); // manually override strafe control before we set navigation
-                if (/*!isCurrentPathValid() && */mob.tickCount % 5 == 0) {
+                if (
+                /*!isCurrentPathValid() && */ mob.tickCount % 5 == 0) {
                     this.mob.getNavigation().moveTo(this.target, meleeMoveSpeedModifier);
                 }
             } else {
                 this.mob.getNavigation().stop();
-                strafeForwards = .5f * meleeMoveSpeedModifier * (4 * distanceSquared > meleeRange * meleeRange ? 1.5f : -1);
-                //we do a little strafing
+                strafeForwards =
+                        .5f
+                                * meleeMoveSpeedModifier
+                                * (4 * distanceSquared > meleeRange * meleeRange ? 1.5f : -1);
+                // we do a little strafing
                 if (++strafeTime > 25) {
                     if (mob.getRandom().nextDouble() < .1) {
                         strafingClockwise = !strafingClockwise;
@@ -110,17 +128,19 @@ public class WarlockAttackGoal extends WizardAttackGoal {
     @Override
     protected void handleAttackLogic(double distanceSquared) {
         var meleeRange = meleeRange();
-        if (!wantsToMelee || distanceSquared > meleeRange * meleeRange || spellCastingMob.isCasting()) {
+        if (!wantsToMelee
+                || distanceSquared > meleeRange * meleeRange
+                || spellCastingMob.isCasting()) {
             super.handleAttackLogic(distanceSquared);
         } else if (--this.meleeAttackDelay <= 0) {
             this.mob.swing(InteractionHand.MAIN_HAND);
             doMeleeAction();
         }
-
     }
 
     protected void doMeleeAction() {
-        double distanceSquared = this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
+        double distanceSquared =
+                this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
         this.mob.doHurtTarget(target);
         resetMeleeAttackInterval(distanceSquared);
     }
@@ -132,8 +152,13 @@ public class WarlockAttackGoal extends WizardAttackGoal {
     }
 
     @Override
-    public WarlockAttackGoal setSpells(List<AbstractSpell> attackSpells, List<AbstractSpell> defenseSpells, List<AbstractSpell> movementSpells, List<AbstractSpell> supportSpells) {
-        return (WarlockAttackGoal) super.setSpells(attackSpells, defenseSpells, movementSpells, supportSpells);
+    public WarlockAttackGoal setSpells(
+            List<AbstractSpell> attackSpells,
+            List<AbstractSpell> defenseSpells,
+            List<AbstractSpell> movementSpells,
+            List<AbstractSpell> supportSpells) {
+        return (WarlockAttackGoal)
+                super.setSpells(attackSpells, defenseSpells, movementSpells, supportSpells);
     }
 
     @Override
@@ -142,8 +167,10 @@ public class WarlockAttackGoal extends WizardAttackGoal {
     }
 
     @Override
-    public WarlockAttackGoal setSingleUseSpell(AbstractSpell spellType, int minDelay, int maxDelay, int minLevel, int maxLevel) {
-        return (WarlockAttackGoal) super.setSingleUseSpell(spellType, minDelay, maxDelay, minLevel, maxLevel);
+    public WarlockAttackGoal setSingleUseSpell(
+            AbstractSpell spellType, int minDelay, int maxDelay, int minLevel, int maxLevel) {
+        return (WarlockAttackGoal)
+                super.setSingleUseSpell(spellType, minDelay, maxDelay, minLevel, maxLevel);
     }
 
     @Override
@@ -164,12 +191,23 @@ public class WarlockAttackGoal extends WizardAttackGoal {
 
     @Override
     protected double movementSpeed() {
-        //fixme: move control already reads speed attribute, we should not be basing speed modifier based on it as well
-        return wantsToMelee ? meleeMoveSpeedModifier * mob.getAttributeValue(Attributes.MOVEMENT_SPEED) * 2 : super.movementSpeed();
+        // fixme: move control already reads speed attribute, we should not be basing speed modifier
+        // based on it as well
+        return wantsToMelee
+                ? meleeMoveSpeedModifier * mob.getAttributeValue(Attributes.MOVEMENT_SPEED) * 2
+                : super.movementSpeed();
     }
 
     protected void resetMeleeAttackInterval(double distanceSquared) {
         float f = (float) Math.sqrt(distanceSquared) / this.spellcastingRange;
-        this.meleeAttackDelay = Math.max(1, Mth.floor(f * (float) (this.meleeAttackIntervalMax - this.meleeAttackIntervalMin) + (float) this.meleeAttackIntervalMin));
+        this.meleeAttackDelay =
+                Math.max(
+                        1,
+                        Mth.floor(
+                                f
+                                                * (float)
+                                                        (this.meleeAttackIntervalMax
+                                                                - this.meleeAttackIntervalMin)
+                                        + (float) this.meleeAttackIntervalMin));
     }
 }

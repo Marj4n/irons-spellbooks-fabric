@@ -22,20 +22,25 @@ import java.util.List;
 import java.util.Optional;
 
 public class GuidingBoltSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "guiding_bolt");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "guiding_bolt");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
                 Component.translatable("ui.irons_spellbooks.effect_length", "25s"));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(8)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(8)
+                    .build();
 
     public GuidingBoltSpell() {
         this.manaCostPerLevel = 5;
@@ -71,9 +76,20 @@ public class GuidingBoltSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         GuidingBoltProjectile guidingBolt = new GuidingBoltProjectile(world, entity);
-        guidingBolt.setPos(entity.position().add(0, entity.getEyeHeight() - guidingBolt.getBoundingBox().getYsize() * .5f, 0));
+        guidingBolt.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight()
+                                        - guidingBolt.getBoundingBox().getYsize() * .5f,
+                                0));
         guidingBolt.shoot(entity.getLookAngle());
         guidingBolt.setDamage(getDamage(spellLevel, entity));
         world.addFreshEntity(guidingBolt);
@@ -83,5 +99,4 @@ public class GuidingBoltSpell extends AbstractSpell {
     private float getDamage(int spellLevel, LivingEntity entity) {
         return getSpellPower(spellLevel, entity) * .5f;
     }
-
 }

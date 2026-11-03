@@ -50,30 +50,65 @@ public class FurledMapItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level level, Player player, InteractionHand hand) {
         if (level instanceof ServerLevel serverlevel) {
-            level.playSound(null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
+            level.playSound(
+                    null,
+                    player,
+                    SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT,
+                    player.getSoundSource(),
+                    1.0F,
+                    1.0F);
             ItemStack itemStack = player.getItemInHand(hand);
             player.getCooldowns().addCooldown(itemStack.getItem(), 50);
 
             if (FurledMapData.has(itemStack)) {
                 FurledMapData furledMapData = FurledMapData.get(itemStack);
-                ResourceKey<Structure> structureResourceKey = ResourceKey.create(Registries.STRUCTURE, furledMapData.destinationResource);
-                var holder = serverlevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getHolder(structureResourceKey).map(HolderSet::direct);
+                ResourceKey<Structure> structureResourceKey =
+                        ResourceKey.create(Registries.STRUCTURE, furledMapData.destinationResource);
+                var holder =
+                        serverlevel
+                                .registryAccess()
+                                .registryOrThrow(Registries.STRUCTURE)
+                                .getHolder(structureResourceKey)
+                                .map(HolderSet::direct);
                 if (furledMapData.dimension().isPresent()) {
                     var dimensionRestriction = furledMapData.dimension().get();
                     if (!serverlevel.dimension().equals(dimensionRestriction)) {
-                        ((ServerPlayer) player).connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("item.irons_spellbooks.furled_map.dimension_fail").withStyle(ChatFormatting.RED)));
+                        ((ServerPlayer) player)
+                                .connection.send(
+                                        new ClientboundSetActionBarTextPacket(
+                                                Component.translatable(
+                                                                "item.irons_spellbooks.furled_map.dimension_fail")
+                                                        .withStyle(ChatFormatting.RED)));
                         return InteractionResultHolder.fail(itemStack);
                     }
                 }
                 if (holder.isPresent()) {
-                    Pair<BlockPos, Holder<Structure>> pair = serverlevel.getChunkSource().getGenerator().findNearestMapStructure(serverlevel, holder.get(), player.blockPosition(), 100, ServerConfigs.FURLED_MAPS_SKIP_CHUNKS.get());
+                    Pair<BlockPos, Holder<Structure>> pair =
+                            serverlevel
+                                    .getChunkSource()
+                                    .getGenerator()
+                                    .findNearestMapStructure(
+                                            serverlevel,
+                                            holder.get(),
+                                            player.blockPosition(),
+                                            100,
+                                            ServerConfigs.FURLED_MAPS_SKIP_CHUNKS.get());
                     if (pair != null) {
                         var blockpos = pair.getFirst();
-                        ItemStack mapStack = MapItem.create(serverlevel, blockpos.getX(), blockpos.getZ(), (byte) 2, true, true);
+                        ItemStack mapStack =
+                                MapItem.create(
+                                        serverlevel,
+                                        blockpos.getX(),
+                                        blockpos.getZ(),
+                                        (byte) 2,
+                                        true,
+                                        true);
                         MapItem.renderBiomePreviewMap(serverlevel, mapStack);
-                        MapItemSavedData.addTargetDecoration(mapStack, blockpos, "x", MapDecoration.Type.RED_X);
+                        MapItemSavedData.addTargetDecoration(
+                                mapStack, blockpos, "x", MapDecoration.Type.RED_X);
                         furledMapData.descriptionOverride.ifPresent(mapStack::setHoverName);
                         replaceItem(player, mapStack, hand);
                         return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
@@ -88,58 +123,97 @@ public class FurledMapItem extends Item {
     private static void replaceItem(Player player, ItemStack itemStack, InteractionHand hand) {
         boolean flag = player.getAbilities().instabuild;
         if (!flag) {
-            //dumb hardcode becuase create filled results isnt working :/
+            // dumb hardcode becuase create filled results isnt working :/
             player.setItemInHand(hand, itemStack);
         } else {
             player.getInventory().add(itemStack);
         }
     }
 
-    public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
-    public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
+    public static final ResourceKey<Level> OVERWORLD =
+            ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
+    public static final ResourceKey<Level> NETHER =
+            ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
 
     public static ItemStack of(ResourceLocation structure, MutableComponent descriptor) {
         ItemStack itemStack = new ItemStack(ItemRegistry.FURLED_MAP.get());
-        FurledMapData.set(itemStack, new FurledMapData(structure, Optional.empty(), Optional.of(descriptor)));
-        FurledMapData.setLoreHelper(itemStack, Component.translatable("item.irons_spellbooks.furled_map_descriptor_framing", descriptor).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)));
+        FurledMapData.set(
+                itemStack, new FurledMapData(structure, Optional.empty(), Optional.of(descriptor)));
+        FurledMapData.setLoreHelper(
+                itemStack,
+                Component.translatable(
+                                "item.irons_spellbooks.furled_map_descriptor_framing", descriptor)
+                        .setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)));
         return itemStack;
     }
 
-    public static ItemStack of(ResourceLocation structure, ResourceKey<Level> exclusiveDimension, MutableComponent descriptor) {
+    public static ItemStack of(
+            ResourceLocation structure,
+            ResourceKey<Level> exclusiveDimension,
+            MutableComponent descriptor) {
         return of(structure, exclusiveDimension, descriptor, false);
     }
 
-    public static ItemStack of(ResourceLocation structure, ResourceKey<Level> exclusiveDimension, MutableComponent descriptor, boolean ancient) {
-        ItemStack itemStack = new ItemStack(ancient ? ItemRegistry.ANCIENT_FURLED_MAP.get() : ItemRegistry.FURLED_MAP.get());
-        FurledMapData.set(itemStack, new FurledMapData(structure, Optional.of(exclusiveDimension), Optional.of(descriptor)));
-        FurledMapData.setLoreHelper(itemStack, Component.translatable("item.irons_spellbooks.furled_map_descriptor_framing", descriptor).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)));
+    public static ItemStack of(
+            ResourceLocation structure,
+            ResourceKey<Level> exclusiveDimension,
+            MutableComponent descriptor,
+            boolean ancient) {
+        ItemStack itemStack =
+                new ItemStack(
+                        ancient
+                                ? ItemRegistry.ANCIENT_FURLED_MAP.get()
+                                : ItemRegistry.FURLED_MAP.get());
+        FurledMapData.set(
+                itemStack,
+                new FurledMapData(
+                        structure, Optional.of(exclusiveDimension), Optional.of(descriptor)));
+        FurledMapData.setLoreHelper(
+                itemStack,
+                Component.translatable(
+                                "item.irons_spellbooks.furled_map_descriptor_framing", descriptor)
+                        .setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)));
         return itemStack;
     }
 
-
-    public record FurledMapData(ResourceLocation destinationResource, Optional<ResourceKey<Level>> dimension,
-                                Optional<Component> descriptionOverride) {
+    public record FurledMapData(
+            ResourceLocation destinationResource,
+            Optional<ResourceKey<Level>> dimension,
+            Optional<Component> descriptionOverride) {
 
         public static final String NBT = "irons_spellbooks:furled_map_data";
         public static final String LEGACY_NBT = "furledMapData";
         public static final String FURLED_MAP_LOCATION = "destination";
         public static final String FURLED_MAP_DESCRIPTION = "description";
-        public static final Codec<FurledMapData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                ResourceLocation.CODEC.fieldOf("destination").forGetter(FurledMapData::destinationResource),
-                ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("dimension").forGetter(FurledMapData::dimension),
-                ExtraCodecs.COMPONENT.optionalFieldOf("descriptionOverride").forGetter(FurledMapData::descriptionOverride)
-        ).apply(builder, FurledMapData::new));
-        public static final Codec<FurledMapData> LEGACY_CODEC = CodecHelper.createLegacyCodec(tag -> {
-            CompoundTag nbt = (CompoundTag) tag;
-            String destination = nbt.getString("destination");
-            String rawDesc = nbt.getString("description");
-            Optional<Component> desc = Optional.empty();
-            if (!rawDesc.isEmpty()) {
-                desc = Optional.ofNullable(Component.Serializer.fromJson(rawDesc));
-            }
-            return new FurledMapData(new ResourceLocation(destination), Optional.empty(), desc);
-        });
-
+        public static final Codec<FurledMapData> CODEC =
+                RecordCodecBuilder.create(
+                        builder ->
+                                builder.group(
+                                                ResourceLocation.CODEC
+                                                        .fieldOf("destination")
+                                                        .forGetter(
+                                                                FurledMapData::destinationResource),
+                                                ResourceKey.codec(Registries.DIMENSION)
+                                                        .optionalFieldOf("dimension")
+                                                        .forGetter(FurledMapData::dimension),
+                                                ExtraCodecs.COMPONENT
+                                                        .optionalFieldOf("descriptionOverride")
+                                                        .forGetter(
+                                                                FurledMapData::descriptionOverride))
+                                        .apply(builder, FurledMapData::new));
+        public static final Codec<FurledMapData> LEGACY_CODEC =
+                CodecHelper.createLegacyCodec(
+                        tag -> {
+                            CompoundTag nbt = (CompoundTag) tag;
+                            String destination = nbt.getString("destination");
+                            String rawDesc = nbt.getString("description");
+                            Optional<Component> desc = Optional.empty();
+                            if (!rawDesc.isEmpty()) {
+                                desc = Optional.ofNullable(Component.Serializer.fromJson(rawDesc));
+                            }
+                            return new FurledMapData(
+                                    new ResourceLocation(destination), Optional.empty(), desc);
+                        });
 
         public static boolean has(ItemStack stack) {
             return CodecHelper.hasWithLegacy(stack, NBT, LEGACY_NBT);
@@ -161,7 +235,10 @@ public class FurledMapItem extends Item {
 
         @Override
         public boolean equals(Object obj) {
-            return obj == this || (obj instanceof FurledMapData data && data.destinationResource.equals(this.destinationResource) && data.descriptionOverride.equals(this.descriptionOverride));
+            return obj == this
+                    || (obj instanceof FurledMapData data
+                            && data.destinationResource.equals(this.destinationResource)
+                            && data.descriptionOverride.equals(this.descriptionOverride));
         }
 
         @Override
@@ -170,4 +247,3 @@ public class FurledMapItem extends Item {
         }
     }
 }
-

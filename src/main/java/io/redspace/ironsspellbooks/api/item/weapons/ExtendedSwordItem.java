@@ -23,11 +23,26 @@ public class ExtendedSwordItem extends SwordItem {
 
         float attackDamage = tier.getAttackDamageBonus();
         float attackSpeed = tier.getSpeed();
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", attackDamage, AttributeModifier.Operation.ADDITION));
-        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
+                ImmutableMultimap.builder();
+        builder.put(
+                Attributes.ATTACK_DAMAGE,
+                new AttributeModifier(
+                        BASE_ATTACK_DAMAGE_UUID,
+                        "Weapon modifier",
+                        attackDamage,
+                        AttributeModifier.Operation.ADDITION));
+        builder.put(
+                Attributes.ATTACK_SPEED,
+                new AttributeModifier(
+                        BASE_ATTACK_SPEED_UUID,
+                        "Weapon modifier",
+                        attackSpeed,
+                        AttributeModifier.Operation.ADDITION));
         for (AttributeContainer container : tier.getAdditionalAttributes()) {
-            builder.put(container.attribute().get(), container.createModifier(EquipmentSlot.MAINHAND.getName()));
+            builder.put(
+                    container.attribute().get(),
+                    container.createModifier(EquipmentSlot.MAINHAND.getName()));
         }
         this.defaultModifiers = builder.build();
     }
@@ -36,38 +51,63 @@ public class ExtendedSwordItem extends SwordItem {
      * Deprecated 1.20.1 API compat.  Use {@link IronsWeaponTier} and {@link ExtendedSwordItem#ExtendedSwordItem(Tier, Properties)} instead
      */
     @Deprecated(forRemoval = true)
-    public ExtendedSwordItem(Tier tier, double attackDamage, double attackSpeed, Map<Attribute, AttributeModifier> additionalAttributes, Properties properties) {
+    public ExtendedSwordItem(
+            Tier tier,
+            double attackDamage,
+            double attackSpeed,
+            Map<Attribute, AttributeModifier> additionalAttributes,
+            Properties properties) {
         super(tier, 3, -2.4f, properties);
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", attackDamage, AttributeModifier.Operation.ADDITION));
-        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
-        for (Map.Entry<Attribute, AttributeModifier> modifierEntry : additionalAttributes.entrySet()) {
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder =
+                ImmutableMultimap.builder();
+        builder.put(
+                Attributes.ATTACK_DAMAGE,
+                new AttributeModifier(
+                        BASE_ATTACK_DAMAGE_UUID,
+                        "Weapon modifier",
+                        attackDamage,
+                        AttributeModifier.Operation.ADDITION));
+        builder.put(
+                Attributes.ATTACK_SPEED,
+                new AttributeModifier(
+                        BASE_ATTACK_SPEED_UUID,
+                        "Weapon modifier",
+                        attackSpeed,
+                        AttributeModifier.Operation.ADDITION));
+        for (Map.Entry<Attribute, AttributeModifier> modifierEntry :
+                additionalAttributes.entrySet()) {
             builder.put(modifierEntry.getKey(), modifierEntry.getValue());
         }
         this.defaultModifiers = builder.build();
     }
 
     @Override
-    public @NotNull Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@NotNull EquipmentSlot pEquipmentSlot) {
-        return pEquipmentSlot == EquipmentSlot.MAINHAND ? this.defaultModifiers : super.getDefaultAttributeModifiers(pEquipmentSlot);
+    public @NotNull Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(
+            @NotNull EquipmentSlot pEquipmentSlot) {
+        return pEquipmentSlot == EquipmentSlot.MAINHAND
+                ? this.defaultModifiers
+                : super.getDefaultAttributeModifiers(pEquipmentSlot);
     }
-//    public static ItemAttributeModifiers createAttributes(IronsWeaponTier pTier) {
-//        var builder = ItemAttributeModifiers.builder()
-//                .add(
-//                        Attributes.ATTACK_DAMAGE,
-//                        new AttributeModifier(
-//                                BASE_ATTACK_DAMAGE_ID, pTier.getAttackDamageBonus(), AttributeModifier.Operation.ADDITION
-//                        ),
-//                        EquipmentSlotGroup.MAINHAND
-//                )
-//                .add(
-//                        Attributes.ATTACK_SPEED,
-//                        new AttributeModifier(BASE_ATTACK_SPEED_ID, pTier.getSpeed(), AttributeModifier.Operation.ADDITION),
-//                        EquipmentSlotGroup.MAINHAND
-//                );
-//        for (AttributeContainer holder : pTier.getAdditionalAttributes()) {
-//            builder.add(holder.attribute(), holder.createModifier(EquipmentSlot.MAINHAND.getName()), EquipmentSlotGroup.MAINHAND);
-//        }
-//        return builder.build();
-//    }
+    //    public static ItemAttributeModifiers createAttributes(IronsWeaponTier pTier) {
+    //        var builder = ItemAttributeModifiers.builder()
+    //                .add(
+    //                        Attributes.ATTACK_DAMAGE,
+    //                        new AttributeModifier(
+    //                                BASE_ATTACK_DAMAGE_ID, pTier.getAttackDamageBonus(),
+    // AttributeModifier.Operation.ADDITION
+    //                        ),
+    //                        EquipmentSlotGroup.MAINHAND
+    //                )
+    //                .add(
+    //                        Attributes.ATTACK_SPEED,
+    //                        new AttributeModifier(BASE_ATTACK_SPEED_ID, pTier.getSpeed(),
+    // AttributeModifier.Operation.ADDITION),
+    //                        EquipmentSlotGroup.MAINHAND
+    //                );
+    //        for (AttributeContainer holder : pTier.getAdditionalAttributes()) {
+    //            builder.add(holder.attribute(),
+    // holder.createModifier(EquipmentSlot.MAINHAND.getName()), EquipmentSlotGroup.MAINHAND);
+    //        }
+    //        return builder.build();
+    //    }
 }

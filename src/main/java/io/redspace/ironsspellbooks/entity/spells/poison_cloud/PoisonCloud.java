@@ -21,7 +21,6 @@ public class PoisonCloud extends AoeEntity {
 
     public PoisonCloud(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-
     }
 
     public PoisonCloud(Level level) {
@@ -31,7 +30,12 @@ public class PoisonCloud extends AoeEntity {
     @Override
     public void applyEffect(LivingEntity target) {
         if (damageSource == null) {
-            damageSource = new DamageSource(DamageSources.getHolderFromResource(target, ISSDamageTypes.POISON_CLOUD), this, getOwner());
+            damageSource =
+                    new DamageSource(
+                            DamageSources.getHolderFromResource(
+                                    target, ISSDamageTypes.POISON_CLOUD),
+                            this,
+                            getOwner());
         }
         DamageSources.ignoreNextKnockback(target);
         target.hurt(damageSource, getDamage());

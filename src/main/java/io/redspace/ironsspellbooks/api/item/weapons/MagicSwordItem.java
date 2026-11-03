@@ -19,7 +19,8 @@ public class MagicSwordItem extends ExtendedSwordItem implements IPresetSpellCon
     List<SpellData> spellData = null;
     SpellDataRegistryHolder[] spellDataRegistryHolders;
 
-    public <T extends Tier & IronsWeaponTier> MagicSwordItem(T pTier, Properties pProperties, SpellDataRegistryHolder[] spellDataRegistryHolders) {
+    public <T extends Tier & IronsWeaponTier> MagicSwordItem(
+            T pTier, Properties pProperties, SpellDataRegistryHolder[] spellDataRegistryHolders) {
         super(pTier, pProperties);
         this.spellDataRegistryHolders = spellDataRegistryHolders;
     }
@@ -28,14 +29,23 @@ public class MagicSwordItem extends ExtendedSwordItem implements IPresetSpellCon
      * Use {@link IronsWeaponTier} and {@link MagicSwordItem#MagicSwordItem(Tier, Properties, SpellDataRegistryHolder[])}
      */
     @Deprecated(forRemoval = true)
-    public MagicSwordItem(Tier tier, double attackDamage, double attackSpeed, SpellDataRegistryHolder[] spellDataRegistryHolders, Map<Attribute, AttributeModifier> additionalAttributes, Properties properties) {
+    public MagicSwordItem(
+            Tier tier,
+            double attackDamage,
+            double attackSpeed,
+            SpellDataRegistryHolder[] spellDataRegistryHolders,
+            Map<Attribute, AttributeModifier> additionalAttributes,
+            Properties properties) {
         super(tier, attackDamage, attackSpeed, additionalAttributes, properties);
         this.spellDataRegistryHolders = spellDataRegistryHolders;
     }
 
     public List<SpellData> getSpells() {
         if (spellData == null) {
-            spellData = Arrays.stream(spellDataRegistryHolders).map(SpellDataRegistryHolder::getSpellData).toList();
+            spellData =
+                    Arrays.stream(spellDataRegistryHolders)
+                            .map(SpellDataRegistryHolder::getSpellData)
+                            .toList();
             spellDataRegistryHolders = null;
         }
         return spellData;
@@ -50,7 +60,10 @@ public class MagicSwordItem extends ExtendedSwordItem implements IPresetSpellCon
         if (!ISpellContainer.isSpellContainer(itemStack)) {
             var spells = getSpells();
             var spellContainer = ISpellContainer.create(spells.size(), true, false).mutableCopy();
-            spells.forEach(spellData -> spellContainer.addSpell(spellData.getSpell(), spellData.getLevel(), true));
+            spells.forEach(
+                    spellData ->
+                            spellContainer.addSpell(
+                                    spellData.getSpell(), spellData.getLevel(), true));
             ISpellContainer.set(itemStack, spellContainer.toImmutable());
         }
     }

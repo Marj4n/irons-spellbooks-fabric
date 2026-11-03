@@ -48,23 +48,35 @@ public class BossLootHandler {
         }
     }
 
-    public void prepareDrops(Mob mob, ServerLevel serverLevel, DamageSource damageSource, boolean attackedRecently, boolean ominous, @Nullable ServerPlayer lastDamagePlayer) {
+    public void prepareDrops(
+            Mob mob,
+            ServerLevel serverLevel,
+            DamageSource damageSource,
+            boolean attackedRecently,
+            boolean ominous,
+            @Nullable ServerPlayer lastDamagePlayer) {
         preparedDrops.clear();
 
         ResourceLocation rootLootTable = mob.getLootTable();
         ResourceLocation perPlayerLootTable = rootLootTable.withSuffix("_per_player");
         ResourceLocation ominousLootTable = rootLootTable.withSuffix("_ominous");
-        ResourceLocation perPlayerOminousLootTable = rootLootTable.withSuffix("_per_player_ominous");
+        ResourceLocation perPlayerOminousLootTable =
+                rootLootTable.withSuffix("_per_player_ominous");
 
         // if not set, loot tables default to empty
         LootTable sharedLoot = serverLevel.getServer().getLootData().getLootTable(rootLootTable);
-        LootTable sharedOminousLoot = serverLevel.getServer().getLootData().getLootTable(ominousLootTable);
-        LootTable perPlayer = serverLevel.getServer().getLootData().getLootTable(perPlayerLootTable);
-        LootTable perPlayerOminous = serverLevel.getServer().getLootData().getLootTable(perPlayerOminousLootTable);
+        LootTable sharedOminousLoot =
+                serverLevel.getServer().getLootData().getLootTable(ominousLootTable);
+        LootTable perPlayer =
+                serverLevel.getServer().getLootData().getLootTable(perPlayerLootTable);
+        LootTable perPlayerOminous =
+                serverLevel.getServer().getLootData().getLootTable(perPlayerOminousLootTable);
 
         List<ItemStack> sharedDrops = new ArrayList<>();
 
-        LootParams sharedParams = createLootParams(serverLevel, mob, damageSource, attackedRecently ? lastDamagePlayer : null);
+        LootParams sharedParams =
+                createLootParams(
+                        serverLevel, mob, damageSource, attackedRecently ? lastDamagePlayer : null);
         sharedLoot.getRandomItems(sharedParams, sharedDrops::add);
         if (ominous) {
             sharedOminousLoot.getRandomItems(sharedParams, sharedDrops::add);
@@ -82,7 +94,8 @@ public class BossLootHandler {
                     contextPlayer = serverPlayer;
                 }
             }
-            LootParams participantParams = createLootParams(serverLevel, mob, damageSource, contextPlayer);
+            LootParams participantParams =
+                    createLootParams(serverLevel, mob, damageSource, contextPlayer);
 
             List<ItemStack> rolledForParticipant = new ArrayList<>();
             perPlayer.getRandomItems(participantParams, rolledForParticipant::add);
@@ -94,7 +107,9 @@ public class BossLootHandler {
                 sharedDrops.addAll(rolledForParticipant);
             } else {
                 // verbose but allows for other accumulation passes
-                perPlayerDrops.computeIfAbsent(participantId, uuid -> new ArrayList<>()).addAll(rolledForParticipant);
+                perPlayerDrops
+                        .computeIfAbsent(participantId, uuid -> new ArrayList<>())
+                        .addAll(rolledForParticipant);
             }
         }
 
@@ -113,11 +128,19 @@ public class BossLootHandler {
             return;
         }
         for (PreparedDrop preparedDrop : preparedDrops) {
-            ItemEntity itemEntity = new ItemEntity(serverLevel, mob.getX(), mob.getY() + mob.getBbHeight() * 0.5, mob.getZ(), preparedDrop.itemStack.copy());
+            ItemEntity itemEntity =
+                    new ItemEntity(
+                            serverLevel,
+                            mob.getX(),
+                            mob.getY() + mob.getBbHeight() * 0.5,
+                            mob.getZ(),
+                            preparedDrop.itemStack.copy());
             itemEntity.setPickUpDelay(20);
             if (preparedDrop.targetPlayer != null) {
                 Player player = serverLevel.getPlayerByUUID(preparedDrop.targetPlayer);
-                if (player != null && player.distanceToSqr(mob) <= PLAYER_TARGETING_RANGE_SQR && Utils.hasLineOfSight(serverLevel, mob, player, false)) {
+                if (player != null
+                        && player.distanceToSqr(mob) <= PLAYER_TARGETING_RANGE_SQR
+                        && Utils.hasLineOfSight(serverLevel, mob, player, false)) {
                     itemEntity.setThrower(player.getUUID());
                     Vec3 targetPos = player.position().add(0, player.getBbHeight() * 0.5, 0);
                     Vec3 launchMotion = computeLaunchVelocity(itemEntity.position(), targetPos);
@@ -168,22 +191,34 @@ public class BossLootHandler {
             if (stack.isEmpty()) {
                 continue;
             }
-            UUID targetPlayer = dropTag.hasUUID(PREPARED_DROP_TARGET_TAG) ? dropTag.getUUID(PREPARED_DROP_TARGET_TAG) : null;
+            UUID targetPlayer =
+                    dropTag.hasUUID(PREPARED_DROP_TARGET_TAG)
+                            ? dropTag.getUUID(PREPARED_DROP_TARGET_TAG)
+                            : null;
             preparedDrops.add(new PreparedDrop(stack, targetPlayer));
         }
     }
 
-    private static LootParams createLootParams(ServerLevel serverLevel, Mob mob, DamageSource damageSource, @Nullable ServerPlayer damagePlayer) {
-        LootParams.Builder builder = new LootParams.Builder(serverLevel)
-                .withParameter(LootContextParams.THIS_ENTITY, mob)
-                .withParameter(LootContextParams.ORIGIN, mob.position())
-                .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-                .withOptionalParameter(LootContextParams.KILLER_ENTITY, damageSource.getEntity())
-                .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, damageSource.getDirectEntity());
+    private static LootParams createLootParams(
+            ServerLevel serverLevel,
+            Mob mob,
+            DamageSource damageSource,
+            @Nullable ServerPlayer damagePlayer) {
+        LootParams.Builder builder =
+                new LootParams.Builder(serverLevel)
+                        .withParameter(LootContextParams.THIS_ENTITY, mob)
+                        .withParameter(LootContextParams.ORIGIN, mob.position())
+                        .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
+                        .withOptionalParameter(
+                                LootContextParams.KILLER_ENTITY, damageSource.getEntity())
+                        .withOptionalParameter(
+                                LootContextParams.DIRECT_KILLER_ENTITY,
+                                damageSource.getDirectEntity());
 
         if (damagePlayer != null) {
-            builder = builder.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, damagePlayer)
-                    .withLuck(damagePlayer.getLuck());
+            builder =
+                    builder.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, damagePlayer)
+                            .withLuck(damagePlayer.getLuck());
         }
 
         return builder.create(LootContextParamSets.ENTITY);
@@ -192,7 +227,11 @@ public class BossLootHandler {
     private static Vec3 computeLaunchVelocity(Vec3 start, Vec3 target) {
         target = target.add(Utils.getRandomVec3(0.25));
         Vec3 horizontal = target.subtract(start).multiply(1, 0, 1);
-        double horizontalSpeed = horizontal.length() / 20f * 0.8f; // 1 second flight, 80% so it lands in front of player instead of on top
+        double horizontalSpeed =
+                horizontal.length()
+                        / 20f
+                        * 0.8f; // 1 second flight, 80% so it lands in front of player instead of on
+                                // top
         double distance = horizontal.length();
         double ticks = distance / horizontalSpeed;
 
@@ -204,6 +243,5 @@ public class BossLootHandler {
         return horizontal.normalize().scale(horizontalSpeed).add(0, verticalSpeed, 0);
     }
 
-    private record PreparedDrop(ItemStack itemStack, @Nullable UUID targetPlayer) {
-    }
+    private record PreparedDrop(ItemStack itemStack, @Nullable UUID targetPlayer) {}
 }

@@ -33,19 +33,23 @@ import java.util.List;
 import java.util.Optional;
 
 public class DivineSmiteSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "divine_smite");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "divine_smite");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", getDamageText(spellLevel, caster)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage", getDamageText(spellLevel, caster)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(15)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(15)
+                    .build();
 
     public DivineSmiteSpell() {
         this.manaCostPerLevel = 15;
@@ -62,7 +66,7 @@ public class DivineSmiteSpell extends AbstractSpell {
 
     @Override
     public int getEffectiveCastTime(int spellLevel, @Nullable LivingEntity entity) {
-        //due to melee animation timing, we do not want cast time attribute to affect this spell
+        // due to melee animation timing, we do not want cast time attribute to affect this spell
         return getCastTime(spellLevel);
     }
 
@@ -92,21 +96,73 @@ public class DivineSmiteSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float radius = 2.2f;
         float range = 1.7f;
-        Vec3 smiteLocation = Utils.raycastForBlock(level, entity.getEyePosition(), entity.getEyePosition().add(entity.getForward().multiply(range, 0, range)), ClipContext.Fluid.NONE).getLocation();
-        Vec3 particleLocation = level.clip(new ClipContext(smiteLocation, smiteLocation.add(0, -2, 0), ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, null)).getLocation().add(0, 0.1, 0);
-        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(SchoolRegistry.HOLY.get().getTargetingColor(), radius * 2),
-                particleLocation.x, particleLocation.y, particleLocation.z, 1, 0, 0, 0, 0, true);
-        MagicManager.spawnParticles(level, ParticleTypes.ELECTRIC_SPARK, particleLocation.x, particleLocation.y, particleLocation.z, 50, 0, 0, 0, 1, false);
+        Vec3 smiteLocation =
+                Utils.raycastForBlock(
+                                level,
+                                entity.getEyePosition(),
+                                entity.getEyePosition()
+                                        .add(entity.getForward().multiply(range, 0, range)),
+                                ClipContext.Fluid.NONE)
+                        .getLocation();
+        Vec3 particleLocation =
+                level.clip(
+                                new ClipContext(
+                                        smiteLocation,
+                                        smiteLocation.add(0, -2, 0),
+                                        ClipContext.Block.VISUAL,
+                                        ClipContext.Fluid.NONE,
+                                        null))
+                        .getLocation()
+                        .add(0, 0.1, 0);
+        MagicManager.spawnParticles(
+                level,
+                new BlastwaveParticleOptions(
+                        SchoolRegistry.HOLY.get().getTargetingColor(), radius * 2),
+                particleLocation.x,
+                particleLocation.y,
+                particleLocation.z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        MagicManager.spawnParticles(
+                level,
+                ParticleTypes.ELECTRIC_SPARK,
+                particleLocation.x,
+                particleLocation.y,
+                particleLocation.z,
+                50,
+                0,
+                0,
+                0,
+                1,
+                false);
         CameraShakeManager.addCameraShake(new CameraShakeData(level, 20, particleLocation, 10));
-        var entities = level.getEntities(entity, AABB.ofSize(smiteLocation, radius * 2, radius * 4, radius * 2));
+        var entities =
+                level.getEntities(
+                        entity, AABB.ofSize(smiteLocation, radius * 2, radius * 4, radius * 2));
         var damageSource = this.getDamageSource(entity);
         for (Entity targetEntity : entities) {
-            //double distance = targetEntity.distanceToSqr(smiteLocation);
-            if (targetEntity.isAlive() && targetEntity.isPickable() && Utils.hasLineOfSight(level, smiteLocation.add(0, 1, 0), targetEntity.getBoundingBox().getCenter(), true)) {
-                if (DamageSources.applyDamage(targetEntity, getDamage(spellLevel, entity), damageSource)) {
+            // double distance = targetEntity.distanceToSqr(smiteLocation);
+            if (targetEntity.isAlive()
+                    && targetEntity.isPickable()
+                    && Utils.hasLineOfSight(
+                            level,
+                            smiteLocation.add(0, 1, 0),
+                            targetEntity.getBoundingBox().getCenter(),
+                            true)) {
+                if (DamageSources.applyDamage(
+                        targetEntity, getDamage(spellLevel, entity), damageSource)) {
                     EnchantmentHelper.doPostDamageEffects(entity, targetEntity);
                 }
             }
@@ -115,25 +171,26 @@ public class DivineSmiteSpell extends AbstractSpell {
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return getSpellPower(spellLevel, entity) + Utils.getWeaponDamage(entity, MobType.UNDEAD) /*+ getAdditionalDamage(entity)*/;
+        return getSpellPower(spellLevel, entity)
+                + Utils.getWeaponDamage(entity, MobType.UNDEAD) /*+ getAdditionalDamage(entity)*/;
     }
 
-//    private float getAdditionalDamage(LivingEntity entity) {
-//        if (entity == null) {
-//            return 0;
-//        }
-//        float weaponDamage = Utils.getWeaponDamage(entity);
-//        var weaponItem = entity.getWeaponItem();
-//        if (!weaponItem.isEmpty() && weaponItem.has(DataComponents.ENCHANTMENTS)) {
-//            weaponDamage += Utils.processEnchantment(entity.level, Enchantments.SMITE, EnchantmentEffectComponents.DAMAGE, weaponItem.get(DataComponents.ENCHANTMENTS));
-//        }
-//        return weaponDamage;
-//    }
-
+    //    private float getAdditionalDamage(LivingEntity entity) {
+    //        if (entity == null) {
+    //            return 0;
+    //        }
+    //        float weaponDamage = Utils.getWeaponDamage(entity);
+    //        var weaponItem = entity.getWeaponItem();
+    //        if (!weaponItem.isEmpty() && weaponItem.has(DataComponents.ENCHANTMENTS)) {
+    //            weaponDamage += Utils.processEnchantment(entity.level, Enchantments.SMITE,
+    // EnchantmentEffectComponents.DAMAGE, weaponItem.get(DataComponents.ENCHANTMENTS));
+    //        }
+    //        return weaponDamage;
+    //    }
 
     private String getDamageText(int spellLevel, LivingEntity entity) {
         if (entity != null) {
-//            float weaponDamage = getAdditionalDamage(entity);
+            //            float weaponDamage = getAdditionalDamage(entity);
             float weaponDamage = Utils.getWeaponDamage(entity, MobType.UNDEAD);
 
             String plus = "";

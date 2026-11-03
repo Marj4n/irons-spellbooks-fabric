@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArcaneAnvilMenu extends ItemCombinerMenu {
-    public ArcaneAnvilMenu(int pContainerId, Inventory inventory, ContainerLevelAccess containerLevelAccess) {
+    public ArcaneAnvilMenu(
+            int pContainerId, Inventory inventory, ContainerLevelAccess containerLevelAccess) {
         super(MenuRegistry.ARCANE_ANVIL_MENU.get(), pContainerId, inventory, containerLevelAccess);
     }
 
@@ -49,17 +50,31 @@ public class ArcaneAnvilMenu extends ItemCombinerMenu {
         inputSlots.getItem(0).shrink(1);
         inputSlots.getItem(1).shrink(1);
 
-        this.access.execute((level, pos) -> {
-            level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, .8f, 1.1f);
-            level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS, 1f, 1f);
-            additionalDrops.forEach(stack -> {
-                if (!stack.isEmpty()) {
-                    level.addFreshEntity(new ItemEntity(level, pos.getX() + .5, pos.getY() + 1, pos.getZ() + .5, stack));
-                }
-            });
-            additionalDrops.clear();
-
-        });
+        this.access.execute(
+                (level, pos) -> {
+                    level.playSound(
+                            null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, .8f, 1.1f);
+                    level.playSound(
+                            null,
+                            pos,
+                            SoundEvents.AMETHYST_BLOCK_BREAK,
+                            SoundSource.BLOCKS,
+                            1f,
+                            1f);
+                    additionalDrops.forEach(
+                            stack -> {
+                                if (!stack.isEmpty()) {
+                                    level.addFreshEntity(
+                                            new ItemEntity(
+                                                    level,
+                                                    pos.getX() + .5,
+                                                    pos.getY() + 1,
+                                                    pos.getZ() + .5,
+                                                    stack));
+                                }
+                            });
+                    additionalDrops.clear();
+                });
         createResult();
     }
 
@@ -81,8 +96,10 @@ public class ArcaneAnvilMenu extends ItemCombinerMenu {
         ItemStack baseItemStack = inputSlots.getItem(0);
         ItemStack modifierItemStack = inputSlots.getItem(1);
         if (!baseItemStack.isEmpty() && !modifierItemStack.isEmpty()) {
-            //Scroll Merging
-            if (ServerConfigs.SCROLL_MERGING.get() && baseItemStack.getItem() instanceof Scroll && modifierItemStack.getItem() instanceof InkItem inkItem/*Scroll*/) {
+            // Scroll Merging
+            if (ServerConfigs.SCROLL_MERGING.get()
+                    && baseItemStack.getItem() instanceof Scroll
+                    && modifierItemStack.getItem() instanceof InkItem inkItem /*Scroll*/) {
                 var spell1 = ISpellContainer.get(baseItemStack).getSpellAtIndex(0);
                 if (spell1.getLevel() < spell1.getSpell().getMaxLevel()) {
                     var baseRarity = spell1.getRarity();
@@ -90,20 +107,24 @@ public class ArcaneAnvilMenu extends ItemCombinerMenu {
                     if (nextRarity.equals(inkItem.getRarity())) {
                         result = baseItemStack.copy();
                         result.setCount(1);
-                        ISpellContainer.createScrollContainer(spell1.getSpell(), spell1.getLevel() + 1, result);
+                        ISpellContainer.createScrollContainer(
+                                spell1.getSpell(), spell1.getLevel() + 1, result);
                     }
                 }
-                //var spell2 = ISpellContainer.get(modifierItemStack).getSpellAtIndex(0);
+                // var spell2 = ISpellContainer.get(modifierItemStack).getSpellAtIndex(0);
 
-                //if (spell1.equals(spell2)) {
-                //    if (spell1.getLevel() < ServerConfigs.getSpellConfig(spell1.getSpell()).maxLevel()) {
+                // if (spell1.equals(spell2)) {
+                //    if (spell1.getLevel() <
+                // ServerConfigs.getSpellConfig(spell1.getSpell()).maxLevel()) {
                 //        result = new ItemStack(ItemRegistry.SCROLL.get());
-                //        ISpellContainer.createScrollContainer(spell1.getSpell(), spell1.getLevel() + 1, result);
+                //        ISpellContainer.createScrollContainer(spell1.getSpell(), spell1.getLevel()
+                // + 1, result);
                 //    }
-                //}
+                // }
             }
-            //Unique Weapon Improving
-            else if (baseItemStack.getItem() instanceof UniqueItem && modifierItemStack.getItem() instanceof Scroll scroll) {
+            // Unique Weapon Improving
+            else if (baseItemStack.getItem() instanceof UniqueItem
+                    && modifierItemStack.getItem() instanceof Scroll scroll) {
                 var scrollSlot = ISpellContainer.get(modifierItemStack).getSpellAtIndex(0);
                 if (ISpellContainer.isSpellContainer(baseItemStack)) {
                     var spellContainer = ISpellContainer.get(baseItemStack);
@@ -114,15 +135,17 @@ public class ArcaneAnvilMenu extends ItemCombinerMenu {
                             result = baseItemStack.copy();
                             var newContainer = spellContainer.mutableCopy();
                             newContainer.removeSpellAtIndex(matchIndex);
-                            newContainer.addSpellAtIndex(scrollSlot.getSpell(), scrollSlot.getLevel(), matchIndex, true);
+                            newContainer.addSpellAtIndex(
+                                    scrollSlot.getSpell(), scrollSlot.getLevel(), matchIndex, true);
                             newContainer.setImproved(true);
                             ISpellContainer.set(result, newContainer.toImmutable());
                         }
                     }
                 }
             }
-            //Weapon Imbuement
-            else if (Utils.canImbue(baseItemStack) && modifierItemStack.getItem() instanceof Scroll scroll) {
+            // Weapon Imbuement
+            else if (Utils.canImbue(baseItemStack)
+                    && modifierItemStack.getItem() instanceof Scroll scroll) {
                 result = baseItemStack.copy();
                 var spellContainer = ISpellContainer.getOrCreate(result).mutableCopy();
 
@@ -132,17 +155,25 @@ public class ArcaneAnvilMenu extends ItemCombinerMenu {
                 if (nextSlotIndex == -1) {
                     nextSlotIndex = 0;
                 }
-                //override slot
+                // override slot
                 spellContainer.removeSpellAtIndex(nextSlotIndex);
-                spellContainer.addSpellAtIndex(scrollSlot.getSpell(), scrollSlot.getLevel(), nextSlotIndex, false);
+                spellContainer.addSpellAtIndex(
+                        scrollSlot.getSpell(), scrollSlot.getLevel(), nextSlotIndex, false);
                 ISpellContainer.set(result, spellContainer.toImmutable());
             }
-            //Upgrade System
+            // Upgrade System
             else if (Utils.canBeUpgraded(baseItemStack)
-                    && UpgradeData.getUpgradeData(baseItemStack).getTotalUpgrades() < ServerConfigs.MAX_UPGRADES.get()
+                    && UpgradeData.getUpgradeData(baseItemStack).getTotalUpgrades()
+                            < ServerConfigs.MAX_UPGRADES.get()
                     && UpgradeOrbTypeData.has(modifierItemStack)) {
                 var upgradeKey = UpgradeOrbTypeData.get(modifierItemStack);
-                var holderopt = /*Optional.of*/(this.player.level().registryAccess().registry(UpgradeOrbTypeRegistry.UPGRADE_ORB_REGISTRY_KEY).get().getHolder(upgradeKey.type()));
+                var holderopt = /*Optional.of*/
+                        (this.player
+                                .level()
+                                .registryAccess()
+                                .registry(UpgradeOrbTypeRegistry.UPGRADE_ORB_REGISTRY_KEY)
+                                .get()
+                                .getHolder(upgradeKey.type()));
                 if (holderopt.isPresent()) {
                     var upgradeOrb = holderopt.get();
                     result = baseItemStack.copy();
@@ -150,30 +181,41 @@ public class ArcaneAnvilMenu extends ItemCombinerMenu {
                     UpgradeData.getUpgradeData(result).addUpgrade(result, upgradeOrb, slot);
                 }
             }
-            //Shriving Stone
+            // Shriving Stone
             else if (modifierItemStack.is(ItemRegistry.SHRIVING_STONE.get())) {
                 result = Utils.handleShriving(baseItemStack);
                 UpgradeData upgradeData = UpgradeData.getUpgradeData(baseItemStack);
-                upgradeData.upgrades().forEach((upgrade, count) -> upgrade.value().containerItem().map(stack -> {
-                    stack.setCount(count);
-                    return stack;
-                }).ifPresent(additionalDrops::add));
+                upgradeData
+                        .upgrades()
+                        .forEach(
+                                (upgrade, count) ->
+                                        upgrade.value()
+                                                .containerItem()
+                                                .map(
+                                                        stack -> {
+                                                            stack.setCount(count);
+                                                            return stack;
+                                                        })
+                                                .ifPresent(additionalDrops::add));
             }
-            //Spell Slot upgrades
-            else if (modifierItemStack.getItem() instanceof SpellSlotUpgradeItem spellSlotUpgradeItem) {
+            // Spell Slot upgrades
+            else if (modifierItemStack.getItem()
+                    instanceof SpellSlotUpgradeItem spellSlotUpgradeItem) {
                 if (baseItemStack.getItem() instanceof SpellBook) {
                     ISpellContainer spellBookContainer = ISpellContainer.get(baseItemStack);
                     int max = spellSlotUpgradeItem.maxSlots();
                     if (spellBookContainer.getMaxSpellCount() < max) {
                         result = baseItemStack.copy();
                         var upgradedContainer = ISpellContainer.get(result).mutableCopy();
-                        upgradedContainer.setMaxSpellCount(upgradedContainer.getMaxSpellCount() + 1);
+                        upgradedContainer.setMaxSpellCount(
+                                upgradedContainer.getMaxSpellCount() + 1);
                         ISpellContainer.set(result, upgradedContainer.toImmutable());
                     }
                 }
             }
-            //Attune Affinity Ring
-            else if (baseItemStack.getItem() instanceof AffinityRing affinityRing && modifierItemStack.getItem() instanceof Scroll scroll) {
+            // Attune Affinity Ring
+            else if (baseItemStack.getItem() instanceof AffinityRing affinityRing
+                    && modifierItemStack.getItem() instanceof Scroll scroll) {
                 result = baseItemStack.copy();
                 var scrollSlot = ISpellContainer.get(modifierItemStack).getSpellAtIndex(0);
                 AffinityData newData = new AffinityData(scrollSlot.getSpell());
@@ -186,11 +228,23 @@ public class ArcaneAnvilMenu extends ItemCombinerMenu {
 
     @Override
     protected ItemCombinerMenuSlotDefinition createInputSlotDefinitions() {
-        return ItemCombinerMenuSlotDefinition.create().withSlot(0, 27, 47, (p_266635_) -> {
-            return true;
-        }).withSlot(1, 76, 47, (p_266634_) -> {
-            return true;
-        }).withResultSlot(2, 134, 47).build();
+        return ItemCombinerMenuSlotDefinition.create()
+                .withSlot(
+                        0,
+                        27,
+                        47,
+                        (p_266635_) -> {
+                            return true;
+                        })
+                .withSlot(
+                        1,
+                        76,
+                        47,
+                        (p_266634_) -> {
+                            return true;
+                        })
+                .withResultSlot(2, 134, 47)
+                .build();
     }
 
     @Override

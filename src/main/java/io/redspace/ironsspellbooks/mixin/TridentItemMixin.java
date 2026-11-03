@@ -15,11 +15,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TridentItem.class)
 public class TridentItemMixin {
     @Inject(method = "releaseUsing", at = @At(value = "TAIL"))
-    public void releaseUsing(ItemStack p_43394_, Level p_43395_, LivingEntity livingEntity, int p_43397_, CallbackInfo ci) {
+    public void releaseUsing(
+            ItemStack p_43394_,
+            Level p_43395_,
+            LivingEntity livingEntity,
+            int p_43397_,
+            CallbackInfo ci) {
         if (livingEntity.level().isClientSide) {
-            ClientMagicData.getSyncedSpellData(livingEntity).setSpinAttackType(SpinAttackType.RIPTIDE);
+            ClientMagicData.getSyncedSpellData(livingEntity)
+                    .setSpinAttackType(SpinAttackType.RIPTIDE);
         } else {
-            MagicData.getPlayerMagicData(livingEntity).getSyncedData().setSpinAttackType(SpinAttackType.RIPTIDE);
+            MagicData.getPlayerMagicData(livingEntity)
+                    .getSyncedData()
+                    .setSpinAttackType(SpinAttackType.RIPTIDE);
         }
     }
 }

@@ -24,18 +24,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-
 public class CreeperHeadProjectile extends AbstractMagicProjectile {
     protected boolean chainOnKill;
 
     protected int chainCount;
     protected float speed;
 
-    public CreeperHeadProjectile(EntityType<? extends CreeperHeadProjectile> pEntityType, Level pLevel) {
+    public CreeperHeadProjectile(
+            EntityType<? extends CreeperHeadProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         setExplosionRadius(5);
         chainOnKill = false;
-
     }
 
     public CreeperHeadProjectile(Level level, @Nullable Entity owner) {
@@ -78,9 +77,7 @@ public class CreeperHeadProjectile extends AbstractMagicProjectile {
     }
 
     @Override
-    public void impactParticles(double x, double y, double z) {
-
-    }
+    public void impactParticles(double x, double y, double z) {}
 
     @Override
     public float getSpeed() {
@@ -95,26 +92,55 @@ public class CreeperHeadProjectile extends AbstractMagicProjectile {
     @Override
     protected void onHit(@NotNull HitResult hitResult) {
         if (!this.level().isClientSide) {
-            var entities = level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            var entities =
+                    level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
             for (Entity entity : entities) {
                 double distance = entity.position().distanceTo(hitResult.getLocation());
                 if (distance < explosionRadius && canHitEntity(entity)) {
-                    //Prevent duplicate chains
-                    if (entity instanceof LivingEntity livingEntity && livingEntity.isDeadOrDying()) {
+                    // Prevent duplicate chains
+                    if (entity instanceof LivingEntity livingEntity
+                            && livingEntity.isDeadOrDying()) {
                         break;
                     }
-                    float damage = (float) (this.damage * (1 - Math.pow(distance / (explosionRadius), 2)));
-                    DamageSources.applyDamage(entity, damage, SpellRegistry.LOB_CREEPER_SPELL.get().getDamageSource(this, getOwner()));
-                    if (chainOnKill && entity instanceof LivingEntity livingEntity && livingEntity.isDeadOrDying()) {
-                        ChainCreeperSpell.summonCreeperRing(this.level(), this.getOwner() instanceof LivingEntity livingOwner ? livingOwner : null, livingEntity.getEyePosition(), this.damage * .85f, this.chainCount);
+                    float damage =
+                            (float) (this.damage * (1 - Math.pow(distance / (explosionRadius), 2)));
+                    DamageSources.applyDamage(
+                            entity,
+                            damage,
+                            SpellRegistry.LOB_CREEPER_SPELL
+                                    .get()
+                                    .getDamageSource(this, getOwner()));
+                    if (chainOnKill
+                            && entity instanceof LivingEntity livingEntity
+                            && livingEntity.isDeadOrDying()) {
+                        ChainCreeperSpell.summonCreeperRing(
+                                this.level(),
+                                this.getOwner() instanceof LivingEntity livingOwner
+                                        ? livingOwner
+                                        : null,
+                                livingEntity.getEyePosition(),
+                                this.damage * .85f,
+                                this.chainCount);
                     }
                 }
             }
             var x = getX();
             var y = getY();
             var z = getZ();
-            MagicManager.spawnParticles(level(), ParticleTypes.EXPLOSION, x, y, z, 3, 0.1, 0.1, 0.1, 0.3, true);
-            MagicManager.spawnParticles(level(), new BlastwaveParticleOptions(1, 1, 1, explosionRadius * 1.2f), x, y, z, 1, 0, 0, 0, 0, true);
+            MagicManager.spawnParticles(
+                    level(), ParticleTypes.EXPLOSION, x, y, z, 3, 0.1, 0.1, 0.1, 0.3, true);
+            MagicManager.spawnParticles(
+                    level(),
+                    new BlastwaveParticleOptions(1, 1, 1, explosionRadius * 1.2f),
+                    x,
+                    y,
+                    z,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    true);
             this.playSound(SoundEvents.GENERIC_EXPLODE, 3, Utils.random.nextFloat() * .2f + .9f);
             this.discardHelper(hitResult);
         }

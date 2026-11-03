@@ -18,21 +18,31 @@ import java.util.List;
 
 public class NecronomiconSpellBook extends UniqueSpellBook {
     public NecronomiconSpellBook(Item.Properties properties) {
-        super(SpellDataRegistryHolder.of(
-                new SpellDataRegistryHolder(SpellRegistry.BLOOD_SLASH_SPELL, 5),
-                new SpellDataRegistryHolder(SpellRegistry.BLOOD_STEP_SPELL, 5),
-                new SpellDataRegistryHolder(SpellRegistry.RAY_OF_SIPHONING_SPELL, 5),
-                new SpellDataRegistryHolder(SpellRegistry.BLAZE_STORM_SPELL, 5)
-        ), 6, properties);
-        withSpellbookAttributes(new AttributeContainer(AttributeRegistry.MAX_MANA, 200, AttributeModifier.Operation.ADDITION));
+        super(
+                SpellDataRegistryHolder.of(
+                        new SpellDataRegistryHolder(SpellRegistry.BLOOD_SLASH_SPELL, 5),
+                        new SpellDataRegistryHolder(SpellRegistry.BLOOD_STEP_SPELL, 5),
+                        new SpellDataRegistryHolder(SpellRegistry.RAY_OF_SIPHONING_SPELL, 5),
+                        new SpellDataRegistryHolder(SpellRegistry.BLAZE_STORM_SPELL, 5)),
+                6,
+                properties);
+        withSpellbookAttributes(
+                new AttributeContainer(
+                        AttributeRegistry.MAX_MANA, 200, AttributeModifier.Operation.ADDITION));
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack, Level context, @NotNull List<Component> lines, @NotNull TooltipFlag flag) {
+    public void appendHoverText(
+            @NotNull ItemStack itemStack,
+            Level context,
+            @NotNull List<Component> lines,
+            @NotNull TooltipFlag flag) {
         super.appendHoverText(itemStack, context, lines, flag);
         var affinityData = AffinityData.getAffinityData(itemStack);
         if (!affinityData.affinityData().isEmpty()) {
-            int i = TooltipsUtils.indexOfComponent(lines, "tooltip.irons_spellbooks.spellbook_spell_count");
+            int i =
+                    TooltipsUtils.indexOfComponent(
+                            lines, "tooltip.irons_spellbooks.spellbook_spell_count");
             lines.addAll(i < 0 ? lines.size() : i + 1, affinityData.getDescriptionComponent());
         }
     }

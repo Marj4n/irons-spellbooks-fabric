@@ -22,8 +22,11 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
-public class TwilightGaleItem extends MagicSwordItem implements io.github.fabricators_of_create.porting_lib.enchant.CustomEnchantingBehaviorItem {
-    public <T extends Tier & IronsWeaponTier> TwilightGaleItem(T pTier, Properties pProperties, SpellDataRegistryHolder[] spellDataRegistryHolders) {
+public class TwilightGaleItem extends MagicSwordItem
+        implements io.github.fabricators_of_create.porting_lib.enchant
+                .CustomEnchantingBehaviorItem {
+    public <T extends Tier & IronsWeaponTier> TwilightGaleItem(
+            T pTier, Properties pProperties, SpellDataRegistryHolder[] spellDataRegistryHolders) {
         super(pTier, pProperties, spellDataRegistryHolders);
     }
 
@@ -38,7 +41,8 @@ public class TwilightGaleItem extends MagicSwordItem implements io.github.fabric
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (isTooDamagedToUse(itemstack)) {
             return InteractionResultHolder.fail(itemstack);
@@ -48,32 +52,43 @@ public class TwilightGaleItem extends MagicSwordItem implements io.github.fabric
         }
     }
 
-//    @Override
-//    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
-//        return super.supportsEnchantment(stack, enchantment) || enchantment.is(Enchantments.LOYALTY)|| enchantment.is(Enchantments.CHANNELING);
-//    }
-
+    //    @Override
+    //    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+    //        return super.supportsEnchantment(stack, enchantment) ||
+    // enchantment.is(Enchantments.LOYALTY)|| enchantment.is(Enchantments.CHANNELING);
+    //    }
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return io.github.fabricators_of_create.porting_lib.enchant.CustomEnchantingBehaviorItem.super.canApplyAtEnchantingTable(stack, enchantment)  || enchantment == Enchantments.LOYALTY|| enchantment == Enchantments.CHANNELING;
+        return io.github.fabricators_of_create.porting_lib.enchant.CustomEnchantingBehaviorItem
+                        .super
+                        .canApplyAtEnchantingTable(stack, enchantment)
+                || enchantment == Enchantments.LOYALTY
+                || enchantment == Enchantments.CHANNELING;
     }
 
     /**
      * Called when the player stops using an Item (stops holding the right mouse button).
      */
     @Override
-    public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
+    public void releaseUsing(
+            ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof Player player) {
             int i = this.getUseDuration(stack) - timeLeft;
             if (i >= 8) {
                 if (!isTooDamagedToUse(stack)) {
-                    Holder<SoundEvent> holder = /*EnchantmentHelper.pickHighestLevel(stack, EnchantmentEffectComponents.TRIDENT_SOUND)
-                            .orElse*/BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.TRIDENT_THROW);
+                    Holder<SoundEvent>
+                            holder = /*EnchantmentHelper.pickHighestLevel(stack, EnchantmentEffectComponents.TRIDENT_SOUND)
+                                     .orElse*/
+                                    BuiltInRegistries.SOUND_EVENT.wrapAsHolder(
+                                            SoundEvents.TRIDENT_THROW);
                     if (!level.isClientSide) {
-                        stack.hurtAndBreak(1, player, (p_43388_) -> {
-                            p_43388_.broadcastBreakEvent(entityLiving.getUsedItemHand());
-                        });
+                        stack.hurtAndBreak(
+                                1,
+                                player,
+                                (p_43388_) -> {
+                                    p_43388_.broadcastBreakEvent(entityLiving.getUsedItemHand());
+                                });
                         double damage = 1 + ExtendedWeaponTier.TWILIGHT_GALE.damage;
                         if (stack.equals(player.getMainHandItem())) {
                             damage = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
@@ -81,7 +96,8 @@ public class TwilightGaleItem extends MagicSwordItem implements io.github.fabric
                         ThrownSpear throwntrident = new ThrownSpear(level, stack, damage);
                         throwntrident.setOwner(player);
                         throwntrident.moveTo(player.getEyePosition());
-                        throwntrident.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 0.5F);
+                        throwntrident.shootFromRotation(
+                                player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 0.5F);
                         if (player.getAbilities().instabuild) {
                             throwntrident.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
                         }
@@ -89,7 +105,13 @@ public class TwilightGaleItem extends MagicSwordItem implements io.github.fabric
                         if (!player.getAbilities().instabuild) {
                             player.getCooldowns().addCooldown(stack.getItem(), 20 * 10);
                         }
-                        level.playSound(null, throwntrident, holder.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
+                        level.playSound(
+                                null,
+                                throwntrident,
+                                holder.value(),
+                                SoundSource.PLAYERS,
+                                1.0F,
+                                1.0F);
                     }
                     player.awardStat(Stats.ITEM_USED.get(this));
                 }

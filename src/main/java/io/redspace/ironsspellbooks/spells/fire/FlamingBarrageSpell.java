@@ -20,20 +20,25 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class FlamingBarrageSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "flaming_barrage");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(15)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "flaming_barrage");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(15)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.projectile_count", (int) (getRecastCount(spellLevel, caster)))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.projectile_count",
+                        (int) (getRecastCount(spellLevel, caster))));
     }
 
     public FlamingBarrageSpell() {
@@ -65,16 +70,35 @@ public class FlamingBarrageSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         var recasts = playerMagicData.getPlayerRecasts();
         if (!recasts.hasRecastForSpell(getSpellId())) {
-            recasts.addRecast(new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), 120, castSource, null), playerMagicData);
+            recasts.addRecast(
+                    new RecastInstance(
+                            getSpellId(),
+                            spellLevel,
+                            getRecastCount(spellLevel, entity),
+                            120,
+                            castSource,
+                            null),
+                    playerMagicData);
         }
-        Vec3 origin = entity.getEyePosition().add(entity.getForward().normalize().scale(.2f)).subtract(0, 0.15, 0);
+        Vec3 origin =
+                entity.getEyePosition()
+                        .add(entity.getForward().normalize().scale(.2f))
+                        .subtract(0, 0.15, 0);
         SmallMagicFireball fireball = new SmallMagicFireball(level, entity);
         fireball.setPos(origin.subtract(0, fireball.getBbHeight(), 0));
         var inaccuracy = 0.4f;
-        Vec3 vec = entity.getForward().add(0, 0.2, 0).normalize(); // adjust for inaccuracy sometimes hitting the ground
+        Vec3 vec =
+                entity.getForward()
+                        .add(0, 0.2, 0)
+                        .normalize(); // adjust for inaccuracy sometimes hitting the ground
         fireball.shoot(vec.scale(.5f), inaccuracy);
         fireball.setDamage(getDamage(spellLevel, entity));
         fireball.setCursorHoming(true);

@@ -17,23 +17,56 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 @Environment(EnvType.CLIENT)
 public class VoidTentacleEmissiveLayer extends GeoRenderLayer<VoidTentacle> {
-    public static final ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/void_tentacle/void_tentacle_emissive.png");
+    public static final ResourceLocation TEXTURE =
+            IronsSpellbooks.id("textures/entity/void_tentacle/void_tentacle_emissive.png");
 
     public VoidTentacleEmissiveLayer(GeoEntityRenderer entityRendererIn) {
         super(entityRendererIn);
     }
 
     @Override
-    public void render(PoseStack poseStack, VoidTentacle animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+    public void render(
+            PoseStack poseStack,
+            VoidTentacle animatable,
+            BakedGeoModel bakedModel,
+            RenderType renderType,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay) {
         renderType = RenderType.eyes(TEXTURE);
-        //renderType = RenderType.endGateway();
+        // renderType = RenderType.endGateway();
         VertexConsumer vertexconsumer = bufferSource.getBuffer(renderType);
         poseStack.pushPose();
-        float f = Mth.sin((float) ((animatable.tickCount + partialTick + ((animatable.getX() + animatable.getZ()) * 500)) * .15f)) * .5f + .5f;
-        //IronsSpellbooks.LOGGER.debug("{}", f);
-        this.getRenderer().actuallyRender(poseStack, animatable, bakedModel, renderType, bufferSource, vertexconsumer, true, partialTick,
-                LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, f,f,f,1);
+        float f =
+                Mth.sin(
+                                        (float)
+                                                ((animatable.tickCount
+                                                                + partialTick
+                                                                + ((animatable.getX()
+                                                                                + animatable.getZ())
+                                                                        * 500))
+                                                        * .15f))
+                                * .5f
+                        + .5f;
+        // IronsSpellbooks.LOGGER.debug("{}", f);
+        this.getRenderer()
+                .actuallyRender(
+                        poseStack,
+                        animatable,
+                        bakedModel,
+                        renderType,
+                        bufferSource,
+                        vertexconsumer,
+                        true,
+                        partialTick,
+                        LightTexture.FULL_BRIGHT,
+                        OverlayTexture.NO_OVERLAY,
+                        f,
+                        f,
+                        f,
+                        1);
         poseStack.popPose();
-
     }
 }

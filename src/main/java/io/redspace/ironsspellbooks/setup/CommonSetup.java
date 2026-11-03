@@ -43,7 +43,7 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 public class CommonSetup {
 
     public static void onModConfigLoadingEvent(ModConfig config) {
-        //IronsSpellbooks.LOGGER.debug("onModConfigLoadingEvent");
+        // IronsSpellbooks.LOGGER.debug("onModConfigLoadingEvent");
         if (config.getType() == ModConfig.Type.SERVER) {
             SpellRegistry.onConfigReload();
             ServerConfigs.onConfigReload();
@@ -53,7 +53,7 @@ public class CommonSetup {
     }
 
     public static void onModConfigReloadingEvent(ModConfig config) {
-        //IronsSpellbooks.LOGGER.debug("onModConfigReloadingEvent");
+        // IronsSpellbooks.LOGGER.debug("onModConfigReloadingEvent");
         if (config.getType() == ModConfig.Type.SERVER) {
             SpellRegistry.onConfigReload();
             ServerConfigs.onConfigReload();
@@ -62,59 +62,104 @@ public class CommonSetup {
         }
     }
 
-    //todo: forge sucks
-//    @SubscribeEvent
-//    public static void registerCapabilitiesEvent(/*RegisterCapabilitiesEvent event*/AttachCapabilitiesEvent<BlockEntity> event) {
-//        if (event.getObject() instanceof AlchemistCauldronTile) {
-//            var noopHandler =  new MillibucketTank(0);
-//            event.addCapability(IronsSpellbooks.id("alchemist_cauldron"), new CapabilityProvider<>(ForgeCapabilities.FLUID_HANDLER, LazyOptional.of(() -> noopHandler)) {
-//            });
-//        }
-////        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BlockRegistry.ALCHEMIST_CAULDRON_TILE.get(),
-////                (be, context) -> {
-////                    if (be.fluidCapability == null) {
-////                        be.refreshCapabilities();
-////                    }
-////
-////                    return be.fluidCapability;
-////                });
-//    }
+    // todo: forge sucks
+    //    @SubscribeEvent
+    //    public static void registerCapabilitiesEvent(/*RegisterCapabilitiesEvent
+    // event*/AttachCapabilitiesEvent<BlockEntity> event) {
+    //        if (event.getObject() instanceof AlchemistCauldronTile) {
+    //            var noopHandler =  new MillibucketTank(0);
+    //            event.addCapability(IronsSpellbooks.id("alchemist_cauldron"), new
+    // CapabilityProvider<>(ForgeCapabilities.FLUID_HANDLER, LazyOptional.of(() -> noopHandler)) {
+    //            });
+    //        }
+    ////        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+    // BlockRegistry.ALCHEMIST_CAULDRON_TILE.get(),
+    ////                (be, context) -> {
+    ////                    if (be.fluidCapability == null) {
+    ////                        be.refreshCapabilities();
+    ////                    }
+    ////
+    ////                    return be.fluidCapability;
+    ////                });
+    //    }
 
     public static void registerEntityAttributes() {
-        FabricDefaultAttributeRegistry.register(EntityRegistry.DEBUG_WIZARD.get(), DebugWizard.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.PYROMANCER.get(), PyromancerEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.NECROMANCER.get(), NecromancerEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SPECTRAL_STEED.get(), SummonedHorse.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.WISP.get(), WispEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SPECTRAL_HAMMER.get(), SpectralHammer.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SUMMONED_VEX.get(), SummonedVex.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SUMMONED_ZOMBIE.get(), SummonedZombie.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SUMMONED_SKELETON.get(), SummonedSkeleton.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.FROZEN_HUMANOID.get(), FrozenHumanoid.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SUMMONED_POLAR_BEAR.get(), PolarBear.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.DEAD_KING.get(), DeadKingBoss.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.DEAD_KING_CORPSE.get(), DeadKingBoss.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.CATACOMBS_ZOMBIE.get(), Zombie.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.MAGEHUNTER_VINDICATOR.get(), Vindicator.createAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.ARCHEVOKER.get(), ArchevokerEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.PRIEST.get(), PriestEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.KEEPER.get(), KeeperEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SCULK_TENTACLE.get(), VoidTentacle.createLivingAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.CRYOMANCER.get(), CryomancerEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.ROOT.get(), RootEntity.createLivingAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.FIREFLY_SWARM.get(), WispEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.APOTHECARIST.get(), ApothecaristEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.CULTIST.get(), CultistEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.FIRE_BOSS.get(), FireBossEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.CURSED_ARMOR_STAND.get(), CursedArmorStandEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SUMMONED_SWORD.get(), SummonedSwordEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SUMMONED_CLAYMORE.get(), SummonedClaymoreEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SUMMONED_RAPIER.get(), SummonedRapierEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.ICE_SPIDER.get(), IceSpiderEntity.prepareAttributes().build());
-        FabricDefaultAttributeRegistry.register(EntityRegistry.SCAPEGOAT.get(), ScapegoatEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.DEBUG_WIZARD.get(), DebugWizard.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.PYROMANCER.get(), PyromancerEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.NECROMANCER.get(), NecromancerEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SPECTRAL_STEED.get(), SummonedHorse.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.WISP.get(), WispEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SPECTRAL_HAMMER.get(), SpectralHammer.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SUMMONED_VEX.get(), SummonedVex.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SUMMONED_ZOMBIE.get(), SummonedZombie.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SUMMONED_SKELETON.get(),
+                SummonedSkeleton.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.FROZEN_HUMANOID.get(), FrozenHumanoid.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SUMMONED_POLAR_BEAR.get(), PolarBear.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.DEAD_KING.get(), DeadKingBoss.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.DEAD_KING_CORPSE.get(), DeadKingBoss.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.CATACOMBS_ZOMBIE.get(), Zombie.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.MAGEHUNTER_VINDICATOR.get(), Vindicator.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.ARCHEVOKER.get(), ArchevokerEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.PRIEST.get(), PriestEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.KEEPER.get(), KeeperEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SCULK_TENTACLE.get(), VoidTentacle.createLivingAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.CRYOMANCER.get(), CryomancerEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.ROOT.get(), RootEntity.createLivingAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.FIREFLY_SWARM.get(), WispEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.APOTHECARIST.get(), ApothecaristEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.CULTIST.get(), CultistEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.FIRE_BOSS.get(), FireBossEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.CURSED_ARMOR_STAND.get(),
+                CursedArmorStandEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SUMMONED_SWORD.get(),
+                SummonedSwordEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SUMMONED_CLAYMORE.get(),
+                SummonedClaymoreEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SUMMONED_RAPIER.get(),
+                SummonedRapierEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.ICE_SPIDER.get(), IceSpiderEntity.prepareAttributes().build());
+        FabricDefaultAttributeRegistry.register(
+                EntityRegistry.SCAPEGOAT.get(), ScapegoatEntity.prepareAttributes().build());
     }
 
     public static void registerSpawnPlacements() {
-        SpawnPlacements.register(EntityRegistry.NECROMANCER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (type, serverLevelAccessor, spawnType, blockPos, random) -> Utils.checkMonsterSpawnRules(serverLevelAccessor, spawnType, blockPos, random));
+        SpawnPlacements.register(
+                EntityRegistry.NECROMANCER.get(),
+                SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, serverLevelAccessor, spawnType, blockPos, random) ->
+                        Utils.checkMonsterSpawnRules(
+                                serverLevelAccessor, spawnType, blockPos, random));
     }
 }

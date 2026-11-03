@@ -16,9 +16,10 @@ public class ShockwaveParticleOptions extends DustParticleOptionsBase {
     protected final float unclampedScale;
     protected final boolean fullbright;
 
-    public ShockwaveParticleOptions(Vector3f color, float scale, boolean glowing, String trailParticle) {
+    public ShockwaveParticleOptions(
+            Vector3f color, float scale, boolean glowing, String trailParticle) {
         super(color, scale);
-        //Super clamped scale to 4
+        // Super clamped scale to 4
         this.unclampedScale = scale;
         this.fullbright = glowing;
     }
@@ -41,28 +42,48 @@ public class ShockwaveParticleOptions extends DustParticleOptionsBase {
     }
 
     /*
-        Copied From Dust Particle Options
-         */
-    public static final Codec<ShockwaveParticleOptions> CODEC = RecordCodecBuilder.create((p_175793_) ->
-            p_175793_.group(ExtraCodecs.VECTOR3F.fieldOf("color").forGetter((option) -> option.color),
-                    Codec.FLOAT.fieldOf("scale").forGetter((option) -> option.unclampedScale),
-                    Codec.BOOL.fieldOf("fullbright").forGetter((option) -> option.fullbright)
-            ).apply(p_175793_, ShockwaveParticleOptions::new));
-    @SuppressWarnings("deprecation")
-    public static final Deserializer<ShockwaveParticleOptions> DESERIALIZER = new Deserializer<ShockwaveParticleOptions>() {
-        public @NotNull ShockwaveParticleOptions fromCommand(@NotNull ParticleType<ShockwaveParticleOptions> p_123689_, @NotNull StringReader reader) throws CommandSyntaxException {
-            Vector3f vector3f = DustParticleOptionsBase.readVector3f(reader);
-            reader.expect(' ');
-            float f = reader.readFloat();
-            reader.expect(' ');
-            boolean glowing = reader.readBoolean();
-            return new ShockwaveParticleOptions(vector3f, f, glowing);
-        }
+    Copied From Dust Particle Options
+     */
+    public static final Codec<ShockwaveParticleOptions> CODEC =
+            RecordCodecBuilder.create(
+                    (p_175793_) ->
+                            p_175793_
+                                    .group(
+                                            ExtraCodecs.VECTOR3F
+                                                    .fieldOf("color")
+                                                    .forGetter((option) -> option.color),
+                                            Codec.FLOAT
+                                                    .fieldOf("scale")
+                                                    .forGetter((option) -> option.unclampedScale),
+                                            Codec.BOOL
+                                                    .fieldOf("fullbright")
+                                                    .forGetter((option) -> option.fullbright))
+                                    .apply(p_175793_, ShockwaveParticleOptions::new));
 
-        public @NotNull ShockwaveParticleOptions fromNetwork(@NotNull ParticleType<ShockwaveParticleOptions> p_123692_, @NotNull FriendlyByteBuf buf) {
-            return new ShockwaveParticleOptions(DustParticleOptionsBase.readVector3f(buf), buf.readFloat(), buf.readBoolean());
-        }
-    };
+    @SuppressWarnings("deprecation")
+    public static final Deserializer<ShockwaveParticleOptions> DESERIALIZER =
+            new Deserializer<ShockwaveParticleOptions>() {
+                public @NotNull ShockwaveParticleOptions fromCommand(
+                        @NotNull ParticleType<ShockwaveParticleOptions> p_123689_,
+                        @NotNull StringReader reader)
+                        throws CommandSyntaxException {
+                    Vector3f vector3f = DustParticleOptionsBase.readVector3f(reader);
+                    reader.expect(' ');
+                    float f = reader.readFloat();
+                    reader.expect(' ');
+                    boolean glowing = reader.readBoolean();
+                    return new ShockwaveParticleOptions(vector3f, f, glowing);
+                }
+
+                public @NotNull ShockwaveParticleOptions fromNetwork(
+                        @NotNull ParticleType<ShockwaveParticleOptions> p_123692_,
+                        @NotNull FriendlyByteBuf buf) {
+                    return new ShockwaveParticleOptions(
+                            DustParticleOptionsBase.readVector3f(buf),
+                            buf.readFloat(),
+                            buf.readBoolean());
+                }
+            };
 
     @Override
     public void writeToNetwork(FriendlyByteBuf pBuffer) {

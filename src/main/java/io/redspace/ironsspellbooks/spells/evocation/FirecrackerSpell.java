@@ -26,19 +26,24 @@ import java.util.List;
 import java.util.Random;
 
 public class FirecrackerSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "firecracker");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "firecracker");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(1.5)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(1.5)
+                    .build();
 
     public FirecrackerSpell() {
         this.manaCostPerLevel = 2;
@@ -64,15 +69,30 @@ public class FirecrackerSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 shootAngle = entity.getLookAngle().normalize();
-        Vec3 spawn = RaycastBuilder.begin(world, entity)
-                .range(getRange(spellLevel, entity))
-                .checkForBlocks(true)
-                .build()
-                .getLocation()
-                .subtract(shootAngle.scale(.25f));
-        ExtendedFireworkRocket firework = new ExtendedFireworkRocket(world, randomFireworkRocket(), entity, spawn.x, spawn.y, spawn.z, true, getDamage(spellLevel, entity));
+        Vec3 spawn =
+                RaycastBuilder.begin(world, entity)
+                        .range(getRange(spellLevel, entity))
+                        .checkForBlocks(true)
+                        .build()
+                        .getLocation()
+                        .subtract(shootAngle.scale(.25f));
+        ExtendedFireworkRocket firework =
+                new ExtendedFireworkRocket(
+                        world,
+                        randomFireworkRocket(),
+                        entity,
+                        spawn.x,
+                        spawn.y,
+                        spawn.z,
+                        true,
+                        getDamage(spellLevel, entity));
         world.addFreshEntity(firework);
         firework.shoot(shootAngle.x, shootAngle.y, shootAngle.z, 0, 0);
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
@@ -90,18 +110,16 @@ public class FirecrackerSpell extends AbstractSpell {
         Random random = new Random();
         ItemStack rocket = new ItemStack(Items.FIREWORK_ROCKET);
         CompoundTag properties = new CompoundTag();
-        //https://minecraft.fandom.com/wiki/Firework_Rocket#Data_values
+        // https://minecraft.fandom.com/wiki/Firework_Rocket#Data_values
         ListTag explosions = new ListTag();
         CompoundTag explosion = new CompoundTag();
         byte type = (byte) (random.nextInt(3) * 2);
-        if (random.nextFloat() < .08f) { //8% chance for creeper face explosion
+        if (random.nextFloat() < .08f) { // 8% chance for creeper face explosion
             type = 3;
         }
         explosion.putByte("Type", type);
-        if (random.nextInt(3) == 0)
-            explosion.putByte("Trail", (byte) 1);
-        if (random.nextInt(3) == 0)
-            explosion.putByte("Flicker", (byte) 1);
+        if (random.nextInt(3) == 0) explosion.putByte("Trail", (byte) 1);
+        if (random.nextInt(3) == 0) explosion.putByte("Flicker", (byte) 1);
 
         explosion.putIntArray("Colors", randomColors());
 
@@ -125,27 +143,27 @@ public class FirecrackerSpell extends AbstractSpell {
         return colors;
     }
 
-    //https://minecraft.fandom.com/wiki/Dye#Color_values
+    // https://minecraft.fandom.com/wiki/Dye#Color_values
     private static final int[] DYE_COLORS = {
-            //1908001,
-            11546150,
-            6192150,
-            //8606770,
-            3949738,
-            8991416,
-            1481884,
-            //10329495,
-            //4673362,
-            15961002,
-            8439583,
-            16701501,
-            3847130,
-            13061821,
-            16351261,
-            16383998
+        // 1908001,
+        11546150,
+        6192150,
+        // 8606770,
+        3949738,
+        8991416,
+        1481884,
+        // 10329495,
+        // 4673362,
+        15961002,
+        8439583,
+        16701501,
+        3847130,
+        13061821,
+        16351261,
+        16383998
     };
-//    @Override
-//    public MutableComponent getUniqueInfo() {
-//        return uniqueText;
-//    }
+    //    @Override
+    //    public MutableComponent getUniqueInfo() {
+    //        return uniqueText;
+    //    }
 }

@@ -26,12 +26,13 @@ import java.util.Optional;
 public class WololoSpell extends AbstractSpell {
     private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "wololo");
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(1)
-            .setCooldownSeconds(10)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(1)
+                    .setCooldownSeconds(10)
+                    .build();
 
     public WololoSpell() {
         this.manaCostPerLevel = 5;
@@ -39,7 +40,6 @@ public class WololoSpell extends AbstractSpell {
         this.spellPowerPerLevel = 1;
         this.castTime = 30;
         this.baseManaCost = 10;
-
     }
 
     @Override
@@ -63,17 +63,45 @@ public class WololoSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f, true, livingEntity -> livingEntity instanceof Sheep sheep/* && sheep.getColor() == DyeColor.BLUE*/);
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        return Utils.preCastTargetHelper(
+                level,
+                entity,
+                playerMagicData,
+                this,
+                32,
+                .35f,
+                true,
+                livingEntity ->
+                        livingEntity
+                                instanceof Sheep sheep /* && sheep.getColor() == DyeColor.BLUE*/);
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData healTargetingData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData healTargetingData) {
             var targetEntity = healTargetingData.getTarget((ServerLevel) world);
             if (targetEntity instanceof Sheep sheep) {
                 sheep.setColor(DyeColor.values()[Utils.random.nextInt(DyeColor.values().length)]);
-                MagicManager.spawnParticles(world, ParticleTypes.CRIT, sheep.getX(), sheep.getY() + .6, sheep.getZ(), 25, .5, .5, .5, 0, false);
+                MagicManager.spawnParticles(
+                        world,
+                        ParticleTypes.CRIT,
+                        sheep.getX(),
+                        sheep.getY() + .6,
+                        sheep.getZ(),
+                        25,
+                        .5,
+                        .5,
+                        .5,
+                        0,
+                        false);
             }
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);

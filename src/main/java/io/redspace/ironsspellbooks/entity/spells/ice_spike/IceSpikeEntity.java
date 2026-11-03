@@ -30,8 +30,10 @@ import java.util.stream.Collectors;
 
 public class IceSpikeEntity extends AoeEntity {
 
-    private static final EntityDataAccessor<Float> DATA_SIZE = SynchedEntityData.defineId(IceSpikeEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_WAIT_TIME = SynchedEntityData.defineId(IceSpikeEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_SIZE =
+            SynchedEntityData.defineId(IceSpikeEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> DATA_WAIT_TIME =
+            SynchedEntityData.defineId(IceSpikeEntity.class, EntityDataSerializers.INT);
     public static final int RISE_TIME = 6;
     public static final int REST_TIME = 40;
     public static final int LOWER_TIME = 30;
@@ -48,8 +50,7 @@ public class IceSpikeEntity extends AoeEntity {
     }
 
     @Override
-    public void applyEffect(LivingEntity target) {
-    }
+    public void applyEffect(LivingEntity target) {}
 
     @Override
     protected void defineSynchedData() {
@@ -79,7 +80,7 @@ public class IceSpikeEntity extends AoeEntity {
      * @return [-1,0] based on whether it should be underground or at full height
      */
     public float getPositionOffset(float partialTick) {
-        //https://www.desmos.com/calculator/puzwsnna2e
+        // https://www.desmos.com/calculator/puzwsnna2e
         float f = this.tickCount + partialTick;
         int waitTime = getWaitTime();
         if (f < waitTime) {
@@ -103,17 +104,70 @@ public class IceSpikeEntity extends AoeEntity {
             if (!level().isClientSide) {
                 float f = getSpikeSize();
                 if (!this.isSilent()) {
-                    level().playSound(null, this.blockPosition(), SoundRegistry.ICE_SPIKE_EMERGE.get(), SoundSource.NEUTRAL, 1.25f * getSpikeSize(), Mth.randomBetweenInclusive(Utils.random, 6, 12) * .1f);
+                    level().playSound(
+                                    null,
+                                    this.blockPosition(),
+                                    SoundRegistry.ICE_SPIKE_EMERGE.get(),
+                                    SoundSource.NEUTRAL,
+                                    1.25f * getSpikeSize(),
+                                    Mth.randomBetweenInclusive(Utils.random, 6, 12) * .1f);
                 }
-                MagicManager.spawnParticles(level(), ParticleHelper.SNOWFLAKE, getX(), level().clip(new ClipContext(position().add(0, 2, 0), position(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation().y() + 0.1, getZ(), (int) (10 * f * f), 0.1 * f, 0.1 * f, 0.1f * f, 0.12 * f, false);
-                MagicManager.spawnParticles(level(), ParticleHelper.SNOW_DUST, getX(), level().clip(new ClipContext(position().add(0, 2, 0), position(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation().y() + 0.1, getZ(), (int) (15 * f * f), 0.1 * f, 0.1 * f, 0.1f * f, 0.08 * f, false);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleHelper.SNOWFLAKE,
+                        getX(),
+                        level().clip(
+                                                new ClipContext(
+                                                        position().add(0, 2, 0),
+                                                        position(),
+                                                        ClipContext.Block.COLLIDER,
+                                                        ClipContext.Fluid.NONE,
+                                                        null))
+                                        .getLocation()
+                                        .y()
+                                + 0.1,
+                        getZ(),
+                        (int) (10 * f * f),
+                        0.1 * f,
+                        0.1 * f,
+                        0.1f * f,
+                        0.12 * f,
+                        false);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleHelper.SNOW_DUST,
+                        getX(),
+                        level().clip(
+                                                new ClipContext(
+                                                        position().add(0, 2, 0),
+                                                        position(),
+                                                        ClipContext.Block.COLLIDER,
+                                                        ClipContext.Fluid.NONE,
+                                                        null))
+                                        .getLocation()
+                                        .y()
+                                + 0.1,
+                        getZ(),
+                        (int) (15 * f * f),
+                        0.1 * f,
+                        0.1 * f,
+                        0.1f * f,
+                        0.08 * f,
+                        false);
             }
         } else if (tickCount > waitTime && tickCount < waitTime + RISE_TIME) {
             AABB damager = this.getBoundingBox();
             damager.setMaxY(this.getY() + (damager.getYsize() * (getPositionOffset(0) + 1)));
-            for (Entity entity : level().getEntities(this, damager).stream().filter(target -> canHitEntity(target) && !victims.contains(target)).collect(Collectors.toSet())) {
-                if (DamageSources.applyDamage(entity, damage, SpellRegistry.ICE_SPIKES_SPELL.get().getDamageSource(this, getOwner()))) {
-                    entity.setDeltaMovement(entity.getDeltaMovement().add(0, this.getSpikeSize() * 0.3, 0));
+            for (Entity entity :
+                    level().getEntities(this, damager).stream()
+                            .filter(target -> canHitEntity(target) && !victims.contains(target))
+                            .collect(Collectors.toSet())) {
+                if (DamageSources.applyDamage(
+                        entity,
+                        damage,
+                        SpellRegistry.ICE_SPIKES_SPELL.get().getDamageSource(this, getOwner()))) {
+                    entity.setDeltaMovement(
+                            entity.getDeltaMovement().add(0, this.getSpikeSize() * 0.3, 0));
                     entity.hurtMarked = true;
                     entity.setTicksFrozen(entity.getTicksFrozen() + (int) (40 * getSpikeSize()));
                 }
@@ -142,7 +196,9 @@ public class IceSpikeEntity extends AoeEntity {
 
     @Override
     public EntityDimensions getDimensions(Pose pPose) {
-        return EntityDimensions.scalable(this.getSpikeSize() * 0.4f, this.getSpikeSize() * 1.25f * (this.getPositionOffset(1) + 1));
+        return EntityDimensions.scalable(
+                this.getSpikeSize() * 0.4f,
+                this.getSpikeSize() * 1.25f * (this.getPositionOffset(1) + 1));
     }
 
     @Override

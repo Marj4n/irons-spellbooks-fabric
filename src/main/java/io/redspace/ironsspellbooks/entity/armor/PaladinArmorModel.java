@@ -18,11 +18,13 @@ public class PaladinArmorModel extends DefaultedItemGeoModel<PaladinArmorItem> {
 
     @Override
     public ResourceLocation getTextureResource(PaladinArmorItem object) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "textures/models/armor/paladin_chestplate.png");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "textures/models/armor/paladin_chestplate.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(PaladinArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

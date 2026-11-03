@@ -16,17 +16,35 @@ import java.util.function.Predicate;
 
 public class LocateBlock {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_spell_book.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED =
+            new SimpleCommandExceptionType(
+                    Component.translatable("commands.irons_spellbooks.create_spell_book.failed"));
 
-    public static void register(CommandDispatcher<CommandSourceStack> pDispatcher, CommandBuildContext pContext) {
-        pDispatcher.register(Commands.literal("locateBlock").requires((p_138819_) -> {
-            return p_138819_.hasPermission(2);
-        }).then(Commands.argument("block", BlockPredicateArgument.blockPredicate(pContext)).executes((commandContext) -> {
-            return locateBlock(commandContext.getSource(), BlockPredicateArgument.getBlockPredicate(commandContext, "block"));
-        })));
+    public static void register(
+            CommandDispatcher<CommandSourceStack> pDispatcher, CommandBuildContext pContext) {
+        pDispatcher.register(
+                Commands.literal("locateBlock")
+                        .requires(
+                                (p_138819_) -> {
+                                    return p_138819_.hasPermission(2);
+                                })
+                        .then(
+                                Commands.argument(
+                                                "block",
+                                                BlockPredicateArgument.blockPredicate(pContext))
+                                        .executes(
+                                                (commandContext) -> {
+                                                    return locateBlock(
+                                                            commandContext.getSource(),
+                                                            BlockPredicateArgument
+                                                                    .getBlockPredicate(
+                                                                            commandContext,
+                                                                            "block"));
+                                                })));
     }
 
-    private static int locateBlock(CommandSourceStack source, Predicate<BlockInWorld> predicate) throws CommandSyntaxException {
+    private static int locateBlock(CommandSourceStack source, Predicate<BlockInWorld> predicate)
+            throws CommandSyntaxException {
         var startingPosition = source.getPlayer().blockPosition();
         var level = source.getLevel();
         var xFrom = startingPosition.getX() - 200;
@@ -36,7 +54,15 @@ public class LocateBlock {
         var zFrom = startingPosition.getZ() - 200;
         var zTo = startingPosition.getZ() + 200;
 
-        IronsSpellbooks.LOGGER.debug("Starting locateBlock from: {}, xFrom:{} xTo:{} yFrom:{} yTo:{} zFrom:{} zTo:{}", startingPosition, xFrom, xTo, yFrom, yTo, zFrom, zTo);
+        IronsSpellbooks.LOGGER.debug(
+                "Starting locateBlock from: {}, xFrom:{} xTo:{} yFrom:{} yTo:{} zFrom:{} zTo:{}",
+                startingPosition,
+                xFrom,
+                xTo,
+                yFrom,
+                yTo,
+                zFrom,
+                zTo);
 
         for (int i = yFrom; i < yTo; i++) {
             for (int j = xFrom; j < xTo; j++) {

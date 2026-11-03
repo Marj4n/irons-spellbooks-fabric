@@ -19,19 +19,24 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class MagicMissileSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "magic_missile");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "magic_missile");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(1)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(1)
+                    .build();
 
     public MagicMissileSpell() {
         this.manaCostPerLevel = 2;
@@ -57,9 +62,20 @@ public class MagicMissileSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         MagicMissileProjectile magicMissileProjectile = new MagicMissileProjectile(world, entity);
-        magicMissileProjectile.setPos(entity.position().add(0, entity.getEyeHeight() - magicMissileProjectile.getBoundingBox().getYsize() * .5f, 0));
+        magicMissileProjectile.setPos(
+                entity.position()
+                        .add(
+                                0,
+                                entity.getEyeHeight()
+                                        - magicMissileProjectile.getBoundingBox().getYsize() * .5f,
+                                0));
         magicMissileProjectile.shoot(entity.getLookAngle());
         magicMissileProjectile.setDamage(getDamage(spellLevel, entity));
         world.addFreshEntity(magicMissileProjectile);
@@ -69,5 +85,4 @@ public class MagicMissileSpell extends AbstractSpell {
     private float getDamage(int spellLevel, LivingEntity entity) {
         return getSpellPower(spellLevel, entity) * .5f;
     }
-
 }

@@ -22,6 +22,7 @@ import java.util.List;
 public class CreateUndeadRiftGoal extends Goal {
     final DeadKingBoss mob;
     int cooldown;
+
     /**
      * Chance to create two portals in rapid succession. This flag prevents repeats, and ignores summon count limit when priming "twin" portal
      */
@@ -47,7 +48,13 @@ public class CreateUndeadRiftGoal extends Goal {
             return false;
         }
         // limit summon count and delay next check if we cannot use
-        int summons = mob.level().getEntities(mob, mob.getBoundingBox().inflate(32), entity -> SummonManager.getOwner(entity) == mob).size();
+        int summons =
+                mob.level()
+                        .getEntities(
+                                mob,
+                                mob.getBoundingBox().inflate(32),
+                                entity -> SummonManager.getOwner(entity) == mob)
+                        .size();
         if (summons < 12) {
             return true;
         } else {
@@ -64,7 +71,13 @@ public class CreateUndeadRiftGoal extends Goal {
             // should be impossible
             return;
         }
-        List<? extends Entity> otherTargets = level.getEntitiesOfClass(target.getClass(), mob.getBoundingBox().inflate(20, 10, 20), entity -> !entity.isSpectator() && Utils.hasLineOfSight(level, mob, entity, false));
+        List<? extends Entity> otherTargets =
+                level.getEntitiesOfClass(
+                        target.getClass(),
+                        mob.getBoundingBox().inflate(20, 10, 20),
+                        entity ->
+                                !entity.isSpectator()
+                                        && Utils.hasLineOfSight(level, mob, entity, false));
         if (!otherTargets.isEmpty()) {
             target = otherTargets.get(mob.getRandom().nextInt(otherTargets.size()));
         }
@@ -77,21 +90,66 @@ public class CreateUndeadRiftGoal extends Goal {
         SummonManager.setOwner(rift, mob);
         rift.setDelay(delay);
         rift.setSummonsToSpawn(summonCount);
-        Vec3 dir = new Vec3(0, 0, 1).yRot(
-                (-target.getYRot() - 90 + mob.getRandom().nextInt(180)) * Mth.DEG_TO_RAD
-        ).add(0, -.2, 0).normalize();
-        Vec3 targetPos = level.clip(new ClipContext(
-                target.getBoundingBox().getCenter(), target.getBoundingBox().getCenter().add(dir.scale(4.5 + target.getBbWidth())),
-                ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, null)).getLocation();
+        Vec3 dir =
+                new Vec3(0, 0, 1)
+                        .yRot(
+                                (-target.getYRot() - 90 + mob.getRandom().nextInt(180))
+                                        * Mth.DEG_TO_RAD)
+                        .add(0, -.2, 0)
+                        .normalize();
+        Vec3 targetPos =
+                level.clip(
+                                new ClipContext(
+                                        target.getBoundingBox().getCenter(),
+                                        target.getBoundingBox()
+                                                .getCenter()
+                                                .add(dir.scale(4.5 + target.getBbWidth())),
+                                        ClipContext.Block.COLLIDER,
+                                        ClipContext.Fluid.ANY,
+                                        null))
+                        .getLocation();
         targetPos = Utils.moveToRelativeGroundLevel(level, targetPos.subtract(dir), 3, 10);
         rift.moveTo(targetPos);
         Utils.fudgeNoCollision(level, rift);
-        rift.setYRot(Utils.getAngle(targetPos.x, targetPos.z, target.getX(), target.getZ()) * Mth.RAD_TO_DEG + 90);
-        rift.setForcedTarget((LivingEntity) target); // safe cast because the entities of class must extend living entity by proxy of getTarget returning a living entity
+        rift.setYRot(
+                Utils.getAngle(targetPos.x, targetPos.z, target.getX(), target.getZ())
+                                * Mth.RAD_TO_DEG
+                        + 90);
+        rift.setForcedTarget(
+                (LivingEntity)
+                        target); // safe cast because the entities of class must extend living
+                                 // entity by proxy of getTarget returning a living entity
         level.addFreshEntity(rift);
-        MagicManager.spawnParticles(level, ParticleTypes.LARGE_SMOKE, targetPos.x, targetPos.y + 1, targetPos.z, 50, 0.1, 0.3, 0.1, 0.1, false);
-        level.playSound(null, targetPos.x, targetPos.y, targetPos.z, SoundRegistry.TRIAL_SPAWNER_SPAWN_MOB.get(), SoundSource.HOSTILE, 2f, 1.0f);
-        level.playSound(null, targetPos.x, targetPos.y, targetPos.z, SoundEvents.VEX_AMBIENT, SoundSource.HOSTILE, 2f, 0.75f);
+        MagicManager.spawnParticles(
+                level,
+                ParticleTypes.LARGE_SMOKE,
+                targetPos.x,
+                targetPos.y + 1,
+                targetPos.z,
+                50,
+                0.1,
+                0.3,
+                0.1,
+                0.1,
+                false);
+        level.playSound(
+                null,
+                targetPos.x,
+                targetPos.y,
+                targetPos.z,
+                SoundRegistry.TRIAL_SPAWNER_SPAWN_MOB.get(),
+                SoundSource.HOSTILE,
+                2f,
+                1.0f);
+        level.playSound(
+                null,
+                targetPos.x,
+                targetPos.y,
+                targetPos.z,
+                SoundEvents.VEX_AMBIENT,
+                SoundSource.HOSTILE,
+                2f,
+                0.75f);
         if (twinPortal) {
             twinPortal = false;
         } else if (mob.getRandom().nextFloat() < .2f) {
@@ -99,7 +157,6 @@ public class CreateUndeadRiftGoal extends Goal {
             cooldown = 10;
         }
     }
-
 
     @Override
     public boolean canContinueToUse() {

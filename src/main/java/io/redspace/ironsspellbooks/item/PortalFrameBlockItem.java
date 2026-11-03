@@ -9,14 +9,20 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class PortalFrameBlockItem extends BlockItem {
-    private static final Component DESCRIPTION = Component.translatable("block.irons_spellbooks.portal_frame.desc").withStyle(ChatFormatting.GRAY);
+    private static final Component DESCRIPTION =
+            Component.translatable("block.irons_spellbooks.portal_frame.desc")
+                    .withStyle(ChatFormatting.GRAY);
 
     public PortalFrameBlockItem(Item.Properties properties) {
         super(BlockRegistry.PORTAL_FRAME.get(), properties);
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Level pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+    public void appendHoverText(
+            ItemStack pStack,
+            Level pContext,
+            List<Component> pTooltipComponents,
+            TooltipFlag pTooltipFlag) {
         super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
         pTooltipComponents.add(DESCRIPTION);
     }

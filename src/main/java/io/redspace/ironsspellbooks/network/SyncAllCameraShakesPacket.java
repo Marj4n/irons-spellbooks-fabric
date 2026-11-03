@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.network;
 
-
 import io.redspace.ironsspellbooks.api.backwards_compat.CustomPacketPayload;
 import io.redspace.ironsspellbooks.api.util.CameraShakeData;
 import io.redspace.ironsspellbooks.api.util.CameraShakeManager;
@@ -11,13 +10,16 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class SyncAllCameraShakesPacket implements CustomPacketPayload {
-//    public static final Type<SyncAllCameraShakesPacket> TYPE = new Type<>(new ResourceLocation(IronsSpellbooks.MODID, "sync_all_camera_shake"));
-//        public static final StreamCodec<RegistryFriendlyByteBuf, SyncAllCameraShakesPacket> STREAM_CODEC = CustomPacketPayload.codec(SyncAllCameraShakesPacket::write, SyncAllCameraShakesPacket::new);
+    //    public static final Type<SyncAllCameraShakesPacket> TYPE = new Type<>(new
+    // ResourceLocation(IronsSpellbooks.MODID, "sync_all_camera_shake"));
+    //        public static final StreamCodec<RegistryFriendlyByteBuf, SyncAllCameraShakesPacket>
+    // STREAM_CODEC = CustomPacketPayload.codec(SyncAllCameraShakesPacket::write,
+    // SyncAllCameraShakesPacket::new);
 
-//    @Override
-//    public Type<? extends CustomPacketPayload> type() {
-//        return TYPE;
-//    }
+    //    @Override
+    //    public Type<? extends CustomPacketPayload> type() {
+    //        return TYPE;
+    //    }
 
     ArrayList<CameraShakeData> cameraShakeData;
 
@@ -35,17 +37,16 @@ public class SyncAllCameraShakesPacket implements CustomPacketPayload {
 
     public void write(FriendlyByteBuf buf) {
         buf.writeInt(cameraShakeData.size());
-        for (CameraShakeData data : cameraShakeData)
-            data.serializeToBuffer(buf);
+        for (CameraShakeData data : cameraShakeData) data.serializeToBuffer(buf);
     }
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            CameraShakeManager.cameraShakeData.clear();
-            CameraShakeManager.cameraShakeData.addAll(cameraShakeData);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    CameraShakeManager.cameraShakeData.clear();
+                    CameraShakeManager.cameraShakeData.addAll(cameraShakeData);
+                });
         return true;
     }
-
 }

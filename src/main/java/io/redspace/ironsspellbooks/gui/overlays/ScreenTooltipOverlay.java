@@ -17,26 +17,39 @@ import org.joml.Vector4i;
 import java.util.List;
 import java.util.Optional;
 
-
 public class ScreenTooltipOverlay implements HudOverlay {
     public static final ScreenTooltipOverlay instance = new ScreenTooltipOverlay();
 
-    private record RenderInfo(List<Component> tooltip, ClientTooltipPositioner positioner, Optional<Vector4i> colors) {
-    }
+    private record RenderInfo(
+            List<Component> tooltip,
+            ClientTooltipPositioner positioner,
+            Optional<Vector4i> colors) {}
 
     RenderInfo toRender = null;
 
-    public void render(HudContext gui, GuiGraphics guiHelper, float partialTick, int screenWidth, int screenHeight) {
+    public void render(
+            HudContext gui,
+            GuiGraphics guiHelper,
+            float partialTick,
+            int screenWidth,
+            int screenHeight) {
         if (Minecraft.getInstance().options.hideGui || toRender == null) {
             return;
         }
 
         // manually render tooltip for extra control (mainly color/opacity)
-        //guiHelper.renderTooltip(Minecraft.getInstance().font, Language.getInstance().getVisualOrder(toRender.tooltip.stream().map(ScreenTooltipOverlay::cast).toList()), toRender.positioner, 0, 0);
+        // guiHelper.renderTooltip(Minecraft.getInstance().font,
+        // Language.getInstance().getVisualOrder(toRender.tooltip.stream().map(ScreenTooltipOverlay::cast).toList()), toRender.positioner, 0, 0);
         var pose = guiHelper.pose();
 
         var font = Minecraft.getInstance().font;
-        var components = Language.getInstance().getVisualOrder(toRender.tooltip.stream().map(ScreenTooltipOverlay::cast).toList()).stream().map(ClientTextTooltip::new).toList();
+        var components =
+                Language.getInstance()
+                        .getVisualOrder(
+                                toRender.tooltip.stream().map(ScreenTooltipOverlay::cast).toList())
+                        .stream()
+                        .map(ClientTextTooltip::new)
+                        .toList();
         int maxTextWidth = 0;
         int totalHeight = components.size() == 1 ? -2 : 0;
 
@@ -49,16 +62,29 @@ public class ScreenTooltipOverlay implements HudOverlay {
             totalHeight += clienttooltipcomponent.getHeight();
         }
 
-        Vector2ic vector2ic = toRender.positioner.positionTooltip(guiHelper.guiWidth(), guiHelper.guiHeight(), 0, 0, maxTextWidth, totalHeight);
+        Vector2ic vector2ic =
+                toRender.positioner.positionTooltip(
+                        guiHelper.guiWidth(),
+                        guiHelper.guiHeight(),
+                        0,
+                        0,
+                        maxTextWidth,
+                        totalHeight);
         int x = vector2ic.x();
         int y = vector2ic.y();
         pose.pushPose();
-        //0xf0100010, 0x505000FF, 0x5028007f
+        // 0xf0100010, 0x505000FF, 0x5028007f
         var bgColor1 = toRender.colors.map(Vector4i::x).orElse(0x90100010);
         var bgColor2 = toRender.colors.map(Vector4i::y).orElse(0x90100010);
         var edgeColor1 = toRender.colors.map(Vector4i::z).orElse(0x705000FF);
         var edgeColor2 = toRender.colors.map(Vector4i::w).orElse(0x7028007f);
-        org.marj4n.irons_spellbooks.client.hud.NativeTooltip.renderBackground(guiHelper, x, y, maxTextWidth, totalHeight, 400,
+        org.marj4n.irons_spellbooks.client.hud.NativeTooltip.renderBackground(
+                guiHelper,
+                x,
+                y,
+                maxTextWidth,
+                totalHeight,
+                400,
                 bgColor1,
                 bgColor2,
                 edgeColor1,
@@ -69,11 +95,11 @@ public class ScreenTooltipOverlay implements HudOverlay {
 
         for (int l1 = 0; l1 < components.size(); l1++) {
             ClientTooltipComponent clienttooltipcomponent1 = components.get(l1);
-            clienttooltipcomponent1.renderText(font, x, lineY, pose.last().pose(), guiHelper.bufferSource());
+            clienttooltipcomponent1.renderText(
+                    font, x, lineY, pose.last().pose(), guiHelper.bufferSource());
             lineY += clienttooltipcomponent1.getHeight() + (l1 == 0 ? 2 : 0);
         }
         pose.popPose();
-
 
         toRender = null;
     }
@@ -92,7 +118,8 @@ public class ScreenTooltipOverlay implements HudOverlay {
      * edgeColor1
      * edgeColor2
      */
-    public static void renderTooltip(List<Component> tooltip, ClientTooltipPositioner positioner, Vector4i colors) {
+    public static void renderTooltip(
+            List<Component> tooltip, ClientTooltipPositioner positioner, Vector4i colors) {
         instance.toRender = new RenderInfo(tooltip, positioner, Optional.of(colors));
     }
 }

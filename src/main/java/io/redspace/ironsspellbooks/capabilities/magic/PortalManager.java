@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//@EventBusSubscriber
+// @EventBusSubscriber
 public class PortalManager implements INBTSerializable<CompoundTag> {
 
     public static final PortalManager INSTANCE = new PortalManager();
@@ -72,16 +72,17 @@ public class PortalManager implements INBTSerializable<CompoundTag> {
     public boolean canUsePortal(UUID portalId, Entity entityToTeleport) {
         var portalData = portalLookup.get(portalId);
 
-        return !entityToTeleport.isPassenger() &&
-                !(entityToTeleport instanceof PartEntity<?>) &&
-                portalData != null &&
-                portalData.portalEntityId1 != null &&
-                portalData.portalEntityId2 != null &&
-                !isEntityOnCooldown(entityToTeleport, portalId);
+        return !entityToTeleport.isPassenger()
+                && !(entityToTeleport instanceof PartEntity<?>)
+                && portalData != null
+                && portalData.portalEntityId1 != null
+                && portalData.portalEntityId2 != null
+                && !isEntityOnCooldown(entityToTeleport, portalId);
     }
 
     public boolean canUsePortal(PortalEntity portalEntity, Entity entity) {
-        //IronsSpellbooks.LOGGER.debug("canUsePortal portal:{}, entity:{}", portalEntity.getUUID(), entity);
+        // IronsSpellbooks.LOGGER.debug("canUsePortal portal:{}, entity:{}", portalEntity.getUUID(),
+        // entity);
         if (portalEntity == null || entity == null) {
             return false;
         }
@@ -91,11 +92,11 @@ public class PortalManager implements INBTSerializable<CompoundTag> {
     public void processCooldownTick(UUID portalUUID, int delta) {
         var playerCooldownsForPortal = cooldownLookup.get(portalUUID);
         if (playerCooldownsForPortal != null) {
-            playerCooldownsForPortal.entrySet()
-                    .stream()
+            playerCooldownsForPortal.entrySet().stream()
                     .filter(item -> item.getValue().addAndGet(delta) <= 0)
                     .toList()
-                    .forEach(itemToRemove -> playerCooldownsForPortal.remove(itemToRemove.getKey()));
+                    .forEach(
+                            itemToRemove -> playerCooldownsForPortal.remove(itemToRemove.getKey()));
         }
     }
 
@@ -126,15 +127,20 @@ public class PortalManager implements INBTSerializable<CompoundTag> {
                 if (connectedPortalUUID != null) {
                     removedPortalData = portalLookup.remove(connectedPortalUUID);
 
-                    removedPortalData.getConnectedPortalPos(portalUUID).ifPresent(globalPos -> {
-                        var level = IronsSpellbooks.MCS.getLevel(globalPos.dimension());
-                        if (level != null) {
-                            var connectedPortalToRemove = level.getEntity(connectedPortalUUID);
-                            if (connectedPortalToRemove != null) {
-                                connectedPortalToRemove.discard();
-                            }
-                        }
-                    });
+                    removedPortalData
+                            .getConnectedPortalPos(portalUUID)
+                            .ifPresent(
+                                    globalPos -> {
+                                        var level =
+                                                IronsSpellbooks.MCS.getLevel(globalPos.dimension());
+                                        if (level != null) {
+                                            var connectedPortalToRemove =
+                                                    level.getEntity(connectedPortalUUID);
+                                            if (connectedPortalToRemove != null) {
+                                                connectedPortalToRemove.discard();
+                                            }
+                                        }
+                                    });
                     cooldownLookup.remove(connectedPortalUUID);
                 }
             }
@@ -148,39 +154,47 @@ public class PortalManager implements INBTSerializable<CompoundTag> {
         if (ownerUUID == null) {
             return;
         }
-        IronsSpellbooks.MCS.getAllLevels().forEach(level -> {
-            var player = level.getPlayerByUUID(ownerUUID);
-            if (player != null) {
-                var magicData = MagicData.getPlayerMagicData(player);
-                var playerRecasts = magicData.getPlayerRecasts();
-                var spellId = SpellRegistry.PORTAL_SPELL.get().getSpellId();
-                var recastInstance = playerRecasts.getRecastInstance(spellId);
-                if (recastInstance != null) {
-                    if (recastInstance.castData instanceof PortalData portalData) {
-                        if (portalData.portalEntityId1 == portalUUID) {
-                            playerRecasts.removeRecast(recastInstance, RecastResult.COUNTERSPELL);
-                            return;
-                        }
-                    }
-                }
-            }
-        });
+        IronsSpellbooks.MCS
+                .getAllLevels()
+                .forEach(
+                        level -> {
+                            var player = level.getPlayerByUUID(ownerUUID);
+                            if (player != null) {
+                                var magicData = MagicData.getPlayerMagicData(player);
+                                var playerRecasts = magicData.getPlayerRecasts();
+                                var spellId = SpellRegistry.PORTAL_SPELL.get().getSpellId();
+                                var recastInstance = playerRecasts.getRecastInstance(spellId);
+                                if (recastInstance != null) {
+                                    if (recastInstance.castData instanceof PortalData portalData) {
+                                        if (portalData.portalEntityId1 == portalUUID) {
+                                            playerRecasts.removeRecast(
+                                                    recastInstance, RecastResult.COUNTERSPELL);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        });
     }
 
     @Override
     public CompoundTag serializeNBT() {
-        //Ignoring cooldowns. Too short to care about persisting them
+        // Ignoring cooldowns. Too short to care about persisting them
 
         var tag = new CompoundTag();
         var portalLookupTag = new ListTag();
 
         if (!portalLookup.isEmpty()) {
-            portalLookupTag.addAll(portalLookup.entrySet().stream().map(entry -> {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putUUID("key", entry.getKey());
-                itemTag.put("value", entry.getValue().serializeNBT());
-                return itemTag;
-            }).toList());
+            portalLookupTag.addAll(
+                    portalLookup.entrySet().stream()
+                            .map(
+                                    entry -> {
+                                        CompoundTag itemTag = new CompoundTag();
+                                        itemTag.putUUID("key", entry.getKey());
+                                        itemTag.put("value", entry.getValue().serializeNBT());
+                                        return itemTag;
+                                    })
+                            .toList());
         }
 
         tag.put("portalLookup", portalLookupTag);
@@ -192,12 +206,13 @@ public class PortalManager implements INBTSerializable<CompoundTag> {
         if (compoundTag.contains("portalLookup")) {
             var portalLookupTag = (ListTag) compoundTag.get("portalLookup");
             if (portalLookupTag != null) {
-                portalLookupTag.forEach(tag -> {
-                    var portalLookupItem = (CompoundTag) tag;
-                    var portalData = new PortalData();
-                    portalData.deserializeNBT(portalLookupItem.getCompound("value"));
-                    portalLookup.put(portalLookupItem.getUUID("key"), portalData);
-                });
+                portalLookupTag.forEach(
+                        tag -> {
+                            var portalLookupItem = (CompoundTag) tag;
+                            var portalData = new PortalData();
+                            portalData.deserializeNBT(portalLookupItem.getCompound("value"));
+                            portalLookup.put(portalLookupItem.getUUID("key"), portalData);
+                        });
             }
         }
     }

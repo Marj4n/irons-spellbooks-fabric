@@ -18,11 +18,13 @@ public class BootsOfSpeedArmorModel extends DefaultedItemGeoModel<BootsOfSpeedAr
 
     @Override
     public ResourceLocation getTextureResource(BootsOfSpeedArmorItem object) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "textures/models/armor/boots_of_speed.png");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "textures/models/armor/boots_of_speed.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(BootsOfSpeedArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
 }

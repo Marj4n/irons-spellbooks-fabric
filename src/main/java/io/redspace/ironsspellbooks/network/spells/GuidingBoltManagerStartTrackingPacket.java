@@ -41,9 +41,10 @@ public class GuidingBoltManagerStartTrackingPacket implements CustomPacketPayloa
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            GuidingBoltManager.handleClientboundStartTracking(entity, projectileIds);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    GuidingBoltManager.handleClientboundStartTracking(entity, projectileIds);
+                });
         return true;
     }
 }

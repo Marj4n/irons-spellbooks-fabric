@@ -1,11 +1,11 @@
-//package io.redspace.ironsspellbooks.datafix.fixers;
+// package io.redspace.ironsspellbooks.datafix.fixers;
 //
-//import io.redspace.ironsspellbooks.datafix.DataFixerElement;
-//import net.minecraft.nbt.CompoundTag;
+// import io.redspace.ironsspellbooks.datafix.DataFixerElement;
+// import net.minecraft.nbt.CompoundTag;
 //
-//import java.util.List;
+// import java.util.List;
 //
-//public class FixSpellbookSlots extends DataFixerElement {
+// public class FixSpellbookSlots extends DataFixerElement {
 //    @Override
 //    public List<String> preScanValuesToMatch() {
 //        return List.of(
@@ -29,18 +29,29 @@
 /// /                if (tag.getString("id").equals(v)) {
 /// /                    var itemTag = tag.getCompound("tag");
 /// /                    if (itemTag.contains(SpellContainer.SPELL_SLOT_CONTAINER)) {
-/// /                        var spellBookTag = itemTag.getCompound(SpellContainer.SPELL_SLOT_CONTAINER);
+/// /                        var spellBookTag =
+// itemTag.getCompound(SpellContainer.SPELL_SLOT_CONTAINER);
 /// /                        switch (v) {
-/// /                            case "irons_spellbooks:netherite_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 12);
-/// /                            case "irons_spellbooks:diamond_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 10);
-/// /                            case "irons_spellbooks:gold_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 8);
-/// /                            case "irons_spellbooks:iron_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 6);
-/// /                            case "irons_spellbooks:copper_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 5);
-/// /                            case "irons_spellbooks:rotten_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 8);
-/// /                            case "irons_spellbooks:blaze_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 10);
-/// /                            case "irons_spellbooks:dragonskin_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 12);
-/// /                            case "irons_spellbooks:druidic_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 10);
-/// /                            case "irons_spellbooks:villager_spell_book" -> spellBookTag.putInt(SpellContainer.MAX_SLOTS, 10);
+/// /                            case "irons_spellbooks:netherite_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 12);
+/// /                            case "irons_spellbooks:diamond_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 10);
+/// /                            case "irons_spellbooks:gold_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 8);
+/// /                            case "irons_spellbooks:iron_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 6);
+/// /                            case "irons_spellbooks:copper_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 5);
+/// /                            case "irons_spellbooks:rotten_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 8);
+/// /                            case "irons_spellbooks:blaze_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 10);
+/// /                            case "irons_spellbooks:dragonskin_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 12);
+/// /                            case "irons_spellbooks:druidic_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 10);
+/// /                            case "irons_spellbooks:villager_spell_book" ->
+// spellBookTag.putInt(SpellContainer.MAX_SLOTS, 10);
 /// /                        }
 /// /                        fixed.set(true);
 /// /                    }
@@ -50,5 +61,5 @@
 /// /        }
 //        return false;
 //    }
-//}
+// }
 //

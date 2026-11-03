@@ -16,8 +16,7 @@ public class PortalDamageSource extends DamageSource {
 
     @Override
     public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity pLivingEntity) {
-        return Component.translatable("death.attack.unstable_portal_owner", pLivingEntity.getDisplayName());
+        return Component.translatable(
+                "death.attack.unstable_portal_owner", pLivingEntity.getDisplayName());
     }
-
-
 }

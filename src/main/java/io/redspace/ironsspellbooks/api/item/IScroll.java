@@ -1,4 +1,3 @@
 package io.redspace.ironsspellbooks.api.item;
 
-public interface IScroll {
-}
+public interface IScroll {}

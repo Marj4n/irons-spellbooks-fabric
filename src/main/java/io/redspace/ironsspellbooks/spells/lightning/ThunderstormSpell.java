@@ -29,23 +29,31 @@ import java.util.List;
 import java.util.Optional;
 
 public class ThunderstormSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "thunderstorm");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "thunderstorm");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(ThunderstormEffect.getDamageFromAmplifier(getAmplifierForLevel(spellLevel, caster), caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(
+                                ThunderstormEffect.getDamageFromAmplifier(
+                                        getAmplifierForLevel(spellLevel, caster), caster),
+                                2)),
                 Component.translatable("ui.irons_spellbooks.radius", 20),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDurationTicks(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getDurationTicks(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(120)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(120)
+                    .build();
 
     public ThunderstormSpell() {
         this.manaCostPerLevel = 10;
@@ -76,16 +84,65 @@ public class ThunderstormSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.THUNDERSTORM.get(), getDurationTicks(spellLevel, entity), getAmplifierForLevel(spellLevel, entity), false, false, true));
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.THUNDERSTORM.get(),
+                        getDurationTicks(spellLevel, entity),
+                        getAmplifierForLevel(spellLevel, entity),
+                        false,
+                        false,
+                        true));
         int count = 3;
         for (int i = 0; i < count; i++) {
-            Vec3 offset = new Vec3(0, 5 + level.getRandom().nextFloat() * 2, 2 + level.getRandom().nextFloat());
+            Vec3 offset =
+                    new Vec3(
+                            0,
+                            5 + level.getRandom().nextFloat() * 2,
+                            2 + level.getRandom().nextFloat());
             offset = offset.yRot(i * Mth.TWO_PI / count);
             Vec3 location = entity.position().add(offset);
-            MagicManager.spawnParticles(level, ParticleHelper.FOG_THUNDER_LIGHT, location.x, location.y, location.z, 2, 1, 1, 1, 1, true);
-            MagicManager.spawnParticles(level, ParticleHelper.FOG_THUNDER_DARK, location.x, location.y, location.z, 2, 1, 1, 1, 1, true);
-            MagicManager.spawnParticles(level, new ZapParticleOption(location), entity.getX(), entity.getY(), entity.getZ(), 1, 1,0,1,0, true);
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleHelper.FOG_THUNDER_LIGHT,
+                    location.x,
+                    location.y,
+                    location.z,
+                    2,
+                    1,
+                    1,
+                    1,
+                    1,
+                    true);
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleHelper.FOG_THUNDER_DARK,
+                    location.x,
+                    location.y,
+                    location.z,
+                    2,
+                    1,
+                    1,
+                    1,
+                    1,
+                    true);
+            MagicManager.spawnParticles(
+                    level,
+                    new ZapParticleOption(location),
+                    entity.getX(),
+                    entity.getY(),
+                    entity.getZ(),
+                    1,
+                    1,
+                    0,
+                    1,
+                    0,
+                    true);
         }
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }

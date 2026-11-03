@@ -14,12 +14,21 @@ import net.minecraft.world.phys.Vec3;
 
 public class PortalFrameRenderer implements BlockEntityRenderer<PortalFrameBlockEntity> {
 
-    public PortalFrameRenderer(BlockEntityRendererProvider.Context context) {
-    }
+    public PortalFrameRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override
-    public void render(PortalFrameBlockEntity pBlockEntity, float pPartialTick, PoseStack poseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
-        if (!pBlockEntity.clientIsConnected || pBlockEntity.getBlockState().getValue(PortalFrameBlock.HALF).equals(DoubleBlockHalf.UPPER)) {
+    public void render(
+            PortalFrameBlockEntity pBlockEntity,
+            float pPartialTick,
+            PoseStack poseStack,
+            MultiBufferSource pBufferSource,
+            int pPackedLight,
+            int pPackedOverlay) {
+        if (!pBlockEntity.clientIsConnected
+                || pBlockEntity
+                        .getBlockState()
+                        .getValue(PortalFrameBlock.HALF)
+                        .equals(DoubleBlockHalf.UPPER)) {
             return;
         }
         poseStack.pushPose();
@@ -31,8 +40,14 @@ public class PortalFrameRenderer implements BlockEntityRenderer<PortalFrameBlock
         if (direction == Direction.EAST || direction == Direction.WEST) {
             poseStack.mulPose(Axis.YP.rotation(Mth.HALF_PI));
         }
-        PortalRenderer.renderPortal(poseStack, pBufferSource, pBlockEntity.getLevel() == null ? 0 : (int) pBlockEntity.getLevel().getGameTime(), pPartialTick, false, pBlockEntity.getBlockState()
-                .is(BlockRegistry.POCKET_PORTAL_FRAME.get()), pBlockEntity.getColor());
+        PortalRenderer.renderPortal(
+                poseStack,
+                pBufferSource,
+                pBlockEntity.getLevel() == null ? 0 : (int) pBlockEntity.getLevel().getGameTime(),
+                pPartialTick,
+                false,
+                pBlockEntity.getBlockState().is(BlockRegistry.POCKET_PORTAL_FRAME.get()),
+                pBlockEntity.getColor());
         poseStack.popPose();
     }
 }

@@ -18,11 +18,15 @@ public class IronsAdjustmentModifier extends AbstractModifier {
      * Keep reference to the instance so that we can invoke a fadeout when we stop an animation
      */
     public static IronsAdjustmentModifier INSTANCE;
+
     public boolean enabled = true;
 
-    protected BiFunction<String, Float, Optional<AdjustmentModifier.PartModifier>> transformFunction;
+    protected BiFunction<String, Float, Optional<AdjustmentModifier.PartModifier>>
+            transformFunction;
 
-    public IronsAdjustmentModifier(BiFunction<String, Float, Optional<AdjustmentModifier.PartModifier>> transformFunction) {
+    public IronsAdjustmentModifier(
+            BiFunction<String, Float, Optional<AdjustmentModifier.PartModifier>>
+                    transformFunction) {
         this.transformFunction = transformFunction;
     }
 
@@ -89,12 +93,14 @@ public class IronsAdjustmentModifier extends AbstractModifier {
     }
 
     @Override
-    public Vec3f get3DTransform(String modelName, TransformType type, float partialTick, Vec3f value0) {
+    public Vec3f get3DTransform(
+            String modelName, TransformType type, float partialTick, Vec3f value0) {
         if (!enabled) {
             return super.get3DTransform(modelName, type, partialTick, value0);
         }
 
-        Optional<AdjustmentModifier.PartModifier> partModifier = transformFunction.apply(modelName, partialTick);
+        Optional<AdjustmentModifier.PartModifier> partModifier =
+                transformFunction.apply(modelName, partialTick);
 
         Vec3f modifiedVector = value0;
         float fade = getFadeIn(partialTick) * getFadeOut(partialTick);
@@ -106,7 +112,11 @@ public class IronsAdjustmentModifier extends AbstractModifier {
         }
     }
 
-    protected Vec3f transformVector(Vec3f vector, TransformType type, AdjustmentModifier.PartModifier partModifier, float fade) {
+    protected Vec3f transformVector(
+            Vec3f vector,
+            TransformType type,
+            AdjustmentModifier.PartModifier partModifier,
+            float fade) {
         switch (type) {
             case POSITION:
                 return vector.add(partModifier.offset().scale(fade));

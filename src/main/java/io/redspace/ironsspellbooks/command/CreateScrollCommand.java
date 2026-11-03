@@ -16,17 +16,42 @@ import net.minecraft.world.item.ItemStack;
 
 public class CreateScrollCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_scroll.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED =
+            new SimpleCommandExceptionType(
+                    Component.translatable("commands.irons_spellbooks.create_scroll.failed"));
 
     public static void register(CommandDispatcher<CommandSourceStack> pDispatcher) {
-        pDispatcher.register(Commands.literal("createScroll").requires((p_138819_) -> {
-            return p_138819_.hasPermission(2);
-        }).then(Commands.argument("spell", SpellArgument.spellArgument()).then(Commands.argument("level", IntegerArgumentType.integer(1)).executes((commandContext) -> {
-            return createScroll(commandContext.getSource(), commandContext.getArgument("spell", String.class), IntegerArgumentType.getInteger(commandContext, "level"));
-        }))));
+        pDispatcher.register(
+                Commands.literal("createScroll")
+                        .requires(
+                                (p_138819_) -> {
+                                    return p_138819_.hasPermission(2);
+                                })
+                        .then(
+                                Commands.argument("spell", SpellArgument.spellArgument())
+                                        .then(
+                                                Commands.argument(
+                                                                "level",
+                                                                IntegerArgumentType.integer(1))
+                                                        .executes(
+                                                                (commandContext) -> {
+                                                                    return createScroll(
+                                                                            commandContext
+                                                                                    .getSource(),
+                                                                            commandContext
+                                                                                    .getArgument(
+                                                                                            "spell",
+                                                                                            String
+                                                                                                    .class),
+                                                                            IntegerArgumentType
+                                                                                    .getInteger(
+                                                                                            commandContext,
+                                                                                            "level"));
+                                                                }))));
     }
 
-    private static int createScroll(CommandSourceStack source, String spell, int spellLevel) throws CommandSyntaxException {
+    private static int createScroll(CommandSourceStack source, String spell, int spellLevel)
+            throws CommandSyntaxException {
         if (!spell.contains(":")) {
             spell = IronsSpellbooks.MODID + ":" + spell;
         }
@@ -38,7 +63,12 @@ public class CreateScrollCommand {
         }
 
         if (spellLevel > abstractSpell.getMaxLevel()) {
-            throw new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();
+            throw new SimpleCommandExceptionType(
+                            Component.translatable(
+                                    "commands.irons_spellbooks.create_spell.failed_max_level",
+                                    abstractSpell.getSpellName(),
+                                    abstractSpell.getMaxLevel()))
+                    .create();
         }
 
         var serverPlayer = source.getPlayer();

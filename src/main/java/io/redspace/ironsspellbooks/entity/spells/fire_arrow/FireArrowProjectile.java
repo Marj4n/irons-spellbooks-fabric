@@ -60,7 +60,16 @@ public class FireArrowProjectile extends AbstractMagicProjectile {
             var x = Mth.lerp(f, d0, this.getX() + vec3.x);
             var y = Mth.lerp(f, d1, this.getY() + vec3.y) - .4;
             var z = Mth.lerp(f, d2, this.getZ() + vec3.z);
-            this.level().addParticle(ParticleHelper.FIRE, true, x - random.x, y + 0.5D - random.y, z - random.z, random.x * .5f, random.y * .5f, random.z * .5f);
+            this.level()
+                    .addParticle(
+                            ParticleHelper.FIRE,
+                            true,
+                            x - random.x,
+                            y + 0.5D - random.y,
+                            z - random.z,
+                            random.x * .5f,
+                            random.y * .5f,
+                            random.z * .5f);
         }
     }
 
@@ -73,8 +82,7 @@ public class FireArrowProjectile extends AbstractMagicProjectile {
     }
 
     @Override
-    public void impactParticles(double x, double y, double z) {
-    }
+    public void impactParticles(double x, double y, double z) {}
 
     @Override
     public float getSpeed() {
@@ -83,7 +91,7 @@ public class FireArrowProjectile extends AbstractMagicProjectile {
 
     @Override
     public Optional<Supplier<SoundEvent>> getImpactSound() {
-        return Optional.of(()->SoundEvents.GENERIC_EXPLODE);
+        return Optional.of(() -> SoundEvents.GENERIC_EXPLODE);
     }
 
     @Override
@@ -94,42 +102,71 @@ public class FireArrowProjectile extends AbstractMagicProjectile {
             UUID ignore = null;
             if (hitResult instanceof EntityHitResult entityHitResult) {
                 var directHit = entityHitResult.getEntity();
-                DamageSources.applyDamage(directHit, directDamage, SpellRegistry.FIRE_ARROW_SPELL.get().getDamageSource(this, getOwner()));
+                DamageSources.applyDamage(
+                        directHit,
+                        directDamage,
+                        SpellRegistry.FIRE_ARROW_SPELL.get().getDamageSource(this, getOwner()));
                 ignore = directHit.getUUID();
             }
 
             float explosionRadius = getExplosionRadius();
             var explosionRadiusSqr = explosionRadius * explosionRadius;
-            var entities = level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
-            Vec3 losPoint = Utils.raycastForBlock(level(), this.position(), this.position().add(0, 2, 0), ClipContext.Fluid.NONE).getLocation();
+            var entities =
+                    level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            Vec3 losPoint =
+                    Utils.raycastForBlock(
+                                    level(),
+                                    this.position(),
+                                    this.position().add(0, 2, 0),
+                                    ClipContext.Fluid.NONE)
+                            .getLocation();
             for (Entity entity : entities) {
                 double distanceSqr = entity.distanceToSqr(hitResult.getLocation());
-                if (ignore != entity.getUUID() && distanceSqr < explosionRadiusSqr && canHitEntity(entity) && Utils.hasLineOfSight(level(), losPoint, entity.getBoundingBox().getCenter(), true)) {
+                if (ignore != entity.getUUID()
+                        && distanceSqr < explosionRadiusSqr
+                        && canHitEntity(entity)
+                        && Utils.hasLineOfSight(
+                                level(), losPoint, entity.getBoundingBox().getCenter(), true)) {
                     double p = (1 - distanceSqr / explosionRadiusSqr);
                     float damage = (float) (explosionDamage * p);
-                    DamageSources.applyDamage(entity, damage, SpellRegistry.FIRE_ARROW_SPELL.get().getDamageSource(this, getOwner()));
+                    DamageSources.applyDamage(
+                            entity,
+                            damage,
+                            SpellRegistry.FIRE_ARROW_SPELL.get().getDamageSource(this, getOwner()));
                 }
             }
             if (ServerConfigs.SPELL_GREIFING.get()) {
-//                Explosion explosion = new Explosion(
-//                        level,
-//                        null,
-//                        null,
-//                        null,
-//                        this.getX(), this.getY(), this.getZ(),
-//                        this.getExplosionRadius() / 2,
-//                        true,
-//                        Explosion.BlockInteraction.DESTROY,
-//                        ParticleTypes.EXPLOSION,
-//                        ParticleTypes.EXPLOSION_EMITTER,
-//                        SoundEvents.GENERIC_EXPLODE);
-//                if (!org.marj4n.irons_spellbooks.events.SpellEvents.post(new ExplosionEvent.Start(level, explosion)).isCanceled()) {
-//                    explosion.explode();
-//                    explosion.finalizeExplosion(false);
-//                }
+                //                Explosion explosion = new Explosion(
+                //                        level,
+                //                        null,
+                //                        null,
+                //                        null,
+                //                        this.getX(), this.getY(), this.getZ(),
+                //                        this.getExplosionRadius() / 2,
+                //                        true,
+                //                        Explosion.BlockInteraction.DESTROY,
+                //                        ParticleTypes.EXPLOSION,
+                //                        ParticleTypes.EXPLOSION_EMITTER,
+                //                        SoundEvents.GENERIC_EXPLODE);
+                //                if (!org.marj4n.irons_spellbooks.events.SpellEvents.post(new
+                // ExplosionEvent.Start(level, explosion)).isCanceled()) {
+                //                    explosion.explode();
+                //                    explosion.finalizeExplosion(false);
+                //                }
             }
-            PacketDistributor.sendToPlayersTrackingEntity(this, new FieryExplosionParticlesPacket(hitResult.getLocation().subtract(getDeltaMovement().scale(0.25)), getExplosionRadius() * .7f));
-            playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
+            PacketDistributor.sendToPlayersTrackingEntity(
+                    this,
+                    new FieryExplosionParticlesPacket(
+                            hitResult.getLocation().subtract(getDeltaMovement().scale(0.25)),
+                            getExplosionRadius() * .7f));
+            playSound(
+                    SoundEvents.GENERIC_EXPLODE,
+                    4.0F,
+                    (1.0F
+                                    + (this.level().random.nextFloat()
+                                                    - this.level().random.nextFloat())
+                                            * 0.2F)
+                            * 0.7F);
             this.discardHelper(hitResult);
         }
     }

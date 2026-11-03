@@ -18,7 +18,10 @@ public class HastenedEffect extends CustomDescriptionMobEffect {
     @Override
     public Component getDescriptionLine(MobEffectInstance instance) {
         float reductionAmount = getPercentForAmplifier(instance.getAmplifier(), null);
-        return Component.translatable("tooltip.irons_spellbooks.hastened_description", (int) (reductionAmount * 100)).withStyle(ChatFormatting.BLUE);
+        return Component.translatable(
+                        "tooltip.irons_spellbooks.hastened_description",
+                        (int) (reductionAmount * 100))
+                .withStyle(ChatFormatting.BLUE);
     }
 
     public static float getPercentForAmplifier(int amplifier, @Nullable LivingEntity livingEntity) {

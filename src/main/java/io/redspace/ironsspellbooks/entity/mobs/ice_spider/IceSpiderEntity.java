@@ -60,7 +60,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, IAnimatedAttacker, PreventDismount, io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity, org.marj4n.irons_spellbooks.events.RiderSettings {
+public class IceSpiderEntity extends AbstractSpellCastingMob
+        implements Enemy,
+                IAnimatedAttacker,
+                PreventDismount,
+                io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity,
+                org.marj4n.irons_spellbooks.events.RiderSettings {
 
     @Override
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
@@ -73,12 +78,18 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
         this.yHeadRotO = y;
     }
 
-    protected static final EntityDataAccessor<Boolean> DATA_IS_CLIMBING = SynchedEntityData.defineId(IceSpiderEntity.class, EntityDataSerializers.BOOLEAN);
-    protected static final EntityDataAccessor<Boolean> DATA_IS_CROUCHING = SynchedEntityData.defineId(IceSpiderEntity.class, EntityDataSerializers.BOOLEAN);
-    protected static final EntityDataAccessor<Optional<UUID>> DATA_GRAPPLE_UUID = SynchedEntityData.defineId(
-            IceSpiderEntity.class, EntityDataSerializers.OPTIONAL_UUID
-    );
-    private static final AttributeModifier CROUCH_SPEED_MODIFIER = new AttributeModifier(UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E"), "crouching", -0.30, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    protected static final EntityDataAccessor<Boolean> DATA_IS_CLIMBING =
+            SynchedEntityData.defineId(IceSpiderEntity.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> DATA_IS_CROUCHING =
+            SynchedEntityData.defineId(IceSpiderEntity.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Optional<UUID>> DATA_GRAPPLE_UUID =
+            SynchedEntityData.defineId(IceSpiderEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final AttributeModifier CROUCH_SPEED_MODIFIER =
+            new AttributeModifier(
+                    UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E"),
+                    "crouching",
+                    -0.30,
+                    AttributeModifier.Operation.MULTIPLY_TOTAL);
     public static final Vec3 TORSO_OFFSET = new Vec3(0, 18, 0);
     protected static final int EMERGE_TIME = 45;
     public static final int STOP_HUNTING_THRESHOLD = 18;
@@ -95,25 +106,26 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
     public boolean wantsToCastSpells;
     protected IceSpiderPartEntity[] subEntities;
     protected IceSpiderAttackGoal attackGoal;
-    @Nullable
-    protected int grappleTime;
-    @Nullable
-    protected Entity cachedGrappleTarget = null;
+    @Nullable protected int grappleTime;
+    @Nullable protected Entity cachedGrappleTarget = null;
     protected int satiation;
     protected boolean isHungry;
 
     public IceSpiderEntity(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         this.noCulling = true;
-        subEntities = new IceSpiderPartEntity[]{
-                //head
-                new IceSpiderPartEntity(this, TORSO_OFFSET.add(0, 0, 16), 1.2f, .8f),
-                //torso
-                new IceSpiderPartEntity(this, TORSO_OFFSET, 0.75f, 0.75f),
-                //abdomen
-                new IceSpiderPartEntity(this, TORSO_OFFSET.add(0, 0, -20), 1.75f, 1.5f)
-        };
-        this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Copy of forge fix to sub entity id's
+        subEntities =
+                new IceSpiderPartEntity[] {
+                    // head
+                    new IceSpiderPartEntity(this, TORSO_OFFSET.add(0, 0, 16), 1.2f, .8f),
+                    // torso
+                    new IceSpiderPartEntity(this, TORSO_OFFSET, 0.75f, 0.75f),
+                    // abdomen
+                    new IceSpiderPartEntity(this, TORSO_OFFSET.add(0, 0, -20), 1.75f, 1.5f)
+                };
+        this.setId(
+                ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1)
+                        + 1); // Copy of forge fix to sub entity id's
         this.moveControl = createMoveControl();
         setSatiation(0);
     }
@@ -130,8 +142,14 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
                 .add(Attributes.ARMOR, 20)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.6)
                 .add(Attributes.FOLLOW_RANGE, 32)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH, 4)
-                .add(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.STEP_HEIGHT_ADDITION, 1.5)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .ENTITY_REACH,
+                        4)
+                .add(
+                        io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes
+                                .STEP_HEIGHT_ADDITION,
+                        1.5)
                 .add(Attributes.MOVEMENT_SPEED, .35);
     }
 
@@ -148,7 +166,13 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
                 Vec3 vec = rotateWithBody(new Vec3((x - 0.5) * scalar, 0, (y - 0.5) * scalar));
                 int maxStep = 2;
                 int climbOffset = isClimbing() ? 4 * Mth.sign(y - 0.5) : 0;
-                cornerPins[x * 2 + y] = Utils.moveToRelativeGroundLevel(level(), worldpos.add(vec), maxStep + climbOffset, maxStep - climbOffset).subtract(worldpos);
+                cornerPins[x * 2 + y] =
+                        Utils.moveToRelativeGroundLevel(
+                                        level(),
+                                        worldpos.add(vec),
+                                        maxStep + climbOffset,
+                                        maxStep - climbOffset)
+                                .subtract(worldpos);
             }
         }
         Vec3[] vx = cornerPins;
@@ -237,7 +261,10 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
         setSatiation(satiation - 1);
     }
 
-    public static void onPreyKilled(LivingEntity entity, DamageSource source, java.util.Collection<net.minecraft.world.entity.item.ItemEntity> drops) {
+    public static void onPreyKilled(
+            LivingEntity entity,
+            DamageSource source,
+            java.util.Collection<net.minecraft.world.entity.item.ItemEntity> drops) {
         if (!(entity instanceof Animal prey)) {
             return;
         }
@@ -259,9 +286,11 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
             }
         } else {
             if (horizontalCollision) {
-                var projection = this.getDimensions(Pose.CROUCHING).makeBoundingBox(this.position().add(getForward().scale(0.15)));
+                var projection =
+                        this.getDimensions(Pose.CROUCHING)
+                                .makeBoundingBox(this.position().add(getForward().scale(0.15)));
                 if (level().noCollision(this, projection.deflate(1.0E-7))
-                    /*&& !level.noCollision(this, this.getBoundingBox().deflate(1.0E-7))*/) {
+                /*&& !level.noCollision(this, this.getBoundingBox().deflate(1.0E-7))*/ ) {
                     startCrouching();
                 }
             }
@@ -274,7 +303,10 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
         }
         if (verticalCollision && !verticalCollisionBelow) {
             // try to unstuck ourselves
-            var leftprojection = this.getBoundingBox().deflate(0.2).move(getForward().scale(0.5).yRot(-Mth.HALF_PI));
+            var leftprojection =
+                    this.getBoundingBox()
+                            .deflate(0.2)
+                            .move(getForward().scale(0.5).yRot(-Mth.HALF_PI));
             boolean strafeLeft = level().noCollision(this, leftprojection);
             this.getMoveControl().strafe(0, strafeLeft ? 1 : -1);
             return;
@@ -286,7 +318,10 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
         } else {
             if (horizontalCollision) {
                 float deflate = 0.75f;
-                var projection = this.getBoundingBox().deflate(deflate).move(getForward().scale(0.25 + deflate / 2));
+                var projection =
+                        this.getBoundingBox()
+                                .deflate(deflate)
+                                .move(getForward().scale(0.25 + deflate / 2));
                 if (!level().noCollision(this, projection)) {
                     setIsClimbing(true);
                 }
@@ -319,7 +354,9 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
 
     @Override
     public Vec3 getDeltaMovement() {
-        return this.isClimbing() ? super.getDeltaMovement().multiply(1, 0, 1).add(0, .275f, 0) : super.getDeltaMovement();
+        return this.isClimbing()
+                ? super.getDeltaMovement().multiply(1, 0, 1).add(0, .275f, 0)
+                : super.getDeltaMovement();
     }
 
     public float getCrouchHeightMultiplier(float partialTick) {
@@ -362,7 +399,6 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
         super.initiateCastSpell(spell, spellLevel);
     }
 
-
     @Override
     public float maxUpStep() {
         return Math.max(1, super.maxUpStep() * getScale());
@@ -378,8 +414,9 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
 
     protected MoveControl createMoveControl() {
         return new MoveControl(this) {
-            //This fixes a bug where a mob tries to path into the block it's already standing, and spins around trying to look "forward"
-            //We nullify our rotation calculation if we are close to block we are trying to get to
+            // This fixes a bug where a mob tries to path into the block it's already standing, and
+            // spins around trying to look "forward"
+            // We nullify our rotation calculation if we are close to block we are trying to get to
             @Override
             protected float rotlerp(float pSourceAngle, float pTargetAngle, float pMaximumChange) {
                 double d0 = this.wantedX - this.mob.getX();
@@ -392,7 +429,6 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
             }
         };
     }
-
 
     @Override
     protected PathNavigation createNavigation(Level level) {
@@ -408,31 +444,69 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new LeapBackGoal(this));
         this.goalSelector.addGoal(1, new PounceGrappleGoal(this));
-        attackGoal = (IceSpiderAttackGoal) new IceSpiderAttackGoal(this, 1.1, 0, 40)
-                .setMoveset(List.of(
-                        new AttackAnimationData.Builder("attack_bite").length(22).attacks(new AttackKeyframe(14, new Vec3(0, 0, 1))).build(),
-                        new AttackAnimationData.Builder("attack_fang_basic").length(20).attacks(new AttackKeyframe(12, new Vec3(0, 0, 1))).build(),
-                        new AttackAnimationData.Builder("attack_right_swipe").length(14).attacks(new AttackKeyframe(10, new Vec3(0, 0.1, -1), new Vec3(0, 0, 1))).build()
-                ))
-                .setMeleeBias(1f, 1f)
-                .setSpells(List.of(SpellRegistry.SNOWBALL_SPELL.get(), SpellRegistry.ICE_SPIKES_SPELL.get()), List.of(), List.of(), List.of()).setSpellQuality(.75f, .75f);
-        this.goalSelector.addGoal(2, attackGoal
-        );
+        attackGoal =
+                (IceSpiderAttackGoal)
+                        new IceSpiderAttackGoal(this, 1.1, 0, 40)
+                                .setMoveset(
+                                        List.of(
+                                                new AttackAnimationData.Builder("attack_bite")
+                                                        .length(22)
+                                                        .attacks(
+                                                                new AttackKeyframe(
+                                                                        14, new Vec3(0, 0, 1)))
+                                                        .build(),
+                                                new AttackAnimationData.Builder("attack_fang_basic")
+                                                        .length(20)
+                                                        .attacks(
+                                                                new AttackKeyframe(
+                                                                        12, new Vec3(0, 0, 1)))
+                                                        .build(),
+                                                new AttackAnimationData.Builder(
+                                                                "attack_right_swipe")
+                                                        .length(14)
+                                                        .attacks(
+                                                                new AttackKeyframe(
+                                                                        10,
+                                                                        new Vec3(0, 0.1, -1),
+                                                                        new Vec3(0, 0, 1)))
+                                                        .build()))
+                                .setMeleeBias(1f, 1f)
+                                .setSpells(
+                                        List.of(
+                                                SpellRegistry.SNOWBALL_SPELL.get(),
+                                                SpellRegistry.ICE_SPIKES_SPELL.get()),
+                                        List.of(),
+                                        List.of(),
+                                        List.of())
+                                .setSpellQuality(.75f, .75f);
+        this.goalSelector.addGoal(2, attackGoal);
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 32, 0.08f));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new MomentHurtByTargetGoal(this, IceSpiderEntity.class));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, true, livingEntity ->
-                livingEntity instanceof Player
-                        || livingEntity instanceof IronGolem));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, true, livingEntity -> {
-            if (livingEntity instanceof Animal) {
-                return this.canHuntAnimals();
-            }
-            return livingEntity instanceof AbstractVillager
-                    || livingEntity instanceof Raider;
-        }));
+        this.targetSelector.addGoal(
+                2,
+                new NearestAttackableTargetGoal<>(
+                        this,
+                        LivingEntity.class,
+                        true,
+                        livingEntity ->
+                                livingEntity instanceof Player
+                                        || livingEntity instanceof IronGolem));
+        this.targetSelector.addGoal(
+                3,
+                new NearestAttackableTargetGoal<>(
+                        this,
+                        LivingEntity.class,
+                        true,
+                        livingEntity -> {
+                            if (livingEntity instanceof Animal) {
+                                return this.canHuntAnimals();
+                            }
+                            return livingEntity instanceof AbstractVillager
+                                    || livingEntity instanceof Raider;
+                        }));
     }
 
     @Override
@@ -496,7 +570,6 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
         return f;
     }
 
-
     @Override
     protected boolean isImmobile() {
         return super.isImmobile() || getPose().equals(Pose.EMERGING);
@@ -513,21 +586,26 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
     }
 
     public boolean hurt(IceSpiderPartEntity bodypart, DamageSource source, float amount) {
-        //todo: can do cool damage manipulations based on bodypart (ie headshots)
+        // todo: can do cool damage manipulations based on bodypart (ie headshots)
         return hurt(source, amount);
     }
 
     @Override
     protected void actuallyHurt(DamageSource damageSource, float damageAmount) {
         // give ourselves resistance against our own grappled target
-        if (damageSource.getEntity() != null && damageSource.getEntity().getUUID().equals(getGrappleTargetUUID())) {
+        if (damageSource.getEntity() != null
+                && damageSource.getEntity().getUUID().equals(getGrappleTargetUUID())) {
             damageAmount *= .20f;
         }
         if (damageSource.getEntity() instanceof IronGolem) {
             damageAmount *= 0.5f;
         }
         // potentially attempt to leap back if incoming melee damage is severe
-        if (isAggressive() && !isCrouching() && !isGrappling() && !wantsToLeapBack && !damageSource.isIndirect()) {
+        if (isAggressive()
+                && !isCrouching()
+                && !isGrappling()
+                && !wantsToLeapBack
+                && !damageSource.isIndirect()) {
             float f = Mth.lerp(Mth.clamp(damageAmount / 12f, 0, 1), 0.02f, .7f);
             if (random.nextFloat() < f) {
                 wantsToCastSpells = true;
@@ -600,14 +678,14 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
         return dimensions;
     }
 
-//    @Override
-//    protected EntityDimensions getDefaultDimensions(Pose pose) {
-//        var dimensions = super.getDefaultDimensions(pose);
-//        if (pose == Pose.CROUCHING) {
-//            dimensions = dimensions.scale(1, 0.5f);
-//        }
-//        return dimensions;
-//    }
+    //    @Override
+    //    protected EntityDimensions getDefaultDimensions(Pose pose) {
+    //        var dimensions = super.getDefaultDimensions(pose);
+    //        if (pose == Pose.CROUCHING) {
+    //            dimensions = dimensions.scale(1, 0.5f);
+    //        }
+    //        return dimensions;
+    //    }
 
     @Nullable
     public UUID getGrappleTargetUUID() {
@@ -685,7 +763,10 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
             stopGrappling();
             entomb(entity);
         } else {
-            cachedGrappleTarget.setTicksFrozen(Math.min(cachedGrappleTarget.getTicksRequiredToFreeze() * 3, cachedGrappleTarget.getTicksFrozen() + 10));
+            cachedGrappleTarget.setTicksFrozen(
+                    Math.min(
+                            cachedGrappleTarget.getTicksRequiredToFreeze() * 3,
+                            cachedGrappleTarget.getTicksFrozen() + 10));
             yHeadRot = yBodyRot;
         }
     }
@@ -716,7 +797,8 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
     public IceTombEntity entomb(Entity entity) {
         IceTombEntity iceTombEntity = new IceTombEntity(level(), this);
         iceTombEntity.moveTo(entity.position());
-        iceTombEntity.setDeltaMovement(entity.getDeltaMovement().add(this.getForward().add(0, 1, 0).scale(0.5)));
+        iceTombEntity.setDeltaMovement(
+                entity.getDeltaMovement().add(this.getForward().add(0, 1, 0).scale(0.5)));
         iceTombEntity.setEvil();
         iceTombEntity.setLifetime(20 * 5);
         level().addFreshEntity(iceTombEntity);
@@ -806,7 +888,8 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
     }
 
     RawAnimation animationToPlay = null;
-    private final AnimationController<IceSpiderEntity> meleeController = new AnimationController<>(this, "melee_animations", 0, this::predicate);
+    private final AnimationController<IceSpiderEntity> meleeController =
+            new AnimationController<>(this, "melee_animations", 0, this::predicate);
 
     @Override
     public void playAnimation(String animationId) {
@@ -833,5 +916,4 @@ public class IceSpiderEntity extends AbstractSpellCastingMob implements Enemy, I
     public boolean isAnimating() {
         return meleeController.getAnimationState() == AnimationController.State.RUNNING;
     }
-
 }

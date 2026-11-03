@@ -13,7 +13,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class LearnSpellPacket implements CustomPacketPayload {
     private final byte hand;
     private final String spell;
@@ -35,18 +34,22 @@ public class LearnSpellPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer serverPlayer = ctx.getSender();
-            ItemStack itemStack = serverPlayer.getItemInHand(byteToHand(hand));
-            AbstractSpell spell = SpellRegistry.getSpell(this.spell);
-            var data = MagicData.getPlayerMagicData(serverPlayer).getSyncedData();
-            if (spell != SpellRegistry.none() && !data.isSpellLearned(spell) && itemStack.is(ItemRegistry.ELDRITCH_PAGE.get()) && itemStack.getCount() > 0) {
-                data.learnSpell(spell);
-                if (!serverPlayer.getAbilities().instabuild) {
-                    itemStack.shrink(1);
-                }
-            }
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ServerPlayer serverPlayer = ctx.getSender();
+                    ItemStack itemStack = serverPlayer.getItemInHand(byteToHand(hand));
+                    AbstractSpell spell = SpellRegistry.getSpell(this.spell);
+                    var data = MagicData.getPlayerMagicData(serverPlayer).getSyncedData();
+                    if (spell != SpellRegistry.none()
+                            && !data.isSpellLearned(spell)
+                            && itemStack.is(ItemRegistry.ELDRITCH_PAGE.get())
+                            && itemStack.getCount() > 0) {
+                        data.learnSpell(spell);
+                        if (!serverPlayer.getAbilities().instabuild) {
+                            itemStack.shrink(1);
+                        }
+                    }
+                });
         return true;
     }
 

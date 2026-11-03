@@ -8,25 +8,44 @@ import net.minecraft.world.item.ItemStack;
 
 /** Vanilla inventory with the original Forge inventory NBT format retained. */
 public class NativeItemInventory extends SimpleContainer {
-    public NativeItemInventory(int size) { super(size); }
-    public int getSlots() { return getContainerSize(); }
-    public ItemStack getStackInSlot(int slot) { return getItem(slot); }
-    public void setStackInSlot(int slot, ItemStack stack) { setItem(slot, stack); }
+    public NativeItemInventory(int size) {
+        super(size);
+    }
+
+    public int getSlots() {
+        return getContainerSize();
+    }
+
+    public ItemStack getStackInSlot(int slot) {
+        return getItem(slot);
+    }
+
+    public void setStackInSlot(int slot, ItemStack stack) {
+        setItem(slot, stack);
+    }
+
     protected void onContentsChanged(int slot) {}
-    @Override public void setItem(int slot, ItemStack stack) {
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
         super.setItem(slot, stack);
         onContentsChanged(slot);
     }
-    @Override public ItemStack removeItem(int slot, int amount) {
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
         ItemStack result = super.removeItem(slot, amount);
         if (!result.isEmpty()) onContentsChanged(slot);
         return result;
     }
-    @Override public ItemStack removeItemNoUpdate(int slot) {
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
         ItemStack result = super.removeItemNoUpdate(slot);
         if (!result.isEmpty()) onContentsChanged(slot);
         return result;
     }
+
     public CompoundTag serializeNBT() {
         CompoundTag result = new CompoundTag();
         ListTag items = new ListTag();
@@ -40,6 +59,7 @@ public class NativeItemInventory extends SimpleContainer {
         result.putInt("Size", getContainerSize());
         return result;
     }
+
     public void deserializeNBT(CompoundTag tag) {
         for (int slot = 0; slot < getContainerSize(); slot++) setItem(slot, ItemStack.EMPTY);
         ListTag items = tag.getList("Items", Tag.TAG_COMPOUND);

@@ -12,10 +12,17 @@ import net.fabricmc.api.Environment;
 public class UnstableEnderParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
 
-    public UnstableEnderParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public UnstableEnderParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
-
 
         this.friction = .77f;
         this.xd = xd;
@@ -23,7 +30,8 @@ public class UnstableEnderParticle extends TextureSheetParticle {
         this.zd = zd;
         this.quadSize = 0.14F * (this.random.nextFloat() * 0.15F + 0.3F);
         this.scale(2.25f);
-        this.lifetime = 7 + (int) (Math.random() * 10 + Math.min(new Vec3(xd, yd, zd).length() * 100, 20));
+        this.lifetime =
+                7 + (int) (Math.random() * 10 + Math.min(new Vec3(xd, yd, zd).length() * 100, 20));
         sprites = spriteSet;
         this.gravity = 0.0F;
         randomlyAnimate();
@@ -32,7 +40,6 @@ public class UnstableEnderParticle extends TextureSheetParticle {
         this.rCol = f * 0.9F;
         this.gCol = f * 0.3F;
         this.bCol = f;
-
     }
 
     @Override
@@ -61,9 +68,15 @@ public class UnstableEnderParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new UnstableEnderParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }

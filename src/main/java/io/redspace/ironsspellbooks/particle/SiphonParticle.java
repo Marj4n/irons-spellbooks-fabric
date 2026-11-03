@@ -9,10 +9,17 @@ import net.fabricmc.api.Environment;
 public class SiphonParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
 
-    public SiphonParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public SiphonParticle(
+            ClientLevel level,
+            double xCoord,
+            double yCoord,
+            double zCoord,
+            SpriteSet spriteSet,
+            double xd,
+            double yd,
+            double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
-
 
         this.xd = xd;
         this.yd = yd;
@@ -25,7 +32,6 @@ public class SiphonParticle extends TextureSheetParticle {
         this.rCol = 0.85F * .4f;
         this.gCol = 0.0F;
         this.bCol = .1f * .4f;
-
     }
 
     @Override
@@ -35,7 +41,6 @@ public class SiphonParticle extends TextureSheetParticle {
         this.yd += this.random.nextFloat() / 100.0F;
         this.zd += this.random.nextFloat() / 500.0F * (float) (this.random.nextBoolean() ? 1 : -1);
         this.setSpriteFromAge(this.sprites);
-
     }
 
     @Override
@@ -51,9 +56,15 @@ public class SiphonParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
+        public Particle createParticle(
+                SimpleParticleType particleType,
+                ClientLevel level,
+                double x,
+                double y,
+                double z,
+                double dx,
+                double dy,
+                double dz) {
             return new SiphonParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }
@@ -62,13 +73,13 @@ public class SiphonParticle extends TextureSheetParticle {
     public int getLightColor(float p_107564_) {
         return 240;
     }
-//
-//    @Override
-//    public float getQuadSize(float p_107567_) {
-//        float f = ((float) this.age + p_107567_) / (float) this.lifetime;
-//        f = 1.0F - f;
-//        f *= f;
-//        f = 1.0F - f;
-//        return this.quadSize * f;
-//    }
+    //
+    //    @Override
+    //    public float getQuadSize(float p_107567_) {
+    //        float f = ((float) this.age + p_107567_) / (float) this.lifetime;
+    //        f = 1.0F - f;
+    //        f *= f;
+    //        f = 1.0F - f;
+    //        return this.quadSize * f;
+    //    }
 }

@@ -38,11 +38,9 @@ import java.util.UUID;
 
 public class WispEntity extends PathfinderMob implements GeoEntity {
 
-    @Nullable
-    private UUID ownerUUID;
+    @Nullable private UUID ownerUUID;
 
-    @Nullable
-    private Entity cachedOwner;
+    @Nullable private Entity cachedOwner;
 
     private final RawAnimation animation = RawAnimation.begin().thenPlay("animation.wisp.flying");
 
@@ -58,7 +56,7 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
     public WispEntity(Level levelIn, LivingEntity owner, float damageAmount) {
         this(EntityRegistry.WISP.get(), levelIn);
         this.moveControl = new FlyingMoveControl(this, 20, true);
-        //this.targetSearchStart = targetSearchStart;
+        // this.targetSearchStart = targetSearchStart;
         this.damageAmount = damageAmount;
 
         setOwner(owner);
@@ -76,22 +74,22 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     protected void registerGoals() {
-        //IronsSpellbooks.LOGGER.debug("WispEntity.registerGoals");
+        // IronsSpellbooks.LOGGER.debug("WispEntity.registerGoals");
         this.goalSelector.addGoal(2, new WispAttackGoal(this, 1));
-//        this.targetSelector.addGoal(1, new AcquireTargetNearLocationGoal<>(
-//                this,
-//                LivingEntity.class,
-//                0,
-//                false,
-//                true,
-//                targetSearchStart,
-//                WispEntity::isValidTarget));
+        //        this.targetSelector.addGoal(1, new AcquireTargetNearLocationGoal<>(
+        //                this,
+        //                LivingEntity.class,
+        //                0,
+        //                false,
+        //                true,
+        //                targetSearchStart,
+        //                WispEntity::isValidTarget));
     }
 
     public static boolean isValidTarget(@Nullable Entity entity) {
-        if (entity instanceof LivingEntity livingEntity &&
-                livingEntity.isAlive() &&
-                livingEntity instanceof Enemy) {
+        if (entity instanceof LivingEntity livingEntity
+                && livingEntity.isAlive()
+                && livingEntity instanceof Enemy) {
             return true;
         }
         return false;
@@ -117,11 +115,16 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
                 }
             } else {
                 if (this.getBoundingBox().intersects(target.getBoundingBox())) {
-                    // IronsSpellbooks.LOGGER.debug("WispEntity.tick applyDamage: {}", damageAmount);
-                    DamageSources.applyDamage(target, damageAmount, SpellRegistry.WISP_SPELL.get().getDamageSource(this, cachedOwner));
+                    // IronsSpellbooks.LOGGER.debug("WispEntity.tick applyDamage: {}",
+                    // damageAmount);
+                    DamageSources.applyDamage(
+                            target,
+                            damageAmount,
+                            SpellRegistry.WISP_SPELL.get().getDamageSource(this, cachedOwner));
                     this.playSound(WispSpell.getImpactSound(), 1.0f, 1.0f);
                     var p = target.getEyePosition();
-                    MagicManager.spawnParticles(level(), ParticleHelper.WISP, p.x, p.y, p.z, 25, 0, 0, 0, .18, true);
+                    MagicManager.spawnParticles(
+                            level(), ParticleHelper.WISP, p.x, p.y, p.z, 25, 0, 0, 0, .18, true);
                     discard();
                 }
             }
@@ -138,15 +141,16 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     protected @NotNull PathNavigation createNavigation(Level pLevel) {
-        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, pLevel) {
-            public boolean isStableDestination(BlockPos blockPos) {
-                return !this.level.getBlockState(blockPos.below()).isAir();
-            }
+        FlyingPathNavigation flyingpathnavigation =
+                new FlyingPathNavigation(this, pLevel) {
+                    public boolean isStableDestination(BlockPos blockPos) {
+                        return !this.level.getBlockState(blockPos.below()).isAir();
+                    }
 
-            public void tick() {
-                super.tick();
-            }
-        };
+                    public void tick() {
+                        super.tick();
+                    }
+                };
         flyingpathnavigation.setCanOpenDoors(false);
         flyingpathnavigation.setCanFloat(true);
         flyingpathnavigation.setCanPassDoors(true);
@@ -183,7 +187,7 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
     public void setTarget(@org.jetbrains.annotations.Nullable LivingEntity target) {
         super.setTarget(target);
 
-        //irons_spellbooks.LOGGER.debug("WispEntity.setTarget: {}", target);
+        // irons_spellbooks.LOGGER.debug("WispEntity.setTarget: {}", target);
     }
 
     @Override
@@ -218,7 +222,6 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
                 .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(Attributes.FLYING_SPEED, .2)
                 .add(Attributes.MOVEMENT_SPEED, .2);
-
     }
 
     @Override
@@ -232,9 +235,7 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {
-
-    }
+    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {}
 
     public boolean hurt(DamageSource pSource, float pAmount) {
         if (!this.level().isClientSide) {
@@ -246,7 +247,17 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
 
     private void popAndDie() {
         this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
-        ((ServerLevel) this.level()).sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
+        ((ServerLevel) this.level())
+                .sendParticles(
+                        ParticleTypes.CRIT,
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        15,
+                        0.2D,
+                        0.2D,
+                        0.2D,
+                        0.0D);
         this.discard();
     }
 
@@ -255,17 +266,20 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
         return HumanoidArm.LEFT;
     }
 
-    //https://forge.gemwire.uk/wiki/Particles
+    // https://forge.gemwire.uk/wiki/Particles
     public void spawnParticles() {
-//        for (int i = 0; i < 1; i++) {
-//            double speed = .02;
-//            double dx = Utils.random.nextDouble() * 2 * speed - speed;
-//            double dy = Utils.random.nextDouble() * 2 * speed - speed;
-//            double dz = Utils.random.nextDouble() * 2 * speed - speed;
-//            var tmp = ParticleHelper.UNSTABLE_ENDER;
-//            //IronsSpellbooks.LOGGER.debug("WispEntity.spawnParticles isClientSide:{}, position:{}, {} {} {}", this.level.isClientSide, this.position(), dx, dy, dz);
-//            level.addParticle(ParticleHelper.WISP, this.xOld - dx, this.position().y, this.zOld - dz, dx, dy, dz);
-//            //level.addParticle(ParticleHelper.UNSTABLE_ENDER, this.getX() + dx / 2, this.getY() + dy / 2, this.getZ() + dz / 2, dx, dy, dz);
-//        }
+        //        for (int i = 0; i < 1; i++) {
+        //            double speed = .02;
+        //            double dx = Utils.random.nextDouble() * 2 * speed - speed;
+        //            double dy = Utils.random.nextDouble() * 2 * speed - speed;
+        //            double dz = Utils.random.nextDouble() * 2 * speed - speed;
+        //            var tmp = ParticleHelper.UNSTABLE_ENDER;
+        //            //IronsSpellbooks.LOGGER.debug("WispEntity.spawnParticles isClientSide:{},
+        // position:{}, {} {} {}", this.level.isClientSide, this.position(), dx, dy, dz);
+        //            level.addParticle(ParticleHelper.WISP, this.xOld - dx, this.position().y,
+        // this.zOld - dz, dx, dy, dz);
+        //            //level.addParticle(ParticleHelper.UNSTABLE_ENDER, this.getX() + dx / 2,
+        // this.getY() + dy / 2, this.getZ() + dz / 2, dx, dy, dz);
+        //        }
     }
 }

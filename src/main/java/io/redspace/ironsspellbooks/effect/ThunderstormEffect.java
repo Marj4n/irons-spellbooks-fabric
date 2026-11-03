@@ -20,22 +20,27 @@ public class ThunderstormEffect extends MagicMobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int pAmplifier) {
-        var radiusSqr = 400; //20
-        entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(20, 12, 20),
-                        livingEntity -> livingEntity != entity &&
-                                horizontalDistanceSqr(livingEntity, entity) < radiusSqr &&
-                                livingEntity.isPickable() &&
-                                !livingEntity.isSpectator() &&
-                                !Utils.shouldHealEntity(entity, livingEntity) &&
-                                Utils.hasLineOfSight(entity.level(), entity, livingEntity, false)
-                )
-                .forEach(targetEntity -> {
-                    LightningStrike lightningStrike = new LightningStrike(entity.level());
-                    lightningStrike.setOwner(entity);
-                    lightningStrike.setDamage(getDamageFromAmplifier(pAmplifier, entity));
-                    lightningStrike.setPos(targetEntity.position());
-                    entity.level().addFreshEntity(lightningStrike);
-                });
+        var radiusSqr = 400; // 20
+        entity.level()
+                .getEntitiesOfClass(
+                        LivingEntity.class,
+                        entity.getBoundingBox().inflate(20, 12, 20),
+                        livingEntity ->
+                                livingEntity != entity
+                                        && horizontalDistanceSqr(livingEntity, entity) < radiusSqr
+                                        && livingEntity.isPickable()
+                                        && !livingEntity.isSpectator()
+                                        && !Utils.shouldHealEntity(entity, livingEntity)
+                                        && Utils.hasLineOfSight(
+                                                entity.level(), entity, livingEntity, false))
+                .forEach(
+                        targetEntity -> {
+                            LightningStrike lightningStrike = new LightningStrike(entity.level());
+                            lightningStrike.setOwner(entity);
+                            lightningStrike.setDamage(getDamageFromAmplifier(pAmplifier, entity));
+                            lightningStrike.setPos(targetEntity.position());
+                            entity.level().addFreshEntity(lightningStrike);
+                        });
     }
 
     private float horizontalDistanceSqr(LivingEntity livingEntity, LivingEntity entity2) {
@@ -45,7 +50,10 @@ public class ThunderstormEffect extends MagicMobEffect {
     }
 
     public static float getDamageFromAmplifier(int effectAmplifier, @Nullable LivingEntity caster) {
-        var power = caster == null ? 1 : SpellRegistry.THUNDERSTORM_SPELL.get().getEntityPowerMultiplier(caster);
+        var power =
+                caster == null
+                        ? 1
+                        : SpellRegistry.THUNDERSTORM_SPELL.get().getEntityPowerMultiplier(caster);
         return (((effectAmplifier - 7) * power) + 7);
     }
 }

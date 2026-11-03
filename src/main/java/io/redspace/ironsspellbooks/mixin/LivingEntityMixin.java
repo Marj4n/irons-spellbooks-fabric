@@ -42,14 +42,10 @@ import java.util.function.Predicate;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin implements MagicData.IExtendedEntity {
 
-    @Unique
-    MagicData irons_spellbooks$magicData = null;
-    @Unique
-    EchoingStrikesData irons_spellbooks$echoingStrikesData = null;
-    @Unique
-    OakskinData irons_spellbooks$oakskinData = null;
-    @Unique
-    IArmorCapeProvider.CapeData irons_spellbooks$capeData = null;
+    @Unique MagicData irons_spellbooks$magicData = null;
+    @Unique EchoingStrikesData irons_spellbooks$echoingStrikesData = null;
+    @Unique OakskinData irons_spellbooks$oakskinData = null;
+    @Unique IArmorCapeProvider.CapeData irons_spellbooks$capeData = null;
 
     @Override
     public IArmorCapeProvider.CapeData irons_spellbooks$getCapData() {
@@ -115,7 +111,8 @@ public abstract class LivingEntityMixin implements MagicData.IExtendedEntity {
             return;
         }
         CompoundTag tag = new CompoundTag();
-        irons_spellbooks$magicData.saveNBTData(tag, ((Entity) (Object) this).level().registryAccess());
+        irons_spellbooks$magicData.saveNBTData(
+                tag, ((Entity) (Object) this).level().registryAccess());
         pCompound.put("irons_spellbooks:magic_data", tag);
     }
 
@@ -126,38 +123,50 @@ public abstract class LivingEntityMixin implements MagicData.IExtendedEntity {
         }
         irons_spellbooks$getMagicData(); // initialize
         CompoundTag tag = pCompound.getCompound("irons_spellbooks:magic_data");
-        irons_spellbooks$magicData.loadNBTData(tag, ((Entity) (Object) this).level().registryAccess());
+        irons_spellbooks$magicData.loadNBTData(
+                tag, ((Entity) (Object) this).level().registryAccess());
     }
 
     @Inject(method = "onEffectRemoved", at = @At(value = "HEAD"))
-    public void irons_spellbooks$onEffectRemoved(MobEffectInstance effectInstance, CallbackInfo ci) {
+    public void irons_spellbooks$onEffectRemoved(
+            MobEffectInstance effectInstance, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
         if (!self.level().isClientSide) {
             if (effectInstance.getEffect() instanceof IMobEffectEndCallback mobEffect) {
                 mobEffect.onEffectRemoved(self, effectInstance.getAmplifier());
             }
-            if (effectInstance.getEffect() instanceof ISyncedMobEffect && self.level().getChunkSource() instanceof ServerChunkCache serverChunk) {
-                serverChunk.broadcast(self, new ClientboundRemoveMobEffectPacket(self.getId(), effectInstance.getEffect()));
+            if (effectInstance.getEffect() instanceof ISyncedMobEffect
+                    && self.level().getChunkSource() instanceof ServerChunkCache serverChunk) {
+                serverChunk.broadcast(
+                        self,
+                        new ClientboundRemoveMobEffectPacket(
+                                self.getId(), effectInstance.getEffect()));
             }
         }
     }
 
     @Inject(method = "onEffectUpdated", at = @At(value = "HEAD"))
-    public void irons_spellbooks$onEffectUpdated(MobEffectInstance effectInstance, boolean forced, Entity entity, CallbackInfo ci) {
+    public void irons_spellbooks$onEffectUpdated(
+            MobEffectInstance effectInstance, boolean forced, Entity entity, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
         if (!self.level().isClientSide) {
-            if (effectInstance.getEffect() instanceof ISyncedMobEffect && self.level().getChunkSource() instanceof ServerChunkCache serverChunk) {
-                serverChunk.broadcast(self, new ClientboundUpdateMobEffectPacket(self.getId(), effectInstance));
+            if (effectInstance.getEffect() instanceof ISyncedMobEffect
+                    && self.level().getChunkSource() instanceof ServerChunkCache serverChunk) {
+                serverChunk.broadcast(
+                        self, new ClientboundUpdateMobEffectPacket(self.getId(), effectInstance));
             }
         }
     }
 
     @Inject(method = "onEffectAdded", at = @At(value = "HEAD"))
-    public void irons_spellbooks$onEffectAdded(MobEffectInstance effectInstance, Entity entity, CallbackInfo ci) {
+    public void irons_spellbooks$onEffectAdded(
+            MobEffectInstance effectInstance, Entity entity, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
         if (!self.level().isClientSide) {
-            if (effectInstance.getEffect() instanceof ISyncedMobEffect && self.level().getChunkSource() instanceof ServerChunkCache serverChunk) {
-                serverChunk.broadcast(self, new ClientboundUpdateMobEffectPacket(self.getId(), effectInstance));
+            if (effectInstance.getEffect() instanceof ISyncedMobEffect
+                    && self.level().getChunkSource() instanceof ServerChunkCache serverChunk) {
+                serverChunk.broadcast(
+                        self, new ClientboundUpdateMobEffectPacket(self.getId(), effectInstance));
             }
         }
     }
@@ -165,8 +174,7 @@ public abstract class LivingEntityMixin implements MagicData.IExtendedEntity {
     @Inject(method = "updateInvisibilityStatus", at = @At(value = "TAIL"))
     public void irons_spellbooks$updateInvisibilityStatus(CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
-        if (self.hasEffect(MobEffectRegistry.TRUE_INVISIBILITY.get()))
-            self.setInvisible(true);
+        if (self.hasEffect(MobEffectRegistry.TRUE_INVISIBILITY.get())) self.setInvisible(true);
     }
 
     @Inject(method = "isCurrentlyGlowing", at = @At(value = "HEAD"), cancellable = true)
@@ -178,8 +186,12 @@ public abstract class LivingEntityMixin implements MagicData.IExtendedEntity {
     }
 
     @Inject(method = "hurt", at = @At("RETURN"))
-    public void irons_spellbooks$changeSummonHurtCredit(DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
-        IMagicSummon fromSummon = damageSource.getDirectEntity() instanceof IMagicSummon summon ? summon : damageSource.getEntity() instanceof IMagicSummon summon ? summon : null;
+    public void irons_spellbooks$changeSummonHurtCredit(
+            DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
+        IMagicSummon fromSummon =
+                damageSource.getDirectEntity() instanceof IMagicSummon summon
+                        ? summon
+                        : damageSource.getEntity() instanceof IMagicSummon summon ? summon : null;
         if (fromSummon instanceof LivingEntity livingSummon) {
             ((LivingEntity) (Object) this).setLastHurtByMob(livingSummon);
         }
@@ -189,13 +201,18 @@ public abstract class LivingEntityMixin implements MagicData.IExtendedEntity {
     abstract ItemStack getLastHandItem(EquipmentSlot pSlot);
 
     @Unique
-    private static final List<EquipmentSlot> handSlots = List.of(EquipmentSlot.OFFHAND, EquipmentSlot.MAINHAND);
+    private static final List<EquipmentSlot> handSlots =
+            List.of(EquipmentSlot.OFFHAND, EquipmentSlot.MAINHAND);
 
     @Unique
-    private static Multimap<Attribute, AttributeModifier> filterApplicableAttributes(Multimap<Attribute, AttributeModifier> attributeModifierMap) {
+    private static Multimap<Attribute, AttributeModifier> filterApplicableAttributes(
+            Multimap<Attribute, AttributeModifier> attributeModifierMap) {
         Multimap<Attribute, AttributeModifier> map = HashMultimap.create();
         for (Attribute attribute : attributeModifierMap.keySet()) {
-            Predicate<Attribute> predicate = ServerConfigs.APPLY_ALL_MULTIHAND_ATTRIBUTES.get() ? allNonBaseAttackAttributes : onlyIronAttributes;
+            Predicate<Attribute> predicate =
+                    ServerConfigs.APPLY_ALL_MULTIHAND_ATTRIBUTES.get()
+                            ? allNonBaseAttackAttributes
+                            : onlyIronAttributes;
             if (predicate.test(attribute)) {
                 map.putAll(attribute, attributeModifierMap.get(attribute));
             }
@@ -204,8 +221,16 @@ public abstract class LivingEntityMixin implements MagicData.IExtendedEntity {
     }
 
     @Unique
-    private static final Predicate<Attribute> allNonBaseAttackAttributes = (attribute) -> !(attribute == io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH || attribute == Attributes.ATTACK_DAMAGE || attribute == Attributes.ATTACK_SPEED || attribute == Attributes.ATTACK_KNOCKBACK);
-    @Unique
-    private static final Predicate<Attribute> onlyIronAttributes = (attribute) -> attribute instanceof IMagicAttribute;
+    private static final Predicate<Attribute> allNonBaseAttackAttributes =
+            (attribute) ->
+                    !(attribute
+                                    == io.github.fabricators_of_create.porting_lib.attributes
+                                            .PortingLibAttributes.ENTITY_REACH
+                            || attribute == Attributes.ATTACK_DAMAGE
+                            || attribute == Attributes.ATTACK_SPEED
+                            || attribute == Attributes.ATTACK_KNOCKBACK);
 
+    @Unique
+    private static final Predicate<Attribute> onlyIronAttributes =
+            (attribute) -> attribute instanceof IMagicAttribute;
 }

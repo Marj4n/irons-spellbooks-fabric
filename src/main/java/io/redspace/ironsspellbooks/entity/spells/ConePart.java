@@ -6,14 +6,14 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 
-
 public class ConePart extends PartEntity<AbstractConeProjectile> {
 
     public final AbstractConeProjectile parentEntity;
     public final String name;
     private final EntityDimensions size;
 
-    public ConePart(AbstractConeProjectile coneProjectile, String name, float scaleX, float scaleY) {
+    public ConePart(
+            AbstractConeProjectile coneProjectile, String name, float scaleX, float scaleY) {
         super(coneProjectile);
         this.size = EntityDimensions.scalable(scaleX, scaleY);
         this.refreshDimensions();
@@ -22,18 +22,13 @@ public class ConePart extends PartEntity<AbstractConeProjectile> {
     }
 
     @Override
-    protected void defineSynchedData() {
-    }
+    protected void defineSynchedData() {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
-
-    }
+    protected void readAdditionalSaveData(CompoundTag compoundTag) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
-
-    }
+    protected void addAdditionalSaveData(CompoundTag compoundTag) {}
 
     @Override
     public boolean is(Entity entity) {

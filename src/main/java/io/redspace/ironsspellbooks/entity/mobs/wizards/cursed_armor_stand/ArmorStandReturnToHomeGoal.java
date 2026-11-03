@@ -52,7 +52,7 @@ public class ArmorStandReturnToHomeGoal extends WaterAvoidingRandomStrollGoal {
         } else if (mob.getNavigation().isDone()) {
             var distance = homeDistanceSqr();
             if (distance <= ATHRESHOLD_SQR) {
-                return false; //done
+                return false; // done
             } else if (distance <= CLOSE_DISTANCE * CLOSE_DISTANCE) {
                 closingFinalDistance = true;
                 return true; // not quite done, trigger landing sequence
@@ -86,7 +86,8 @@ public class ArmorStandReturnToHomeGoal extends WaterAvoidingRandomStrollGoal {
         }
         if (closingFinalDistance && mob.getNavigation().isDone() && mob.spawn != null) {
             // the path can only get up to our spawn within a margin of 1 block
-            // once we cross the CLOSE_DISTANCE threshold, just nudge ourselves over until we are happy
+            // once we cross the CLOSE_DISTANCE threshold, just nudge ourselves over until we are
+            // happy
             Vec3 delta = mob.spawn.subtract(mob.position());
             var currDistance = delta.lengthSqr();
 
@@ -109,11 +110,11 @@ public class ArmorStandReturnToHomeGoal extends WaterAvoidingRandomStrollGoal {
 
     @Override
     public void start() {
-        //force end strafe
+        // force end strafe
         mob.setXxa(0);
-        //begin path
+        // begin path
         super.start();
-        //reset stuck counting
+        // reset stuck counting
         this.stuckTimer = 0;
         this.interval = MAX_INTERVAL;
     }

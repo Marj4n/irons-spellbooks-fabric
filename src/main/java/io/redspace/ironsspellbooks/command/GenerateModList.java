@@ -16,15 +16,22 @@ import java.io.FileWriter;
 
 public class GenerateModList {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.generate_mod_list.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED =
+            new SimpleCommandExceptionType(
+                    Component.translatable("commands.irons_spellbooks.generate_mod_list.failed"));
 
     public static void register(CommandDispatcher<CommandSourceStack> pDispatcher) {
         if (pDispatcher.getRoot().getChild("modlist") == null) {
-            pDispatcher.register(Commands.literal("modlist").requires((p_138819_) -> {
-                return p_138819_.hasPermission(2);
-            }).executes((commandContext) -> {
-                return generateModList(commandContext.getSource());
-            }));
+            pDispatcher.register(
+                    Commands.literal("modlist")
+                            .requires(
+                                    (p_138819_) -> {
+                                        return p_138819_.hasPermission(2);
+                                    })
+                            .executes(
+                                    (commandContext) -> {
+                                        return generateModList(commandContext.getSource());
+                                    }));
         } else {
             IronsSpellbooks.LOGGER.debug("modlist already loaded.. skipping");
         }
@@ -48,15 +55,26 @@ public class GenerateModList {
         sb.append("issue_tracker_url");
         sb.append("\n");
 
-        net.fabricmc.loader.api.FabricLoader.getInstance().getAllMods().forEach(container -> {
-            var metadata = container.getMetadata();
-            sb.append(metadata.getId()).append(',').append(metadata.getName()).append(',')
-                    .append(metadata.getVersion().getFriendlyString()).append(',')
-                    .append(container.getOrigin().getPaths()).append(',')
-                    .append(metadata.getContact().get("homepage").orElse("")).append(',')
-                    .append(metadata.getContact().get("sources").orElse("")).append(',')
-                    .append(metadata.getContact().get("issues").orElse("")).append('\n');
-        });
+        net.fabricmc.loader.api.FabricLoader.getInstance()
+                .getAllMods()
+                .forEach(
+                        container -> {
+                            var metadata = container.getMetadata();
+                            sb.append(metadata.getId())
+                                    .append(',')
+                                    .append(metadata.getName())
+                                    .append(',')
+                                    .append(metadata.getVersion().getFriendlyString())
+                                    .append(',')
+                                    .append(container.getOrigin().getPaths())
+                                    .append(',')
+                                    .append(metadata.getContact().get("homepage").orElse(""))
+                                    .append(',')
+                                    .append(metadata.getContact().get("sources").orElse(""))
+                                    .append(',')
+                                    .append(metadata.getContact().get("issues").orElse(""))
+                                    .append('\n');
+                        });
 
         try {
             var file = new File("modlist.txt");
@@ -64,11 +82,23 @@ public class GenerateModList {
             writer.write(sb.toString());
             writer.close();
 
-            Component component = Component.literal(file.getName()).withStyle(ChatFormatting.UNDERLINE).withStyle((style) -> {
-                return style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
-            });
+            Component component =
+                    Component.literal(file.getName())
+                            .withStyle(ChatFormatting.UNDERLINE)
+                            .withStyle(
+                                    (style) -> {
+                                        return style.withClickEvent(
+                                                new ClickEvent(
+                                                        ClickEvent.Action.OPEN_FILE,
+                                                        file.getAbsolutePath()));
+                                    });
 
-            source.sendSuccess(() -> Component.translatable("commands.irons_spellbooks.generate_mod_list.success", component), true);
+            source.sendSuccess(
+                    () ->
+                            Component.translatable(
+                                    "commands.irons_spellbooks.generate_mod_list.success",
+                                    component),
+                    true);
 
         } catch (Exception e) {
             IronsSpellbooks.LOGGER.info(e.getMessage());

@@ -29,7 +29,11 @@ public class FireField extends AoeEntity {
     @Override
     public void applyEffect(LivingEntity target) {
         if (damageSource == null) {
-            damageSource = new DamageSource(DamageSources.getHolderFromResource(target, ISSDamageTypes.FIRE_FIELD), this, getOwner());
+            damageSource =
+                    new DamageSource(
+                            DamageSources.getHolderFromResource(target, ISSDamageTypes.FIRE_FIELD),
+                            this,
+                            getOwner());
         }
         if (!DamageSources.isFriendlyFireBetween(this.getOwner(), target)) {
             DamageSources.ignoreNextKnockback(target);

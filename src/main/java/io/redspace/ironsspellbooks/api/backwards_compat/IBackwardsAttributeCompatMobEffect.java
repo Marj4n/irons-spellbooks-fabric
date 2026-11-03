@@ -9,12 +9,21 @@ import java.util.function.Supplier;
 
 public interface IBackwardsAttributeCompatMobEffect {
 
-    default IBackwardsAttributeCompatMobEffect addAttributeModifier(Supplier<Attribute> attribute, ResourceLocation id, double amount, AttributeModifier.Operation operation) {
+    default IBackwardsAttributeCompatMobEffect addAttributeModifier(
+            Supplier<Attribute> attribute,
+            ResourceLocation id,
+            double amount,
+            AttributeModifier.Operation operation) {
         return addAttributeModifier(attribute.get(), id, amount, operation);
     }
 
-    default IBackwardsAttributeCompatMobEffect addAttributeModifier(Attribute attribute, ResourceLocation id, double amount, AttributeModifier.Operation operation) {
-        cast().addAttributeModifier(attribute, AttributeHelper.uuidFromId(id).toString(), amount, operation);
+    default IBackwardsAttributeCompatMobEffect addAttributeModifier(
+            Attribute attribute,
+            ResourceLocation id,
+            double amount,
+            AttributeModifier.Operation operation) {
+        cast().addAttributeModifier(
+                        attribute, AttributeHelper.uuidFromId(id).toString(), amount, operation);
         return this;
     }
 

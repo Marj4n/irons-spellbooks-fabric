@@ -24,8 +24,7 @@ import java.util.*;
 
 public class SummonManager implements INBTSerializable<CompoundTag> {
 
-    record ExpirationInstance(UUID uuid, int summonedServerTick, int expirationServerTick) {
-    }
+    record ExpirationInstance(UUID uuid, int summonedServerTick, int expirationServerTick) {}
 
     public static final SummonManager INSTANCE = new SummonManager();
 
@@ -33,19 +32,24 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
      * Map of Owner UUID to a List of their serialized summoned mobs, including additional "summon_duration_remaining" entry.
      * It is populated when a player disconnects, including when the server stops. This means it is the only thing that must be written to disk.
      */
-    private final HashMap<UUID, List<CompoundTag>> offlineSummonersToSavedEntities = new HashMap<>();
+    private final HashMap<UUID, List<CompoundTag>> offlineSummonersToSavedEntities =
+            new HashMap<>();
+
     /**
      * A quick lookup holding a summon's owner information. A summon can only have 1 owner
      */
     private final HashMap<UUID, UUID> summonToOwner = new HashMap<>();
+
     /**
      * Map of Owner UUID to a set of UUID's of active summoned creatures
      */
     private final HashMap<UUID, Set<UUID>> ownerToSummons = new HashMap<>();
+
     /**
      * Heap-Based Priority Queue of Expiration Instances, sorted by nearest to expiration time. Chosen for Constant-time peeking, as queue/dequeue operations are separated by large quantities of real-life time
      */
-    private final PriorityQueue<ExpirationInstance> summonExpirations = new PriorityQueue<>(Comparator.comparingInt(ExpirationInstance::expirationServerTick));
+    private final PriorityQueue<ExpirationInstance> summonExpirations =
+            new PriorityQueue<>(Comparator.comparingInt(ExpirationInstance::expirationServerTick));
 
     /**
      * Attempts to perform entity-lookup for the owner of the summon. Always returns null on the client.
@@ -72,14 +76,19 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
         startTrackingSummon(owner, summon);
         IronsDataStorage.INSTANCE.setDirty();
         if (owner.level() instanceof ServerLevel) {
-            org.marj4n.irons_spellbooks.events.SpellEvents.post(new SetSummonOwnerEvent(owner, summon));
+            org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                    new SetSummonOwnerEvent(owner, summon));
         }
     }
 
     /**
      * Helper to handle all summon initialization logic
      */
-    public static void initSummon(Entity owner, Entity summon, int duration, SummonedEntitiesCastData summonedEntitiesCastData) {
+    public static void initSummon(
+            Entity owner,
+            Entity summon,
+            int duration,
+            SummonedEntitiesCastData summonedEntitiesCastData) {
         setOwner(summon, owner);
         setDuration(summon, duration);
         summonedEntitiesCastData.add(summon);
@@ -93,7 +102,11 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
      */
     public static void setDuration(Entity summon, int duration) {
         if (!(summon.level() instanceof ServerLevel serverLevel)) return;
-        INSTANCE.summonExpirations.add(new ExpirationInstance(summon.getUUID(), serverLevel.getServer().getTickCount(), serverLevel.getServer().getTickCount() + duration));
+        INSTANCE.summonExpirations.add(
+                new ExpirationInstance(
+                        summon.getUUID(),
+                        serverLevel.getServer().getTickCount(),
+                        serverLevel.getServer().getTickCount() + duration));
     }
 
     /**
@@ -129,21 +142,30 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
      *
      * @return Whether the cooldown should be applied for the spell
      */
-    public static boolean recastFinishedHelper(ServerPlayer serverPlayer, RecastInstance recastInstance, RecastResult recastResult, ICastDataSerializable castDataSerializable) {
+    public static boolean recastFinishedHelper(
+            ServerPlayer serverPlayer,
+            RecastInstance recastInstance,
+            RecastResult recastResult,
+            ICastDataSerializable castDataSerializable) {
         if (recastResult == RecastResult.COUNTERSPELL) {
-            //ignore counterspell
-            MagicData.getPlayerMagicData(serverPlayer).getPlayerRecasts().forceAddRecast(recastInstance);
+            // ignore counterspell
+            MagicData.getPlayerMagicData(serverPlayer)
+                    .getPlayerRecasts()
+                    .forceAddRecast(recastInstance);
         } else if (recastResult != RecastResult.TIMEOUT) { // timeouts are handled by summon manager
             if (castDataSerializable instanceof SummonedEntitiesCastData summonedEntitiesCastData) {
                 var serverLevel = serverPlayer.serverLevel();
-                summonedEntitiesCastData.getSummons().forEach(uuid -> {
-                    var toRemove = serverLevel.getEntity(uuid);
-                    if (toRemove instanceof IMagicSummon summon) {
-                        summon.onUnSummon();
-                    } else if (toRemove != null) {
-                        toRemove.discard();
-                    }
-                });
+                summonedEntitiesCastData
+                        .getSummons()
+                        .forEach(
+                                uuid -> {
+                                    var toRemove = serverLevel.getEntity(uuid);
+                                    if (toRemove instanceof IMagicSummon summon) {
+                                        summon.onUnSummon();
+                                    } else if (toRemove != null) {
+                                        toRemove.discard();
+                                    }
+                                });
             }
         } else if (ItemRegistry.GREATER_CONJURERS_TALISMAN.get().isEquippedBy(serverPlayer)) {
             return false;
@@ -188,7 +210,8 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
      * Links summon to owner, and adds to or initializes owner's summon tracking
      */
     private static void startTrackingSummon(Entity owner, Entity summon) {
-        Set<UUID> summons = INSTANCE.ownerToSummons.computeIfAbsent(owner.getUUID(), uuid -> new HashSet<>());
+        Set<UUID> summons =
+                INSTANCE.ownerToSummons.computeIfAbsent(owner.getUUID(), uuid -> new HashSet<>());
         summons.add(summon.getUUID());
         IronsDataStorage.INSTANCE.setDirty();
     }
@@ -200,11 +223,12 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
         var summons = ownerToSummons.remove(summoner.getUUID());
         if (summons != null) {
             IronsDataStorage.INSTANCE.setDirty();
-            summons.forEach(summonUUID -> {
-                if (summonToOwner.remove(summonUUID) != null) {
-                    getExpirationInstance(summonUUID).ifPresent(summonExpirations::remove);
-                }
-            });
+            summons.forEach(
+                    summonUUID -> {
+                        if (summonToOwner.remove(summonUUID) != null) {
+                            getExpirationInstance(summonUUID).ifPresent(summonExpirations::remove);
+                        }
+                    });
         }
     }
 
@@ -212,7 +236,8 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
      * Stops tracking the expiration time for this entity
      */
     public static void stopTrackingExpiration(Entity summon) {
-        INSTANCE.getExpirationInstance(summon.getUUID()).ifPresent(INSTANCE.summonExpirations::remove);
+        INSTANCE.getExpirationInstance(summon.getUUID())
+                .ifPresent(INSTANCE.summonExpirations::remove);
     }
 
     /**
@@ -235,10 +260,14 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
         List<Entity> toRemove = new ArrayList<>();
         for (UUID uuid : summons) {
             Entity entity = serverLevel.getEntity(uuid);
-            if (entity != null && !entity.isRemoved() && ((ServerLevel)entity.level()).getEntity(entity.getUUID()) == entity) {
+            if (entity != null
+                    && !entity.isRemoved()
+                    && ((ServerLevel) entity.level()).getEntity(entity.getUUID()) == entity) {
                 CompoundTag saveData = new CompoundTag();
                 entity.save(saveData);
-                int durationRemaining = INSTANCE.getExpirationTick(entity.getUUID()) - serverLevel.getServer().getTickCount();
+                int durationRemaining =
+                        INSTANCE.getExpirationTick(entity.getUUID())
+                                - serverLevel.getServer().getTickCount();
                 saveData.putInt("summon_duration_remaining", durationRemaining);
                 savedSummons.add(saveData);
                 toRemove.add(entity);
@@ -290,9 +319,9 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
 
                 var uuid = nextDespawn.uuid;
                 Entity toRemove = null;
-                for(ServerLevel serverLevel : server.getAllLevels()){
+                for (ServerLevel serverLevel : server.getAllLevels()) {
                     toRemove = serverLevel.getEntity(uuid);
-                    if(toRemove != null){
+                    if (toRemove != null) {
                         break;
                     }
                 }
@@ -311,9 +340,13 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
         }
         if (Log.SUMMON_MANAGER && tick % 100 == 0) {
             IronsSpellbooks.LOGGER.debug("SummonManagerDump -------------");
-            IronsSpellbooks.LOGGER.debug("SummonManagerDump ownerToSummons: {}", INSTANCE.ownerToSummons.toString());
-            IronsSpellbooks.LOGGER.debug("SummonManagerDump summonToOwner: {}", INSTANCE.summonToOwner.toString());
-            IronsSpellbooks.LOGGER.debug("SummonManagerDump summonExpirations: {}", INSTANCE.summonExpirations.toString());
+            IronsSpellbooks.LOGGER.debug(
+                    "SummonManagerDump ownerToSummons: {}", INSTANCE.ownerToSummons.toString());
+            IronsSpellbooks.LOGGER.debug(
+                    "SummonManagerDump summonToOwner: {}", INSTANCE.summonToOwner.toString());
+            IronsSpellbooks.LOGGER.debug(
+                    "SummonManagerDump summonExpirations: {}",
+                    INSTANCE.summonExpirations.toString());
         }
     }
 
@@ -324,7 +357,7 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
     }
 
     public static void onServerStopping(net.minecraft.server.MinecraftServer server) {
-//        server.getPlayerList().getPlayers().forEach(INSTANCE::handlePlayerDisconnect);
+        //        server.getPlayerList().getPlayers().forEach(INSTANCE::handlePlayerDisconnect);
         List<UUID> summoners = INSTANCE.ownerToSummons.keySet().stream().toList();
         for (ServerLevel serverLevel : server.getAllLevels()) {
             for (UUID summonerId : summoners) {
@@ -344,8 +377,10 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
             IronsDataStorage.INSTANCE.setDirty();
             var savedSummons = INSTANCE.offlineSummonersToSavedEntities.remove(entity.getUUID());
             if (savedSummons != null) {
-                // Note: summons always get added to summoner's level, even if that conflicts with where they were saved
-                // However, it is logically impossible for a summon to not be in the summoner's level, so that should be fine
+                // Note: summons always get added to summoner's level, even if that conflicts with
+                // where they were saved
+                // However, it is logically impossible for a summon to not be in the summoner's
+                // level, so that should be fine
                 var server = serverLevel.getServer();
                 Set<UUID> summonsSet = new HashSet<>();
                 UUID ownerUUID = entity.getUUID();
@@ -356,7 +391,12 @@ public class SummonManager implements INBTSerializable<CompoundTag> {
                         var summonUUID = summonedEntity.getUUID();
                         summonsSet.add(summonUUID);
                         INSTANCE.summonToOwner.put(summonUUID, ownerUUID);
-                        INSTANCE.summonExpirations.add(new ExpirationInstance(summonUUID, server.getTickCount(), server.getTickCount() + summon.getInt("summon_duration_remaining")));
+                        INSTANCE.summonExpirations.add(
+                                new ExpirationInstance(
+                                        summonUUID,
+                                        server.getTickCount(),
+                                        server.getTickCount()
+                                                + summon.getInt("summon_duration_remaining")));
                     }
                     INSTANCE.ownerToSummons.put(ownerUUID, summonsSet);
                 }

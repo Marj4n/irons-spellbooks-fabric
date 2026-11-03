@@ -22,14 +22,20 @@ import java.util.List;
 import java.util.Set;
 
 public class TinctureOfForgetfulnessItem extends Item {
-    private static final Component DESCRIPTION = Component.translatable("item.irons_spellbooks.tincture_of_forgetfulness.desc").withStyle(ChatFormatting.GRAY);
+    private static final Component DESCRIPTION =
+            Component.translatable("item.irons_spellbooks.tincture_of_forgetfulness.desc")
+                    .withStyle(ChatFormatting.GRAY);
 
     public TinctureOfForgetfulnessItem(Properties properties) {
         super(properties);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, Level context, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            @NotNull ItemStack pStack,
+            Level context,
+            @NotNull List<Component> pTooltipComponents,
+            @NotNull TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, context, pTooltipComponents, pIsAdvanced);
         pTooltipComponents.add(DESCRIPTION);
     }
@@ -56,7 +62,8 @@ public class TinctureOfForgetfulnessItem extends Item {
         if (serverData == null) {
             return InteractionResult.PASS;
         }
-        Set<java.util.UUID> rewardedPlayers = ((VaultServerDataAccessor) serverData).irons_spellbooks$getRewardedPlayers();
+        Set<java.util.UUID> rewardedPlayers =
+                ((VaultServerDataAccessor) serverData).irons_spellbooks$getRewardedPlayers();
         boolean removed = rewardedPlayers.remove(player.getUUID());
         if (!removed) {
             return InteractionResult.PASS;
@@ -65,7 +72,8 @@ public class TinctureOfForgetfulnessItem extends Item {
         ((VaultServerDataAccessor) serverData).irons_spellbooks$markChanged();
         vaultBlockEntity.setChanged();
         level.sendBlockUpdated(pos, state, state, 3);
-        level.playSound(null, pos, SoundRegistry.APPLY_EFFECT_BAD_OMEN.get(), SoundSource.BLOCKS, 1f, 1f);
+        level.playSound(
+                null, pos, SoundRegistry.APPLY_EFFECT_BAD_OMEN.get(), SoundSource.BLOCKS, 1f, 1f);
         level.playSound(null, pos, SoundEvents.HONEY_DRINK, SoundSource.BLOCKS, 1f, 1f);
         if (!player.getAbilities().instabuild) {
             context.getItemInHand().shrink(1);

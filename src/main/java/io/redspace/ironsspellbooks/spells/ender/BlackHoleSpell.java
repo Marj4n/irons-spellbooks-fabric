@@ -26,22 +26,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class BlackHoleSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "black_hole");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "black_hole");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.aoe_damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(6)
-            .setCooldownSeconds(120)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(6)
+                    .setCooldownSeconds(120)
+                    .build();
 
     public BlackHoleSpell() {
         this.manaCostPerLevel = 100;
@@ -77,25 +82,46 @@ public class BlackHoleSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float radius = getRadius(spellLevel, entity);
 
-        HitResult raycast = RaycastBuilder.begin(level, entity)
-                .range(16 + radius * 1.5f)
-                .checkForBlocks(true)
-                .build();
+        HitResult raycast =
+                RaycastBuilder.begin(level, entity)
+                        .range(16 + radius * 1.5f)
+                        .checkForBlocks(true)
+                        .build();
         Vec3 center = raycast.getLocation();
         if (raycast instanceof BlockHitResult blockHitResult) {
             if (blockHitResult.getDirection().getAxis().isHorizontal()) {
                 center = center.subtract(0, radius, 0); // Make black hole centered on hit location
             } else if (blockHitResult.getDirection() == Direction.DOWN) {
-                center = center.subtract(0, radius * 2 - 1, 0); // Make black hole stick one block into ceiling surface
+                center =
+                        center.subtract(
+                                0,
+                                radius * 2 - 1,
+                                0); // Make black hole stick one block into ceiling surface
             } else {
-                center = center.subtract(0, 1, 0); // Make black hole sink into ground 1 block if we hit top face
+                center =
+                        center.subtract(
+                                0, 1,
+                                0); // Make black hole sink into ground 1 block if we hit top face
             }
         }
 
-        level.playSound(null, center.x, center.y, center.z, SoundRegistry.BLACK_HOLE_CAST.get(), SoundSource.AMBIENT, 4, 1);
+        level.playSound(
+                null,
+                center.x,
+                center.y,
+                center.z,
+                SoundRegistry.BLACK_HOLE_CAST.get(),
+                SoundSource.AMBIENT,
+                4,
+                1);
 
         BlackHole blackHole = new BlackHole(level, entity);
         blackHole.setRadius(radius);

@@ -29,20 +29,25 @@ import java.util.List;
 import java.util.Optional;
 
 public class SonicBoomSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "sonic_boom");
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.LEGENDARY)
-            .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
-            .setMaxLevel(3)
-            .setCooldownSeconds(25)
-            .build();
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "sonic_boom");
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.LEGENDARY)
+                    .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
+                    .setMaxLevel(3)
+                    .setCooldownSeconds(25)
+                    .build();
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getRange(spellLevel, caster), 1)));
     }
 
     public SonicBoomSpell() {
@@ -79,7 +84,12 @@ public class SonicBoomSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         CameraShakeManager.addCameraShake(new CameraShakeData(level, 20, entity.position(), 20));
         var range = getRange(spellLevel, entity);
         Vec3 start = entity.getEyePosition();
@@ -90,14 +100,26 @@ public class SonicBoomSpell extends AbstractSpell {
         for (Entity target : entities) {
             HitResult hit = Utils.checkEntityIntersecting(target, start, end, .4f);
             if (hit.getType() != HitResult.Type.MISS) {
-                DamageSources.applyDamage(target, getDamage(spellLevel, entity), getDamageSource(entity));
+                DamageSources.applyDamage(
+                        target, getDamage(spellLevel, entity), getDamageSource(entity));
             }
         }
 
         Vec3 vec3 = entity.getLookAngle().normalize();
         for (int i = 0; i < range; i++) {
             var vec32 = vec3.scale(i).add(entity.getEyePosition());
-            MagicManager.spawnParticles(level, ParticleTypes.SONIC_BOOM, vec32.x, vec32.y, vec32.z, 1, 0, 0, 0, 0, false);
+            MagicManager.spawnParticles(
+                    level,
+                    ParticleTypes.SONIC_BOOM,
+                    vec32.x,
+                    vec32.y,
+                    vec32.z,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    false);
         }
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
@@ -109,7 +131,6 @@ public class SonicBoomSpell extends AbstractSpell {
         } else {
             super.playSound(sound, entity);
         }
-
     }
 
     public static float getRange(int level, LivingEntity caster) {

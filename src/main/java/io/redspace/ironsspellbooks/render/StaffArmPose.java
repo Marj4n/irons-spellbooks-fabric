@@ -13,13 +13,15 @@ public final class StaffArmPose {
     public static void initializeClientHelper(Consumer<NativeClientItemExtensions> consumer) {
         // Ordinary staffs use the standard item model; arm rotation is handled below.
     }
+
     public static void apply(HumanoidModel<?> model, LivingEntity entity) {
         boolean mainRight = entity.getMainArm() == HumanoidArm.RIGHT;
         if (entity.getMainHandItem().getItem() instanceof StaffItem) rotate(model, mainRight);
         if (entity.getOffhandItem().getItem() instanceof StaffItem) rotate(model, !mainRight);
     }
+
     private static void rotate(HumanoidModel<?> model, boolean right) {
         var arm = right ? model.rightArm : model.leftArm;
-        arm.xRot = Mth.lerp(.85f, arm.xRot, -(float)Math.PI / 3.5f + model.head.xRot / 2f);
+        arm.xRot = Mth.lerp(.85f, arm.xRot, -(float) Math.PI / 3.5f + model.head.xRot / 2f);
     }
 }

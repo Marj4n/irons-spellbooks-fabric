@@ -8,7 +8,6 @@ import org.marj4n.irons_spellbooks.network.FabricPacketContext;
 
 import java.util.function.Supplier;
 
-
 public class SyncRecastPacket implements CustomPacketPayload {
 
     private final RecastInstance recastInstance;
@@ -30,10 +29,11 @@ public class SyncRecastPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            ClientMagicData.getRecasts().forceAddRecast(recastInstance);
-            ClientMagicData.cacheClientSummons();
-        });
+        ctx.enqueueWork(
+                () -> {
+                    ClientMagicData.getRecasts().forceAddRecast(recastInstance);
+                    ClientMagicData.cacheClientSummons();
+                });
         return true;
     }
 }

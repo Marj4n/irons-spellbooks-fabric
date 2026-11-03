@@ -12,7 +12,8 @@ public class ModifySpellLevelEvent extends SpellEvent {
     final int baseLevel;
     int totalLevel;
 
-    public ModifySpellLevelEvent(AbstractSpell spell, LivingEntity caster, int baseLevel, int totalLevel) {
+    public ModifySpellLevelEvent(
+            AbstractSpell spell, LivingEntity caster, int baseLevel, int totalLevel) {
         this.spell = spell;
         this.caster = caster;
         this.baseLevel = baseLevel;

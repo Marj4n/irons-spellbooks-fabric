@@ -8,21 +8,18 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-
 public class TargetEntityCastData implements ICastData {
-    //private Entity castingEntity;
-    //private LivingEntity targetEntity;
+    // private Entity castingEntity;
+    // private LivingEntity targetEntity;
     private final UUID targetUUID;
 
     public TargetEntityCastData(LivingEntity target) {
-        //this.targetEntity = target;
+        // this.targetEntity = target;
         this.targetUUID = target.getUUID();
     }
 
     @Override
-    public void reset() {
-
-    }
+    public void reset() {}
 
     @Nullable
     public LivingEntity getTarget(ServerLevel level) {

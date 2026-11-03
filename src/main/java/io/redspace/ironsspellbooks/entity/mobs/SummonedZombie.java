@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.mobs;
 
-
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.capabilities.magic.MagicManager;
@@ -41,8 +40,12 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
-public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatable, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
-    private static final EntityDataAccessor<Boolean> DATA_IS_ANIMATING_RISE = SynchedEntityData.defineId(SummonedZombie.class, EntityDataSerializers.BOOLEAN);
+public class SummonedZombie extends Zombie
+        implements IMagicSummon,
+                GeoAnimatable,
+                org.marj4n.irons_spellbooks.events.WorldRemovalListener {
+    private static final EntityDataAccessor<Boolean> DATA_IS_ANIMATING_RISE =
+            SynchedEntityData.defineId(SummonedZombie.class, EntityDataSerializers.BOOLEAN);
 
     public SummonedZombie(EntityType<? extends Zombie> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -71,7 +74,8 @@ public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatabl
     public void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2f, true));
-        this.goalSelector.addGoal(7, new GenericFollowOwnerGoal(this, this::getSummoner, 0.9f, 15, 5, false, 25));
+        this.goalSelector.addGoal(
+                7, new GenericFollowOwnerGoal(this, this::getSummoner, 0.9f, 15, 5, false, 25));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
@@ -79,9 +83,11 @@ public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatabl
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(3, new GenericCopyOwnerTargetGoal(this, this::getSummoner));
-        this.targetSelector.addGoal(4, (new GenericHurtByTargetGoal(this, (entity) -> entity == getSummoner())).setAlertOthers());
+        this.targetSelector.addGoal(
+                4,
+                (new GenericHurtByTargetGoal(this, (entity) -> entity == getSummoner()))
+                        .setAlertOthers());
         this.targetSelector.addGoal(5, new GenericProtectOwnerTargetGoal(this, this::getSummoner));
-
     }
 
     @Override
@@ -101,7 +107,12 @@ public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatabl
     }
 
     @Override
-        public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
+    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor pLevel,
+            DifficultyInstance pDifficulty,
+            MobSpawnType pReason,
+            @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData,
+            @org.jetbrains.annotations.Nullable CompoundTag pDataTag) {
         RandomSource randomsource = Utils.random;
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         if (randomsource.nextDouble() < .25)
@@ -136,22 +147,26 @@ public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatabl
         this.onRemovedHelper(this);
     }
 
-
     @Override
     public void remove(RemovalReason pReason) {
-        // IronsSpellbooks.LOGGER.debug("Summoned Zombie: Attempt remove for: {}",pReason.toString());
+        // IronsSpellbooks.LOGGER.debug("Summoned Zombie: Attempt remove for:
+        // {}",pReason.toString());
 
         super.remove(pReason);
     }
 
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        return Utils.doMeleeAttack(this, pEntity, SpellRegistry.RAISE_DEAD_SPELL.get().getDamageSource(this, getSummoner()));
+        return Utils.doMeleeAttack(
+                this,
+                pEntity,
+                SpellRegistry.RAISE_DEAD_SPELL.get().getDamageSource(this, getSummoner()));
     }
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (!pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && (isAnimatingRise() || shouldIgnoreDamage(pSource))) {
+        if (!pSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
+                && (isAnimatingRise() || shouldIgnoreDamage(pSource))) {
             return false;
         }
         return super.hurt(pSource, pAmount);
@@ -160,11 +175,10 @@ public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatabl
     @Override
     public void tick() {
         if (isAnimatingRise()) {
-            if (level().isClientSide)
-                clientDiggingParticles(this);
+            if (level().isClientSide) clientDiggingParticles(this);
             if (--riseAnimTime < 0) {
                 entityData.set(DATA_IS_ANIMATING_RISE, false);
-                //they do a weird head flick thing
+                // they do a weird head flick thing
                 this.setXRot(0);
                 this.setOldPosAndRot();
             }
@@ -181,21 +195,42 @@ public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatabl
     @Override
     public void onUnSummon() {
         if (!level().isClientSide) {
-            MagicManager.spawnParticles(level(), ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleTypes.POOF,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    25,
+                    .4,
+                    .8,
+                    .4,
+                    .03,
+                    false);
             setRemoved(RemovalReason.DISCARDED);
         }
     }
-
 
     protected void clientDiggingParticles(LivingEntity livingEntity) {
         RandomSource randomsource = livingEntity.getRandom();
         BlockState blockstate = livingEntity.getBlockStateOn();
         if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
             for (int i = 0; i < 15; ++i) {
-                double d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
+                double d0 =
+                        livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
                 double d1 = livingEntity.getY();
-                double d2 = livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
-                livingEntity.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+                double d2 =
+                        livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
+                livingEntity
+                        .level()
+                        .addParticle(
+                                new BlockParticleOption(ParticleTypes.BLOCK, blockstate),
+                                d0,
+                                d1,
+                                d2,
+                                0.0D,
+                                0.0D,
+                                0.0D);
             }
         }
     }
@@ -217,7 +252,6 @@ public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatabl
     protected boolean isImmobile() {
         return super.isImmobile() || isAnimatingRise();
     }
-
 
     /*
     Geckolib
@@ -241,10 +275,16 @@ public class SummonedZombie extends Zombie implements IMagicSummon, GeoAnimatabl
     }
 
     private PlayState risePredicate(software.bernie.geckolib.core.animation.AnimationState event) {
-        if (!isAnimatingRise())
-            return PlayState.STOP;
+        if (!isAnimatingRise()) return PlayState.STOP;
         if (event.getController().getAnimationState() == AnimationController.State.STOPPED) {
-            String animation = new String[]{"rise_from_ground_01", "rise_from_ground_02", "rise_from_ground_03", "rise_from_ground_04"}[random.nextIntBetweenInclusive(0, 3)];
+            String animation =
+                    new String[] {
+                                "rise_from_ground_01",
+                                "rise_from_ground_02",
+                                "rise_from_ground_03",
+                                "rise_from_ground_04"
+                            }
+                            [random.nextIntBetweenInclusive(0, 3)];
             event.getController().setAnimation(RawAnimation.begin().thenPlay(animation));
         }
         return PlayState.CONTINUE;

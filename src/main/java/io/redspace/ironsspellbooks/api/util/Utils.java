@@ -107,8 +107,16 @@ public class Utils {
 
     public static final RandomSource random = RandomSource.createThreadSafe();
 
-    public static final Predicate<Holder<Attribute>> ONLY_MAGIC_ATTRIBUTES = (attribute) -> attribute.value() instanceof IMagicAttribute;
-    public static final Predicate<Holder<Attribute>> NON_BASE_ATTRIBUTES = (attribute) -> !(attribute == io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH || attribute == Attributes.ATTACK_DAMAGE || attribute == Attributes.ATTACK_SPEED || attribute == Attributes.ATTACK_KNOCKBACK);
+    public static final Predicate<Holder<Attribute>> ONLY_MAGIC_ATTRIBUTES =
+            (attribute) -> attribute.value() instanceof IMagicAttribute;
+    public static final Predicate<Holder<Attribute>> NON_BASE_ATTRIBUTES =
+            (attribute) ->
+                    !(attribute
+                                    == io.github.fabricators_of_create.porting_lib.attributes
+                                            .PortingLibAttributes.ENTITY_REACH
+                            || attribute == Attributes.ATTACK_DAMAGE
+                            || attribute == Attributes.ATTACK_SPEED
+                            || attribute == Attributes.ATTACK_KNOCKBACK);
 
     public static long getServerTick() {
         return IronsSpellbooks.OVERWORLD.getGameTime();
@@ -117,16 +125,19 @@ public class Utils {
     public static String getStackTraceAsString() {
         var trace = Arrays.stream(Thread.currentThread().getStackTrace());
         StringBuffer sb = new StringBuffer();
-        trace.forEach(item -> {
-            sb.append(item.toString());
-            sb.append("\n");
-        });
+        trace.forEach(
+                item -> {
+                    sb.append(item.toString());
+                    sb.append("\n");
+                });
         return sb.toString();
     }
 
     public static void spawnInWorld(Level level, BlockPos pos, ItemStack remaining) {
         if (!remaining.isEmpty()) {
-            ItemEntity itemEntity = new ItemEntity(level, pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, remaining);
+            ItemEntity itemEntity =
+                    new ItemEntity(
+                            level, pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, remaining);
             itemEntity.setPickUpDelay(40);
             itemEntity.setDeltaMovement(itemEntity.getDeltaMovement().multiply(0, 1, 0));
             level.addFreshEntity(itemEntity);
@@ -138,10 +149,11 @@ public class Utils {
         boolean isUpgradeable = stack.is(ModTags.CAN_BE_UPGRADED);
 
         return !ServerConfigs.UPGRADE_BLACKLIST_ITEMS.contains(item)
-                && (stack.getItem() instanceof SpellBook || stack.getItem() instanceof ArmorItem || stack.getItem() instanceof CastingItem
-                || ServerConfigs.UPGRADE_WHITELIST_ITEMS.contains(item)
-                || isUpgradeable
-        );
+                && (stack.getItem() instanceof SpellBook
+                        || stack.getItem() instanceof ArmorItem
+                        || stack.getItem() instanceof CastingItem
+                        || ServerConfigs.UPGRADE_WHITELIST_ITEMS.contains(item)
+                        || isUpgradeable);
     }
 
     public static String timeFromTicks(float ticks, int decimalPlaces) {
@@ -156,8 +168,10 @@ public class Utils {
         return stringTruncation(time, decimalPlaces) + affix;
     }
 
-    public static boolean handleSpellTeleport(AbstractSpell spell, Entity entity, Vec3 destination) {
-        var event = new SpellTeleportEvent(spell, entity, destination.x, destination.y, destination.z);
+    public static boolean handleSpellTeleport(
+            AbstractSpell spell, Entity entity, Vec3 destination) {
+        var event =
+                new SpellTeleportEvent(spell, entity, destination.x, destination.y, destination.z);
         org.marj4n.irons_spellbooks.events.SpellEvents.post(event);
         boolean canceled = event.isCanceled();
         if (!canceled) {
@@ -172,18 +186,21 @@ public class Utils {
     public static double softCapFormula(double x) {
         return x <= 1.5 ? x : -.25 * (1 / (x - 1)) + 2;
 
-        //Softcap (https://www.desmos.com/calculator/tuooig12pf)
-        //return x <= 1.75 ? x : 1 / (-16 * (x - 1.5)) + 2;
+        // Softcap (https://www.desmos.com/calculator/tuooig12pf)
+        // return x <= 1.75 ? x : 1 / (-16 * (x - 1.5)) + 2;
     }
 
     @javax.annotation.Nullable
     public static ItemStack getPlayerSpellbookStack(@NotNull Player player) {
-        return EquipmentApi.getCuriosHelper().findCurio(player, Curios.SPELLBOOK_SLOT, 0).map(EquippedSlot::stack).orElse(null);
+        return EquipmentApi.getCuriosHelper()
+                .findCurio(player, Curios.SPELLBOOK_SLOT, 0)
+                .map(EquippedSlot::stack)
+                .orElse(null);
     }
 
     public static void setPlayerSpellbookStack(@NotNull Player player, ItemStack itemStack) {
-        EquipmentApi.getCuriosInventory(player).
-                ifPresent(curios -> curios.setEquippedCurio(Curios.SPELLBOOK_SLOT, 0, itemStack));
+        EquipmentApi.getCuriosInventory(player)
+                .ifPresent(curios -> curios.setEquippedCurio(Curios.SPELLBOOK_SLOT, 0, itemStack));
     }
 
     public static String stringTruncation(double f, int decimalPlaces) {
@@ -233,10 +250,11 @@ public class Utils {
     }
 
     public static float getAngle(double ax, double ay, double bx, double by) {
-        return (float) (Math.atan2(by - ay, bx - ax)) + 3.141f;// + (a.x > b.x ? Math.PI : 0));
+        return (float) (Math.atan2(by - ay, bx - ax)) + 3.141f; // + (a.x > b.x ? Math.PI : 0));
     }
 
-    public static BlockHitResult getTargetOld(Level level, Player player, ClipContext.Fluid clipContext, double reach) {
+    public static BlockHitResult getTargetOld(
+            Level level, Player player, ClipContext.Fluid clipContext, double reach) {
         float f = player.getXRot();
         float f1 = player.getYRot();
         Vec3 vec3 = player.getEyePosition();
@@ -247,46 +265,75 @@ public class Utils {
         float f6 = f3 * f4;
         float f7 = f2 * f4;
         Vec3 vec31 = vec3.add((double) f6 * reach, (double) f5 * reach, (double) f7 * reach);
-        return level.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, clipContext, player));
+        return level.clip(
+                new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, clipContext, player));
     }
 
-    public static BlockHitResult getTargetBlock(Level level, LivingEntity entity, ClipContext.Fluid clipContext, double reach) {
+    public static BlockHitResult getTargetBlock(
+            Level level, LivingEntity entity, ClipContext.Fluid clipContext, double reach) {
         var rotation = entity.getLookAngle().normalize().scale(reach);
         var pos = entity.getEyePosition();
         var dest = rotation.add(pos);
-        return level.clip(new ClipContext(pos, dest, ClipContext.Block.COLLIDER, clipContext, entity));
+        return level.clip(
+                new ClipContext(pos, dest, ClipContext.Block.COLLIDER, clipContext, entity));
     }
 
-//    public static Vec3 raycastForPosition(Level level, LivingEntity entity, double reach) {
-//        var rotation = entity.getLookAngle().normalize().scale(reach);
-//        var pos = entity.getEyePosition();
-//        return rotation.add(pos);
-//    }
+    //    public static Vec3 raycastForPosition(Level level, LivingEntity entity, double reach) {
+    //        var rotation = entity.getLookAngle().normalize().scale(reach);
+    //        var pos = entity.getEyePosition();
+    //        return rotation.add(pos);
+    //    }
 
-    public static boolean hasLineOfSight(Level level, Vec3 start, Vec3 end, boolean checkForShields) {
+    public static boolean hasLineOfSight(
+            Level level, Vec3 start, Vec3 end, boolean checkForShields) {
         if (checkForShields) {
-            List<ShieldEntity> shieldEntities = level.getEntitiesOfClass(ShieldEntity.class, new AABB(start, end));
+            List<ShieldEntity> shieldEntities =
+                    level.getEntitiesOfClass(ShieldEntity.class, new AABB(start, end));
             if (shieldEntities.size() > 0) {
                 var shieldImpact = checkEntityIntersecting(shieldEntities.get(0), start, end, 0);
-                if (shieldImpact.getType() != HitResult.Type.MISS)
-                    end = shieldImpact.getLocation();
+                if (shieldImpact.getType() != HitResult.Type.MISS) end = shieldImpact.getLocation();
             }
         }
-        return level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getType() == HitResult.Type.MISS;
+        return level.clip(
+                                new ClipContext(
+                                        start,
+                                        end,
+                                        ClipContext.Block.COLLIDER,
+                                        ClipContext.Fluid.NONE,
+                                        null))
+                        .getType()
+                == HitResult.Type.MISS;
     }
 
-    public static boolean hasLineOfSight(Level level, Entity entity1, Entity entity2, boolean checkForShields) {
-        return hasLineOfSight(level, entity1.getEyePosition(), entity2.getBoundingBox().getCenter(), checkForShields);
+    public static boolean hasLineOfSight(
+            Level level, Entity entity1, Entity entity2, boolean checkForShields) {
+        return hasLineOfSight(
+                level,
+                entity1.getEyePosition(),
+                entity2.getBoundingBox().getCenter(),
+                checkForShields);
     }
 
-    public static BlockHitResult raycastForBlock(Level level, Vec3 start, Vec3 end, ClipContext.Fluid clipContext) {
-        return level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, clipContext, null));
+    public static BlockHitResult raycastForBlock(
+            Level level, Vec3 start, Vec3 end, ClipContext.Fluid clipContext) {
+        return level.clip(
+                new ClipContext(start, end, ClipContext.Block.COLLIDER, clipContext, null));
     }
 
-    public static HitResult checkEntityIntersecting(Entity entity, Vec3 start, Vec3 end, float bbInflation) {
-        if (entity instanceof io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity multipart && multipart.isMultipartEntity()) {
+    public static HitResult checkEntityIntersecting(
+            Entity entity, Vec3 start, Vec3 end, float bbInflation) {
+        if (entity
+                        instanceof
+                        io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity multipart
+                && multipart.isMultipartEntity()) {
             for (PartEntity<?> p : multipart.getParts()) {
-                var hit = p == null ? null : p.getBoundingBox().inflate(bbInflation).clip(start, end).orElse(null);
+                var hit =
+                        p == null
+                                ? null
+                                : p.getBoundingBox()
+                                        .inflate(bbInflation)
+                                        .clip(start, end)
+                                        .orElse(null);
                 if (hit != null) {
                     return new EntityHitResult(entity, hit);
                 }
@@ -298,7 +345,8 @@ public class Utils {
             }
         }
         Vec3 vector = start.subtract(end);
-        return BlockHitResult.miss(end, Direction.getNearest(vector.x, vector.y, vector.z), BlockPos.containing(end));
+        return BlockHitResult.miss(
+                end, Direction.getNearest(vector.x, vector.y, vector.z), BlockPos.containing(end));
     }
 
     public static Vec3 getPositionFromEntityLookDirection(Entity originEntity, float distance) {
@@ -310,7 +358,8 @@ public class Utils {
      * @deprecated Use {@link RaycastBuilder} instead.
      */
     @Deprecated
-    public static HitResult raycastForEntity(Level level, Entity originEntity, float distance, boolean checkForBlocks) {
+    public static HitResult raycastForEntity(
+            Level level, Entity originEntity, float distance, boolean checkForBlocks) {
         Vec3 start = originEntity.getEyePosition();
         Vec3 end = originEntity.getLookAngle().normalize().scale(distance).add(start);
 
@@ -321,7 +370,12 @@ public class Utils {
      * @deprecated Use {@link RaycastBuilder} instead.
      */
     @Deprecated
-    public static HitResult raycastForEntity(Level level, Entity originEntity, float distance, boolean checkForBlocks, float bbInflation) {
+    public static HitResult raycastForEntity(
+            Level level,
+            Entity originEntity,
+            float distance,
+            boolean checkForBlocks,
+            float bbInflation) {
         Vec3 start = originEntity.getEyePosition();
         Vec3 end = originEntity.getLookAngle().normalize().scale(distance).add(start);
         return RaycastBuilder.begin(level, originEntity)
@@ -336,7 +390,8 @@ public class Utils {
      * @deprecated Use {@link RaycastBuilder} instead.
      */
     @Deprecated
-    public static HitResult raycastForEntity(Level level, Entity originEntity, Vec3 start, Vec3 end, boolean checkForBlocks) {
+    public static HitResult raycastForEntity(
+            Level level, Entity originEntity, Vec3 start, Vec3 end, boolean checkForBlocks) {
         return RaycastBuilder.begin(level, originEntity)
                 .start(start)
                 .end(end)
@@ -348,7 +403,14 @@ public class Utils {
      * @deprecated Use {@link RaycastBuilder} instead.
      */
     @Deprecated
-    public static HitResult raycastForEntity(Level level, Entity originEntity, Vec3 start, Vec3 end, boolean checkForBlocks, float bbInflation, Predicate<? super Entity> filter) {
+    public static HitResult raycastForEntity(
+            Level level,
+            Entity originEntity,
+            Vec3 start,
+            Vec3 end,
+            boolean checkForBlocks,
+            float bbInflation,
+            Predicate<? super Entity> filter) {
         return RaycastBuilder.begin(level, originEntity)
                 .start(start)
                 .end(end)
@@ -362,7 +424,13 @@ public class Utils {
      * @deprecated Use {@link RaycastBuilder} instead.
      */
     @Deprecated
-    public static HitResult raycastForEntityOfClass(Level level, Entity originEntity, Vec3 start, Vec3 end, boolean checkForBlocks, Class<? extends Entity> c) {
+    public static HitResult raycastForEntityOfClass(
+            Level level,
+            Entity originEntity,
+            Vec3 start,
+            Vec3 end,
+            boolean checkForBlocks,
+            Class<? extends Entity> c) {
         return RaycastBuilder.begin(level, originEntity)
                 .start(start)
                 .end(end)
@@ -388,22 +456,42 @@ public class Utils {
             var spellData = ssm.getSelectedSpellData();
             if (spellData != SpellData.EMPTY) {
                 var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
-                if (playerMagicData.isCasting() && !playerMagicData.getCastingSpellId().equals(spellData.getSpell().getSpellId())) {
-                    CancelCastPacket.cancelCast(serverPlayer, playerMagicData.getCastType() != CastType.LONG);
+                if (playerMagicData.isCasting()
+                        && !playerMagicData
+                                .getCastingSpellId()
+                                .equals(spellData.getSpell().getSpellId())) {
+                    CancelCastPacket.cancelCast(
+                            serverPlayer, playerMagicData.getCastType() != CastType.LONG);
                 }
 
-                return spellData.getSpell().attemptInitiateCast(ItemStack.EMPTY, spellData.getSpell().getLevelFor(spellData.getLevel(), serverPlayer), serverPlayer.level(), serverPlayer, spellItem.getCastSource(), true, spellItem.slot);
+                return spellData
+                        .getSpell()
+                        .attemptInitiateCast(
+                                ItemStack.EMPTY,
+                                spellData
+                                        .getSpell()
+                                        .getLevelFor(spellData.getLevel(), serverPlayer),
+                                serverPlayer.level(),
+                                serverPlayer,
+                                spellItem.getCastSource(),
+                                true,
+                                spellItem.slot);
             }
         } else if (Utils.getPlayerSpellbookStack(serverPlayer) == null) {
-            //Helper for beginners (they tried casting with the spellbook in their hand, not their spell book slot
+            // Helper for beginners (they tried casting with the spellbook in their hand, not their
+            // spell book slot
             ItemStack heldSpellbookStack = serverPlayer.getMainHandItem();
             if (!(heldSpellbookStack.getItem() instanceof SpellBook)) {
                 heldSpellbookStack = serverPlayer.getOffhandItem();
             }
             if (heldSpellbookStack.getItem() instanceof SpellBook spellBook) {
-                spellBook.onEquipFromUse(new EquipmentSlotContext(Curios.SPELLBOOK_SLOT, serverPlayer, 0, false, true), heldSpellbookStack);
+                spellBook.onEquipFromUse(
+                        new EquipmentSlotContext(
+                                Curios.SPELLBOOK_SLOT, serverPlayer, 0, false, true),
+                        heldSpellbookStack);
                 Utils.setPlayerSpellbookStack(serverPlayer, heldSpellbookStack.split(1));
-                //serverPlayer.level.playSound(null, serverPlayer.blockPosition(), SoundRegistry.EQUIP_SPELL_BOOK.get(), SoundSource.PLAYERS, 1, 1);
+                // serverPlayer.level.playSound(null, serverPlayer.blockPosition(),
+                // SoundRegistry.EQUIP_SPELL_BOOK.get(), SoundSource.PLAYERS, 1, 1);
             }
         }
         return false;
@@ -422,18 +510,39 @@ public class Utils {
             var spellData = spellSelection.spellData;
             if (spellData != SpellData.EMPTY) {
                 var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
-                if (playerMagicData.isCasting() && !playerMagicData.getCastingSpellId().equals(spellData.getSpell().getSpellId())) {
-                    CancelCastPacket.cancelCast(serverPlayer, playerMagicData.getCastType() != CastType.LONG);
+                if (playerMagicData.isCasting()
+                        && !playerMagicData
+                                .getCastingSpellId()
+                                .equals(spellData.getSpell().getSpellId())) {
+                    CancelCastPacket.cancelCast(
+                            serverPlayer, playerMagicData.getCastType() != CastType.LONG);
                 }
 
-                return spellData.getSpell().attemptInitiateCast(ItemStack.EMPTY, spellData.getSpell().getLevelFor(spellData.getLevel(), serverPlayer), serverPlayer.level(), serverPlayer, spellSelection.getCastSource(), true, spellSelection.slot);
+                return spellData
+                        .getSpell()
+                        .attemptInitiateCast(
+                                ItemStack.EMPTY,
+                                spellData
+                                        .getSpell()
+                                        .getLevelFor(spellData.getLevel(), serverPlayer),
+                                serverPlayer.level(),
+                                serverPlayer,
+                                spellSelection.getCastSource(),
+                                true,
+                                spellSelection.slot);
             }
         }
         return false;
     }
 
     public static void serverSideCancelCast(ServerPlayer serverPlayer) {
-        CancelCastPacket.cancelCast(serverPlayer, MagicData.getPlayerMagicData(serverPlayer).getCastingSpell().getSpell().getCastType() == CastType.CONTINUOUS);
+        CancelCastPacket.cancelCast(
+                serverPlayer,
+                MagicData.getPlayerMagicData(serverPlayer)
+                                .getCastingSpell()
+                                .getSpell()
+                                .getCastType()
+                        == CastType.CONTINUOUS);
     }
 
     public static void serverSideCancelCast(ServerPlayer serverPlayer, boolean triggerCooldown) {
@@ -444,18 +553,21 @@ public class Utils {
      * Smoothsteps from a to b by percentage x
      */
     public static float smoothstep(float a, float b, float x) {
-        //6x^5 - 15x^4 + 10x^3
+        // 6x^5 - 15x^4 + 10x^3
         x = 6 * (x * x * x * x * x) - 15 * (x * x * x * x) + 10 * (x * x * x);
         return a + (b - a) * x;
     }
 
     public static boolean canHitWithRaycast(Entity entity) {
-        //IronsSpellbooks.LOGGER.debug("Utils.canHitWithRaycast: {} - {}", entity.getName().getString(), !(entity instanceof Projectile || entity instanceof AreaEffectCloud || entity instanceof ConePart));
+        // IronsSpellbooks.LOGGER.debug("Utils.canHitWithRaycast: {} - {}",
+        // entity.getName().getString(), !(entity instanceof Projectile || entity instanceof
+        // AreaEffectCloud || entity instanceof ConePart));
         return entity.isPickable() && entity.isAlive() && !entity.isSpectator();
     }
 
     public static int applyCooldownReduction(int baseTicks, @Nullable LivingEntity livingEntity) {
-        double modifier = livingEntity == null ? 1 : livingEntity.getAttributeValue(COOLDOWN_REDUCTION.get());
+        double modifier =
+                livingEntity == null ? 1 : livingEntity.getAttributeValue(COOLDOWN_REDUCTION.get());
         return (int) (baseTicks * (2 - Utils.softCapFormula(modifier)));
     }
 
@@ -472,14 +584,20 @@ public class Utils {
         float f = (float) attacker.getAttributeValue(Attributes.ATTACK_DAMAGE);
         float f1 = (float) attacker.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
         if (target instanceof LivingEntity) {
-            f += EnchantmentHelper.getDamageBonus(attacker.getMainHandItem(), ((LivingEntity) target).getMobType());
+            f +=
+                    EnchantmentHelper.getDamageBonus(
+                            attacker.getMainHandItem(), ((LivingEntity) target).getMobType());
             f1 += (float) EnchantmentHelper.getKnockbackBonus(attacker);
         }
 
         boolean flag = DamageSources.applyDamage(target, f, damageSource);
         if (flag) {
             if (f1 > 0.0F && target instanceof LivingEntity livingTarget) {
-                ((LivingEntity) target).knockback((double) (f1 * 0.5F), (double) Mth.sin(attacker.getYRot() * ((float) Math.PI / 180F)), (double) (-Mth.cos(attacker.getYRot() * ((float) Math.PI / 180F))));
+                ((LivingEntity) target)
+                        .knockback(
+                                (double) (f1 * 0.5F),
+                                (double) Mth.sin(attacker.getYRot() * ((float) Math.PI / 180F)),
+                                (double) (-Mth.cos(attacker.getYRot() * ((float) Math.PI / 180F))));
                 attacker.setDeltaMovement(attacker.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
                 livingTarget.setLastHurtByMob(attacker);
             }
@@ -495,19 +613,14 @@ public class Utils {
     }
 
     public static Vec3 getRandomVec3(double scale) {
-        return new Vec3(
-                getRandomScaled(scale),
-                getRandomScaled(scale),
-                getRandomScaled(scale)
-        );
+        return new Vec3(getRandomScaled(scale), getRandomScaled(scale), getRandomScaled(scale));
     }
 
     public static Vector3f getRandomVec3f(double scale) {
         return new Vector3f(
                 (float) getRandomScaled(scale),
                 (float) getRandomScaled(scale),
-                (float) getRandomScaled(scale)
-        );
+                (float) getRandomScaled(scale));
     }
 
     public static Vector3f v3f(Vec3 vec3) {
@@ -523,25 +636,29 @@ public class Utils {
     }
 
     public static boolean shouldHealEntity(Entity healer, Entity target) {
-        if (healer instanceof NeutralMob neutralMob && target instanceof LivingEntity livingEntity && neutralMob.isAngryAt(livingEntity)) {
+        if (healer instanceof NeutralMob neutralMob
+                && target instanceof LivingEntity livingEntity
+                && neutralMob.isAngryAt(livingEntity)) {
             return false;
         } else if (healer == target) {
             return true;
         } else if (target.getType().is(ModTags.ALWAYS_HEAL) && !(healer instanceof Enemy)) {
-            //This tag is for things like iron golems, villagers, farm animals, etc
+            // This tag is for things like iron golems, villagers, farm animals, etc
             return true;
         } else if (target.isAlliedTo(healer) || healer.isAlliedTo(target)) {
-            //Generic ally-check. Some mobs override it, such as summons
+            // Generic ally-check. Some mobs override it, such as summons
             return true;
         } else if (healer.getTeam() != null) {
-            //If we are on a team, only heal teammates
+            // If we are on a team, only heal teammates
             return target.isAlliedTo(healer.getTeam());
         } else if (healer instanceof Player) {
-            //If we are a player and not on a team, we only want to heal other players
+            // If we are a player and not on a team, we only want to heal other players
             return target instanceof Player;
         } else {
-            //Otherwise, heal like kind (ie undead to undead), but also xor check "enemy" status (most mob types are undefined)
-            return healer.getType().getCategory() == target.getType().getCategory() && (healer instanceof Enemy ^ target instanceof Enemy);
+            // Otherwise, heal like kind (ie undead to undead), but also xor check "enemy" status
+            // (most mob types are undefined)
+            return healer.getType().getCategory() == target.getType().getCategory()
+                    && (healer instanceof Enemy ^ target instanceof Enemy);
         }
     }
 
@@ -559,7 +676,9 @@ public class Utils {
         if (itemStack.getItem() instanceof SwordItem) {
             return true;
         }
-        if (ISpellContainer.isSpellContainer(itemStack) && !(itemStack.getItem() instanceof Scroll || itemStack.getItem() instanceof SpellBook)) {
+        if (ISpellContainer.isSpellContainer(itemStack)
+                && !(itemStack.getItem() instanceof Scroll
+                        || itemStack.getItem() instanceof SpellBook)) {
             return true;
         }
         if (itemStack.is(ModTags.CAN_BE_IMBUED)) {
@@ -582,10 +701,14 @@ public class Utils {
         }
         boolean hasResult = false;
 
-        if (ISpellContainer.isSpellContainer(result) && !(result.getItem() instanceof SpellBook) && !(result.getItem() instanceof UniqueItem)) {
+        if (ISpellContainer.isSpellContainer(result)
+                && !(result.getItem() instanceof SpellBook)
+                && !(result.getItem() instanceof UniqueItem)) {
             if (result.getItem() instanceof IPresetSpellContainer) {
                 var spellContainer = ISpellContainer.get(result).mutableCopy();
-                spellContainer.getActiveSpells().forEach(spellData -> spellContainer.removeSpell(spellData.getSpell()));
+                spellContainer
+                        .getActiveSpells()
+                        .forEach(spellData -> spellContainer.removeSpell(spellData.getSpell()));
                 ISpellContainer.set(result, spellContainer.toImmutable());
             } else {
                 ISpellContainer.remove(result);
@@ -604,14 +727,18 @@ public class Utils {
     }
 
     public static boolean validAntiMagicTarget(Entity entity) {
-        return !entity.isSpectator() && (entity instanceof AntiMagicSusceptible || (entity instanceof Player) || (entity instanceof IMagicEntity));
+        return !entity.isSpectator()
+                && (entity instanceof AntiMagicSusceptible
+                        || (entity instanceof Player)
+                        || (entity instanceof IMagicEntity));
     }
 
     /**
      * From the given start position, this finds the first non-suffocating y level within +/- maxSteps, biased towards the ground
      */
     public static float findRelativeGroundLevel(Level level, Vec3 start, int maxSteps) {
-        if (level.getBlockState(BlockPos.containing(start)).isSuffocating(level, BlockPos.containing(start))) {
+        if (level.getBlockState(BlockPos.containing(start))
+                .isSuffocating(level, BlockPos.containing(start))) {
             for (int i = 0; i < maxSteps; i++) {
                 start = start.add(0, 1, 0);
                 BlockPos pos = BlockPos.containing(start);
@@ -620,61 +747,139 @@ public class Utils {
                 }
             }
         }
-        return (float) level.clip(new ClipContext(start, start.add(0, -maxSteps, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation().y;
+        return (float)
+                level.clip(
+                                new ClipContext(
+                                        start,
+                                        start.add(0, -maxSteps, 0),
+                                        ClipContext.Block.COLLIDER,
+                                        ClipContext.Fluid.NONE,
+                                        null))
+                        .getLocation()
+                        .y;
     }
 
     public static Vec3 moveToRelativeGroundLevel(Level level, Vec3 start, int maxSteps) {
         return moveToRelativeGroundLevel(level, start, maxSteps, maxSteps);
     }
 
-    public static Vec3 moveToRelativeGroundLevel(Level level, Vec3 start, int maxStepsUp, int maxStepsDown) {
-        var blockcollisions = new BlockCollisions<>(level, null, new AABB(0, 0, 0, .5, .5, .5).move(start), true, (p_286215_, p_286216_) -> p_286216_);
+    public static Vec3 moveToRelativeGroundLevel(
+            Level level, Vec3 start, int maxStepsUp, int maxStepsDown) {
+        var blockcollisions =
+                new BlockCollisions<>(
+                        level,
+                        null,
+                        new AABB(0, 0, 0, .5, .5, .5).move(start),
+                        true,
+                        (p_286215_, p_286216_) -> p_286216_);
         if (blockcollisions.hasNext()) {
             for (int i = 1; i < maxStepsUp; i++) {
-                blockcollisions = new BlockCollisions<>(level, null, new AABB(0, 0, 0, .5, .5, .5).move(start.add(0, i, 0)), true, (p_286215_, p_286216_) -> p_286216_);
+                blockcollisions =
+                        new BlockCollisions<>(
+                                level,
+                                null,
+                                new AABB(0, 0, 0, .5, .5, .5).move(start.add(0, i, 0)),
+                                true,
+                                (p_286215_, p_286216_) -> p_286216_);
                 if (!blockcollisions.hasNext()) {
                     start = start.add(0, i, 0);
                     break;
                 }
             }
         }
-        return level.clip(new ClipContext(start, start.add(0, -maxStepsDown, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
+        return level.clip(
+                        new ClipContext(
+                                start,
+                                start.add(0, -maxStepsDown, 0),
+                                ClipContext.Block.COLLIDER,
+                                ClipContext.Fluid.NONE,
+                                null))
+                .getLocation();
     }
 
-    public static boolean checkMonsterSpawnRules(ServerLevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
-        //Omits monster from spawn where monsters are not allowed, as well as default monster spawning conditions
-        return !pLevel.getBiome(pPos).is(Biomes.DEEP_DARK) && !pLevel.getBiome(pPos).is(Tags.Biomes.IS_MUSHROOM) && pLevel.getDifficulty() != Difficulty.PEACEFUL && Monster.isDarkEnoughToSpawn(pLevel, pPos, pRandom) && Monster.checkMobSpawnRules(EntityRegistry.NECROMANCER.get(), pLevel, pSpawnType, pPos, pRandom);
+    public static boolean checkMonsterSpawnRules(
+            ServerLevelAccessor pLevel,
+            MobSpawnType pSpawnType,
+            BlockPos pPos,
+            RandomSource pRandom) {
+        // Omits monster from spawn where monsters are not allowed, as well as default monster
+        // spawning conditions
+        return !pLevel.getBiome(pPos).is(Biomes.DEEP_DARK)
+                && !pLevel.getBiome(pPos).is(Tags.Biomes.IS_MUSHROOM)
+                && pLevel.getDifficulty() != Difficulty.PEACEFUL
+                && Monster.isDarkEnoughToSpawn(pLevel, pPos, pRandom)
+                && Monster.checkMobSpawnRules(
+                        EntityRegistry.NECROMANCER.get(), pLevel, pSpawnType, pPos, pRandom);
     }
 
-    public static void sendTargetedNotification(ServerPlayer target, LivingEntity caster, AbstractSpell spell) {
-        target.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.spell_target_warning", caster.getDisplayName().getString(), spell.getDisplayName(target)).withStyle(ChatFormatting.LIGHT_PURPLE)));
+    public static void sendTargetedNotification(
+            ServerPlayer target, LivingEntity caster, AbstractSpell spell) {
+        target.connection.send(
+                new ClientboundSetActionBarTextPacket(
+                        Component.translatable(
+                                        "ui.irons_spellbooks.spell_target_warning",
+                                        caster.getDisplayName().getString(),
+                                        spell.getDisplayName(target))
+                                .withStyle(ChatFormatting.LIGHT_PURPLE)));
     }
 
-    public static boolean preCastTargetHelper(Level level, LivingEntity caster, MagicData playerMagicData, AbstractSpell spell, int range, float aimAssist) {
+    public static boolean preCastTargetHelper(
+            Level level,
+            LivingEntity caster,
+            MagicData playerMagicData,
+            AbstractSpell spell,
+            int range,
+            float aimAssist) {
         return preCastTargetHelper(level, caster, playerMagicData, spell, range, aimAssist, true);
     }
 
-    public static boolean preCastTargetHelper(Level level, LivingEntity caster, MagicData playerMagicData, AbstractSpell spell, int range, float aimAssist, boolean sendFailureMessage) {
-        return preCastTargetHelper(level, caster, playerMagicData, spell, range, aimAssist, sendFailureMessage, x -> true);
-
+    public static boolean preCastTargetHelper(
+            Level level,
+            LivingEntity caster,
+            MagicData playerMagicData,
+            AbstractSpell spell,
+            int range,
+            float aimAssist,
+            boolean sendFailureMessage) {
+        return preCastTargetHelper(
+                level,
+                caster,
+                playerMagicData,
+                spell,
+                range,
+                aimAssist,
+                sendFailureMessage,
+                x -> true);
     }
 
-    public static boolean preCastTargetHelper(Level level, LivingEntity caster, MagicData playerMagicData, AbstractSpell spell, int range, float aimAssist, boolean sendFailureMessage, Predicate<LivingEntity> filter) {
-        var target = RaycastBuilder.begin(caster.level(), caster)
-                .range(range)
-                .checkForBlocks(true)
-                .bbInflation(aimAssist)
-                .build();
+    public static boolean preCastTargetHelper(
+            Level level,
+            LivingEntity caster,
+            MagicData playerMagicData,
+            AbstractSpell spell,
+            int range,
+            float aimAssist,
+            boolean sendFailureMessage,
+            Predicate<LivingEntity> filter) {
+        var target =
+                RaycastBuilder.begin(caster.level(), caster)
+                        .range(range)
+                        .checkForBlocks(true)
+                        .bbInflation(aimAssist)
+                        .build();
         LivingEntity livingTarget = null;
         if (target instanceof EntityHitResult entityHit) {
             if (entityHit.getEntity() instanceof PreventDismount) {
-                if (entityHit.getEntity().getFirstPassenger() instanceof LivingEntity livingRooted) {
+                if (entityHit.getEntity().getFirstPassenger()
+                        instanceof LivingEntity livingRooted) {
                     livingTarget = livingRooted;
                 }
-            } else if (entityHit.getEntity() instanceof LivingEntity livingEntity && filter.test(livingEntity)) {
+            } else if (entityHit.getEntity() instanceof LivingEntity livingEntity
+                    && filter.test(livingEntity)) {
                 livingTarget = livingEntity;
-            } else if (entityHit.getEntity() instanceof PartEntity<?> partEntity &&
-                    partEntity.getParent() instanceof LivingEntity livingParent && !caster.equals(livingParent)
+            } else if (entityHit.getEntity() instanceof PartEntity<?> partEntity
+                    && partEntity.getParent() instanceof LivingEntity livingParent
+                    && !caster.equals(livingParent)
                     && filter.test(livingParent)) {
                 livingTarget = livingParent;
             }
@@ -684,16 +889,26 @@ public class Utils {
             playerMagicData.setAdditionalCastData(new TargetEntityCastData(livingTarget));
             if (caster instanceof ServerPlayer serverPlayer) {
                 if (spell.getCastType() != CastType.INSTANT) {
-                    PacketDistributor.sendToPlayer(serverPlayer, new SyncTargetingDataPacket(livingTarget, spell));
+                    PacketDistributor.sendToPlayer(
+                            serverPlayer, new SyncTargetingDataPacket(livingTarget, spell));
                 }
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.spell_target_success", livingTarget.getDisplayName().getString(), spell.getDisplayName(serverPlayer)).withStyle(ChatFormatting.GREEN)));
+                serverPlayer.connection.send(
+                        new ClientboundSetActionBarTextPacket(
+                                Component.translatable(
+                                                "ui.irons_spellbooks.spell_target_success",
+                                                livingTarget.getDisplayName().getString(),
+                                                spell.getDisplayName(serverPlayer))
+                                        .withStyle(ChatFormatting.GREEN)));
             }
             if (livingTarget instanceof ServerPlayer serverPlayer) {
                 Utils.sendTargetedNotification(serverPlayer, caster, spell);
             }
             return true;
         } else if (sendFailureMessage && caster instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.cast_error_target").withStyle(ChatFormatting.RED)));
+            serverPlayer.connection.send(
+                    new ClientboundSetActionBarTextPacket(
+                            Component.translatable("ui.irons_spellbooks.cast_error_target")
+                                    .withStyle(ChatFormatting.RED)));
         }
         return false;
     }
@@ -703,18 +918,29 @@ public class Utils {
     }
 
     public static void doMobBreakSuffocatingBlocks(LivingEntity entity, Vec3 offset) {
-        if (io.github.fabricators_of_create.porting_lib.entity.events.EntityEventFactory.getMobGriefingEvent(entity.level(), entity)) {
+        if (io.github.fabricators_of_create.porting_lib.entity.events.EntityEventFactory
+                .getMobGriefingEvent(entity.level(), entity)) {
             int l = Mth.floor(entity.getBbWidth() / 2.0F + 1.0F);
             int i1 = Mth.ceil(entity.getBbHeight());
-            Vec3i o = new Vec3i(Math.round((float) offset.x), Math.round((float) offset.y), Math.round((float) offset.z));
-            for (BlockPos blockpos : BlockPos.betweenClosed(
-                    entity.getBlockX() - l + o.getX(), entity.getBlockY() + o.getY(), entity.getBlockZ() - l + o.getZ(),
-                    entity.getBlockX() + l + o.getX(), entity.getBlockY() + i1 + o.getY(), entity.getBlockZ() + l + o.getZ()
-            )) {
+            Vec3i o =
+                    new Vec3i(
+                            Math.round((float) offset.x),
+                            Math.round((float) offset.y),
+                            Math.round((float) offset.z));
+            for (BlockPos blockpos :
+                    BlockPos.betweenClosed(
+                            entity.getBlockX() - l + o.getX(),
+                            entity.getBlockY() + o.getY(),
+                            entity.getBlockZ() - l + o.getZ(),
+                            entity.getBlockX() + l + o.getX(),
+                            entity.getBlockY() + i1 + o.getY(),
+                            entity.getBlockZ() + l + o.getZ())) {
                 BlockState blockstate = entity.level().getBlockState(blockpos);
-                if (blockstate.getDestroySpeed(entity.level(), blockpos) >= 0 &&
-                        blockstate.canEntityDestroy(entity.level(), blockpos, entity) &&
-                        org.marj4n.irons_spellbooks.events.NativeWorldEvents.ALLOW_ENTITY_DESTROY.invoker().allow(entity, blockpos, blockstate)) {
+                if (blockstate.getDestroySpeed(entity.level(), blockpos) >= 0
+                        && blockstate.canEntityDestroy(entity.level(), blockpos, entity)
+                        && org.marj4n.irons_spellbooks.events.NativeWorldEvents.ALLOW_ENTITY_DESTROY
+                                .invoker()
+                                .allow(entity, blockpos, blockstate)) {
                     if (entity.level().destroyBlock(blockpos, true, entity)) {
                         entity.level().levelEvent(null, 1022, entity.blockPosition(), 0);
                     }
@@ -742,7 +968,8 @@ public class Utils {
     /**
      * Implementation of ContainerHelper#saveAllItems that takes the save location as parameter
      */
-    public static CompoundTag saveAllItems(CompoundTag pTag, NonNullList<ItemStack> pList, String location) {
+    public static CompoundTag saveAllItems(
+            CompoundTag pTag, NonNullList<ItemStack> pList, String location) {
         ListTag listtag = new ListTag();
 
         for (int i = 0; i < pList.size(); ++i) {
@@ -762,7 +989,8 @@ public class Utils {
         return pTag;
     }
 
-    public static void loadAllItems(CompoundTag pTag, NonNullList<ItemStack> pList, String location) {
+    public static void loadAllItems(
+            CompoundTag pTag, NonNullList<ItemStack> pList, String location) {
         ListTag listtag = pTag.getList(location, 10);
 
         for (int i = 0; i < listtag.size(); ++i) {
@@ -779,10 +1007,12 @@ public class Utils {
             float weapon = (float) (entity.getAttributeValue(Attributes.ATTACK_DAMAGE));
             float fist = (float) (entity.getAttributeBaseValue(Attributes.ATTACK_DAMAGE));
             if (weapon <= fist) {
-                //Remove fist damage if they are not using a melee weapon
+                // Remove fist damage if they are not using a melee weapon
                 weapon -= fist;
             }
-            float enchant = EnchantmentHelper.getDamageBonus(entity.getMainHandItem(), entityForDamageBonus);
+            float enchant =
+                    EnchantmentHelper.getDamageBonus(
+                            entity.getMainHandItem(), entityForDamageBonus);
             return weapon + enchant;
         }
         return 0;
@@ -792,54 +1022,63 @@ public class Utils {
         return getWeaponDamage(entity, MobType.UNDEFINED);
     }
 
-
     /**
      * @return A factor used to dampen values based on given entity's knockback resistance. Returns max if the entity has no knockback resistance.
      */
     public static float clampedKnockbackResistanceFactor(Entity entity, float min, float max) {
         if (entity instanceof LivingEntity living) {
-            return Mth.clamp(1 - (float) living.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), min, max);
+            return Mth.clamp(
+                    1 - (float) living.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE),
+                    min,
+                    max);
         } else {
             return max;
         }
     }
-//    public static float processEnchantment(Level level, ResourceKey<Enchantment> enchantmentKey, DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> component, ItemEnchantments enchantments) {
-//        if (enchantments != null) {
-//            var reg = level.registryAccess().registry(Registries.ENCHANTMENT).orElse(null);
-//            if (reg != null) {
-//                var enchantment = reg.getHolder(enchantmentKey).orElse(null);
-//                if (enchantment != null && enchantments.keySet().contains(enchantment)) {
-//                    var enchantmentLevel = enchantments.getLevel(enchantment);
-//                    var effectList = enchantment.value().effects().get(component);
-//                    if (effectList != null && !effectList.isEmpty()) {
-//                        return effectList.getFirst().effect().process(enchantmentLevel, Utils.random, 0f);
-//                    }
-//                }
-//            }
-//        }
-//        return 0f;
-//    }
 
-//    public static int getEnchantmentLevel(Level level, ResourceKey<Enchantment> enchantmentKey, ItemEnchantments enchantments) {
-//        if (enchantments != null) {
-//            var enchantment = enchantmentFromKey(level.registryAccess(), enchantmentKey);
-//            if (enchantment != null) {
-//                return enchantments.getLevel(enchantment);
-//            }
-//        }
-//        return 0;
-//    }
+    //    public static float processEnchantment(Level level, ResourceKey<Enchantment>
+    // enchantmentKey, DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> component,
+    // ItemEnchantments enchantments) {
+    //        if (enchantments != null) {
+    //            var reg = level.registryAccess().registry(Registries.ENCHANTMENT).orElse(null);
+    //            if (reg != null) {
+    //                var enchantment = reg.getHolder(enchantmentKey).orElse(null);
+    //                if (enchantment != null && enchantments.keySet().contains(enchantment)) {
+    //                    var enchantmentLevel = enchantments.getLevel(enchantment);
+    //                    var effectList = enchantment.value().effects().get(component);
+    //                    if (effectList != null && !effectList.isEmpty()) {
+    //                        return effectList.getFirst().effect().process(enchantmentLevel,
+    // Utils.random, 0f);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        return 0f;
+    //    }
+
+    //    public static int getEnchantmentLevel(Level level, ResourceKey<Enchantment>
+    // enchantmentKey, ItemEnchantments enchantments) {
+    //        if (enchantments != null) {
+    //            var enchantment = enchantmentFromKey(level.registryAccess(), enchantmentKey);
+    //            if (enchantment != null) {
+    //                return enchantments.getLevel(enchantment);
+    //            }
+    //        }
+    //        return 0;
+    //    }
 
     public static int getEnchantmentLevel(Level level, ItemStack stack, Enchantment enchantment) {
-//        var enchantment = enchantmentFromKey(level.registryAccess(), enchantmentKey);
-//        if (enchantment != null) {
-        return net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(enchantment, stack);
-//        }
-//        return 0;
+        //        var enchantment = enchantmentFromKey(level.registryAccess(), enchantmentKey);
+        //        if (enchantment != null) {
+        return net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(
+                enchantment, stack);
+        //        }
+        //        return 0;
     }
 
     @Nullable
-    public static Holder<Enchantment> enchantmentFromKey(RegistryAccess registryAccess, ResourceKey<Enchantment> enchantmentkey) {
+    public static Holder<Enchantment> enchantmentFromKey(
+            RegistryAccess registryAccess, ResourceKey<Enchantment> enchantmentkey) {
         var reg = registryAccess.registry(Registries.ENCHANTMENT).orElse(null);
         if (reg != null) {
             var enchantment = reg.get(enchantmentkey);
@@ -854,31 +1093,72 @@ public class Utils {
         if (level.isClientSide) {
             return;
         }
-        if (level.getBlockState(blockPos.above()).isAir() || level.getBlockState(blockPos.above().above()).isAir()) {
-            MagicManager.spawnParticles(level, new FallingBlockParticleOption(level.getBlockState(blockPos), new Vec3(0, impulseStrength, 0)), blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 1, 0, 0, 0, 0, true);
+        if (level.getBlockState(blockPos.above()).isAir()
+                || level.getBlockState(blockPos.above().above()).isAir()) {
+            MagicManager.spawnParticles(
+                    level,
+                    new FallingBlockParticleOption(
+                            level.getBlockState(blockPos), new Vec3(0, impulseStrength, 0)),
+                    blockPos.getX() + 0.5,
+                    blockPos.getY(),
+                    blockPos.getZ() + 0.5,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    true);
             if (!level.getBlockState(blockPos.above()).isAir()) {
-                // if non-solid block (ie snow, grass, fire, etc) is on top, also create a tremor of that
-                MagicManager.spawnParticles(level, new FallingBlockParticleOption(level.getBlockState(blockPos.above()), new Vec3(0, impulseStrength, 0)), blockPos.getX() + 0.5, blockPos.getY() + 1, blockPos.getZ() + 0.5, 1, 0, 0, 0, 0, true);
+                // if non-solid block (ie snow, grass, fire, etc) is on top, also create a tremor of
+                // that
+                MagicManager.spawnParticles(
+                        level,
+                        new FallingBlockParticleOption(
+                                level.getBlockState(blockPos.above()),
+                                new Vec3(0, impulseStrength, 0)),
+                        blockPos.getX() + 0.5,
+                        blockPos.getY() + 1,
+                        blockPos.getZ() + 0.5,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        true);
             }
         }
     }
 
-    public static void createTremorBlockWithState(Level level, BlockState state, BlockPos blockPos, float impulseStrength) {
-        MagicManager.spawnParticles(level, new FallingBlockParticleOption(state, new Vec3(0, impulseStrength, 0)), blockPos.getX() + 0.5, blockPos.getY() + 1, blockPos.getZ() + 0.5, 1, 0, 0, 0, 0, true);
+    public static void createTremorBlockWithState(
+            Level level, BlockState state, BlockPos blockPos, float impulseStrength) {
+        MagicManager.spawnParticles(
+                level,
+                new FallingBlockParticleOption(state, new Vec3(0, impulseStrength, 0)),
+                blockPos.getX() + 0.5,
+                blockPos.getY() + 1,
+                blockPos.getZ() + 0.5,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
     }
 
     public static ItemStack setPotion(ItemStack itemStack, Holder<Potion> potion) {
         return PotionUtils.setPotion(itemStack, potion.value());
     }
 
-
     public static ItemStack setPotion(ItemStack itemStack, Potion potion) {
         return PotionUtils.setPotion(itemStack, potion);
     }
 
     public static Predicate<Entity> tauntPredicate(Entity taunter) {
-        return entity -> (entity instanceof Enemy ^ taunter instanceof Enemy && !taunter.isAlliedTo(entity))
-                || ((taunter instanceof LivingEntity livingEntity && entity instanceof NeutralMob neutralMob) && neutralMob.isAngryAt(livingEntity));
+        return entity ->
+                (entity instanceof Enemy ^ taunter instanceof Enemy && !taunter.isAlliedTo(entity))
+                        || ((taunter instanceof LivingEntity livingEntity
+                                        && entity instanceof NeutralMob neutralMob)
+                                && neutralMob.isAngryAt(livingEntity));
     }
 
     public static void performTaunt(Entity taunter, LivingEntity newTarget, float range) {
@@ -886,18 +1166,40 @@ public class Utils {
         performTaunt(newTarget, 10, predicate);
     }
 
-    public static void performTaunt(LivingEntity newTarget, float range, Predicate<Entity> selector) {
-        performTaunt(newTarget, newTarget.level().getEntities(newTarget, newTarget.getBoundingBox().inflate(range, range, range),
-                entity -> entity.distanceToSqr(newTarget) < range * range && selector.test(entity)));
+    public static void performTaunt(
+            LivingEntity newTarget, float range, Predicate<Entity> selector) {
+        performTaunt(
+                newTarget,
+                newTarget
+                        .level()
+                        .getEntities(
+                                newTarget,
+                                newTarget.getBoundingBox().inflate(range, range, range),
+                                entity ->
+                                        entity.distanceToSqr(newTarget) < range * range
+                                                && selector.test(entity)));
     }
 
     public static void performTaunt(LivingEntity newTarget, List<Entity> targets) {
-        targets.forEach(entity -> {
-            if (entity instanceof Mob tauntmob) {
-                MagicManager.spawnParticles(tauntmob.level(), ParticleTypes.ANGRY_VILLAGER, tauntmob.getX(), tauntmob.getEyeY() + (tauntmob.getBoundingBox().maxY - tauntmob.getEyeY()) * 2, tauntmob.getZ(), 5, 0.3, 0.3, 0.3, 0, false);
-                tauntmob.setTarget(newTarget);
-            }
-        });
+        targets.forEach(
+                entity -> {
+                    if (entity instanceof Mob tauntmob) {
+                        MagicManager.spawnParticles(
+                                tauntmob.level(),
+                                ParticleTypes.ANGRY_VILLAGER,
+                                tauntmob.getX(),
+                                tauntmob.getEyeY()
+                                        + (tauntmob.getBoundingBox().maxY - tauntmob.getEyeY()) * 2,
+                                tauntmob.getZ(),
+                                5,
+                                0.3,
+                                0.3,
+                                0.3,
+                                0,
+                                false);
+                        tauntmob.setTarget(newTarget);
+                    }
+                });
     }
 
     public static void particleTrail(Level level, Vec3 a, Vec3 b, ParticleOptions particleType) {
@@ -905,7 +1207,8 @@ public class Utils {
         for (int i = 0; i < d; i++) {
             double p = i / d;
             Vec3 vec = a.add(b.subtract(a).scale(p));
-            MagicManager.spawnParticles(level, particleType, vec.x, vec.y, vec.z, 1, 0, 0, 0, 0, true);
+            MagicManager.spawnParticles(
+                    level, particleType, vec.x, vec.y, vec.z, 1, 0, 0, 0, 0, true);
         }
     }
 
@@ -940,7 +1243,8 @@ public class Utils {
     }
 
     public static void addFreezeTicks(LivingEntity target, int ticks, int cap) {
-        target.setTicksFrozen(Math.min(target.getTicksFrozen() + ticks, cap < 0 ? Integer.MAX_VALUE : cap));
+        target.setTicksFrozen(
+                Math.min(target.getTicksFrozen() + ticks, cap < 0 ? Integer.MAX_VALUE : cap));
     }
 
     public static Vec3 slerp(double t, Vec3 from, Vec3 to) {
@@ -961,12 +1265,23 @@ public class Utils {
         return ItemStack.isSameItemSameTags(a, b);
     }
 
-    public static MobEffectInstance addEffectStack(LivingEntity entity, Supplier<MobEffect> effectHolder, int amplifierCap, int defaultDuration) {
+    public static MobEffectInstance addEffectStack(
+            LivingEntity entity,
+            Supplier<MobEffect> effectHolder,
+            int amplifierCap,
+            int defaultDuration) {
         var effect = effectHolder.get();
         MobEffectInstance previous = entity.getEffect(effect);
         MobEffectInstance inst;
         if (previous != null) {
-            inst = new MobEffectInstance(effect, Math.max(defaultDuration, previous.getDuration()), Math.min(previous.getAmplifier() + 1, amplifierCap), previous.isAmbient(), previous.isVisible(), previous.showIcon());
+            inst =
+                    new MobEffectInstance(
+                            effect,
+                            Math.max(defaultDuration, previous.getDuration()),
+                            Math.min(previous.getAmplifier() + 1, amplifierCap),
+                            previous.isAmbient(),
+                            previous.isVisible(),
+                            previous.showIcon());
         } else {
             inst = new MobEffectInstance(effect, defaultDuration, 0, false, false, true);
         }
@@ -976,29 +1291,28 @@ public class Utils {
 
     public static void fudgeNoCollision(Level level, Entity entity) {
         // very rudimentary, brute force collision resolution
-        level.getBlockCollisions(entity, entity.getBoundingBox()).forEach(
-                shape -> {
-                    AABB riftBox = entity.getBoundingBox();
-                    AABB collider = shape.bounds();
-                    double dx, dy, dz;
-                    if (riftBox.getCenter().x > collider.getCenter().x) {
-                        dx = Math.max(0, collider.maxX - riftBox.minX);
-                    } else {
-                        dx = Math.min(0, collider.minX - riftBox.maxX);
-                    }
-                    if (riftBox.getCenter().y > collider.getCenter().y) {
-                        dy = Math.max(0, collider.maxY - riftBox.minY);
-                    } else {
-                        dy = Math.min(0, collider.minY - riftBox.maxY);
-                    }
-                    if (riftBox.getCenter().z > collider.getCenter().z) {
-                        dz = Math.max(0, collider.maxZ - riftBox.minZ);
-                    } else {
-                        dz = Math.min(0, collider.minZ - riftBox.maxZ);
-                    }
-                    entity.moveTo(entity.position().add(dx, dy, dz));
-                }
-        );
+        level.getBlockCollisions(entity, entity.getBoundingBox())
+                .forEach(
+                        shape -> {
+                            AABB riftBox = entity.getBoundingBox();
+                            AABB collider = shape.bounds();
+                            double dx, dy, dz;
+                            if (riftBox.getCenter().x > collider.getCenter().x) {
+                                dx = Math.max(0, collider.maxX - riftBox.minX);
+                            } else {
+                                dx = Math.min(0, collider.minX - riftBox.maxX);
+                            }
+                            if (riftBox.getCenter().y > collider.getCenter().y) {
+                                dy = Math.max(0, collider.maxY - riftBox.minY);
+                            } else {
+                                dy = Math.min(0, collider.minY - riftBox.maxY);
+                            }
+                            if (riftBox.getCenter().z > collider.getCenter().z) {
+                                dz = Math.max(0, collider.maxZ - riftBox.minZ);
+                            } else {
+                                dz = Math.min(0, collider.minZ - riftBox.maxZ);
+                            }
+                            entity.moveTo(entity.position().add(dx, dy, dz));
+                        });
     }
-
 }

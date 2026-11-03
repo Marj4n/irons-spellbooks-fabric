@@ -22,22 +22,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class SpiderAspectSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "spider_aspect");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "spider_aspect");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.additional_poisoned_damage", Utils.stringTruncation(getPercentDamage(spellLevel, caster), 0)),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.additional_poisoned_damage",
+                        Utils.stringTruncation(getPercentDamage(spellLevel, caster), 0)),
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(90)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(90)
+                    .build();
 
     public SpiderAspectSpell() {
         this.manaCostPerLevel = 5;
@@ -73,8 +78,20 @@ public class SpiderAspectSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.SPIDER_ASPECT.get(), (int) (getSpellPower(spellLevel, entity) * 20), spellLevel - 1, false, false, true));
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.SPIDER_ASPECT.get(),
+                        (int) (getSpellPower(spellLevel, entity) * 20),
+                        spellLevel - 1,
+                        false,
+                        false,
+                        true));
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 

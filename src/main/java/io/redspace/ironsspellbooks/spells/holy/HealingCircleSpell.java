@@ -26,23 +26,30 @@ import java.util.List;
 import java.util.Optional;
 
 public class HealingCircleSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "healing_circle");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "healing_circle");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.aoe_healing", Utils.stringTruncation(getHealing(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.duration", Utils.timeFromTicks(getDuration(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.aoe_healing",
+                        Utils.stringTruncation(getHealing(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.duration",
+                        Utils.timeFromTicks(getDuration(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(25)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(25)
+                    .build();
 
     public HealingCircleSpell() {
         this.manaCostPerLevel = 10;
@@ -73,32 +80,38 @@ public class HealingCircleSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .15f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 spawn = null;
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             var target = castTargetingData.getTarget((ServerLevel) world);
-            if (target != null)
-                spawn = target.position();
+            if (target != null) spawn = target.position();
         }
         if (spawn == null) {
-            spawn = RaycastBuilder.begin(world, entity)
-                    .range(32)
-                    .checkForBlocks(true)
-                    .bbInflation(.15f)
-                    .build()
-                    .getLocation();
+            spawn =
+                    RaycastBuilder.begin(world, entity)
+                            .range(32)
+                            .checkForBlocks(true)
+                            .bbInflation(.15f)
+                            .build()
+                            .getLocation();
             spawn = Utils.moveToRelativeGroundLevel(world, spawn, 6);
         }
 
         int duration = getDuration(spellLevel, entity);
         float radius = getRadius(spellLevel, entity);
-
 
         HealingAoe aoeEntity = new HealingAoe(world);
         aoeEntity.setOwner(entity);
@@ -109,7 +122,8 @@ public class HealingCircleSpell extends AbstractSpell {
         aoeEntity.setPos(spawn);
         world.addFreshEntity(aoeEntity);
 
-        TargetedAreaEntity visualEntity = TargetedAreaEntity.createTargetAreaEntity(world, spawn, radius, 0xc80000);
+        TargetedAreaEntity visualEntity =
+                TargetedAreaEntity.createTargetAreaEntity(world, spawn, radius, 0xc80000);
         visualEntity.setDuration(duration);
         visualEntity.setOwner(aoeEntity);
         visualEntity.setShouldFade(true);

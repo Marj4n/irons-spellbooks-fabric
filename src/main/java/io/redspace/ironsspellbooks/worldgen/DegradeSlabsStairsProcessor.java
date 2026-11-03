@@ -26,10 +26,36 @@ import java.util.Optional;
 
 public class DegradeSlabsStairsProcessor extends StructureProcessor {
     public static final Codec<DegradeSlabsStairsProcessor> CODEC =
-            (Codec<DegradeSlabsStairsProcessor>) (Codec) RecordCodecBuilder.mapCodec(builder -> builder.group(
-                    Codec.DOUBLE.fieldOf("chance_stairs").forGetter(obj -> (double) ((DegradeSlabsStairsProcessor) obj).chanceStairs),
-                    Codec.DOUBLE.fieldOf("chance_slabs").forGetter(obj -> (double) ((DegradeSlabsStairsProcessor) obj).chanceSlabs)
-            ).apply(builder, (a, b) -> new DegradeSlabsStairsProcessor(a.floatValue(), b.floatValue()))).codec();
+            (Codec<DegradeSlabsStairsProcessor>)
+                    (Codec)
+                            RecordCodecBuilder.mapCodec(
+                                            builder ->
+                                                    builder.group(
+                                                                    Codec.DOUBLE
+                                                                            .fieldOf(
+                                                                                    "chance_stairs")
+                                                                            .forGetter(
+                                                                                    obj ->
+                                                                                            (double)
+                                                                                                    ((DegradeSlabsStairsProcessor)
+                                                                                                                    obj)
+                                                                                                            .chanceStairs),
+                                                                    Codec.DOUBLE
+                                                                            .fieldOf("chance_slabs")
+                                                                            .forGetter(
+                                                                                    obj ->
+                                                                                            (double)
+                                                                                                    ((DegradeSlabsStairsProcessor)
+                                                                                                                    obj)
+                                                                                                            .chanceSlabs))
+                                                            .apply(
+                                                                    builder,
+                                                                    (a, b) ->
+                                                                            new DegradeSlabsStairsProcessor(
+                                                                                    a.floatValue(),
+                                                                                    b
+                                                                                            .floatValue())))
+                                    .codec();
 
     private final float chanceStairs;
     private final float chanceSlabs;
@@ -47,8 +73,7 @@ public class DegradeSlabsStairsProcessor extends StructureProcessor {
             BlockPos pPos,
             StructureTemplate.StructureBlockInfo pBlockInfo,
             StructureTemplate.StructureBlockInfo pRelativeBlockInfo,
-            StructurePlaceSettings pSettings
-    ) {
+            StructurePlaceSettings pSettings) {
         RandomSource randomsource = pSettings.getRandom(pRelativeBlockInfo.pos());
         BlockState blockstate = pRelativeBlockInfo.state();
         BlockPos blockpos = pRelativeBlockInfo.pos();
@@ -59,7 +84,10 @@ public class DegradeSlabsStairsProcessor extends StructureProcessor {
             blockstate1 = this.maybeReplaceSlab(randomsource);
         }
 
-        return blockstate1 != null ? new StructureTemplate.StructureBlockInfo(blockpos, blockstate1, pRelativeBlockInfo.nbt()) : pRelativeBlockInfo;
+        return blockstate1 != null
+                ? new StructureTemplate.StructureBlockInfo(
+                        blockpos, blockstate1, pRelativeBlockInfo.nbt())
+                : pRelativeBlockInfo;
     }
 
     @Nullable
@@ -70,7 +98,10 @@ public class DegradeSlabsStairsProcessor extends StructureProcessor {
         } else {
             var block = tryGetSlab(pState.getBlock());
             if (block.isPresent()) {
-                return block.get().defaultBlockState().setValue(SlabBlock.TYPE, half == Half.TOP ? SlabType.TOP : SlabType.BOTTOM);
+                return block.get()
+                        .defaultBlockState()
+                        .setValue(
+                                SlabBlock.TYPE, half == Half.TOP ? SlabType.TOP : SlabType.BOTTOM);
             } else {
                 return null;
             }
@@ -79,7 +110,8 @@ public class DegradeSlabsStairsProcessor extends StructureProcessor {
 
     private Optional<Block> tryGetSlab(Block original) {
         try {
-            var stringKey = BuiltInRegistries.BLOCK.getKey(original).toString().replace("_stairs", "_slab");
+            var stringKey =
+                    BuiltInRegistries.BLOCK.getKey(original).toString().replace("_stairs", "_slab");
             var block = BuiltInRegistries.BLOCK.get(new ResourceLocation(stringKey));
             if (block.equals(Blocks.AIR)) {
                 return Optional.empty();

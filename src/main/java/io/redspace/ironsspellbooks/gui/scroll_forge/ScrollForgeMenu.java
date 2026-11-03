@@ -40,10 +40,10 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
 
     private AbstractSpell spellRecipeSelection = SpellRegistry.none();
 
-    //private List<SpellCardInfo> spellCards;
+    // private List<SpellCardInfo> spellCards;
 
     public ScrollForgeMenu(int containerId, Inventory inv, BlockEntity entity) {
-        //exists on server and render
+        // exists on server and render
         super(MenuRegistry.SCROLL_FORGE_MENU.get(), containerId);
         checkContainerSize(inv, 4);
         blockEntity = (ScrollForgeTile) entity;
@@ -53,41 +53,49 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
         Container itemHandler = this.blockEntity.getItemHandler();
 
-        inkSlot = new Slot(itemHandler, 0, 12, 17) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return stack.getItem() instanceof InkItem;
-            }
+        inkSlot =
+                new Slot(itemHandler, 0, 12, 17) {
+                    @Override
+                    public boolean mayPlace(ItemStack stack) {
+                        return stack.getItem() instanceof InkItem;
+                    }
+                };
+        blankScrollSlot =
+                new Slot(itemHandler, 1, 35, 17) {
+                    @Override
+                    public boolean mayPlace(ItemStack stack) {
+                        return stack.is(Items.PAPER);
+                    }
+                };
+        focusSlot =
+                new Slot(itemHandler, 2, 58, 17) {
+                    @Override
+                    public boolean mayPlace(ItemStack stack) {
+                        return stack.is(ModTags.SCHOOL_FOCUS);
+                    }
+                };
+        resultSlot =
+                new Slot(itemHandler, 3, 35, 47) {
+                    @Override
+                    public boolean mayPlace(ItemStack stack) {
+                        return false;
+                    }
 
-        };
-        blankScrollSlot = new Slot(itemHandler, 1, 35, 17) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return stack.is(Items.PAPER);
-            }
-
-        };
-        focusSlot = new Slot(itemHandler, 2, 58, 17) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return stack.is(ModTags.SCHOOL_FOCUS);
-            }
-        };
-        resultSlot = new Slot(itemHandler, 3, 35, 47) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-
-            @Override
-            public void onTake(Player player, ItemStack stack) {
-                inkSlot.remove(1);
-                blankScrollSlot.remove(1);
-                focusSlot.remove(1);
-                level.playSound(null, blockEntity.getBlockPos(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundSource.BLOCKS, .8f, 1.1f);
-                super.onTake(player, stack);
-            }
-        };
+                    @Override
+                    public void onTake(Player player, ItemStack stack) {
+                        inkSlot.remove(1);
+                        blankScrollSlot.remove(1);
+                        focusSlot.remove(1);
+                        level.playSound(
+                                null,
+                                blockEntity.getBlockPos(),
+                                SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT,
+                                SoundSource.BLOCKS,
+                                .8f,
+                                1.1f);
+                        super.onTake(player, stack);
+                    }
+                };
 
         this.addSlot(inkSlot);
         this.addSlot(blankScrollSlot);
@@ -97,7 +105,7 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
 
     public void onSlotsChanged(int slot) {
         if (slot != 3) {
-            //3 is the result slot
+            // 3 is the result slot
             setupResultSlot(spellRecipeSelection);
         }
     }
@@ -107,14 +115,18 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
         ItemStack inkStack = this.inkSlot.getItem();
         ItemStack focusStack = this.focusSlot.getItem();
         ItemStack resultStack = ItemStack.EMPTY;
-        if (!scrollStack.isEmpty() && !inkStack.isEmpty() && !focusStack.isEmpty() &&
-                !spell.equals(SpellRegistry.none()) &&
-                spell.allowCrafting() &&
-                SchoolRegistry.getSchoolsFromFocus(focusStack).contains(spell.getSchoolType())) {
-            if (scrollStack.getItem().equals(Items.PAPER) && inkStack.getItem() instanceof InkItem inkItem) {
+        if (!scrollStack.isEmpty()
+                && !inkStack.isEmpty()
+                && !focusStack.isEmpty()
+                && !spell.equals(SpellRegistry.none())
+                && spell.allowCrafting()
+                && SchoolRegistry.getSchoolsFromFocus(focusStack).contains(spell.getSchoolType())) {
+            if (scrollStack.getItem().equals(Items.PAPER)
+                    && inkStack.getItem() instanceof InkItem inkItem) {
                 resultStack = new ItemStack(ItemRegistry.SCROLL.get());
                 resultStack.setCount(1);
-                ISpellContainer.createScrollContainer(spell, spell.getMinLevelForRarity(inkItem.getRarity()), resultStack);
+                ISpellContainer.createScrollContainer(
+                        spell, spell.getMinLevelForRarity(inkItem.getRarity()), resultStack);
             }
         }
 
@@ -128,7 +140,7 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
 
     public void setRecipeSpell(AbstractSpell typeFromValue) {
         this.spellRecipeSelection = typeFromValue;
-        //Ironsspellbooks.logger.debug("Setting selected Spell");
+        // Ironsspellbooks.logger.debug("Setting selected Spell");
         setupResultSlot(typeFromValue);
     }
 
@@ -150,38 +162,50 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
 
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
     // must assign a slot number to each of the slots used by the GUI.
-    // For this container, we can see both the tile inventory's slots as well as the player inventory slots and the hotbar.
-    // Each time we add a Slot to the container, it automatically increases the slotIndex, which means
+    // For this container, we can see both the tile inventory's slots as well as the player
+    // inventory slots and the hotbar.
+    // Each time we add a Slot to the container, it automatically increases the slotIndex, which
+    // means
     //  0 - 8 = hotbar slots (which will map to the InventoryPlayer slot numbers 0 - 8)
     //  9 - 35 = player inventory slots (which map to the InventoryPlayer slot numbers 9 - 35)
     //  36 - 44 = TileInventory slots, which map to our TileEntity slot numbers 0 - 8)
     private static final int HOTBAR_SLOT_COUNT = 9;
     private static final int PLAYER_INVENTORY_ROW_COUNT = 3;
     private static final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
-    private static final int PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
+    private static final int PLAYER_INVENTORY_SLOT_COUNT =
+            PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
     private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
     private static final int VANILLA_FIRST_SLOT_INDEX = 0;
-    private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
+    private static final int TE_INVENTORY_FIRST_SLOT_INDEX =
+            VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
 
     // THIS YOU HAVE TO DEFINE!
-    private static final int TE_INVENTORY_SLOT_COUNT = 4;  // must be the number of slots you have!
+    private static final int TE_INVENTORY_SLOT_COUNT = 4; // must be the number of slots you have!
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int index) {
         Slot sourceSlot = slots.get(index);
-        if (sourceSlot == null || !sourceSlot.hasItem()) return ItemStack.EMPTY;  //EMPTY_ITEM
+        if (sourceSlot == null || !sourceSlot.hasItem()) return ItemStack.EMPTY; // EMPTY_ITEM
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
         // Check if the slot clicked is one of the vanilla container slots
         if (index < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
             // This is a vanilla container slot so merge the stack into the tile inventory
-            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT, false)) {
-                return ItemStack.EMPTY;  // EMPTY_ITEM
+            if (!moveItemStackTo(
+                    sourceStack,
+                    TE_INVENTORY_FIRST_SLOT_INDEX,
+                    TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT,
+                    false)) {
+                return ItemStack.EMPTY; // EMPTY_ITEM
             }
         } else if (index < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
             // This is a TE slot so merge the stack into the players inventory
-            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
+            if (!moveItemStackTo(
+                    sourceStack,
+                    VANILLA_FIRST_SLOT_INDEX,
+                    VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT,
+                    false)) {
                 return ItemStack.EMPTY;
             }
         } else {
@@ -205,14 +229,17 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player pPlayer) {
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                pPlayer, SCROLL_FORGE_BLOCK.get());
+        return stillValid(
+                ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
+                pPlayer,
+                SCROLL_FORGE_BLOCK.get());
     }
 
     private void addPlayerInventory(Inventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18 + 21, 84 + i * 18));
+                this.addSlot(
+                        new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18 + 21, 84 + i * 18));
             }
         }
     }
@@ -223,16 +250,15 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
         }
     }
 
-
-//    private class SpellCardInfo {
-//        public SpellType spell;
-//        public int index;
-//        public Button button;
-//
-//        SpellCardInfo(SpellType spell, int index, Button button) {
-//            this.spell = spell;
-//            this.index = index;
-//            this.button = button;
-//        }
-//    }
+    //    private class SpellCardInfo {
+    //        public SpellType spell;
+    //        public int index;
+    //        public Button button;
+    //
+    //        SpellCardInfo(SpellType spell, int index, Button button) {
+    //            this.spell = spell;
+    //            this.index = index;
+    //            this.button = button;
+    //        }
+    //    }
 }

@@ -32,7 +32,8 @@ public class FallingBlockParticle extends TextureSheetParticle {
     private final boolean particlesOnImpact;
     private final BlockPos originalPos;
 
-    public static void globalrender(net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext event) {
+    public static void globalrender(
+            net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext event) {
         var dispatcher = Minecraft.getInstance().getBlockRenderer();
         var level = Minecraft.getInstance().level;
         if (level == null) {
@@ -48,27 +49,52 @@ public class FallingBlockParticle extends TextureSheetParticle {
             for (Renderable particle : toRender) {
                 PoseStack poseStack = event.matrixStack();
                 poseStack.pushPose();
-                poseStack.translate((float) particle.relativePos.x, (float) particle.relativePos.y, (float) particle.relativePos.z);
-                BlockPos blockpos = particle.worldPos.above(); // trick lightning into being at above-ground levels even with in-ground tremor blocks
+                poseStack.translate(
+                        (float) particle.relativePos.x,
+                        (float) particle.relativePos.y,
+                        (float) particle.relativePos.z);
+                BlockPos blockpos =
+                        particle.worldPos
+                                .above(); // trick lightning into being at above-ground levels even
+                                          // with in-ground tremor blocks
                 poseStack.translate(-0.5D, 0.0D, -0.5D);
                 var model = dispatcher.getBlockModel(particle.state);
-                var renderType = net.minecraft.client.renderer.ItemBlockRenderTypes.getMovingBlockRenderType(particle.state);
-                dispatcher.getModelRenderer().tesselateBlock(level, model, particle.state, blockpos,
-                        poseStack, buf.getBuffer(renderType), false, RandomSource.create(),
-                        particle.state.getSeed(particle.originalPos), OverlayTexture.NO_OVERLAY);
+                var renderType =
+                        net.minecraft.client.renderer.ItemBlockRenderTypes.getMovingBlockRenderType(
+                                particle.state);
+                dispatcher
+                        .getModelRenderer()
+                        .tesselateBlock(
+                                level,
+                                model,
+                                particle.state,
+                                blockpos,
+                                poseStack,
+                                buf.getBuffer(renderType),
+                                false,
+                                RandomSource.create(),
+                                particle.state.getSeed(particle.originalPos),
+                                OverlayTexture.NO_OVERLAY);
                 poseStack.popPose();
-
             }
             toRender.clear();
         }
     }
 
-    record Renderable(BlockPos worldPos, BlockPos originalPos, Vec3 relativePos, BlockState state) {
-    }
+    record Renderable(
+            BlockPos worldPos, BlockPos originalPos, Vec3 relativePos, BlockState state) {}
 
     private static final List<Renderable> toRender = new ArrayList<>();
 
-    FallingBlockParticle(ClientLevel pLevel, double pX, double pY, double pZ, double xd, double yd, double zd, FallingBlockParticleOption options) {
+    FallingBlockParticle(
+            ClientLevel pLevel,
+            double pX,
+            double pY,
+            double pZ,
+            double xd,
+            double yd,
+            double zd,
+            FallingBlockParticleOption options) {
         super(pLevel, pX, pY, pZ, 0, 0, 0);
         this.xd = options.getMotion().x;
         this.yd = options.getMotion().y;
@@ -81,13 +107,13 @@ public class FallingBlockParticle extends TextureSheetParticle {
 
         this.gravity = 0.08f;
         this.originalPos = BlockPos.containing(x, y, z);
-        //todo: control over this?
+        // todo: control over this?
         this.particlesOnImpact = false;
     }
 
     @Override
     public void tick() {
-        //todo: idk how this works
+        // todo: idk how this works
         boolean onGround = this.onGround;
         age++;
         this.xo = this.x;
@@ -100,8 +126,19 @@ public class FallingBlockParticle extends TextureSheetParticle {
                 if (particlesOnImpact) {
                     double speed = Math.sqrt(xd * xd + yd * yd + zd * zd);
                     for (int i = 0; i < 25; i++) {
-                        Vec3 random = Utils.getRandomVec3(1).multiply(1, 0.25, 1).normalize().scale(speed * 10 + 0.1);
-                        level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, this.blockState), this.x, this.y, this.z, random.x, random.y, random.z);
+                        Vec3 random =
+                                Utils.getRandomVec3(1)
+                                        .multiply(1, 0.25, 1)
+                                        .normalize()
+                                        .scale(speed * 10 + 0.1);
+                        level.addParticle(
+                                new BlockParticleOption(ParticleTypes.BLOCK, this.blockState),
+                                this.x,
+                                this.y,
+                                this.z,
+                                random.x,
+                                random.y,
+                                random.z);
                     }
                 }
             }
@@ -116,7 +153,12 @@ public class FallingBlockParticle extends TextureSheetParticle {
             float f = (float) (Mth.lerp(partialTick, this.xo, this.x) - vec3.x());
             float f1 = (float) (Mth.lerp(partialTick, this.yo, this.y) - vec3.y());
             float f2 = (float) (Mth.lerp(partialTick, this.zo, this.z) - vec3.z());
-            toRender.add(new Renderable(BlockPos.containing(x, y, z), this.originalPos, new Vec3(f, f1, f2), this.blockState));
+            toRender.add(
+                    new Renderable(
+                            BlockPos.containing(x, y, z),
+                            this.originalPos,
+                            new Vec3(f, f1, f2),
+                            this.blockState));
         }
     }
 
@@ -134,12 +176,18 @@ public class FallingBlockParticle extends TextureSheetParticle {
     @Environment(EnvType.CLIENT)
     public static class Provider implements ParticleProvider<FallingBlockParticleOption> {
 
-        public Provider() {
-        }
+        public Provider() {}
 
-        public Particle createParticle(@NotNull FallingBlockParticleOption options, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
+        public Particle createParticle(
+                @NotNull FallingBlockParticleOption options,
+                @NotNull ClientLevel pLevel,
+                double pX,
+                double pY,
+                double pZ,
+                double pXSpeed,
+                double pYSpeed,
+                double pZSpeed) {
             return new FallingBlockParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, options);
         }
     }
-
 }

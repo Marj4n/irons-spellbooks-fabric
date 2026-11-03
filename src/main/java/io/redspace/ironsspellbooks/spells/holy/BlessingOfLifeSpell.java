@@ -27,21 +27,24 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class BlessingOfLifeSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "blessing_of_life");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "blessing_of_life");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.healing",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(10)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(10)
+                    .build();
 
     public BlessingOfLifeSpell() {
         this.manaCostPerLevel = 5;
@@ -49,7 +52,6 @@ public class BlessingOfLifeSpell extends AbstractSpell {
         this.spellPowerPerLevel = 1;
         this.castTime = 30;
         this.baseManaCost = 10;
-
     }
 
     @Override
@@ -68,19 +70,28 @@ public class BlessingOfLifeSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 64, .35f);
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData healTargetingData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData healTargetingData) {
             var targetEntity = healTargetingData.getTarget((ServerLevel) world);
             if (targetEntity != null) {
                 float healAmount = getSpellPower(spellLevel, entity);
-                org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellHealEvent(entity, targetEntity, healAmount, getSchoolType()));
+                org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                        new SpellHealEvent(entity, targetEntity, healAmount, getSchoolType()));
                 targetEntity.heal(healAmount);
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(targetEntity, new HealParticlesPacket(targetEntity.position()));
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                        targetEntity, new HealParticlesPacket(targetEntity.position()));
             }
         }
 
@@ -89,12 +100,14 @@ public class BlessingOfLifeSpell extends AbstractSpell {
 
     @Nullable
     private LivingEntity findTarget(LivingEntity caster) {
-        var target = RaycastBuilder.begin(caster.level(), caster)
-                .range(32)
-                .checkForBlocks(true)
-                .bbInflation(0.35f)
-                .build();
-        if (target instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        var target =
+                RaycastBuilder.begin(caster.level(), caster)
+                        .range(32)
+                        .checkForBlocks(true)
+                        .bbInflation(0.35f)
+                        .build();
+        if (target instanceof EntityHitResult entityHit
+                && entityHit.getEntity() instanceof LivingEntity livingTarget) {
             return livingTarget;
         } else {
             return null;

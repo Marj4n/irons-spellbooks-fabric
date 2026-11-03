@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.loot;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -48,15 +47,21 @@ public class SpellFilter {
         this.force = false;
     }
 
-//    private static final Codec<SpellFilter> SCHOOL_CODEC = RecordCodecBuilder.create(builder -> builder.group(
-//                    Codec.BOOL.optionalFieldOf("force", false).forGetter(f -> f.force),
-//                    SchoolRegistry.REGISTRY.byNameCodec().fieldOf("school").forGetter(f -> f.schoolType)).apply(builder, SpellFilter::new));
-//    private static final Codec<SpellFilter> SPELLS_CODEC = RecordCodecBuilder.create(builder -> builder.group(
-//                    Codec.BOOL.optionalFieldOf("force", false).forGetter(f -> f.force),
-//                    Codec.list(SpellRegistry.REGISTRY.byNameCodec()).fieldOf("spells").forGetter(f -> f.spells)).apply(builder, SpellFilter::new));
-//
-//    private static final Codec<SpellFilter> NO_FILTER_CODEC = Codec.unit(new SpellFilter());
-//    public static final Codec<SpellFilter> CODEC = CodecHelper.withAlternative(SCHOOL_CODEC, SPELLS_CODEC);
+    //    private static final Codec<SpellFilter> SCHOOL_CODEC = RecordCodecBuilder.create(builder
+    // -> builder.group(
+    //                    Codec.BOOL.optionalFieldOf("force", false).forGetter(f -> f.force),
+    //                    SchoolRegistry.REGISTRY.byNameCodec().fieldOf("school").forGetter(f ->
+    // f.schoolType)).apply(builder, SpellFilter::new));
+    //    private static final Codec<SpellFilter> SPELLS_CODEC = RecordCodecBuilder.create(builder
+    // -> builder.group(
+    //                    Codec.BOOL.optionalFieldOf("force", false).forGetter(f -> f.force),
+    //
+    // Codec.list(SpellRegistry.REGISTRY.byNameCodec()).fieldOf("spells").forGetter(f ->
+    // f.spells)).apply(builder, SpellFilter::new));
+    //
+    //    private static final Codec<SpellFilter> NO_FILTER_CODEC = Codec.unit(new SpellFilter());
+    //    public static final Codec<SpellFilter> CODEC = CodecHelper.withAlternative(SCHOOL_CODEC,
+    // SPELLS_CODEC);
 
     private boolean isSpellAllowed(AbstractSpell spell) {
         return spell.isEnabled() && (force || spell.allowLooting());
@@ -67,13 +72,19 @@ public class SpellFilter {
             return spells.stream().filter(AbstractSpell::isEnabled).toList();
         } else if (schoolType != null) {
             if (force) {
-                return SPELLS_FOR_SCHOOL_FORCED.computeIfAbsent(this.schoolType,
-                        school -> SpellRegistry.getSpellsForSchool(school).stream().filter(AbstractSpell::isEnabled).toList()
-                );
+                return SPELLS_FOR_SCHOOL_FORCED.computeIfAbsent(
+                        this.schoolType,
+                        school ->
+                                SpellRegistry.getSpellsForSchool(school).stream()
+                                        .filter(AbstractSpell::isEnabled)
+                                        .toList());
             } else {
-                return SPELLS_FOR_SCHOOL.computeIfAbsent(this.schoolType,
-                        school -> SpellRegistry.getSpellsForSchool(school).stream().filter(this::isSpellAllowed).toList()
-                );
+                return SPELLS_FOR_SCHOOL.computeIfAbsent(
+                        this.schoolType,
+                        school ->
+                                SpellRegistry.getSpellsForSchool(school).stream()
+                                        .filter(this::isSpellAllowed)
+                                        .toList());
             }
         } else {
             return SpellRegistry.getEnabledSpells().stream().filter(this::isSpellAllowed).toList();
@@ -89,14 +100,21 @@ public class SpellFilter {
     }
 
     public AbstractSpell getRandomSpell(RandomSource randomSource) {
-        return getRandomSpell(randomSource, (spell -> spell.isEnabled() && spell != SpellRegistry.none() && spell.allowLooting()));
+        return getRandomSpell(
+                randomSource,
+                (spell ->
+                        spell.isEnabled()
+                                && spell != SpellRegistry.none()
+                                && spell.allowLooting()));
     }
 
     private static SpellFilter deserializeActualObject(JsonObject json) {
-        boolean force = GsonHelper.isValidNode(json, "force") && GsonHelper.getAsBoolean(json, "force");
+        boolean force =
+                GsonHelper.isValidNode(json, "force") && GsonHelper.getAsBoolean(json, "force");
         if (GsonHelper.isValidNode(json, "school")) {
             var schoolType = GsonHelper.getAsString(json, "school");
-            return new SpellFilter(force, SchoolRegistry.getSchool(new ResourceLocation(schoolType)));
+            return new SpellFilter(
+                    force, SchoolRegistry.getSchool(new ResourceLocation(schoolType)));
         } else if (GsonHelper.isArrayNode(json, "spells")) {
             var spellsFromJson = GsonHelper.getAsJsonArray(json, "spells");
             List<AbstractSpell> applicableSpellList = new ArrayList<>();

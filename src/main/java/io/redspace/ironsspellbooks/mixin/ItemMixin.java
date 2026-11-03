@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-//Default priority is 1000
+// Default priority is 1000
 @Mixin(Item.class)
 public abstract class ItemMixin {
 
@@ -19,9 +19,20 @@ public abstract class ItemMixin {
     @Inject(method = "getName", at = @At("TAIL"), cancellable = true)
     public void getHoverName(ItemStack stack, CallbackInfoReturnable<Component> cir) {
         if (io.redspace.ironsspellbooks.render.CinderousRarity.isCinderous(stack))
-            cir.setReturnValue(cir.getReturnValue().copy().withStyle(style -> style.withColor(io.redspace.ironsspellbooks.render.CinderousRarity.COLOR)));
+            cir.setReturnValue(
+                    cir.getReturnValue()
+                            .copy()
+                            .withStyle(
+                                    style ->
+                                            style.withColor(
+                                                    io.redspace.ironsspellbooks.render
+                                                            .CinderousRarity.COLOR)));
         if (UpgradeData.hasUpgradeData(stack)) {
-            cir.setReturnValue(Component.translatable("tooltip.irons_spellbooks.upgrade_plus_format", cir.getReturnValue(), UpgradeData.getUpgradeData(stack).getTotalUpgrades()));
+            cir.setReturnValue(
+                    Component.translatable(
+                            "tooltip.irons_spellbooks.upgrade_plus_format",
+                            cir.getReturnValue(),
+                            UpgradeData.getUpgradeData(stack).getTotalUpgrades()));
         }
     }
 }

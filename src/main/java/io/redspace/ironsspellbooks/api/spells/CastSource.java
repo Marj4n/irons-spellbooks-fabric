@@ -17,5 +17,4 @@ public enum CastSource {
     public boolean respectsCooldown() {
         return this == SPELLBOOK || this == SWORD;
     }
-
 }

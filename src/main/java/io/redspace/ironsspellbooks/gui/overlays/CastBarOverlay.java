@@ -10,28 +10,37 @@ import net.minecraft.resources.ResourceLocation;
 import org.marj4n.irons_spellbooks.client.hud.HudContext;
 import org.marj4n.irons_spellbooks.client.hud.HudOverlay;
 
-
 public class CastBarOverlay implements HudOverlay {
     public static CastBarOverlay instance = new CastBarOverlay();
 
-    public final static ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
+    public final static ResourceLocation TEXTURE =
+            new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
     static final int IMAGE_WIDTH = 54;
     static final int COMPLETION_BAR_WIDTH = 44;
     static final int IMAGE_HEIGHT = 21;
 
-    public void render(HudContext gui, GuiGraphics guiHelper, float partialTick, int screenWidth, int screenHeight) {
-        if (Minecraft.getInstance().options.hideGui || Minecraft.getInstance().player.isSpectator()) {
+    public void render(
+            HudContext gui,
+            GuiGraphics guiHelper,
+            float partialTick,
+            int screenWidth,
+            int screenHeight) {
+        if (Minecraft.getInstance().options.hideGui
+                || Minecraft.getInstance().player.isSpectator()) {
             return;
         }
-//        var screenWidth = guiHelper.guiWidth();
-//        var screenHeight = guiHelper.guiHeight();
-        if (!ClientMagicData.isCasting() || ClientMagicData.isCasting() && ClientMagicData.getCastType() == CastType.INSTANT) {
+        //        var screenWidth = guiHelper.guiWidth();
+        //        var screenHeight = guiHelper.guiHeight();
+        if (!ClientMagicData.isCasting()
+                || ClientMagicData.isCasting()
+                        && ClientMagicData.getCastType() == CastType.INSTANT) {
             return;
         }
-
 
         float castCompletionPercent = ClientMagicData.getCastCompletionPercent();
-        String castTimeString = Utils.timeFromTicks((1 - castCompletionPercent) * ClientMagicData.getCastDuration(), 1);
+        String castTimeString =
+                Utils.timeFromTicks(
+                        (1 - castCompletionPercent) * ClientMagicData.getCastDuration(), 1);
         if (ClientMagicData.getCastType() == CastType.CONTINUOUS) {
             castCompletionPercent = 1 - castCompletionPercent;
         }
@@ -40,12 +49,22 @@ public class CastBarOverlay implements HudOverlay {
         barX = screenWidth / 2 - IMAGE_WIDTH / 2;
         barY = screenHeight / 2 + screenHeight / 8;
 
-        //RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        //RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        //RenderSystem.setShaderTexture(0, TEXTURE);
+        // RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        // RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        // RenderSystem.setShaderTexture(0, TEXTURE);
 
-        guiHelper.blit(TEXTURE, barX, barY, 0, IMAGE_HEIGHT * 2, IMAGE_WIDTH, IMAGE_HEIGHT, 256, 256);
-        guiHelper.blit(TEXTURE, barX, barY, 0, IMAGE_HEIGHT * 3, (int) (COMPLETION_BAR_WIDTH * castCompletionPercent + (IMAGE_WIDTH - COMPLETION_BAR_WIDTH) / 2), IMAGE_HEIGHT);
+        guiHelper.blit(
+                TEXTURE, barX, barY, 0, IMAGE_HEIGHT * 2, IMAGE_WIDTH, IMAGE_HEIGHT, 256, 256);
+        guiHelper.blit(
+                TEXTURE,
+                barX,
+                barY,
+                0,
+                IMAGE_HEIGHT * 3,
+                (int)
+                        (COMPLETION_BAR_WIDTH * castCompletionPercent
+                                + (IMAGE_WIDTH - COMPLETION_BAR_WIDTH) / 2),
+                IMAGE_HEIGHT);
 
         int textX, textY;
         var font = Minecraft.getInstance().font;

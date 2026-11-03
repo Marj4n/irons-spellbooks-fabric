@@ -24,21 +24,26 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class WaywardCompass extends Item {
-    private static final Component description = Component.translatable("item.irons_spellbooks.wayward_compass_desc").withStyle(ChatFormatting.DARK_AQUA);
+    private static final Component description =
+            Component.translatable("item.irons_spellbooks.wayward_compass_desc")
+                    .withStyle(ChatFormatting.DARK_AQUA);
 
     public WaywardCompass(Item.Properties properties) {
         super(properties);
     }
 
     public static GlobalPos getCatacombsLocation(Entity entity, CompoundTag compoundTag) {
-        if (!(entity.level().dimension() == Level.OVERWORLD && compoundTag.contains("CatacombsPos")))
-            return null;
+        if (!(entity.level().dimension() == Level.OVERWORLD
+                && compoundTag.contains("CatacombsPos"))) return null;
 
-        return GlobalPos.of(entity.level().dimension(), NbtUtils.readBlockPos(compoundTag.getCompound("CatacombsPos")));
+        return GlobalPos.of(
+                entity.level().dimension(),
+                NbtUtils.readBlockPos(compoundTag.getCompound("CatacombsPos")));
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, Level level, Entity pEntity, int pSlotId, boolean pIsSelected) {
+    public void inventoryTick(
+            ItemStack itemStack, Level level, Entity pEntity, int pSlotId, boolean pIsSelected) {
         if (!level.isClientSide) {
             var tag = itemStack.getOrCreateTag();
             if (!tag.contains("isInInventory")) {
@@ -54,7 +59,9 @@ public class WaywardCompass extends Item {
 
     private static void findCatacombs(ItemStack pStack, Level pLevel, Player pPlayer) {
         if (pLevel instanceof ServerLevel serverlevel) {
-            BlockPos blockpos = serverlevel.findNearestMapStructure(ModTags.WAYWARD_COMPASS_LOCATOR, pPlayer.blockPosition(), 100, false);
+            BlockPos blockpos =
+                    serverlevel.findNearestMapStructure(
+                            ModTags.WAYWARD_COMPASS_LOCATOR, pPlayer.blockPosition(), 100, false);
             if (blockpos != null) {
                 var tag = pStack.getOrCreateTag();
                 tag.put("CatacombsPos", NbtUtils.writeBlockPos(blockpos));
@@ -63,7 +70,8 @@ public class WaywardCompass extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
         ItemStack itemStack = pPlayer.getItemInHand(pUsedHand);
         if (missingWarning(itemStack)) {
             findCatacombs(itemStack, pLevel, pPlayer);
@@ -74,15 +82,28 @@ public class WaywardCompass extends Item {
     }
 
     public boolean missingWarning(ItemStack itemStack) {
-        return itemStack.getTag() != null && itemStack.getTag().contains("isInInventory") && !itemStack.getTag().contains("CatacombsPos");
+        return itemStack.getTag() != null
+                && itemStack.getTag().contains("isInInventory")
+                && !itemStack.getTag().contains("CatacombsPos");
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack,
+            @Nullable Level pLevel,
+            List<Component> pTooltipComponents,
+            TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         pTooltipComponents.add(description);
         if (missingWarning(pStack)) {
-            pTooltipComponents.add(Component.translatable("item.irons_spellbooks.wayward_compass.error", Minecraft.getInstance().options.keyUse.getTranslatedKeyMessage()).withStyle(ChatFormatting.RED));
+            pTooltipComponents.add(
+                    Component.translatable(
+                                    "item.irons_spellbooks.wayward_compass.error",
+                                    Minecraft.getInstance()
+                                            .options
+                                            .keyUse
+                                            .getTranslatedKeyMessage())
+                            .withStyle(ChatFormatting.RED));
         }
     }
 }

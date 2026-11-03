@@ -7,7 +7,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.phys.Vec3;
 
-
 import java.util.function.Function;
 
 public class FireBossMoveControl extends MoveControl {
@@ -26,12 +25,24 @@ public class FireBossMoveControl extends MoveControl {
             var target = mob.getTarget();
             if (target != null) {
                 float f = Mth.clamp(customMovementTimer / (float) customMovementDuration, 0, 1f);
-                Vec3 movement = currentCustomMovementControl.apply(f).scale(mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
-                float angle = -Utils.getAngle(mob.getX(), mob.getZ(), target.getX(), target.getZ()) - Mth.HALF_PI;
+                Vec3 movement =
+                        currentCustomMovementControl
+                                .apply(f)
+                                .scale(mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
+                float angle =
+                        -Utils.getAngle(mob.getX(), mob.getZ(), target.getX(), target.getZ())
+                                - Mth.HALF_PI;
                 mob.setDeltaMovement(mob.getDeltaMovement().add(movement.yRot(angle).scale(f * f)));
-                float slowdownRange = (float) mob.getAttributeValue(io.github.fabricators_of_create.porting_lib.attributes.PortingLibAttributes.ENTITY_REACH) * mob.getScale() * .9f;
+                float slowdownRange =
+                        (float)
+                                        mob.getAttributeValue(
+                                                io.github.fabricators_of_create.porting_lib
+                                                        .attributes.PortingLibAttributes
+                                                        .ENTITY_REACH)
+                                * mob.getScale()
+                                * .9f;
                 if (mob.distanceToSqr(target) < slowdownRange * slowdownRange) {
-                    //rapid deceleration
+                    // rapid deceleration
                     customMovementTimer -= 2;
                 }
             } else {
@@ -45,8 +56,9 @@ public class FireBossMoveControl extends MoveControl {
 
     @Override
     protected float rotlerp(float pSourceAngle, float pTargetAngle, float pMaximumChange) {
-        //This fixes a bug where a mob tries to path into the block it's already standing, and spins around trying to look "forward"
-        //We nullify our rotation calculation if we are close to block we are trying to get to
+        // This fixes a bug where a mob tries to path into the block it's already standing, and
+        // spins around trying to look "forward"
+        // We nullify our rotation calculation if we are close to block we are trying to get to
         double d0 = this.wantedX - this.mob.getX();
         double d1 = this.wantedZ - this.mob.getZ();
         if (d0 * d0 + d1 * d1 < .5f) {

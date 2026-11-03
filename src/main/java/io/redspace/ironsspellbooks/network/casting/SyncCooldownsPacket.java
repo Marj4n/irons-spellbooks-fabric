@@ -26,7 +26,8 @@ public class SyncCooldownsPacket implements CustomPacketPayload {
         buf.writeUtf(spellId);
     }
 
-    public static void writeCoolDownInstance(FriendlyByteBuf buf, CooldownInstance cooldownInstance) {
+    public static void writeCoolDownInstance(
+            FriendlyByteBuf buf, CooldownInstance cooldownInstance) {
         buf.writeInt(cooldownInstance.getSpellCooldown());
         buf.writeInt(cooldownInstance.getCooldownRemaining());
     }
@@ -36,24 +37,34 @@ public class SyncCooldownsPacket implements CustomPacketPayload {
     }
 
     public SyncCooldownsPacket(FriendlyByteBuf buf) {
-        this.spellCooldowns = buf.readMap(SyncCooldownsPacket::readSpellID, SyncCooldownsPacket::readCoolDownInstance);
+        this.spellCooldowns =
+                buf.readMap(
+                        SyncCooldownsPacket::readSpellID,
+                        SyncCooldownsPacket::readCoolDownInstance);
     }
 
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeMap(spellCooldowns, SyncCooldownsPacket::writeSpellId, SyncCooldownsPacket::writeCoolDownInstance);
+        buf.writeMap(
+                spellCooldowns,
+                SyncCooldownsPacket::writeSpellId,
+                SyncCooldownsPacket::writeCoolDownInstance);
     }
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            var cooldowns = ClientMagicData.getCooldowns();
-            cooldowns.clearCooldowns();
-            this.spellCooldowns.forEach((k, v) -> {
-                //irons_spellbooks.LOGGER.debug("ClientboundSyncCooldowns {} {} {}", k, v.getSpellCooldown(), v.getCooldownRemaining());
-                cooldowns.addCooldown(k, v.getSpellCooldown(), v.getCooldownRemaining());
-            });
-            ClientMagicData.resetClientCastState(null);
-        });
+        ctx.enqueueWork(
+                () -> {
+                    var cooldowns = ClientMagicData.getCooldowns();
+                    cooldowns.clearCooldowns();
+                    this.spellCooldowns.forEach(
+                            (k, v) -> {
+                                // irons_spellbooks.LOGGER.debug("ClientboundSyncCooldowns {} {}
+                                // {}", k, v.getSpellCooldown(), v.getCooldownRemaining());
+                                cooldowns.addCooldown(
+                                        k, v.getSpellCooldown(), v.getCooldownRemaining());
+                            });
+                    ClientMagicData.resetClientCastState(null);
+                });
         return true;
     }
 }

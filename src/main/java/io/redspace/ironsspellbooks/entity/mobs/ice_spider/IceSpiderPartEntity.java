@@ -11,13 +11,19 @@ import net.minecraft.world.phys.Vec3;
 import io.github.fabricators_of_create.porting_lib.entity.PartEntity;
 import org.joml.Quaternionf;
 
-public class IceSpiderPartEntity extends PartEntity<IceSpiderEntity> implements ICritablePartEntity {
+public class IceSpiderPartEntity extends PartEntity<IceSpiderEntity>
+        implements ICritablePartEntity {
     public final IceSpiderEntity parentMob;
     private final EntityDimensions size;
     private final Vec3 baseOffset;
     private final boolean collision;
 
-    public IceSpiderPartEntity(IceSpiderEntity pParentMob, Vec3 offset16, float pWidth, float pHeight, boolean collision) {
+    public IceSpiderPartEntity(
+            IceSpiderEntity pParentMob,
+            Vec3 offset16,
+            float pWidth,
+            float pHeight,
+            boolean collision) {
         super(pParentMob);
         float inflate = 0.1f;
         this.size = EntityDimensions.scalable(pWidth + inflate * 2, pHeight + inflate * 2);
@@ -27,7 +33,8 @@ public class IceSpiderPartEntity extends PartEntity<IceSpiderEntity> implements 
         this.collision = collision;
     }
 
-    public IceSpiderPartEntity(IceSpiderEntity pParentMob, Vec3 offset16, float pWidth, float pHeight) {
+    public IceSpiderPartEntity(
+            IceSpiderEntity pParentMob, Vec3 offset16, float pWidth, float pHeight) {
         this(pParentMob, offset16, pWidth, pHeight, false);
     }
 
@@ -42,12 +49,13 @@ public class IceSpiderPartEntity extends PartEntity<IceSpiderEntity> implements 
     public boolean canBeCollidedWith() {
         return collision;
     }
-//
-//    @Override
-//    public boolean canCollideWith(Entity entity) {
-//        return !this.isPassengerOfSameVehicle(entity)
-//                && entity.getY() >= getY() + size.height() - 0.01f;
-//    }
+
+    //
+    //    @Override
+    //    public boolean canCollideWith(Entity entity) {
+    //        return !this.isPassengerOfSameVehicle(entity)
+    //                && entity.getY() >= getY() + size.height() - 0.01f;
+    //    }
 
     private void hardSetPos(Vec3 newVector) {
         this.setPos(newVector);
@@ -62,8 +70,7 @@ public class IceSpiderPartEntity extends PartEntity<IceSpiderEntity> implements 
     }
 
     @Override
-    protected void defineSynchedData() {
-    }
+    protected void defineSynchedData() {}
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
@@ -74,12 +81,10 @@ public class IceSpiderPartEntity extends PartEntity<IceSpiderEntity> implements 
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-    }
+    protected void readAdditionalSaveData(CompoundTag pCompound) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-    }
+    protected void addAdditionalSaveData(CompoundTag pCompound) {}
 
     @Override
     public boolean isPickable() {

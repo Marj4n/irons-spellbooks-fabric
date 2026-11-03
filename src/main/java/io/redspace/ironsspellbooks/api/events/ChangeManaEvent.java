@@ -1,11 +1,8 @@
 package io.redspace.ironsspellbooks.api.events;
 
-
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import net.minecraft.world.entity.player.Player;
 import org.marj4n.irons_spellbooks.events.SpellPlayerEvent;
-
-
 
 public class ChangeManaEvent extends SpellPlayerEvent {
     private final MagicData magicData;

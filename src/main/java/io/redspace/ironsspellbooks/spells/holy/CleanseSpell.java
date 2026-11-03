@@ -32,17 +32,16 @@ public class CleanseSpell extends AbstractSpell {
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
-                Component.translatable("ui.irons_spellbooks.radius", 3)
-        );
+        return List.of(Component.translatable("ui.irons_spellbooks.radius", 3));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.EPIC)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(1)
-            .setCooldownSeconds(60)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.EPIC)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(1)
+                    .setCooldownSeconds(60)
+                    .build();
 
     public CleanseSpell() {
         this.manaCostPerLevel = 0;
@@ -73,23 +72,65 @@ public class CleanseSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         float radius = 3;
-        var area = TargetedAreaEntity.createTargetAreaEntity(level, entity.position(), radius, Utils.packRGB(this.getTargetingColor()), entity);
+        var area =
+                TargetedAreaEntity.createTargetAreaEntity(
+                        level,
+                        entity.position(),
+                        radius,
+                        Utils.packRGB(this.getTargetingColor()),
+                        entity);
         playerMagicData.setAdditionalCastData(new TargetAreaCastData(entity.position(), area));
         return true;
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        level.getEntitiesOfClass(LivingEntity.class, AABB.ofSize(entity.getBoundingBox().getCenter(), 6, 6, 6)).forEach(livingEntity -> {
-            IronsSpellbooks.LOGGER.debug("cleanse: {}", livingEntity);
-            if (Utils.shouldHealEntity(entity, livingEntity)) {
-                var effects = livingEntity.getActiveEffects().stream().map(MobEffectInstance::getEffect).filter(effect -> effect.getCategory() == MobEffectCategory.HARMFUL && !BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect).is(ModTags.CLEANSE_IMMUNE)).toList();
-                effects.forEach(livingEntity::removeEffect);
-                MagicManager.spawnParticles(level, ParticleHelper.CLEANSE_PARTICLE, livingEntity.getX(), livingEntity.getY() + .25, livingEntity.getZ(), 15, livingEntity.getBbWidth() * 0.5, livingEntity.getBbWidth() * 0.5, livingEntity.getBbWidth() * 0.5, 0, false);
-            }
-        });
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        level.getEntitiesOfClass(
+                        LivingEntity.class,
+                        AABB.ofSize(entity.getBoundingBox().getCenter(), 6, 6, 6))
+                .forEach(
+                        livingEntity -> {
+                            IronsSpellbooks.LOGGER.debug("cleanse: {}", livingEntity);
+                            if (Utils.shouldHealEntity(entity, livingEntity)) {
+                                var effects =
+                                        livingEntity.getActiveEffects().stream()
+                                                .map(MobEffectInstance::getEffect)
+                                                .filter(
+                                                        effect ->
+                                                                effect.getCategory()
+                                                                                == MobEffectCategory
+                                                                                        .HARMFUL
+                                                                        && !BuiltInRegistries
+                                                                                .MOB_EFFECT
+                                                                                .wrapAsHolder(
+                                                                                        effect)
+                                                                                .is(
+                                                                                        ModTags
+                                                                                                .CLEANSE_IMMUNE))
+                                                .toList();
+                                effects.forEach(livingEntity::removeEffect);
+                                MagicManager.spawnParticles(
+                                        level,
+                                        ParticleHelper.CLEANSE_PARTICLE,
+                                        livingEntity.getX(),
+                                        livingEntity.getY() + .25,
+                                        livingEntity.getZ(),
+                                        15,
+                                        livingEntity.getBbWidth() * 0.5,
+                                        livingEntity.getBbWidth() * 0.5,
+                                        livingEntity.getBbWidth() * 0.5,
+                                        0,
+                                        false);
+                            }
+                        });
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }

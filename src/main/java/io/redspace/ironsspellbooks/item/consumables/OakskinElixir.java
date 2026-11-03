@@ -24,7 +24,8 @@ public class OakskinElixir extends DrinkableItem {
         this.potionEffect = potionEffect;
     }
 
-    public OakskinElixir(Properties pProperties, Supplier<MobEffectInstance> potionEffect, boolean foil) {
+    public OakskinElixir(
+            Properties pProperties, Supplier<MobEffectInstance> potionEffect, boolean foil) {
         this(pProperties, potionEffect);
         this.foilOverride = foil;
     }
@@ -34,7 +35,8 @@ public class OakskinElixir extends DrinkableItem {
     }
 
     private static void applyEffect(ItemStack itemStack, LivingEntity livingEntity) {
-        if (itemStack.getItem() instanceof OakskinElixir elixir && elixir.potionEffect.get() != null) {
+        if (itemStack.getItem() instanceof OakskinElixir elixir
+                && elixir.potionEffect.get() != null) {
             livingEntity.addEffect(elixir.potionEffect.get());
             OakskinData.setFromElixir(livingEntity);
         }
@@ -46,16 +48,26 @@ public class OakskinElixir extends DrinkableItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack,
+            @Nullable Level pLevel,
+            List<Component> pTooltipComponents,
+            TooltipFlag pIsAdvanced) {
         SimpleElixir.addPotionTooltip(this.potionEffect.get(), pTooltipComponents, 1f);
-        if (this.potionEffect.get().getEffect() instanceof CustomDescriptionMobEffect customDescriptionMobEffect) {
-            CustomDescriptionMobEffect.handleCustomPotionTooltip(pStack, pTooltipComponents, false, this.potionEffect.get(), customDescriptionMobEffect);
+        if (this.potionEffect.get().getEffect()
+                instanceof CustomDescriptionMobEffect customDescriptionMobEffect) {
+            CustomDescriptionMobEffect.handleCustomPotionTooltip(
+                    pStack,
+                    pTooltipComponents,
+                    false,
+                    this.potionEffect.get(),
+                    customDescriptionMobEffect);
         }
     }
-//
-//    @Override
-//    public int getMaxStackSize(ItemStack stack) {
-//        return Items.POTION.getMaxStackSize();
-//    }
+    //
+    //    @Override
+    //    public int getMaxStackSize(ItemStack stack) {
+    //        return Items.POTION.getMaxStackSize();
+    //    }
 
 }

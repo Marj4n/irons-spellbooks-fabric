@@ -10,7 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPacketListener.class)
 public abstract class ClientRespawnMixin {
     @Inject(method = "handleRespawn", at = @At("RETURN"))
-    private void irons_spellbooks$respawn(net.minecraft.network.protocol.game.ClientboundRespawnPacket packet, CallbackInfo ci) {
+    private void irons_spellbooks$respawn(
+            net.minecraft.network.protocol.game.ClientboundRespawnPacket packet, CallbackInfo ci) {
         var player = Minecraft.getInstance().player;
         if (player != null) io.redspace.ironsspellbooks.player.ClientPlayerEvents.onRespawn(player);
     }

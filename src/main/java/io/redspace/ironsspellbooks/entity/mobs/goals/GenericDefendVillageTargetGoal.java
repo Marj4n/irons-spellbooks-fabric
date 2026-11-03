@@ -15,9 +15,9 @@ import java.util.List;
 
 public class GenericDefendVillageTargetGoal extends TargetGoal {
     private final Mob protector;
-    @Nullable
-    private LivingEntity potentialTarget;
-    private final TargetingConditions attackTargeting = TargetingConditions.forCombat().range(64.0D);
+    @Nullable private LivingEntity potentialTarget;
+    private final TargetingConditions attackTargeting =
+            TargetingConditions.forCombat().range(64.0D);
 
     public GenericDefendVillageTargetGoal(Mob mob) {
         super(mob, false, true);
@@ -31,8 +31,13 @@ public class GenericDefendVillageTargetGoal extends TargetGoal {
      */
     public boolean canUse() {
         AABB aabb = this.protector.getBoundingBox().inflate(10.0D, 8.0D, 10.0D);
-        List<Villager> list = this.protector.level().getNearbyEntities(Villager.class, this.attackTargeting, this.protector, aabb);
-        List<Player> list1 = this.protector.level().getNearbyPlayers(this.attackTargeting, this.protector, aabb);
+        List<Villager> list =
+                this.protector
+                        .level()
+                        .getNearbyEntities(
+                                Villager.class, this.attackTargeting, this.protector, aabb);
+        List<Player> list1 =
+                this.protector.level().getNearbyPlayers(this.attackTargeting, this.protector, aabb);
 
         for (Villager villager : list) {
             for (Player player : list1) {
@@ -46,7 +51,9 @@ public class GenericDefendVillageTargetGoal extends TargetGoal {
         if (this.potentialTarget == null) {
             return false;
         } else {
-            return !(this.potentialTarget instanceof Player) || !this.potentialTarget.isSpectator() && !((Player) this.potentialTarget).isCreative();
+            return !(this.potentialTarget instanceof Player)
+                    || !this.potentialTarget.isSpectator()
+                            && !((Player) this.potentialTarget).isCreative();
         }
     }
 

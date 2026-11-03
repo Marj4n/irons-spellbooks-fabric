@@ -31,16 +31,17 @@ public class PlayPlayerAnimationPacket implements CustomPacketPayload {
 
     public boolean handle(Supplier<FabricPacketContext> supplier) {
         FabricPacketContext context = supplier.get();
-        context.enqueueWork(() -> {
-            var level = Minecraft.getInstance().level;
-            if (level == null) {
-                return;
-            }
-            var player = level.getPlayerByUUID(playerId);
-            if (player != null) {
-                AnimationHelper.animatePlayerStart(player, animation);
-            }
-        });
+        context.enqueueWork(
+                () -> {
+                    var level = Minecraft.getInstance().level;
+                    if (level == null) {
+                        return;
+                    }
+                    var player = level.getPlayerByUUID(playerId);
+                    if (player != null) {
+                        AnimationHelper.animatePlayerStart(player, animation);
+                    }
+                });
         return true;
     }
 }

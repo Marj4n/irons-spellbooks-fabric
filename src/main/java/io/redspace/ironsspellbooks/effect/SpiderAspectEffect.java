@@ -18,10 +18,19 @@ public class SpiderAspectEffect extends MagicMobEffect {
         var attacker = event.getSource().getEntity();
         if (attacker instanceof LivingEntity livingAttacker) {
             if (livingAttacker.hasEffect(MobEffectRegistry.SPIDER_ASPECT.get())) {
-                boolean targetHasTagEffect = event.getEntity().getActiveEffects().stream()
-                        .anyMatch(instance -> BuiltInRegistries.MOB_EFFECT.wrapAsHolder(instance.getEffect()).is(ModTags.AFFECTED_BY_SPIDER_ASPECT));
+                boolean targetHasTagEffect =
+                        event.getEntity().getActiveEffects().stream()
+                                .anyMatch(
+                                        instance ->
+                                                BuiltInRegistries.MOB_EFFECT
+                                                        .wrapAsHolder(instance.getEffect())
+                                                        .is(ModTags.AFFECTED_BY_SPIDER_ASPECT));
                 if (targetHasTagEffect) {
-                    int lvl = livingAttacker.getEffect(MobEffectRegistry.SPIDER_ASPECT.get()).getAmplifier() + 1;
+                    int lvl =
+                            livingAttacker
+                                            .getEffect(MobEffectRegistry.SPIDER_ASPECT.get())
+                                            .getAmplifier()
+                                    + 1;
                     float multiplier = 1 + SpiderAspectEffect.DAMAGE_PER_LEVEL * lvl;
                     event.setAmount(event.getAmount() * multiplier);
                 }

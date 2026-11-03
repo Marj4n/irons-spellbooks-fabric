@@ -47,8 +47,15 @@ public class FireboltProjectile extends AbstractMagicProjectile {
 
     @Override
     protected void doImpactSound(Supplier<SoundEvent> sound) {
-        level().playSound(null, getX(), getY(), getZ(), sound.get(), SoundSource.NEUTRAL, 2, 1.2f + Utils.random.nextFloat() * .2f);
-
+        level().playSound(
+                        null,
+                        getX(),
+                        getY(),
+                        getZ(),
+                        sound.get(),
+                        SoundSource.NEUTRAL,
+                        2,
+                        1.2f + Utils.random.nextFloat() * .2f);
     }
 
     @Override
@@ -61,7 +68,10 @@ public class FireboltProjectile extends AbstractMagicProjectile {
     protected void onHitEntity(@NotNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         var target = entityHitResult.getEntity();
-        DamageSources.applyDamage(target, getDamage(), SpellRegistry.FIREBOLT_SPELL.get().getDamageSource(this, getOwner()));
+        DamageSources.applyDamage(
+                target,
+                getDamage(),
+                SpellRegistry.FIREBOLT_SPELL.get().getDamageSource(this, getOwner()));
         consumeEntityImpact(entityHitResult, true);
     }
 

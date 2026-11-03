@@ -15,7 +15,11 @@ import net.minecraft.world.entity.LivingEntity;
 public interface CurioHooksMixin {
 
     @Inject(method = "canInsert", at = @At("HEAD"), cancellable = true, remap = false)
-    private static void killGenericCurio(ItemStack stack, SlotReference slotReference, LivingEntity entity, CallbackInfoReturnable<Boolean> cir) {
+    private static void killGenericCurio(
+            ItemStack stack,
+            SlotReference slotReference,
+            LivingEntity entity,
+            CallbackInfoReturnable<Boolean> cir) {
         if (slotReference.inventory().getSlotType().getName().equals("curio")) {
             if (stack.is(ModTags.SPELLBOOK_CURIO)) {
                 cir.setReturnValue(false);

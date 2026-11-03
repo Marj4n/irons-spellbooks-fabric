@@ -7,6 +7,7 @@ import net.minecraft.world.phys.Vec3;
 public class PortalPos {
     private final ResourceKey<Level> dimension;
     private final Vec3 pos;
+
     /**
      * degrees
      */

@@ -9,7 +9,10 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 public class CultistArmorItem extends ImbuableChestplateArmorItem {
     public CultistArmorItem(ArmorItem.Type slot, Properties settings) {
-        super(ExtendedArmorMaterials.CULTIST, slot, settings/*, schoolAttributes(AttributeRegistry.BLOOD_SPELL_POWER)*/);
+        super(
+                ExtendedArmorMaterials.CULTIST,
+                slot,
+                settings /*, schoolAttributes(AttributeRegistry.BLOOD_SPELL_POWER)*/);
     }
 
     @Override

@@ -27,19 +27,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class BlazeStormSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "blaze_storm");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "blaze_storm");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(20)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(20)
+                    .build();
 
     public BlazeStormSpell() {
         this.manaCostPerLevel = 1;
@@ -80,12 +85,18 @@ public class BlazeStormSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
 
     @Override
-    public void onServerCastTick(Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
+    public void onServerCastTick(
+            Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
         if (playerMagicData != null && (playerMagicData.getCastDurationRemaining() + 1) % 5 == 0) {
             shootBlazeFireball(level, spellLevel, entity);
         }
@@ -101,7 +112,15 @@ public class BlazeStormSpell extends AbstractSpell {
         fireball.setPos(origin.subtract(0, fireball.getBbHeight(), 0));
         fireball.shoot(entity.getLookAngle(), .05f);
         fireball.setDamage(getDamage(spellLevel, entity));
-        world.playSound(null, origin.x, origin.y, origin.z, SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 2.0f, 1.0f);
+        world.playSound(
+                null,
+                origin.x,
+                origin.y,
+                origin.z,
+                SoundEvents.BLAZE_SHOOT,
+                SoundSource.PLAYERS,
+                2.0f,
+                1.0f);
         world.addFreshEntity(fireball);
     }
 

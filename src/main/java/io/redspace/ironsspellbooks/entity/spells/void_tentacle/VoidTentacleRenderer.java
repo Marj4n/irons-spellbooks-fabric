@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.spells.void_tentacle;
 
-
 import io.redspace.ironsspellbooks.render.GeoLivingEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 
@@ -11,5 +10,4 @@ public class VoidTentacleRenderer extends GeoLivingEntityRenderer<VoidTentacle> 
         addRenderLayer(new VoidTentacleEmissiveLayer(this));
         this.shadowRadius = 1f;
     }
-
 }

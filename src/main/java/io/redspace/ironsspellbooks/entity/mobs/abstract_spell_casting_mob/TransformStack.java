@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob;
 
-
 import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
@@ -19,12 +18,14 @@ public class TransformStack {
     }
 
     public void resetDirty() {
-        toReset.forEach(bone -> {
-            var snapshot = bone.getInitialSnapshot();
-            bone.updatePosition(snapshot.getOffsetX(), snapshot.getOffsetY(), snapshot.getOffsetZ());
-            bone.updateRotation(snapshot.getRotX(), snapshot.getRotY(), snapshot.getRotZ());
-            bone.resetStateChanges();
-        });
+        toReset.forEach(
+                bone -> {
+                    var snapshot = bone.getInitialSnapshot();
+                    bone.updatePosition(
+                            snapshot.getOffsetX(), snapshot.getOffsetY(), snapshot.getOffsetZ());
+                    bone.updateRotation(snapshot.getRotX(), snapshot.getRotY(), snapshot.getRotZ());
+                    bone.resetStateChanges();
+                });
         toReset.clear();
     }
 
@@ -43,31 +44,34 @@ public class TransformStack {
     }
 
     public void pushRotationDegrees(CoreGeoBone bone, float x, float y, float z) {
-        pushRotation(bone, new Vector3f(x * Mth.DEG_TO_RAD, y * Mth.DEG_TO_RAD, z * Mth.DEG_TO_RAD));
+        pushRotation(
+                bone, new Vector3f(x * Mth.DEG_TO_RAD, y * Mth.DEG_TO_RAD, z * Mth.DEG_TO_RAD));
     }
 
     public void popStack() {
-        positionStack.forEach((bone, stack) -> {
-            toReset.add(bone);
-            Vector3f position = new Vector3f(bone.getPosX(), bone.getPosY(), bone.getPosZ());
-            stack.forEach(position::add);
-            setPosImpl(bone, position);
-        });
-        rotationStack.forEach((bone, stack) -> {
-            toReset.add(bone);
-            Vector3f rotation = new Vector3f(bone.getRotX(), bone.getRotY(), bone.getRotZ());
-            stack.forEach(rotation::add);
-            setRotImpl(bone, rotation);
-        });
+        positionStack.forEach(
+                (bone, stack) -> {
+                    toReset.add(bone);
+                    Vector3f position =
+                            new Vector3f(bone.getPosX(), bone.getPosY(), bone.getPosZ());
+                    stack.forEach(position::add);
+                    setPosImpl(bone, position);
+                });
+        rotationStack.forEach(
+                (bone, stack) -> {
+                    toReset.add(bone);
+                    Vector3f rotation =
+                            new Vector3f(bone.getRotX(), bone.getRotY(), bone.getRotZ());
+                    stack.forEach(rotation::add);
+                    setRotImpl(bone, rotation);
+                });
         positionStack.clear();
         rotationStack.clear();
     }
 
     public void setRotImpl(CoreGeoBone bone, Vector3f vector3f) {
         bone.updateRotation(
-                wrapRadians(vector3f.x()),
-                wrapRadians(vector3f.y()),
-                wrapRadians(vector3f.z()));
+                wrapRadians(vector3f.x()), wrapRadians(vector3f.y()), wrapRadians(vector3f.z()));
     }
 
     public void setPosImpl(CoreGeoBone bone, Vector3f vector3f) {

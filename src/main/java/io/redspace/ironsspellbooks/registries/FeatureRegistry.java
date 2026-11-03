@@ -33,41 +33,71 @@ public class FeatureRegistry {
         net.fabricmc.fabric.api.biome.v1.BiomeModifications.addFeature(
                 net.fabricmc.fabric.api.biome.v1.BiomeSelectors.tag(BiomeTags.IS_OVERWORLD),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
-                ResourceKey.create(Registries.PLACED_FEATURE, IronsSpellbooks.id("ore_mithril_placement")));
+                ResourceKey.create(
+                        Registries.PLACED_FEATURE, IronsSpellbooks.id("ore_mithril_placement")));
         net.fabricmc.fabric.api.biome.v1.BiomeModifications.addSpawn(
                 net.fabricmc.fabric.api.biome.v1.BiomeSelectors.tag(BiomeTags.IS_OVERWORLD),
-                net.minecraft.world.entity.MobCategory.MONSTER, EntityRegistry.NECROMANCER.get(), 18, 1, 1);
+                net.minecraft.world.entity.MobCategory.MONSTER,
+                EntityRegistry.NECROMANCER.get(),
+                18,
+                1,
+                1);
     }
 
-    public static final ResourceKey<ConfiguredFeature<?, ?>> ARCANE_DEBRIS_FEATURE = configuredFeatureResourceKey("ore_arcane_debris");
-    public static final ResourceKey<PlacedFeature> ARCANE_DEBRIS_PLACEMENT = placedFeatureResourceKey("ore_arcane_debris");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ARCANE_DEBRIS_FEATURE =
+            configuredFeatureResourceKey("ore_arcane_debris");
+    public static final ResourceKey<PlacedFeature> ARCANE_DEBRIS_PLACEMENT =
+            placedFeatureResourceKey("ore_arcane_debris");
 
-    public static void bootstrapConfiguredFeature(BootstapContext<ConfiguredFeature<?, ?>> context) {
+    public static void bootstrapConfiguredFeature(
+            BootstapContext<ConfiguredFeature<?, ?>> context) {
         RuleTest ruleTestArcaneDebris = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
-        List<OreConfiguration.TargetBlockState> arcaneDebrisList = List.of(OreConfiguration.target(ruleTestArcaneDebris, BlockRegistry.ARCANE_DEBRIS.get().defaultBlockState()));
-        FeatureUtils.register(context, ARCANE_DEBRIS_FEATURE, Feature.ORE, new OreConfiguration(arcaneDebrisList, 3, 1.0f));
+        List<OreConfiguration.TargetBlockState> arcaneDebrisList =
+                List.of(
+                        OreConfiguration.target(
+                                ruleTestArcaneDebris,
+                                BlockRegistry.ARCANE_DEBRIS.get().defaultBlockState()));
+        FeatureUtils.register(
+                context,
+                ARCANE_DEBRIS_FEATURE,
+                Feature.ORE,
+                new OreConfiguration(arcaneDebrisList, 3, 1.0f));
     }
 
     public static void bootstrapPlacedFeature(BootstapContext<PlacedFeature> context) {
-        HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
-        Holder<ConfiguredFeature<?, ?>> holderArcaneDebris = holdergetter.getOrThrow(ARCANE_DEBRIS_FEATURE);
-        List<PlacementModifier> list = List.of(CountPlacement.of(7), InSquarePlacement.spread(), HeightRangePlacement.uniform(VerticalAnchor.absolute(-63), VerticalAnchor.absolute(-38)), BiomeFilter.biome());
+        HolderGetter<ConfiguredFeature<?, ?>> holdergetter =
+                context.lookup(Registries.CONFIGURED_FEATURE);
+        Holder<ConfiguredFeature<?, ?>> holderArcaneDebris =
+                holdergetter.getOrThrow(ARCANE_DEBRIS_FEATURE);
+        List<PlacementModifier> list =
+                List.of(
+                        CountPlacement.of(7),
+                        InSquarePlacement.spread(),
+                        HeightRangePlacement.uniform(
+                                VerticalAnchor.absolute(-63), VerticalAnchor.absolute(-38)),
+                        BiomeFilter.biome());
         PlacementUtils.register(context, ARCANE_DEBRIS_PLACEMENT, holderArcaneDebris, list);
     }
 
-    private static ResourceKey<ConfiguredFeature<?, ?>> configuredFeatureResourceKey(final String name) {
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(IronsSpellbooks.MODID, name));
+    private static ResourceKey<ConfiguredFeature<?, ?>> configuredFeatureResourceKey(
+            final String name) {
+        return ResourceKey.create(
+                Registries.CONFIGURED_FEATURE, new ResourceLocation(IronsSpellbooks.MODID, name));
     }
 
     private static ResourceKey<PlacedFeature> placedFeatureResourceKey(final String name) {
-        return ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(IronsSpellbooks.MODID, name));
+        return ResourceKey.create(
+                Registries.PLACED_FEATURE, new ResourceLocation(IronsSpellbooks.MODID, name));
     }
 
-    private static HolderSet<Biome> tag(final HolderGetter<Biome> holderGetter, final TagKey<Biome> key) {
+    private static HolderSet<Biome> tag(
+            final HolderGetter<Biome> holderGetter, final TagKey<Biome> key) {
         return holderGetter.getOrThrow(key);
     }
 
-    private static HolderSet<PlacedFeature> feature(final HolderGetter<PlacedFeature> holderGetter, final ResourceKey<PlacedFeature> feature) {
+    private static HolderSet<PlacedFeature> feature(
+            final HolderGetter<PlacedFeature> holderGetter,
+            final ResourceKey<PlacedFeature> feature) {
         return HolderSet.direct(holderGetter.getOrThrow(feature));
     }
 }

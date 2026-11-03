@@ -27,7 +27,8 @@ public class AquiferHelper {
     public static Set<Structure> getOrCacheStructures(StructureManager registryAccess) {
         if (!cached) {
             synchronized (structuresInterruptingAquifers) {
-                var registry = registryAccess.registryAccess().registryOrThrow(Registries.STRUCTURE);
+                var registry =
+                        registryAccess.registryAccess().registryOrThrow(Registries.STRUCTURE);
                 for (ResourceLocation r : structuresToTrack) {
                     var str = registry.get(r);
                     if (str != null) {

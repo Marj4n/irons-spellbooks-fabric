@@ -29,7 +29,8 @@ import org.jetbrains.annotations.UnknownNullability;
 import java.util.UUID;
 
 public class PocketDimensionManager implements INBTSerializable<CompoundTag> {
-    public static final ResourceKey<Level> POCKET_DIMENSION = ResourceKey.create(Registries.DIMENSION, IronsSpellbooks.id("pocket_dimension"));
+    public static final ResourceKey<Level> POCKET_DIMENSION =
+            ResourceKey.create(Registries.DIMENSION, IronsSpellbooks.id("pocket_dimension"));
     public static final ResourceLocation POCKET_ROOM_STRUCTURE = IronsSpellbooks.id("pocket_room");
     public static final int POCKET_SPACING = 256;
 
@@ -46,7 +47,8 @@ public class PocketDimensionManager implements INBTSerializable<CompoundTag> {
     }
 
     private int nextId;
-    //todo: should we store block position as well? would give freedom to change id hasher in the future
+    // todo: should we store block position as well? would give freedom to change id hasher in the
+    // future
     private final Object2IntMap<UUID> ids = new Object2IntOpenHashMap<>();
 
     @Override
@@ -75,13 +77,16 @@ public class PocketDimensionManager implements INBTSerializable<CompoundTag> {
                 int pocketId = compoundTag.getInt(INT_ID_KEY);
                 ids.put(uuid, pocketId);
             } catch (Exception e) {
-                IronsSpellbooks.LOGGER.error("Failed to parse PocketDimensionManager id entry: {}: {}", tag, e.getMessage());
+                IronsSpellbooks.LOGGER.error(
+                        "Failed to parse PocketDimensionManager id entry: {}: {}",
+                        tag,
+                        e.getMessage());
             }
         }
         this.nextId = nextId;
     }
 
-    //todo: should this be the trigger for generating a new platform? getOrCreateRoomId? i think so
+    // todo: should this be the trigger for generating a new platform? getOrCreateRoomId? i think so
     public int idFor(UUID uuid) {
         if (!ids.containsKey(uuid)) {
             ids.put(uuid, nextId);
@@ -112,7 +117,9 @@ public class PocketDimensionManager implements INBTSerializable<CompoundTag> {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 32; y++) {
                         BlockPos pos = blockPos.south(x).east(z).above(y);
-                        if (pocketDimension.getBlockState(pos).is(BlockRegistry.POCKET_PORTAL_FRAME.get())) {
+                        if (pocketDimension
+                                .getBlockState(pos)
+                                .is(BlockRegistry.POCKET_PORTAL_FRAME.get())) {
                             return pos;
                         }
                     }
@@ -130,8 +137,19 @@ public class PocketDimensionManager implements INBTSerializable<CompoundTag> {
         if (blockState.isAir() && !blockState.is(Blocks.BARRIER)) {
             var structureTemplateManager = pocketLevel.getStructureManager();
             var structureTemplate = structureTemplateManager.getOrCreate(POCKET_ROOM_STRUCTURE);
-            var placementSettings = (new StructurePlaceSettings()).setMirror(Mirror.NONE).setRotation(Rotation.NONE).setIgnoreEntities(true).addProcessor(new ClearPortalFrameDataProcessor());
-            structureTemplate.placeInWorld(pocketLevel, structurePos, structurePos, placementSettings, pocketLevel.getRandom(), 2);
+            var placementSettings =
+                    (new StructurePlaceSettings())
+                            .setMirror(Mirror.NONE)
+                            .setRotation(Rotation.NONE)
+                            .setIgnoreEntities(true)
+                            .addProcessor(new ClearPortalFrameDataProcessor());
+            structureTemplate.placeInWorld(
+                    pocketLevel,
+                    structurePos,
+                    structurePos,
+                    placementSettings,
+                    pocketLevel.getRandom(),
+                    2);
             return true;
         }
         return false;
@@ -145,21 +163,37 @@ public class PocketDimensionManager implements INBTSerializable<CompoundTag> {
             return;
         }
         if (serverLevel.getGameTime() % 100 == 0) {
-            serverLevel.players().forEach(player -> {
-                if (!player.isCreative() && !player.isSpectator()) {
-                    int pocketX = (int) (player.getX() / PocketDimensionManager.POCKET_SPACING) * PocketDimensionManager.POCKET_SPACING;
-                    int pocketZ = (int) (player.getZ() / PocketDimensionManager.POCKET_SPACING) * PocketDimensionManager.POCKET_SPACING;
-                    if (player.getX() < pocketX || player.getX() > pocketX + 16
-                            || player.getZ() < pocketZ || player.getZ() > pocketZ + 16) {
-                        // snap player back into bounds
-                        var blockPos = structurePosForPlayer(player);
-                        var portalPos = findPortalForStructure(serverLevel, blockPos);
-                        player.resetFallDistance();
-                        player.stopRiding();
-                        player.moveTo(Vec3.atBottomCenterOf(portalPos));
-                    }
-                }
-            });
+            serverLevel
+                    .players()
+                    .forEach(
+                            player -> {
+                                if (!player.isCreative() && !player.isSpectator()) {
+                                    int pocketX =
+                                            (int)
+                                                            (player.getX()
+                                                                    / PocketDimensionManager
+                                                                            .POCKET_SPACING)
+                                                    * PocketDimensionManager.POCKET_SPACING;
+                                    int pocketZ =
+                                            (int)
+                                                            (player.getZ()
+                                                                    / PocketDimensionManager
+                                                                            .POCKET_SPACING)
+                                                    * PocketDimensionManager.POCKET_SPACING;
+                                    if (player.getX() < pocketX
+                                            || player.getX() > pocketX + 16
+                                            || player.getZ() < pocketZ
+                                            || player.getZ() > pocketZ + 16) {
+                                        // snap player back into bounds
+                                        var blockPos = structurePosForPlayer(player);
+                                        var portalPos =
+                                                findPortalForStructure(serverLevel, blockPos);
+                                        player.resetFallDistance();
+                                        player.stopRiding();
+                                        player.moveTo(Vec3.atBottomCenterOf(portalPos));
+                                    }
+                                }
+                            });
         }
     }
 }

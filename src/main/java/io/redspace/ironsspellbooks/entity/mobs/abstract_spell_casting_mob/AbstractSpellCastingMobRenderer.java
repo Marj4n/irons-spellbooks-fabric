@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob;
 
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.mobs.HumanoidRenderer;
@@ -20,13 +19,15 @@ import software.bernie.geckolib.core.object.Color;
 import static io.redspace.ironsspellbooks.render.EnergySwirlLayer.CHARGE_TEXTURE;
 import static io.redspace.ironsspellbooks.render.EnergySwirlLayer.EVASION_TEXTURE;
 
-public abstract class AbstractSpellCastingMobRenderer extends HumanoidRenderer<AbstractSpellCastingMob> {
+public abstract class AbstractSpellCastingMobRenderer
+        extends HumanoidRenderer<AbstractSpellCastingMob> {
     private ResourceLocation textureResource;
 
-    public AbstractSpellCastingMobRenderer(EntityRendererProvider.Context renderManager, AbstractSpellCastingMobModel model) {
+    public AbstractSpellCastingMobRenderer(
+            EntityRendererProvider.Context renderManager, AbstractSpellCastingMobModel model) {
         super(renderManager, model);
         this.shadowRadius = 0.5f;
-        //this.addLayer(new GeoEvasionLayer(this));
+        // this.addLayer(new GeoEvasionLayer(this));
         addRenderLayer(new EnergySwirlLayer.Geo(this, EVASION_TEXTURE, MobEffectRegistry.EVASION));
         addRenderLayer(new EnergySwirlLayer.Geo(this, CHARGE_TEXTURE, MobEffectRegistry.CHARGED));
         addRenderLayer(new ChargeSpellLayer.Geo(this));
@@ -38,30 +39,49 @@ public abstract class AbstractSpellCastingMobRenderer extends HumanoidRenderer<A
 
     public static ItemStack makePotion(AbstractSpellCastingMob entity) {
         ItemStack healthPotion = new ItemStack(Items.POTION);
-        return Utils.setPotion(healthPotion, entity.isInvertedHealAndHarm() ? Potions.HARMING : Potions.HEALING);
+        return Utils.setPotion(
+                healthPotion, entity.isInvertedHealAndHarm() ? Potions.HARMING : Potions.HEALING);
     }
 
     @Override
-    public void render(AbstractSpellCastingMob entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(
+            AbstractSpellCastingMob entity,
+            float entityYaw,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 
-        //poseStack.pushPose();
-        //poseStack.mulPose(Axis.YP.rotationDegrees(90));
-        SpellRenderingHelper.renderSpellHelper(ClientMagicData.getSyncedSpellData(entity), entity, poseStack, bufferSource, partialTick);
-        //poseStack.popPose();
+        // poseStack.pushPose();
+        // poseStack.mulPose(Axis.YP.rotationDegrees(90));
+        SpellRenderingHelper.renderSpellHelper(
+                ClientMagicData.getSyncedSpellData(entity),
+                entity,
+                poseStack,
+                bufferSource,
+                partialTick);
+        // poseStack.popPose();
 
     }
 
     @Override
-    public RenderType getRenderType(AbstractSpellCastingMob animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return animatable.isInvisible() ? RenderType.entityTranslucent(texture) : super.getRenderType(animatable, texture, bufferSource, partialTick);
+    public RenderType getRenderType(
+            AbstractSpellCastingMob animatable,
+            ResourceLocation texture,
+            @Nullable MultiBufferSource bufferSource,
+            float partialTick) {
+        return animatable.isInvisible()
+                ? RenderType.entityTranslucent(texture)
+                : super.getRenderType(animatable, texture, bufferSource, partialTick);
     }
 
     /**
      * No longer utilized, but present for 1.20.1 API Compat
      */
     @Override
-    public Color getRenderColor(AbstractSpellCastingMob animatable, float partialTick, int packedLight) {
+    public Color getRenderColor(
+            AbstractSpellCastingMob animatable, float partialTick, int packedLight) {
         return super.getRenderColor(animatable, partialTick, packedLight);
     }
 }

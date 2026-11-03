@@ -30,7 +30,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class EchoingSword extends AbstractMagicProjectile implements IAnimatedAttacker, GeoEntity, NoKnockbackProjectile {
+public class EchoingSword extends AbstractMagicProjectile
+        implements IAnimatedAttacker, GeoEntity, NoKnockbackProjectile {
 
     public EchoingSword(EntityType<? extends EchoingSword> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -78,31 +79,82 @@ public class EchoingSword extends AbstractMagicProjectile implements IAnimatedAt
 
     private void die() {
         if (!level().isClientSide) {
-            MagicManager.spawnParticles(level(), ParticleHelper.ENDER_SPARKS, getX(), getY(), getZ(), 25, .1, .1, .1, 0.25, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    ParticleHelper.ENDER_SPARKS,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    25,
+                    .1,
+                    .1,
+                    .1,
+                    0.25,
+                    false);
         }
         this.discard();
     }
 
     private void performHit() {
-        this.playSound(SoundRegistry.ECHOING_STRIKE.get(), 1.5f, Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
+        this.playSound(
+                SoundRegistry.ECHOING_STRIKE.get(),
+                1.5f,
+                Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
         if (level().isClientSide) {
             return;
         }
         Vec3 vec3 = lastHomingPos.subtract(this.position()).normalize();
         float range = 2f;
         Vec3 center = this.position().add(vec3.scale(range));
-        AABB collider = AABB.ofSize(center, explosionRadius * 2, explosionRadius * 2, explosionRadius * 2).inflate(1);
-        MagicManager.spawnParticles(level(), ParticleHelper.UNSTABLE_ENDER, center.x, center.y, center.z, 25, 0, 0, 0, .18, false);
-        MagicManager.spawnParticles(level(), new BlastwaveParticleOptions(SpellRegistry.ECHOING_STRIKES_SPELL.get().getSchoolType().getTargetingColor(), explosionRadius * .9f), center.x, center.y, center.z, 1, 0, 0, 0, 0, true);
+        AABB collider =
+                AABB.ofSize(center, explosionRadius * 2, explosionRadius * 2, explosionRadius * 2)
+                        .inflate(1);
+        MagicManager.spawnParticles(
+                level(),
+                ParticleHelper.UNSTABLE_ENDER,
+                center.x,
+                center.y,
+                center.z,
+                25,
+                0,
+                0,
+                0,
+                .18,
+                false);
+        MagicManager.spawnParticles(
+                level(),
+                new BlastwaveParticleOptions(
+                        SpellRegistry.ECHOING_STRIKES_SPELL
+                                .get()
+                                .getSchoolType()
+                                .getTargetingColor(),
+                        explosionRadius * .9f),
+                center.x,
+                center.y,
+                center.z,
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
         var explosionRadiusSqr = explosionRadius * explosionRadius;
         var entities = level().getEntities(this, collider);
         for (Entity entity : entities) {
             double distanceSqr = entity.distanceToSqr(center);
-            if (distanceSqr < explosionRadiusSqr && canHitEntity(entity) && Utils.hasLineOfSight(level(), this.position(), entity.getBoundingBox().getCenter(), true)) {
+            if (distanceSqr < explosionRadiusSqr
+                    && canHitEntity(entity)
+                    && Utils.hasLineOfSight(
+                            level(), this.position(), entity.getBoundingBox().getCenter(), true)) {
                 double p = Mth.clamp((1 - distanceSqr / explosionRadiusSqr) + .4f, 0, 1);
                 float damage = (float) (this.damage * p);
                 entity.invulnerableTime = 0;
-                DamageSources.applyDamage(entity, damage, SpellRegistry.ECHOING_STRIKES_SPELL.get().getDamageSource(this, getOwner()));
+                DamageSources.applyDamage(
+                        entity,
+                        damage,
+                        SpellRegistry.ECHOING_STRIKES_SPELL
+                                .get()
+                                .getDamageSource(this, getOwner()));
             }
         }
     }
@@ -113,14 +165,10 @@ public class EchoingSword extends AbstractMagicProjectile implements IAnimatedAt
     }
 
     @Override
-    public void trailParticles() {
-
-    }
+    public void trailParticles() {}
 
     @Override
-    public void impactParticles(double x, double y, double z) {
-
-    }
+    public void impactParticles(double x, double y, double z) {}
 
     @Override
     public float getSpeed() {
@@ -133,7 +181,8 @@ public class EchoingSword extends AbstractMagicProjectile implements IAnimatedAt
     }
 
     RawAnimation animationToPlay = null;
-    private final AnimationController<EchoingSword> meleeController = new AnimationController<>(this, "keeper_animations", 0, this::predicate);
+    private final AnimationController<EchoingSword> meleeController =
+            new AnimationController<>(this, "keeper_animations", 0, this::predicate);
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {

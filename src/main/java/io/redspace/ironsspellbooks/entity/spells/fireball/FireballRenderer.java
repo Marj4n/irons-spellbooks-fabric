@@ -24,19 +24,21 @@ import net.minecraft.world.entity.projectile.Projectile;
 
 public class FireballRenderer extends EntityRenderer<Projectile> {
 
-    public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "fireball_model"), "main");
-    public static final ResourceLocation BASE_TEXTURE = IronsSpellbooks.id("textures/entity/fireball/fireball_core.png");
+    public static final ModelLayerLocation MODEL_LAYER_LOCATION =
+            new ModelLayerLocation(
+                    new ResourceLocation(IronsSpellbooks.MODID, "fireball_model"), "main");
+    public static final ResourceLocation BASE_TEXTURE =
+            IronsSpellbooks.id("textures/entity/fireball/fireball_core.png");
     public static final ResourceLocation[] FIRE_TEXTURES = {
-            IronsSpellbooks.id("textures/entity/fireball/fire_0.png"),
-            IronsSpellbooks.id("textures/entity/fireball/fire_1.png"),
-            IronsSpellbooks.id("textures/entity/fireball/fire_2.png"),
-            IronsSpellbooks.id("textures/entity/fireball/fire_3.png")/*,
+        IronsSpellbooks.id("textures/entity/fireball/fire_0.png"),
+        IronsSpellbooks.id("textures/entity/fireball/fire_1.png"),
+        IronsSpellbooks.id("textures/entity/fireball/fire_2.png"),
+        IronsSpellbooks.id("textures/entity/fireball/fire_3.png") /*,
             IronsSpellbooks.id("textures/entity/fireball/fire_4.png"),
             IronsSpellbooks.id("textures/entity/fireball/fire_5.png"),
             IronsSpellbooks.id("textures/entity/fireball/fire_6.png"),
             IronsSpellbooks.id("textures/entity/fireball/fire_7.png")*/
     };
-
 
     protected final ModelPart body;
     protected final ModelPart outline;
@@ -54,32 +56,59 @@ public class FireballRenderer extends EntityRenderer<Projectile> {
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F), PartPose.ZERO);
-        partdefinition.addOrReplaceChild("outline", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 16.0F), PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "body",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
+                PartPose.ZERO);
+        partdefinition.addOrReplaceChild(
+                "outline",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 16.0F),
+                PartPose.ZERO);
         return LayerDefinition.create(meshdefinition, 48, 24);
     }
 
     @Override
-    public void render(Projectile entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            Projectile entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBoundingBox().getYsize() * .5f, 0);
         poseStack.scale(scale, scale, scale);
         if (entity instanceof AbstractMagicProjectile) {
-            poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) + 180));
-            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
+            poseStack.mulPose(
+                    Axis.YP.rotationDegrees(
+                            Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) + 180));
+            poseStack.mulPose(
+                    Axis.XP.rotationDegrees(
+                            Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
         } else {
             // replaced fireball renderer. these use different rules
-            poseStack.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTicks, entity.yRotO, entity.getYRot())));
-            poseStack.mulPose(Axis.XP.rotationDegrees(-Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
+            poseStack.mulPose(
+                    Axis.YP.rotationDegrees(
+                            -Mth.lerp(partialTicks, entity.yRotO, entity.getYRot())));
+            poseStack.mulPose(
+                    Axis.XP.rotationDegrees(
+                            -Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
         }
 
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
+        VertexConsumer consumer =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
         this.body.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
-        consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getFireTextureLocation(entity)));
+        consumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(getFireTextureLocation(entity)));
         poseStack.scale(1.15f, 1.15f, 1.15f);
-        this.outline.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-
+        this.outline.render(
+                poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
         poseStack.popPose();
 

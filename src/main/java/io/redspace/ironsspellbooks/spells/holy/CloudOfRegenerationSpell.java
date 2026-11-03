@@ -25,25 +25,29 @@ import java.util.List;
 import java.util.Optional;
 
 public class CloudOfRegenerationSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "cloud_of_regeneration");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "cloud_of_regeneration");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getHealing(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.healing",
+                        Utils.stringTruncation(getHealing(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1)));
     }
 
     public static final float radius = 5;
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(35)
-            .setDeprecated(true)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.HOLY_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(35)
+                    .setDeprecated(true)
+                    .build();
 
     public CloudOfRegenerationSpell() {
         this.manaCostPerLevel = 3;
@@ -83,17 +87,29 @@ public class CloudOfRegenerationSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        level.getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(radius)).forEach((target) -> {
-            if (target.distanceToSqr(entity.position()) < radius * radius && Utils.shouldHealEntity(entity, target)) {
-                float healAmount = getHealing(spellLevel, entity);
-                org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellHealEvent(entity, target, healAmount, getSchoolType()));
-                target.heal(healAmount);
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new HealParticlesPacket(target.position()));
-            }
-        });
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
+        level.getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(radius))
+                .forEach(
+                        (target) -> {
+                            if (target.distanceToSqr(entity.position()) < radius * radius
+                                    && Utils.shouldHealEntity(entity, target)) {
+                                float healAmount = getHealing(spellLevel, entity);
+                                org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                                        new SpellHealEvent(
+                                                entity, target, healAmount, getSchoolType()));
+                                target.heal(healAmount);
+                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                                        entity, new HealParticlesPacket(target.position()));
+                            }
+                        });
 
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new RegenCloudParticlesPacket(entity.position()));
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                entity, new RegenCloudParticlesPacket(entity.position()));
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }

@@ -54,9 +54,13 @@ import java.util.stream.Collectors;
 
 public class GenerateSiteData {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.generate_recipe_data.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED =
+            new SimpleCommandExceptionType(
+                    Component.translatable(
+                            "commands.irons_spellbooks.generate_recipe_data.failed"));
 
-    private static final String RECIPE_DATA_TEMPLATE = """
+    private static final String RECIPE_DATA_TEMPLATE =
+            """
             - id: "%s"
               name: "%s"
               path: "%s"
@@ -95,7 +99,8 @@ public class GenerateSiteData {
             
             """;
 
-    private static final String SPELL_DATA_TEMPLATE = """
+    private static final String SPELL_DATA_TEMPLATE =
+            """
             - name: "%s"
               school: "%s"
               icon: "%s"
@@ -111,14 +116,27 @@ public class GenerateSiteData {
               u4: "%s"
             
             """;
-    private static final HashSet<String> DUNGEON_ITEMS = new HashSet<>(List.of("cinderous_soulcaller", "wayward_compass", "dead_king_phylactery", "dead_king_phylactery_shard", "decrepit_key", "bone_key"));
+    private static final HashSet<String> DUNGEON_ITEMS =
+            new HashSet<>(
+                    List.of(
+                            "cinderous_soulcaller",
+                            "wayward_compass",
+                            "dead_king_phylactery",
+                            "dead_king_phylactery_shard",
+                            "decrepit_key",
+                            "bone_key"));
 
     public static void register(CommandDispatcher<CommandSourceStack> pDispatcher) {
-        pDispatcher.register(Commands.literal("generateSiteData").requires((p_138819_) -> {
-            return p_138819_.hasPermission(2);
-        }).executes((commandContext) -> {
-            return generateSiteData(commandContext.getSource());
-        }));
+        pDispatcher.register(
+                Commands.literal("generateSiteData")
+                        .requires(
+                                (p_138819_) -> {
+                                    return p_138819_.hasPermission(2);
+                                })
+                        .executes(
+                                (commandContext) -> {
+                                    return generateSiteData(commandContext.getSource());
+                                }));
     }
 
     private static int generateSiteData(CommandSourceStack source) {
@@ -147,66 +165,135 @@ public class GenerateSiteData {
             Minecraft.getInstance().options.advancedItemTooltips = false;
 
             handleAffinityRingEntry(curioBuilder, itemsTracked, source);
-            getVisibleItems()
-                    .stream()
+            getVisibleItems().stream()
                     .sorted(Comparator.comparing(Item::getDescriptionId))
-                    .forEach(item -> {
-                        if (item instanceof FurledMapItem) {
-                            return;
-                        }
-                        var itemResource = BuiltInRegistries.ITEM.getKey(item);
-                        var tooltip = getTooltip(source.getPlayer(), new ItemStack(item));
+                    .forEach(
+                            item -> {
+                                if (item instanceof FurledMapItem) {
+                                    return;
+                                }
+                                var itemResource = BuiltInRegistries.ITEM.getKey(item);
+                                var tooltip = getTooltip(source.getPlayer(), new ItemStack(item));
 
-                        if (itemResource.getNamespace().equals("irons_spellbooks") && !itemsTracked.contains(item)) {
-                            var recipe = getRecipeFor(source, item);
-                            var name = item.getName(item.getDefaultInstance()).getString();
-                            if (item.getDescriptionId().contains("patchouli") || item.getDescriptionId().contains("spawn_egg") || item.getDescriptionId().equals("item.irons_spellbooks.scroll")) {
-                                return;
-                            } else if (item instanceof ArmorItem armorItem) {
-                                Class<? extends ArmorItem> armortype = armorItem.getClass();
-                                boolean hasGroup = ItemRegistry.getIronsItems().stream().filter(holder -> armortype.isAssignableFrom(holder.get().getClass())).toList().size() > 1;
-                                int sort = 0;
-                                String group = "All Armor";
-                                if (hasGroup) {
-                                    var words = name.split(" ");
-                                    group = Arrays.stream(words).limit(words.length - 1).collect(Collectors.joining(" ")) + " Armor";
-                                    sort = 3 - armorItem.getEquipmentSlot().getIndex();
+                                if (itemResource.getNamespace().equals("irons_spellbooks")
+                                        && !itemsTracked.contains(item)) {
+                                    var recipe = getRecipeFor(source, item);
+                                    var name = item.getName(item.getDefaultInstance()).getString();
+                                    if (item.getDescriptionId().contains("patchouli")
+                                            || item.getDescriptionId().contains("spawn_egg")
+                                            || item.getDescriptionId()
+                                                    .equals("item.irons_spellbooks.scroll")) {
+                                        return;
+                                    } else if (item instanceof ArmorItem armorItem) {
+                                        Class<? extends ArmorItem> armortype = armorItem.getClass();
+                                        boolean hasGroup =
+                                                ItemRegistry.getIronsItems().stream()
+                                                                .filter(
+                                                                        holder ->
+                                                                                armortype
+                                                                                        .isAssignableFrom(
+                                                                                                holder.get()
+                                                                                                        .getClass()))
+                                                                .toList()
+                                                                .size()
+                                                        > 1;
+                                        int sort = 0;
+                                        String group = "All Armor";
+                                        if (hasGroup) {
+                                            var words = name.split(" ");
+                                            group =
+                                                    Arrays.stream(words)
+                                                                    .limit(words.length - 1)
+                                                                    .collect(
+                                                                            Collectors.joining(" "))
+                                                            + " Armor";
+                                            sort = 3 - armorItem.getEquipmentSlot().getIndex();
+                                        }
+                                        if (recipe != null) {
+                                            appendRecipeSorted(
+                                                    armorBuilder,
+                                                    recipe,
+                                                    getRecipeData(recipe),
+                                                    group,
+                                                    tooltip,
+                                                    sort);
+                                        } else {
+                                            appendSimpleGroupedSorted(
+                                                    armorBuilder,
+                                                    name,
+                                                    itemResource,
+                                                    group,
+                                                    tooltip,
+                                                    sort);
+                                        }
+                                    } else if (item instanceof SpellBook
+                                            || item instanceof ExtendedSwordItem
+                                            || item instanceof CastingItem
+                                            || item instanceof ProjectileWeaponItem
+                                            || item instanceof UniqueItem) {
+                                        var group =
+                                                item instanceof SpellBook
+                                                        ? "Spellbooks"
+                                                        : (item instanceof CastingItem
+                                                                ? "Staves"
+                                                                : "Weapons");
+                                        if (recipe != null) {
+                                            appendRecipe(
+                                                    spellbookBuilder,
+                                                    recipe,
+                                                    getRecipeData(recipe),
+                                                    group,
+                                                    tooltip);
+                                        } else {
+                                            appendSimpleGrouped(
+                                                    spellbookBuilder,
+                                                    name,
+                                                    itemResource,
+                                                    group,
+                                                    tooltip);
+                                        }
+                                    } else if (item instanceof CurioBaseItem) {
+                                        if (recipe != null) {
+                                            appendRecipe(
+                                                    curioBuilder,
+                                                    recipe,
+                                                    getRecipeData(recipe),
+                                                    "",
+                                                    tooltip);
+                                        } else {
+                                            appendSimple(curioBuilder, name, itemResource, tooltip);
+                                        }
+                                    } else if (item instanceof BlockItem) {
+                                        if (recipe != null) {
+                                            appendRecipe(
+                                                    blockBuilder,
+                                                    recipe,
+                                                    getRecipeData(recipe),
+                                                    "",
+                                                    tooltip);
+                                        } else {
+                                            appendSimple(blockBuilder, name, itemResource, tooltip);
+                                        }
+                                    } else {
+                                        if (recipe != null) {
+                                            appendRecipe(
+                                                    itemBuilder,
+                                                    recipe,
+                                                    getRecipeData(recipe),
+                                                    handleGenericItemGrouping(item),
+                                                    tooltip);
+                                        } else {
+                                            appendSimpleGrouped(
+                                                    itemBuilder,
+                                                    name,
+                                                    itemResource,
+                                                    handleGenericItemGrouping(item),
+                                                    tooltip);
+                                        }
+                                    }
+                                    itemsTracked.add(item);
                                 }
-                                if (recipe != null) {
-                                    appendRecipeSorted(armorBuilder, recipe, getRecipeData(recipe), group, tooltip, sort);
-                                } else {
-                                    appendSimpleGroupedSorted(armorBuilder, name, itemResource, group, tooltip, sort);
-                                }
-                            } else if (item instanceof SpellBook || item instanceof ExtendedSwordItem || item instanceof CastingItem || item instanceof ProjectileWeaponItem || item instanceof UniqueItem) {
-                                var group = item instanceof SpellBook ? "Spellbooks" : (item instanceof CastingItem ? "Staves" : "Weapons");
-                                if (recipe != null) {
-                                    appendRecipe(spellbookBuilder, recipe, getRecipeData(recipe), group, tooltip);
-                                } else {
-                                    appendSimpleGrouped(spellbookBuilder, name, itemResource, group, tooltip);
-                                }
-                            } else if (item instanceof CurioBaseItem) {
-                                if (recipe != null) {
-                                    appendRecipe(curioBuilder, recipe, getRecipeData(recipe), "", tooltip);
-                                } else {
-                                    appendSimple(curioBuilder, name, itemResource, tooltip);
-                                }
-                            } else if (item instanceof BlockItem) {
-                                if (recipe != null) {
-                                    appendRecipe(blockBuilder, recipe, getRecipeData(recipe), "", tooltip);
-                                } else {
-                                    appendSimple(blockBuilder, name, itemResource, tooltip);
-                                }
-                            } else {
-                                if (recipe != null) {
-                                    appendRecipe(itemBuilder, recipe, getRecipeData(recipe), handleGenericItemGrouping(item), tooltip);
-                                } else {
-                                    appendSimpleGrouped(itemBuilder, name, itemResource, handleGenericItemGrouping(item), tooltip);
-                                }
-                            }
-                            itemsTracked.add(item);
-
-                        }
-                    });
+                            });
             ClientInputEvents.setShowExpandedTooltip(false);
 
             var file = new BufferedWriter(new FileWriter("item_data.yml"));
@@ -235,15 +322,17 @@ public class GenerateSiteData {
         }
     }
 
-    private static void handleAffinityRingEntry(StringBuilder curioBuilder, Set<Item> itemsTracked, CommandSourceStack source) {
+    private static void handleAffinityRingEntry(
+            StringBuilder curioBuilder, Set<Item> itemsTracked, CommandSourceStack source) {
         var item = ItemRegistry.AFFINITY_RING.get();
         itemsTracked.add(item);
         var itemResource = BuiltInRegistries.ITEM.getKey(item);
         var name = item.getName(ItemStack.EMPTY).getString();
-        appendSimple(curioBuilder, name, itemResource,
-                "Affinity Rings are randomly generated as loot, and will boost the level of a select spell by one. This effect can stack. Spell can be set in the Arcane Anvil using a scroll."
-        );
-
+        appendSimple(
+                curioBuilder,
+                name,
+                itemResource,
+                "Affinity Rings are randomly generated as loot, and will boost the level of a select spell by one. This effect can stack. Spell can be set in the Arcane Anvil using a scroll.");
     }
 
     private static String handleGenericItemGrouping(Item item) {
@@ -267,26 +356,60 @@ public class GenerateSiteData {
 
     @NotNull
     private static ArrayList<RecipeIngredientData> getRecipeData(Recipe<?> recipe) {
-        var resultItemResourceLocation = BuiltInRegistries.ITEM.getKey(recipe.getResultItem(level.registryAccess()).getItem());
+        var resultItemResourceLocation =
+                BuiltInRegistries.ITEM.getKey(
+                        recipe.getResultItem(level.registryAccess()).getItem());
         var recipeData = new ArrayList<RecipeIngredientData>(10);
-        recipeData.add(new RecipeIngredientData(
-                resultItemResourceLocation.toString(),
-                recipe.getResultItem(level.registryAccess()).getItem().getName(recipe.getResultItem(level.registryAccess()).getItem().getDefaultInstance()).getString(),
-                String.format("/img/items/%s.png", resultItemResourceLocation.getPath()),
-                recipe.getResultItem(level.registryAccess()).getItem())
-        );
+        recipeData.add(
+                new RecipeIngredientData(
+                        resultItemResourceLocation.toString(),
+                        recipe.getResultItem(level.registryAccess())
+                                .getItem()
+                                .getName(
+                                        recipe.getResultItem(level.registryAccess())
+                                                .getItem()
+                                                .getDefaultInstance())
+                                .getString(),
+                        String.format("/img/items/%s.png", resultItemResourceLocation.getPath()),
+                        recipe.getResultItem(level.registryAccess()).getItem()));
         if (recipe instanceof ShapedRecipe || recipe instanceof ShapelessRecipe) {
-            recipe.getIngredients().forEach(ingredient -> {
-                handleIngredient(ingredient, recipeData, recipe);
-            });
+            recipe.getIngredients()
+                    .forEach(
+                            ingredient -> {
+                                handleIngredient(ingredient, recipeData, recipe);
+                            });
         } else if (recipe instanceof SmithingTransformRecipe smithingRecipe) {
-            handleIngredient(Ingredient.of(BuiltInRegistries.ITEM.stream().map(Item::getDefaultInstance).filter(smithingRecipe::isTemplateIngredient).findFirst().orElse(ItemStack.EMPTY)), recipeData, recipe);
-            handleIngredient(Ingredient.of(BuiltInRegistries.ITEM.stream().map(Item::getDefaultInstance).filter(smithingRecipe::isBaseIngredient).findFirst().orElse(ItemStack.EMPTY)), recipeData, recipe);
-            handleIngredient(Ingredient.of(BuiltInRegistries.ITEM.stream().map(Item::getDefaultInstance).filter(smithingRecipe::isAdditionIngredient).findFirst().orElse(ItemStack.EMPTY)), recipeData, recipe);
-        }/* else if (recipe instanceof NoAdditionSmithingTransformRecipe smithingRecipe) {
-            handleIngredient(Ingredient.of(BuiltInRegistries.ITEM.stream().map(Item::getDefaultInstance).filter(smithingRecipe::isTemplateIngredient).findFirst().orElse(ItemStack.EMPTY)), recipeData, recipe);
-            handleIngredient(Ingredient.of(BuiltInRegistries.ITEM.stream().map(Item::getDefaultInstance).filter(smithingRecipe::isBaseIngredient).findFirst().orElse(ItemStack.EMPTY)), recipeData, recipe);
-        }*/
+            handleIngredient(
+                    Ingredient.of(
+                            BuiltInRegistries.ITEM.stream()
+                                    .map(Item::getDefaultInstance)
+                                    .filter(smithingRecipe::isTemplateIngredient)
+                                    .findFirst()
+                                    .orElse(ItemStack.EMPTY)),
+                    recipeData,
+                    recipe);
+            handleIngredient(
+                    Ingredient.of(
+                            BuiltInRegistries.ITEM.stream()
+                                    .map(Item::getDefaultInstance)
+                                    .filter(smithingRecipe::isBaseIngredient)
+                                    .findFirst()
+                                    .orElse(ItemStack.EMPTY)),
+                    recipeData,
+                    recipe);
+            handleIngredient(
+                    Ingredient.of(
+                            BuiltInRegistries.ITEM.stream()
+                                    .map(Item::getDefaultInstance)
+                                    .filter(smithingRecipe::isAdditionIngredient)
+                                    .findFirst()
+                                    .orElse(ItemStack.EMPTY)),
+                    recipeData,
+                    recipe);
+        } /* else if (recipe instanceof NoAdditionSmithingTransformRecipe smithingRecipe) {
+              handleIngredient(Ingredient.of(BuiltInRegistries.ITEM.stream().map(Item::getDefaultInstance).filter(smithingRecipe::isTemplateIngredient).findFirst().orElse(ItemStack.EMPTY)), recipeData, recipe);
+              handleIngredient(Ingredient.of(BuiltInRegistries.ITEM.stream().map(Item::getDefaultInstance).filter(smithingRecipe::isBaseIngredient).findFirst().orElse(ItemStack.EMPTY)), recipeData, recipe);
+          }*/
         return recipeData;
     }
 
@@ -328,136 +451,263 @@ public class GenerateSiteData {
         if (itemStack.getItem() instanceof SpellBook) {
             var spellList = ISpellContainer.get(itemStack);
 
-            return spellList.getActiveSpells().stream().map(spell -> {
-                return spell.getSpell().getDisplayName(null).getString() + " (" + spell.getLevel() + ")";
-            }).collect(Collectors.joining(", "));
+            return spellList.getActiveSpells().stream()
+                    .map(
+                            spell -> {
+                                return spell.getSpell().getDisplayName(null).getString()
+                                        + " ("
+                                        + spell.getLevel()
+                                        + ")";
+                            })
+                    .collect(Collectors.joining(", "));
         }
         return "";
     }
 
     private static String getTooltip(ServerPlayer player, ItemStack itemStack) {
-        return itemStack.getTooltipLines(player, TooltipFlag.Default.NORMAL)
-                .stream()
-                .skip(1) //First component is always the name. Ignore it
+        return itemStack.getTooltipLines(player, TooltipFlag.Default.NORMAL).stream()
+                .skip(1) // First component is always the name. Ignore it
                 .map(Component::getString)
                 .filter(x -> !x.trim().isEmpty() && !x.contains("Slot"))
                 .collect(Collectors.joining("<br>"))
                 .trim()
-//                .replace(":", ":<br>")
-                ;
+        //                .replace(":", ":<br>")
+        ;
     }
 
-    private static void appendRecipeSorted(StringBuilder sb, Recipe recipe, List<RecipeIngredientData> recipeIngredientData, String group, String tooltip, int sort) {
-        sb.append(String.format(RECIPE_DATA_TEMPLATE,
-                getRecipeDataAtIndex(recipeIngredientData, 0).id,
-                getRecipeDataAtIndex(recipeIngredientData, 0).name,
-                getRecipeDataAtIndex(recipeIngredientData, 0).path,
-                group,
-                sort,
-                recipe.getType(),
-                getRecipeDataAtIndex(recipeIngredientData, 1).id,
-                getRecipeDataAtIndex(recipeIngredientData, 1).name,
-                getRecipeDataAtIndex(recipeIngredientData, 1).path,
-                getRecipeDataAtIndex(recipeIngredientData, 2).id,
-                getRecipeDataAtIndex(recipeIngredientData, 2).name,
-                getRecipeDataAtIndex(recipeIngredientData, 2).path,
-                getRecipeDataAtIndex(recipeIngredientData, 3).id,
-                getRecipeDataAtIndex(recipeIngredientData, 3).name,
-                getRecipeDataAtIndex(recipeIngredientData, 3).path,
-                getRecipeDataAtIndex(recipeIngredientData, 4).id,
-                getRecipeDataAtIndex(recipeIngredientData, 4).name,
-                getRecipeDataAtIndex(recipeIngredientData, 4).path,
-                getRecipeDataAtIndex(recipeIngredientData, 5).id,
-                getRecipeDataAtIndex(recipeIngredientData, 5).name,
-                getRecipeDataAtIndex(recipeIngredientData, 5).path,
-                getRecipeDataAtIndex(recipeIngredientData, 6).id,
-                getRecipeDataAtIndex(recipeIngredientData, 6).name,
-                getRecipeDataAtIndex(recipeIngredientData, 6).path,
-                getRecipeDataAtIndex(recipeIngredientData, 7).id,
-                getRecipeDataAtIndex(recipeIngredientData, 7).name,
-                getRecipeDataAtIndex(recipeIngredientData, 7).path,
-                getRecipeDataAtIndex(recipeIngredientData, 8).id,
-                getRecipeDataAtIndex(recipeIngredientData, 8).name,
-                getRecipeDataAtIndex(recipeIngredientData, 8).path,
-                getRecipeDataAtIndex(recipeIngredientData, 9).id,
-                getRecipeDataAtIndex(recipeIngredientData, 9).name,
-                getRecipeDataAtIndex(recipeIngredientData, 9).path,
-                tooltip
-        ));
+    private static void appendRecipeSorted(
+            StringBuilder sb,
+            Recipe recipe,
+            List<RecipeIngredientData> recipeIngredientData,
+            String group,
+            String tooltip,
+            int sort) {
+        sb.append(
+                String.format(
+                        RECIPE_DATA_TEMPLATE,
+                        getRecipeDataAtIndex(recipeIngredientData, 0).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 0).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 0).path,
+                        group,
+                        sort,
+                        recipe.getType(),
+                        getRecipeDataAtIndex(recipeIngredientData, 1).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 1).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 1).path,
+                        getRecipeDataAtIndex(recipeIngredientData, 2).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 2).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 2).path,
+                        getRecipeDataAtIndex(recipeIngredientData, 3).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 3).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 3).path,
+                        getRecipeDataAtIndex(recipeIngredientData, 4).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 4).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 4).path,
+                        getRecipeDataAtIndex(recipeIngredientData, 5).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 5).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 5).path,
+                        getRecipeDataAtIndex(recipeIngredientData, 6).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 6).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 6).path,
+                        getRecipeDataAtIndex(recipeIngredientData, 7).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 7).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 7).path,
+                        getRecipeDataAtIndex(recipeIngredientData, 8).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 8).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 8).path,
+                        getRecipeDataAtIndex(recipeIngredientData, 9).id,
+                        getRecipeDataAtIndex(recipeIngredientData, 9).name,
+                        getRecipeDataAtIndex(recipeIngredientData, 9).path,
+                        tooltip));
     }
 
-    private static void appendRecipe(StringBuilder sb, Recipe recipe, List<RecipeIngredientData> recipeIngredientData, String group, String tooltip) {
+    private static void appendRecipe(
+            StringBuilder sb,
+            Recipe recipe,
+            List<RecipeIngredientData> recipeIngredientData,
+            String group,
+            String tooltip) {
         appendRecipeSorted(sb, recipe, recipeIngredientData, group, tooltip, 0);
     }
 
-    private static void appendSimple(StringBuilder sb, String name, ResourceLocation itemResource, String tooltip) {
-        sb.append(String.format(RECIPE_DATA_TEMPLATE,
-                itemResource.toString(),
-                name,
-                String.format("/img/items/%s.png", itemResource.getPath()),
-                "",
-                "0",
-                "none",
-                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", tooltip
-        ));
+    private static void appendSimple(
+            StringBuilder sb, String name, ResourceLocation itemResource, String tooltip) {
+        sb.append(
+                String.format(
+                        RECIPE_DATA_TEMPLATE,
+                        itemResource.toString(),
+                        name,
+                        String.format("/img/items/%s.png", itemResource.getPath()),
+                        "",
+                        "0",
+                        "none",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        tooltip));
     }
 
-    private static void appendSimpleGrouped(StringBuilder sb, String name, ResourceLocation itemResource, String group, String tooltip) {
-        sb.append(String.format(RECIPE_DATA_TEMPLATE,
-                itemResource.toString(),
-                name,
-                String.format("/img/items/%s.png", itemResource.getPath()),
-                group,
-                "0",
-                "none",
-                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", tooltip
-        ));
+    private static void appendSimpleGrouped(
+            StringBuilder sb,
+            String name,
+            ResourceLocation itemResource,
+            String group,
+            String tooltip) {
+        sb.append(
+                String.format(
+                        RECIPE_DATA_TEMPLATE,
+                        itemResource.toString(),
+                        name,
+                        String.format("/img/items/%s.png", itemResource.getPath()),
+                        group,
+                        "0",
+                        "none",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        tooltip));
     }
 
-    private static void appendSimpleGroupedSorted(StringBuilder sb, String name, ResourceLocation itemResource, String group, String tooltip, int sort) {
-        sb.append(String.format(RECIPE_DATA_TEMPLATE,
-                itemResource.toString(),
-                name,
-                String.format("/img/items/%s.png", itemResource.getPath()),
-                group,
-                sort,
-                "none",
-                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", tooltip
-        ));
+    private static void appendSimpleGroupedSorted(
+            StringBuilder sb,
+            String name,
+            ResourceLocation itemResource,
+            String group,
+            String tooltip,
+            int sort) {
+        sb.append(
+                String.format(
+                        RECIPE_DATA_TEMPLATE,
+                        itemResource.toString(),
+                        name,
+                        String.format("/img/items/%s.png", itemResource.getPath()),
+                        group,
+                        sort,
+                        "none",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        tooltip));
     }
 
-    private static void handleIngredient(Ingredient ingredient, ArrayList<RecipeIngredientData> recipeData, Recipe recipe) {
+    private static void handleIngredient(
+            Ingredient ingredient, ArrayList<RecipeIngredientData> recipeData, Recipe recipe) {
         Arrays.stream(ingredient.getItems())
                 .findFirst()
-                .ifPresentOrElse(itemStack -> {
-                    var itemResource = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
-                    var path = "";
-                    if (itemResource.equals(IronsSpellbooks.id("wisewood_bookshelf"))) {
-                        // hardcode fix for wisewood bookshelf recipe
-                        itemResource = new ResourceLocation("bookshelf");
-                    }
+                .ifPresentOrElse(
+                        itemStack -> {
+                            var itemResource = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
+                            var path = "";
+                            if (itemResource.equals(IronsSpellbooks.id("wisewood_bookshelf"))) {
+                                // hardcode fix for wisewood bookshelf recipe
+                                itemResource = new ResourceLocation("bookshelf");
+                            }
 
-                    if (itemResource.toString().contains("irons_spellbooks")) {
-                        path = String.format("/img/items/%s.png", itemResource.getPath());
-                    } else {
-                        path = String.format("/img/items/minecraft/%s.png", itemResource.getPath());
-                    }
-                    //Detect a specific ingredient tag and replace it will a gif of all applicable items
-                    if (itemStack.is(ModTags.INSCRIBED_RUNES) && recipe.getResultItem(level.registryAccess()).is(ItemRegistry.BLANK_RUNE.get())) {
-                        path = "/img/items/all_runes.gif";
-                    }
-                    recipeData.add(new RecipeIngredientData(
-                            itemResource.toString(),
-                            itemStack.getItem().getName(ItemStack.EMPTY).getString(),
-                            path,
-                            recipe.getResultItem(level.registryAccess()).getItem()));
-
-                }, () -> {
-                    recipeData.add(RecipeIngredientData.EMPTY);
-                });
+                            if (itemResource.toString().contains("irons_spellbooks")) {
+                                path = String.format("/img/items/%s.png", itemResource.getPath());
+                            } else {
+                                path =
+                                        String.format(
+                                                "/img/items/minecraft/%s.png",
+                                                itemResource.getPath());
+                            }
+                            // Detect a specific ingredient tag and replace it will a gif of all
+                            // applicable items
+                            if (itemStack.is(ModTags.INSCRIBED_RUNES)
+                                    && recipe.getResultItem(level.registryAccess())
+                                            .is(ItemRegistry.BLANK_RUNE.get())) {
+                                path = "/img/items/all_runes.gif";
+                            }
+                            recipeData.add(
+                                    new RecipeIngredientData(
+                                            itemResource.toString(),
+                                            itemStack
+                                                    .getItem()
+                                                    .getName(ItemStack.EMPTY)
+                                                    .getString(),
+                                            path,
+                                            recipe.getResultItem(level.registryAccess())
+                                                    .getItem()));
+                        },
+                        () -> {
+                            recipeData.add(RecipeIngredientData.EMPTY);
+                        });
     }
 
-    private static RecipeIngredientData getRecipeDataAtIndex(List<RecipeIngredientData> recipeIngredientData, int index) {
+    private static RecipeIngredientData getRecipeDataAtIndex(
+            List<RecipeIngredientData> recipeIngredientData, int index) {
         if (index < recipeIngredientData.size()) {
             return recipeIngredientData.get(index);
         } else {
@@ -466,7 +716,12 @@ public class GenerateSiteData {
     }
 
     private static List<Item> getVisibleItems() {
-        return BuiltInRegistries.ITEM.stream().filter(item -> CreativeModeTabs.allTabs().stream().anyMatch(tab -> tab.contains(new ItemStack(item)))).toList();
+        return BuiltInRegistries.ITEM.stream()
+                .filter(
+                        item ->
+                                CreativeModeTabs.allTabs().stream()
+                                        .anyMatch(tab -> tab.contains(new ItemStack(item))))
+                .toList();
     }
 
     private record RecipeIngredientData(String id, String name, String path, Item item) {
@@ -479,35 +734,51 @@ public class GenerateSiteData {
 
             SpellRegistry.REGISTRY.get().stream().toList().stream()
                     .filter(st -> (st.isEnabled() && st != SpellRegistry.none()))
-                    .forEach(spellType -> {
-                        var spellMin = spellType.getMinLevel();
-                        var spellMax = spellType.getMaxLevel();
+                    .forEach(
+                            spellType -> {
+                                var spellMin = spellType.getMinLevel();
+                                var spellMax = spellType.getMaxLevel();
 
-                        var uniqueInfo = processUniqueInfo(spellType);
-                        var u1 = uniqueInfo.size() >= 1 ? uniqueInfo.get(0) : "";
-                        var u2 = uniqueInfo.size() >= 2 ? uniqueInfo.get(1) : "";
-                        var u3 = uniqueInfo.size() >= 3 ? uniqueInfo.get(2) : "";
-                        var u4 = uniqueInfo.size() >= 4 ? uniqueInfo.get(3) : "";
+                                var uniqueInfo = processUniqueInfo(spellType);
+                                var u1 = uniqueInfo.size() >= 1 ? uniqueInfo.get(0) : "";
+                                var u2 = uniqueInfo.size() >= 2 ? uniqueInfo.get(1) : "";
+                                var u3 = uniqueInfo.size() >= 3 ? uniqueInfo.get(2) : "";
+                                var u4 = uniqueInfo.size() >= 4 ? uniqueInfo.get(3) : "";
 
-                        sb.append(String.format(SPELL_DATA_TEMPLATE,
-                                handleCapitalization(spellType.getDisplayName(null).getString()),
-                                handleCapitalization(spellType.getSchoolType().getDisplayName().getString()),
-                                String.format("/img/spells/%s.png", spellType.getSpellName()),
-                                spellType.getMinLevel(),
-                                spellType.getMaxLevel(),
-                                spellType.getManaCost(spellMin),
-                                spellType.getManaCost(spellMax),
-                                spellType.getSpellCooldown(),
-                                handleCapitalization(spellType.getCastType().name()),
-                                handleCapitalization(spellType.getRarity(spellMin).name()),
-                                handleCapitalization(spellType.getRarity(spellMax).name()),
-                                Component.translatable(String.format("%s.guide", spellType.getComponentId())).getString(),
-                                u1,
-                                u2,
-                                u3,
-                                u4)
-                        );
-                    });
+                                sb.append(
+                                        String.format(
+                                                SPELL_DATA_TEMPLATE,
+                                                handleCapitalization(
+                                                        spellType.getDisplayName(null).getString()),
+                                                handleCapitalization(
+                                                        spellType
+                                                                .getSchoolType()
+                                                                .getDisplayName()
+                                                                .getString()),
+                                                String.format(
+                                                        "/img/spells/%s.png",
+                                                        spellType.getSpellName()),
+                                                spellType.getMinLevel(),
+                                                spellType.getMaxLevel(),
+                                                spellType.getManaCost(spellMin),
+                                                spellType.getManaCost(spellMax),
+                                                spellType.getSpellCooldown(),
+                                                handleCapitalization(
+                                                        spellType.getCastType().name()),
+                                                handleCapitalization(
+                                                        spellType.getRarity(spellMin).name()),
+                                                handleCapitalization(
+                                                        spellType.getRarity(spellMax).name()),
+                                                Component.translatable(
+                                                                String.format(
+                                                                        "%s.guide",
+                                                                        spellType.getComponentId()))
+                                                        .getString(),
+                                                u1,
+                                                u2,
+                                                u3,
+                                                u4));
+                            });
 
             var file = new BufferedWriter(new FileWriter("spell_data.yml"));
             file.write(sb.toString());
@@ -535,13 +806,15 @@ public class GenerateSiteData {
                 StringBuilder builder = new StringBuilder();
                 for (int j = 0; j < lineMinLevel.length; j++) {
                     if (j == k) {
-                        builder.append(String.format("%s-%s", lineMinLevel[k], lineMaxLevel[k])).append(" ");
+                        builder.append(String.format("%s-%s", lineMinLevel[k], lineMaxLevel[k]))
+                                .append(" ");
                     } else {
                         builder.append(lineMinLevel[j]).append(" ");
                     }
                 }
                 text.add(builder.toString().strip());
-//                text.add(String.format(uniqueInfoMin.get(i).getString().replaceFirst(lineMinLevel[k], "%s"), String.format("%s-%s", lineMinLevel[k], lineMaxLevel[k])));
+                //
+                // text.add(String.format(uniqueInfoMin.get(i).getString().replaceFirst(lineMinLevel[k], "%s"), String.format("%s-%s", lineMinLevel[k], lineMaxLevel[k])));
             } else {
                 text.add(uniqueInfoMin.get(i).getString());
             }
@@ -551,15 +824,16 @@ public class GenerateSiteData {
 
     public static String handleCapitalization(String input) {
         return Arrays.stream(input.toLowerCase().split("[ |_]"))
-                .map(word -> {
-                    if (word.equals("spell")) {
-                        return "";
-                    } else {
-                        var first = word.substring(0, 1);
-                        var rest = word.substring(1);
-                        return first.toUpperCase() + rest;
-                    }
-                })
+                .map(
+                        word -> {
+                            if (word.equals("spell")) {
+                                return "";
+                            } else {
+                                var first = word.substring(0, 1);
+                                var rest = word.substring(1);
+                                return first.toUpperCase() + rest;
+                            }
+                        })
                 .collect(Collectors.joining(" "))
                 .trim();
     }

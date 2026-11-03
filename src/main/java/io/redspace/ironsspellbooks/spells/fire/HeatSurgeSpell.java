@@ -29,23 +29,30 @@ import java.util.List;
 import java.util.Optional;
 
 public class HeatSurgeSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "heat_surge");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "heat_surge");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.rend", Utils.stringTruncation((getRendAmplifier(spellLevel, caster) + 1) * 5, 1)),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 2)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 2))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.rend",
+                        Utils.stringTruncation((getRendAmplifier(spellLevel, caster) + 1) * 5, 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.effect_length",
+                        Utils.timeFromTicks(getDuration(spellLevel, caster), 2)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
-            .setMaxLevel(6)
-            .setCooldownSeconds(45)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.FIRE_RESOURCE)
+                    .setMaxLevel(6)
+                    .setCooldownSeconds(45)
+                    .build();
 
     public HeatSurgeSpell() {
         this.manaCostPerLevel = 10;
@@ -76,20 +83,67 @@ public class HeatSurgeSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float radius = getRadius(spellLevel, entity);
-        //MagicManager.spawnParticles(level, new ShockwaveParticleOptions(SchoolRegistry.FIRE.get().getTargetingColor(), radius, true, "irons_spellbooks:fire"), entity.getX(), entity.getY() + .15f, entity.getZ(), 1, 0, 0, 0, 0, true);
-        MagicManager.spawnParticles(level, new BlastwaveParticleOptions(SchoolRegistry.FIRE.get().getTargetingColor(), radius), entity.getX(), entity.getY() + .165f, entity.getZ(), 1, 0, 0, 0, 0, true);
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new ShockwaveParticlesPacket(new Vec3(entity.getX(), entity.getY() + .165f, entity.getZ()), radius, ParticleRegistry.FIRE_PARTICLE.get()));
-        level.getEntities(entity, entity.getBoundingBox().inflate(radius, 4, radius), (target) -> !DamageSources.isFriendlyFireBetween(target, entity) && Utils.hasLineOfSight(level, entity, target, true)).forEach(target -> {
-            if (target instanceof LivingEntity livingEntity && livingEntity.distanceToSqr(entity) < radius * radius) {
-                int i = getDuration(spellLevel, entity);
-                livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.REND.get(), i, getRendAmplifier(spellLevel, entity)));
-                //livingEntity.setSecondsOnFire(i / 20);
-                livingEntity.setRemainingFireTicks(Math.min(i / 2, 160));
-                MagicManager.spawnParticles(level, ParticleHelper.EMBERS, livingEntity.getX(), livingEntity.getY() + livingEntity.getBbHeight() * .5f, livingEntity.getZ(), 50, livingEntity.getBbWidth() * .5f, livingEntity.getBbHeight() * .5f, livingEntity.getBbWidth() * .5f, .03, false);
-            }
-        });
+        // MagicManager.spawnParticles(level, new
+        // ShockwaveParticleOptions(SchoolRegistry.FIRE.get().getTargetingColor(), radius, true,
+        // "irons_spellbooks:fire"), entity.getX(), entity.getY() + .15f, entity.getZ(), 1, 0, 0, 0,
+        // 0, true);
+        MagicManager.spawnParticles(
+                level,
+                new BlastwaveParticleOptions(SchoolRegistry.FIRE.get().getTargetingColor(), radius),
+                entity.getX(),
+                entity.getY() + .165f,
+                entity.getZ(),
+                1,
+                0,
+                0,
+                0,
+                0,
+                true);
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                entity,
+                new ShockwaveParticlesPacket(
+                        new Vec3(entity.getX(), entity.getY() + .165f, entity.getZ()),
+                        radius,
+                        ParticleRegistry.FIRE_PARTICLE.get()));
+        level.getEntities(
+                        entity,
+                        entity.getBoundingBox().inflate(radius, 4, radius),
+                        (target) ->
+                                !DamageSources.isFriendlyFireBetween(target, entity)
+                                        && Utils.hasLineOfSight(level, entity, target, true))
+                .forEach(
+                        target -> {
+                            if (target instanceof LivingEntity livingEntity
+                                    && livingEntity.distanceToSqr(entity) < radius * radius) {
+                                int i = getDuration(spellLevel, entity);
+                                livingEntity.addEffect(
+                                        new MobEffectInstance(
+                                                MobEffectRegistry.REND.get(),
+                                                i,
+                                                getRendAmplifier(spellLevel, entity)));
+                                // livingEntity.setSecondsOnFire(i / 20);
+                                livingEntity.setRemainingFireTicks(Math.min(i / 2, 160));
+                                MagicManager.spawnParticles(
+                                        level,
+                                        ParticleHelper.EMBERS,
+                                        livingEntity.getX(),
+                                        livingEntity.getY() + livingEntity.getBbHeight() * .5f,
+                                        livingEntity.getZ(),
+                                        50,
+                                        livingEntity.getBbWidth() * .5f,
+                                        livingEntity.getBbHeight() * .5f,
+                                        livingEntity.getBbWidth() * .5f,
+                                        .03,
+                                        false);
+                            }
+                        });
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
@@ -106,7 +160,12 @@ public class HeatSurgeSpell extends AbstractSpell {
     }
 
     @Override
-    public void onServerCastComplete(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData, boolean cancelled) {
+    public void onServerCastComplete(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            MagicData playerMagicData,
+            boolean cancelled) {
         super.onServerCastComplete(level, spellLevel, entity, playerMagicData, cancelled);
     }
 

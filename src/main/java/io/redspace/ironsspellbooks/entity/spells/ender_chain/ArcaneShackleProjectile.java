@@ -76,15 +76,23 @@ public class ArcaneShackleProjectile extends AbstractMagicProjectile {
         double z = getZ() - motion.z * 0.5;
         for (int i = 0; i < 3; i++) {
             Vec3 jitter = Utils.getRandomVec3(0.04f);
-            level().addParticle(ParticleHelper.UNSTABLE_ENDER, x + jitter.x, y + jitter.y, z + jitter.z, jitter.x, jitter.y, jitter.z);
+            level().addParticle(
+                            ParticleHelper.UNSTABLE_ENDER,
+                            x + jitter.x,
+                            y + jitter.y,
+                            z + jitter.z,
+                            jitter.x,
+                            jitter.y,
+                            jitter.z);
         }
     }
 
     @Override
     public void impactParticles(double x, double y, double z) {
-        MagicManager.spawnParticles(level(), ParticleHelper.UNSTABLE_ENDER, x, y + .1, z, 35, .2, .2, .2, .5, false);
-        MagicManager.spawnParticles(level(), ParticleHelper.ENDER_SPARKS, x, y + .1, z, 25, .2, .2, .2, .2, false);
-
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.UNSTABLE_ENDER, x, y + .1, z, 35, .2, .2, .2, .5, false);
+        MagicManager.spawnParticles(
+                level(), ParticleHelper.ENDER_SPARKS, x, y + .1, z, 25, .2, .2, .2, .2, false);
     }
 
     @Override
@@ -99,7 +107,8 @@ public class ArcaneShackleProjectile extends AbstractMagicProjectile {
         LivingEntity victim;
         if (entity instanceof LivingEntity livingEntity) {
             victim = livingEntity;
-        } else if (entity instanceof PartEntity<?> partEntity && partEntity.getParent() instanceof LivingEntity livingEntity) {
+        } else if (entity instanceof PartEntity<?> partEntity
+                && partEntity.getParent() instanceof LivingEntity livingEntity) {
             victim = livingEntity;
         } else {
             victim = null;
@@ -121,7 +130,7 @@ public class ArcaneShackleProjectile extends AbstractMagicProjectile {
     }
 
     private void spawnChainsOnEntity(LivingEntity victim) {
-//        Vec3 forward = victim.getForward().yRot(60 * Mth.DEG_TO_RAD);
+        //        Vec3 forward = victim.getForward().yRot(60 * Mth.DEG_TO_RAD);
         Vec3 origin = victim.getBoundingBox().getCenter();
 
         float theta = Mth.TWO_PI / CHAIN_COUNT;
@@ -129,10 +138,13 @@ public class ArcaneShackleProjectile extends AbstractMagicProjectile {
             float angle = theta * i + Mth.TWO_PI / 4 - getYRot() * Mth.DEG_TO_RAD;
             float radius = lashRadius * 0.5f + victim.getBbWidth() * .4f;
             Vec3 direction = new Vec3(Mth.cos(angle) * radius, 0, Mth.sin(angle) * radius);
-            Vec3 worldPos = Utils.moveToRelativeGroundLevel(victim.level(), origin.add(direction), 2);
+            Vec3 worldPos =
+                    Utils.moveToRelativeGroundLevel(victim.level(), origin.add(direction), 2);
             if (level().noCollision(AABB.ofSize(worldPos, 0.5, 0.5, 0.5))) {
                 Vec3 random = Utils.getRandomVec3(2);
-                random = random.subtract(direction.scale(direction.normalize().dot(random.normalize())));
+                random =
+                        random.subtract(
+                                direction.scale(direction.normalize().dot(random.normalize())));
                 worldPos = origin.add(direction).add(random);
             }
             spawnChain(victim, worldPos);
@@ -143,8 +155,23 @@ public class ArcaneShackleProjectile extends AbstractMagicProjectile {
         // reduced radius on block hit
         float effectiveRadius = lashRadius;
         AABB searchBox = new AABB(impactPos, impactPos).inflate(lashRadius);
-        List<LivingEntity> entities = level().getEntitiesOfClass(LivingEntity.class, searchBox, entity ->
-                (this.canHitEntity(entity) || (entity instanceof io.github.fabricators_of_create.porting_lib.entity.MultiPartEntity multipart && multipart.isMultipartEntity())) && distanceToSqr(entity) < effectiveRadius * effectiveRadius);
+        List<LivingEntity> entities =
+                level().getEntitiesOfClass(
+                                LivingEntity.class,
+                                searchBox,
+                                entity ->
+                                        (this.canHitEntity(entity)
+                                                        || (entity
+                                                                        instanceof
+                                                                        io.github
+                                                                                        .fabricators_of_create
+                                                                                        .porting_lib
+                                                                                        .entity
+                                                                                        .MultiPartEntity
+                                                                                multipart
+                                                                && multipart.isMultipartEntity()))
+                                                && distanceToSqr(entity)
+                                                        < effectiveRadius * effectiveRadius);
         entities.sort(Comparator.comparingDouble(e -> e.distanceToSqr(impactPos)));
 
         int count = Math.min(CHAIN_COUNT, entities.size());
@@ -154,7 +181,10 @@ public class ArcaneShackleProjectile extends AbstractMagicProjectile {
     }
 
     private void spawnChain(LivingEntity victim, Vec3 anchor) {
-        anchor = Utils.raycastForBlock(victim.level(), this.position(), anchor, ClipContext.Fluid.ANY).getLocation();
+        anchor =
+                Utils.raycastForBlock(
+                                victim.level(), this.position(), anchor, ClipContext.Fluid.ANY)
+                        .getLocation();
         EnderChain chain = new EnderChain(level(), getOwner(), victim, anchor);
         chain.setHealth(chainHealth);
         chain.setLifetime(chainLifetime);

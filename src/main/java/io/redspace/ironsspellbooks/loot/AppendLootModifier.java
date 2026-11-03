@@ -15,9 +15,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 public class AppendLootModifier extends LootModifier {
-    public static final Supplier<Codec<AppendLootModifier>> CODEC = Suppliers.memoize(()
-            -> RecordCodecBuilder.create(inst -> codecStart(inst).and(Codec.STRING
-            .fieldOf("key").forGetter(m -> m.resourceLocationKey)).apply(inst, AppendLootModifier::new)));
+    public static final Supplier<Codec<AppendLootModifier>> CODEC =
+            Suppliers.memoize(
+                    () ->
+                            RecordCodecBuilder.create(
+                                    inst ->
+                                            codecStart(inst)
+                                                    .and(
+                                                            Codec.STRING
+                                                                    .fieldOf("key")
+                                                                    .forGetter(
+                                                                            m ->
+                                                                                    m.resourceLocationKey))
+                                                    .apply(inst, AppendLootModifier::new)));
     private final String resourceLocationKey;
 
     protected AppendLootModifier(LootItemCondition[] conditionsIn, String resourceLocationKey) {
@@ -26,13 +36,14 @@ public class AppendLootModifier extends LootModifier {
     }
 
     @Override
-    protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+    protected @NotNull ObjectArrayList<ItemStack> doApply(
+            ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         ResourceLocation path = new ResourceLocation(resourceLocationKey);
         var lootTable = context.getLevel().getServer().getLootData().getLootTable(path);
         ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
         lootTable.getRandomItemsRaw(context, objectarraylist::add);
 
-        //generatedLoot.addAll(lootTable.getRandomItems(context));
+        // generatedLoot.addAll(lootTable.getRandomItems(context));
         generatedLoot.addAll(objectarraylist);
         return generatedLoot;
     }

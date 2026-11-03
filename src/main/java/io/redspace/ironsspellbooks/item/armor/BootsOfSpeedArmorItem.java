@@ -16,5 +16,4 @@ public class BootsOfSpeedArmorItem extends ImbuableChestplateArmorItem {
     public GeoArmorRenderer<?> supplyRenderer() {
         return new GenericCustomArmorRenderer<>(new BootsOfSpeedArmorModel());
     }
-
 }

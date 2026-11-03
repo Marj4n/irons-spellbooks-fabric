@@ -18,19 +18,36 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 public class SmallMagicArrowRenderer extends EntityRenderer<SmallMagicArrow> {
-    private static final ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/small_magic_arrow.png");
+    private static final ResourceLocation TEXTURE =
+            IronsSpellbooks.id("textures/entity/small_magic_arrow.png");
 
     public SmallMagicArrowRenderer(Context context) {
         super(context);
     }
 
     @Override
-    public void render(SmallMagicArrow entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            SmallMagicArrow entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
 
-        Vec3 motion = entity.deltaMovementOld.add(entity.getDeltaMovement().subtract(entity.deltaMovementOld).scale(partialTicks));
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        Vec3 motion =
+                entity.deltaMovementOld.add(
+                        entity.getDeltaMovement()
+                                .subtract(entity.deltaMovementOld)
+                                .scale(partialTicks));
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.mulPose(Axis.XP.rotationDegrees(xRot));
 
@@ -53,21 +70,89 @@ public class SmallMagicArrowRenderer extends EntityRenderer<SmallMagicArrow> {
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
 
-        VertexConsumer consumer = bufferSource.getBuffer(RenderHelper.CustomerRenderType.magic(getTextureLocation()));
+        VertexConsumer consumer =
+                bufferSource.getBuffer(RenderHelper.CustomerRenderType.magic(getTextureLocation()));
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         poseStack.translate(-2, 0, 0);
 
         for (int j = 0; j < 4; ++j) {
             poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-            vertex(poseMatrix, normalMatrix, consumer, -8, -2, 0, 0.0F, 0.0F, 0, 1, 0, LightTexture.FULL_BRIGHT);
-            vertex(poseMatrix, normalMatrix, consumer, 8, -2, 0, 0.5F, 0.0F, 0, 1, 0, LightTexture.FULL_BRIGHT);
-            vertex(poseMatrix, normalMatrix, consumer, 8, 2, 0, 0.5F, 0.15625F, 0, 1, 0, LightTexture.FULL_BRIGHT);
-            vertex(poseMatrix, normalMatrix, consumer, -8, 2, 0, 0.0F, 0.15625F, 0, 1, 0, LightTexture.FULL_BRIGHT);
+            vertex(
+                    poseMatrix,
+                    normalMatrix,
+                    consumer,
+                    -8,
+                    -2,
+                    0,
+                    0.0F,
+                    0.0F,
+                    0,
+                    1,
+                    0,
+                    LightTexture.FULL_BRIGHT);
+            vertex(
+                    poseMatrix,
+                    normalMatrix,
+                    consumer,
+                    8,
+                    -2,
+                    0,
+                    0.5F,
+                    0.0F,
+                    0,
+                    1,
+                    0,
+                    LightTexture.FULL_BRIGHT);
+            vertex(
+                    poseMatrix,
+                    normalMatrix,
+                    consumer,
+                    8,
+                    2,
+                    0,
+                    0.5F,
+                    0.15625F,
+                    0,
+                    1,
+                    0,
+                    LightTexture.FULL_BRIGHT);
+            vertex(
+                    poseMatrix,
+                    normalMatrix,
+                    consumer,
+                    -8,
+                    2,
+                    0,
+                    0.0F,
+                    0.15625F,
+                    0,
+                    1,
+                    0,
+                    LightTexture.FULL_BRIGHT);
         }
     }
 
-    public static void vertex(Matrix4f pMatrix, Matrix3f pNormals, VertexConsumer pVertexBuilder, int pOffsetX, int pOffsetY, int pOffsetZ, float pTextureX, float pTextureY, int pNormalX, int p_113835_, int p_113836_, int pPackedLight) {
-        pVertexBuilder.vertex(pMatrix, (float) pOffsetX, (float) pOffsetY, (float) pOffsetZ).color(255, 255, 255, 255).uv(pTextureX, pTextureY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(pPackedLight).normal((float) pNormalX, (float) p_113836_, (float) p_113835_).endVertex();
+    public static void vertex(
+            Matrix4f pMatrix,
+            Matrix3f pNormals,
+            VertexConsumer pVertexBuilder,
+            int pOffsetX,
+            int pOffsetY,
+            int pOffsetZ,
+            float pTextureX,
+            float pTextureY,
+            int pNormalX,
+            int p_113835_,
+            int p_113836_,
+            int pPackedLight) {
+        pVertexBuilder
+                .vertex(pMatrix, (float) pOffsetX, (float) pOffsetY, (float) pOffsetZ)
+                .color(255, 255, 255, 255)
+                .uv(pTextureX, pTextureY)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(pPackedLight)
+                .normal((float) pNormalX, (float) p_113836_, (float) p_113835_)
+                .endVertex();
     }
 
     @Override
@@ -78,5 +163,4 @@ public class SmallMagicArrowRenderer extends EntityRenderer<SmallMagicArrow> {
     public static ResourceLocation getTextureLocation() {
         return TEXTURE;
     }
-
 }

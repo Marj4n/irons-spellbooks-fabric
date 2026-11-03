@@ -33,22 +33,27 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class FrostStepSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "frost_step");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "frost_step");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.shatter_damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.distance",
+                        Utils.stringTruncation(getDistance(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.shatter_damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(12)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(12)
+                    .build();
 
     public FrostStepSpell() {
         this.baseSpellPower = 4;
@@ -84,7 +89,12 @@ public class FrostStepSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         var teleportData = (TeleportSpell.TeleportData) playerMagicData.getAdditionalCastData();
 
         FrozenHumanoid shadow = new FrozenHumanoid(level, entity);
@@ -92,8 +102,13 @@ public class FrostStepSpell extends AbstractSpell {
         shadow.setDeathTimer(100);
         level.addFreshEntity(shadow);
         var tauntTarget = entity.getLastHurtByMob();
-        Predicate<Entity> predicate = tauntTarget == null ? (mob -> entity instanceof Enemy ^ mob instanceof Enemy)
-                : (mob -> mob.getClass().isAssignableFrom(tauntTarget.getClass()) || mob.isAlliedTo(tauntTarget) || entity instanceof Enemy ^ mob instanceof Enemy);
+        Predicate<Entity> predicate =
+                tauntTarget == null
+                        ? (mob -> entity instanceof Enemy ^ mob instanceof Enemy)
+                        : (mob ->
+                                mob.getClass().isAssignableFrom(tauntTarget.getClass())
+                                        || mob.isAlliedTo(tauntTarget)
+                                        || entity instanceof Enemy ^ mob instanceof Enemy);
         Utils.performTaunt(shadow, 10, predicate);
         Vec3 dest = null;
         if (teleportData != null) {
@@ -105,14 +120,23 @@ public class FrostStepSpell extends AbstractSpell {
             dest = findTeleportLocation(spellLevel, level, entity);
         }
 
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new FrostStepParticlesPacket(entity.position(), dest));
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                entity, new FrostStepParticlesPacket(entity.position(), dest));
 
         if (entity.isPassenger()) {
             entity.stopRiding();
         }
         Utils.handleSpellTeleport(this, entity, dest);
         entity.resetFallDistance();
-        level.playSound(null, dest.x, dest.y, dest.z, getCastFinishSound().get(), SoundSource.NEUTRAL, 1f, 1f);
+        level.playSound(
+                null,
+                dest.x,
+                dest.y,
+                dest.z,
+                getCastFinishSound().get(),
+                SoundSource.NEUTRAL,
+                1f,
+                1f);
 
         playerMagicData.resetAdditionalCastData();
 
@@ -129,7 +153,11 @@ public class FrostStepSpell extends AbstractSpell {
             float height = 1;
             for (int i = 0; i < 25; i++) {
                 double x = pos.x + Utils.random.nextDouble() * width * 2 - width;
-                double y = pos.y + height + Utils.random.nextDouble() * height * 1.2 * 2 - height * 1.2;
+                double y =
+                        pos.y
+                                + height
+                                + Utils.random.nextDouble() * height * 1.2 * 2
+                                - height * 1.2;
                 double z = pos.z + Utils.random.nextDouble() * width * 2 - width;
                 double dx = Utils.random.nextDouble() * .1 * (Utils.random.nextBoolean() ? 1 : -1);
                 double dy = Utils.random.nextDouble() * .1 * (Utils.random.nextBoolean() ? 1 : -1);
@@ -141,7 +169,8 @@ public class FrostStepSpell extends AbstractSpell {
     }
 
     private float getDistance(int spellLevel, LivingEntity sourceEntity) {
-        // mimic other teleport's spell power scaling, but reduced by 50% to make up for extra levels.
+        // mimic other teleport's spell power scaling, but reduced by 50% to make up for extra
+        // levels.
         return (8 + (spellLevel - 1) * 0.5f) * getEntityPowerMultiplier(sourceEntity);
     }
 

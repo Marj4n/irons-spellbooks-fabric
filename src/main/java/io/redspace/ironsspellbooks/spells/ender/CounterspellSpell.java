@@ -29,7 +29,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class CounterspellSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "counterspell");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "counterspell");
 
     public CounterspellSpell() {
         this.manaCostPerLevel = 1;
@@ -39,12 +40,13 @@ public class CounterspellSpell extends AbstractSpell {
         this.baseManaCost = 50;
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(1)
-            .setCooldownSeconds(10)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(1)
+                    .setCooldownSeconds(10)
+                    .build();
 
     @Override
     public CastType getCastType() {
@@ -62,20 +64,27 @@ public class CounterspellSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 start = entity.getEyePosition();
         Vec3 end = start.add(entity.getForward().normalize().scale(80));
-        HitResult hitResult = RaycastBuilder.begin(entity.level(), entity)
-                .start(start)
-                .end(end)
-                .checkForBlocks(true)
-                .bbInflation(0.35f)
-                .filter(Utils::validAntiMagicTarget)
-                .build();
+        HitResult hitResult =
+                RaycastBuilder.begin(entity.level(), entity)
+                        .start(start)
+                        .end(end)
+                        .checkForBlocks(true)
+                        .bbInflation(0.35f)
+                        .filter(Utils::validAntiMagicTarget)
+                        .build();
         Vec3 forward = entity.getForward().normalize();
         if (hitResult instanceof EntityHitResult entityHitResult) {
             var hitEntity = entityHitResult.getEntity();
-            if (!(org.marj4n.irons_spellbooks.events.SpellEvents.post(new CounterSpellEvent(entity, hitEntity)))) {
+            if (!(org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                    new CounterSpellEvent(entity, hitEntity)))) {
                 if (hitEntity instanceof AntiMagicSusceptible antiMagicSusceptible) {
                     if (antiMagicSusceptible instanceof IMagicSummon summon) {
                         if (summon.getSummoner() == entity) {
@@ -90,13 +99,16 @@ public class CounterspellSpell extends AbstractSpell {
                     }
                 } else if (hitEntity instanceof ServerPlayer serverPlayer) {
                     Utils.serverSideCancelCast(serverPlayer, true);
-                    MagicData.getPlayerMagicData(serverPlayer).getPlayerRecasts().removeAll(RecastResult.COUNTERSPELL);
+                    MagicData.getPlayerMagicData(serverPlayer)
+                            .getPlayerRecasts()
+                            .removeAll(RecastResult.COUNTERSPELL);
                 } else if (hitEntity instanceof IMagicEntity abstractSpellCastingMob) {
                     abstractSpellCastingMob.cancelCast();
                 }
                 if (hitEntity instanceof LivingEntity livingEntity) {
-                    //toList to avoid concurrent modification
-                    for (MobEffect mobEffect : livingEntity.getActiveEffectsMap().keySet().stream().toList()) {
+                    // toList to avoid concurrent modification
+                    for (MobEffect mobEffect :
+                            livingEntity.getActiveEffectsMap().keySet().stream().toList()) {
                         if (mobEffect instanceof MagicMobEffect) {
                             livingEntity.removeEffect(mobEffect);
                         }
@@ -107,7 +119,8 @@ public class CounterspellSpell extends AbstractSpell {
         double distance = entity.position().distanceTo(hitResult.getLocation());
         for (float i = 1; i < distance; i += .5f) {
             Vec3 pos = entity.getEyePosition().add(forward.scale(i));
-            MagicManager.spawnParticles(world, ParticleTypes.ENCHANT, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0, false);
+            MagicManager.spawnParticles(
+                    world, ParticleTypes.ENCHANT, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0, false);
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }

@@ -32,13 +32,14 @@ public class SummonedEntitiesCastData implements ICastDataSerializable {
     public void handleRemove(UUID uuid, MagicData ownerData, RecastInstance recastInstance) {
         summons.remove(uuid);
         if (summons.isEmpty()) {
-            ownerData.getPlayerRecasts().removeRecast(recastInstance, RecastResult.USED_ALL_RECASTS);
+            ownerData
+                    .getPlayerRecasts()
+                    .removeRecast(recastInstance, RecastResult.USED_ALL_RECASTS);
         }
     }
 
     @Override
-    public void reset() {
-    }
+    public void reset() {}
 
     public float getMaxHealthPool() {
         return maxHealthPool;

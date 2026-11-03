@@ -22,14 +22,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LecternRenderer.class)
 public class LecternRendererMixin {
-    @Shadow
-    BookModel bookModel;
+    @Shadow BookModel bookModel;
 
     @Inject(
-            method = "render(Lnet/minecraft/world/level/block/entity/LecternBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
+            method =
+                    "render(Lnet/minecraft/world/level/block/entity/LecternBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
             at = @At(value = "HEAD"),
             cancellable = true)
-    private void render(LecternBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay, CallbackInfo ci) {
+    private void render(
+            LecternBlockEntity pBlockEntity,
+            float pPartialTick,
+            PoseStack pPoseStack,
+            MultiBufferSource pBufferSource,
+            int pPackedLight,
+            int pPackedOverlay,
+            CallbackInfo ci) {
         BlockState blockstate = pBlockEntity.getBlockState();
         if (blockstate.getValue(LecternBlock.HAS_BOOK)) {
             var stack = pBlockEntity.getBook();
@@ -43,16 +50,36 @@ public class LecternRendererMixin {
                 if (textureOverride.isPresent()) {
                     pPoseStack.translate(0.0F, -0.125F, 0.0F);
                     this.bookModel.setupAnim(0.0F, 0.1F, 0.9F, 1.2F);
-                    var vertexconsumer = pBufferSource.getBuffer(RenderType.entitySolid(textureOverride.get()));
-                    this.bookModel.render(pPoseStack, vertexconsumer, pPackedLight, pPackedOverlay, 1f, 1f, 1f, 1f);
-                } else if (stack.getItem() instanceof SpellBook spellBook || stack.is(ItemRegistry.THE_CHRONICLE.get())/*todo: item tag for "3d lecterns"*/) {
+                    var vertexconsumer =
+                            pBufferSource.getBuffer(RenderType.entitySolid(textureOverride.get()));
+                    this.bookModel.render(
+                            pPoseStack,
+                            vertexconsumer,
+                            pPackedLight,
+                            pPackedOverlay,
+                            1f,
+                            1f,
+                            1f,
+                            1f);
+                } else if (stack.getItem() instanceof SpellBook spellBook
+                        || stack.is(
+                                ItemRegistry.THE_CHRONICLE
+                                        .get()) /*todo: item tag for "3d lecterns"*/) {
                     pPoseStack.mulPose(Axis.XP.rotationDegrees(-90f));
                     pPoseStack.mulPose(Axis.ZP.rotationDegrees(90f));
                     pPoseStack.mulPose(Axis.YP.rotationDegrees(180f));
                     pPoseStack.translate(0.125F, -0.625F, 0.125F);
                     lecternPlaceable.handleCustomLecternPosing(pPoseStack);
                     var itemRenderer = Minecraft.getInstance().getItemRenderer();
-                    itemRenderer.renderStatic(stack, ItemDisplayContext.HEAD, pPackedLight, pPackedOverlay, pPoseStack, pBufferSource, null, 0);
+                    itemRenderer.renderStatic(
+                            stack,
+                            ItemDisplayContext.HEAD,
+                            pPackedLight,
+                            pPackedOverlay,
+                            pPoseStack,
+                            pBufferSource,
+                            null,
+                            0);
                 }
                 pPoseStack.popPose();
                 ci.cancel();

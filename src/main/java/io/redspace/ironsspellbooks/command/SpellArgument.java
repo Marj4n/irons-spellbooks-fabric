@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class SpellArgument implements ArgumentType<String> {
-    private static final List<String> EXAMPLES = Arrays.asList("angel_wings", "electrocute", "spell_addon_mod:spell_name");
+    private static final List<String> EXAMPLES =
+            Arrays.asList("angel_wings", "electrocute", "spell_addon_mod:spell_name");
 
     public static SpellArgument spellArgument() {
         return new SpellArgument();
@@ -35,24 +36,34 @@ public class SpellArgument implements ArgumentType<String> {
     }
 
     @Override
-    public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
-        var registeredSpells = SpellRegistry.REGISTRY.get().entrySet().stream().map(entry -> {
-            if (entry.getKey().location().getNamespace().equals(IronsSpellbooks.MODID)) {
-                return entry.getKey().location().getPath();
-            } else {
-                return entry.getKey().location().toString();
-            }
-        }).sorted((s1, s2) -> {
-            if (s1.contains(":") && s2.contains(":")) {
-                return s1.compareTo(s2);
-            } else if (s1.contains(":")) {
-                return 1;
-            } else if (s2.contains(":")) {
-                return -1;
-            } else {
-                return s1.compareTo(s2);
-            }
-        }).toList();
+    public <S> CompletableFuture<Suggestions> listSuggestions(
+            final CommandContext<S> context, final SuggestionsBuilder builder) {
+        var registeredSpells =
+                SpellRegistry.REGISTRY.get().entrySet().stream()
+                        .map(
+                                entry -> {
+                                    if (entry.getKey()
+                                            .location()
+                                            .getNamespace()
+                                            .equals(IronsSpellbooks.MODID)) {
+                                        return entry.getKey().location().getPath();
+                                    } else {
+                                        return entry.getKey().location().toString();
+                                    }
+                                })
+                        .sorted(
+                                (s1, s2) -> {
+                                    if (s1.contains(":") && s2.contains(":")) {
+                                        return s1.compareTo(s2);
+                                    } else if (s1.contains(":")) {
+                                        return 1;
+                                    } else if (s2.contains(":")) {
+                                        return -1;
+                                    } else {
+                                        return s1.compareTo(s2);
+                                    }
+                                })
+                        .toList();
 
         return SharedSuggestionProvider.suggest(registeredSpells, builder);
     }

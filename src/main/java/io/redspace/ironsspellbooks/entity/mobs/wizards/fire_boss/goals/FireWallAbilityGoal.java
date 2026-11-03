@@ -48,7 +48,10 @@ public class FireWallAbilityGoal extends AnimatedActionGoal<FireBossEntity> {
     protected void doAction() {
         var target = mob.getTarget();
         if (target != null) {
-            mob.playSound(SoundRegistry.FIRE_CAST.get(), 2f, Utils.random.nextIntBetweenInclusive(80, 110) * .01f);
+            mob.playSound(
+                    SoundRegistry.FIRE_CAST.get(),
+                    2f,
+                    Utils.random.nextIntBetweenInclusive(80, 110) * .01f);
 
             Vec3 pos = target.position();
             float range = 5;
@@ -57,9 +60,16 @@ public class FireWallAbilityGoal extends AnimatedActionGoal<FireBossEntity> {
             int count = 8;
             for (int i = 0; i < count; i++) {
                 float rot = Mth.lerp(i / (float) count - 1, -Mth.PI, Mth.PI);
-                anchors.add(Utils.moveToRelativeGroundLevel(mob.level(), pos.add(pointer.yRot(rot)), 8));
+                anchors.add(
+                        Utils.moveToRelativeGroundLevel(
+                                mob.level(), pos.add(pointer.yRot(rot)), 8));
             }
-            WallOfFireEntity wallOfFire = new WallOfFireEntity(mob.level(), mob, anchors, (float) mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
+            WallOfFireEntity wallOfFire =
+                    new WallOfFireEntity(
+                            mob.level(),
+                            mob,
+                            anchors,
+                            (float) mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
             wallOfFire.setPos(pos);
             mob.level().addFreshEntity(wallOfFire);
         }

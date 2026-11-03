@@ -49,22 +49,72 @@ public class EchoingStrikeEntity extends AoeEntity {
         if (toTrack != null && tickCount < waitTime / 2) {
             this.setPos(toTrack.position());
         } else if (tickCount == waitTime) {
-            this.playSound(SoundRegistry.ECHOING_STRIKE.get(), 1, Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
+            this.playSound(
+                    SoundRegistry.ECHOING_STRIKE.get(),
+                    1,
+                    Utils.random.nextIntBetweenInclusive(8, 12) * .1f);
             if (!level().isClientSide) {
                 var center = this.getBoundingBox().getCenter();
-                MagicManager.spawnParticles(level(), ParticleHelper.UNSTABLE_ENDER, center.x, center.y, center.z, 25, 0, 0, 0, .18, false);
-                MagicManager.spawnParticles(level(), new BlastwaveParticleOptions(SpellRegistry.ECHOING_STRIKES_SPELL.get().getSchoolType().getTargetingColor(), this.getRadius() * .9f), center.x, center.y, center.z, 1, 0, 0, 0, 0, true);
+                MagicManager.spawnParticles(
+                        level(),
+                        ParticleHelper.UNSTABLE_ENDER,
+                        center.x,
+                        center.y,
+                        center.z,
+                        25,
+                        0,
+                        0,
+                        0,
+                        .18,
+                        false);
+                MagicManager.spawnParticles(
+                        level(),
+                        new BlastwaveParticleOptions(
+                                SpellRegistry.ECHOING_STRIKES_SPELL
+                                        .get()
+                                        .getSchoolType()
+                                        .getTargetingColor(),
+                                this.getRadius() * .9f),
+                        center.x,
+                        center.y,
+                        center.z,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        true);
                 float explosionRadius = getRadius();
                 var explosionRadiusSqr = explosionRadius * explosionRadius;
-                var entities = level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+                var entities =
+                        level().getEntities(this, this.getBoundingBox().inflate(explosionRadius));
                 var losCenter = Utils.moveToRelativeGroundLevel(level(), center, 2);
-                losCenter = Utils.raycastForBlock(level(), losCenter, losCenter.add(0, 3, 0), ClipContext.Fluid.NONE).getLocation().add(losCenter).scale(.5f);
+                losCenter =
+                        Utils.raycastForBlock(
+                                        level(),
+                                        losCenter,
+                                        losCenter.add(0, 3, 0),
+                                        ClipContext.Fluid.NONE)
+                                .getLocation()
+                                .add(losCenter)
+                                .scale(.5f);
                 for (Entity entity : entities) {
                     double distanceSqr = entity.distanceToSqr(center);
-                    if (distanceSqr < explosionRadiusSqr && canHitEntity(entity) && Utils.hasLineOfSight(level(), losCenter, entity.getBoundingBox().getCenter(), true)) {
+                    if (distanceSqr < explosionRadiusSqr
+                            && canHitEntity(entity)
+                            && Utils.hasLineOfSight(
+                                    level(),
+                                    losCenter,
+                                    entity.getBoundingBox().getCenter(),
+                                    true)) {
                         double p = Mth.clamp((1 - distanceSqr / explosionRadiusSqr) + .4f, 0, 1);
                         float damage = (float) (this.damage * p);
-                        DamageSources.applyDamage(entity, damage, SpellRegistry.ECHOING_STRIKES_SPELL.get().getDamageSource(this, getOwner()));
+                        DamageSources.applyDamage(
+                                entity,
+                                damage,
+                                SpellRegistry.ECHOING_STRIKES_SPELL
+                                        .get()
+                                        .getDamageSource(this, getOwner()));
                     }
                 }
             }
@@ -75,9 +125,20 @@ public class EchoingStrikeEntity extends AoeEntity {
             Vec3 position = this.getBoundingBox().getCenter();
             for (int i = 0; i < 3; i++) {
                 Vec3 vec3 = Utils.getRandomVec3(1f);
-                vec3 = vec3.multiply(vec3).multiply(Mth.sign(vec3.x), Mth.sign(vec3.y), Mth.sign(vec3.z)).scale(this.getRadius()).add(position);
+                vec3 =
+                        vec3.multiply(vec3)
+                                .multiply(Mth.sign(vec3.x), Mth.sign(vec3.y), Mth.sign(vec3.z))
+                                .scale(this.getRadius())
+                                .add(position);
                 Vec3 motion = position.subtract(vec3).scale(.125f);
-                level().addParticle(ParticleHelper.UNSTABLE_ENDER, vec3.x, vec3.y - .5, vec3.z, motion.x, motion.y, motion.z);
+                level().addParticle(
+                                ParticleHelper.UNSTABLE_ENDER,
+                                vec3.x,
+                                vec3.y - .5,
+                                vec3.z,
+                                motion.x,
+                                motion.y,
+                                motion.z);
             }
         }
     }
@@ -106,6 +167,4 @@ public class EchoingStrikeEntity extends AoeEntity {
     public Optional<ParticleOptions> getParticle() {
         return Optional.empty();
     }
-
-
 }

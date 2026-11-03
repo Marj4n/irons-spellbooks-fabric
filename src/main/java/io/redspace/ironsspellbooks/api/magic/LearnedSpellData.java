@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.HashSet;
 import java.util.Set;
 
-//TODO: refactor learned spell data to use INBTSerializable instead of this custom deal
+// TODO: refactor learned spell data to use INBTSerializable instead of this custom deal
 public class LearnedSpellData implements ISerializable {
     public static final String LEARNED_SPELLS = "learnedSpells";
 
@@ -33,7 +33,8 @@ public class LearnedSpellData implements ISerializable {
         if (learnedTag != null && !learnedTag.isEmpty()) {
             for (Tag tag : learnedTag) {
                 if (tag instanceof StringTag stringTag) {
-                    ResourceLocation resourceLocation = new ResourceLocation(stringTag.getAsString());
+                    ResourceLocation resourceLocation =
+                            new ResourceLocation(stringTag.getAsString());
                     if (SpellRegistry.getSpell(resourceLocation) != null) {
                         learnedSpells.add(resourceLocation);
                     }

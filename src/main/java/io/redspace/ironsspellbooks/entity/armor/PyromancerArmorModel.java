@@ -9,7 +9,6 @@ public class PyromancerArmorModel extends GeoModel<PyromancerArmorItem> {
 
     public PyromancerArmorModel() {
         super();
-
     }
 
     @Override
@@ -24,12 +23,13 @@ public class PyromancerArmorModel extends GeoModel<PyromancerArmorItem> {
 
     @Override
     public ResourceLocation getAnimationResource(PyromancerArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
-//    public static String listOfBonesToString(List<IBone> list){
-//        String s = "";
-//        for (IBone o:list)
-//            s += o.getName()+", ";
-//        return s;
-//    }
+    //    public static String listOfBonesToString(List<IBone> list){
+    //        String s = "";
+    //        for (IBone o:list)
+    //            s += o.getName()+", ";
+    //        return s;
+    //    }
 }

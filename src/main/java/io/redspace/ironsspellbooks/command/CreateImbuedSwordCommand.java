@@ -24,37 +24,75 @@ import java.util.stream.Collectors;
 
 public class CreateImbuedSwordCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_imbued_sword.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED =
+            new SimpleCommandExceptionType(
+                    Component.translatable("commands.irons_spellbooks.create_imbued_sword.failed"));
 
-//    private static final SuggestionProvider<CommandSourceStack> SWORD_SUGGESTIONS2 = (p_180253_, p_180254_) -> {
-//        var resources = BuiltInRegistries.ITEM.stream()
-//                .filter((k) -> k.getValue() instanceof SwordItem)
-//                .map(x -> Registries.ITEM.location())
-//                .collect(Collectors.toSet());
-//        return SharedSuggestionProvider.suggestResource(resources, p_180254_);
-//    };
+    //    private static final SuggestionProvider<CommandSourceStack> SWORD_SUGGESTIONS2 =
+    // (p_180253_, p_180254_) -> {
+    //        var resources = BuiltInRegistries.ITEM.stream()
+    //                .filter((k) -> k.getValue() instanceof SwordItem)
+    //                .map(x -> Registries.ITEM.location())
+    //                .collect(Collectors.toSet());
+    //        return SharedSuggestionProvider.suggestResource(resources, p_180254_);
+    //    };
 
-    private static final SuggestionProvider<CommandSourceStack> SWORD_SUGGESTIONS = (context, builder) -> {
-        var resources = BuiltInRegistries.ITEM.entrySet().stream()
-                .filter(e -> e.getValue() instanceof SwordItem)
-                .map(e -> e.getKey().location())
-                .collect(Collectors.toSet());
-        return SharedSuggestionProvider.suggestResource(resources, builder);
-    };
+    private static final SuggestionProvider<CommandSourceStack> SWORD_SUGGESTIONS =
+            (context, builder) -> {
+                var resources =
+                        BuiltInRegistries.ITEM.entrySet().stream()
+                                .filter(e -> e.getValue() instanceof SwordItem)
+                                .map(e -> e.getKey().location())
+                                .collect(Collectors.toSet());
+                return SharedSuggestionProvider.suggestResource(resources, builder);
+            };
 
+    public static void register(
+            CommandDispatcher<CommandSourceStack> pDispatcher, CommandBuildContext context) {
 
-    public static void register(CommandDispatcher<CommandSourceStack> pDispatcher, CommandBuildContext context) {
-
-        pDispatcher.register(Commands.literal("createImbuedSword").requires((commandSourceStack) -> {
-            return commandSourceStack.hasPermission(2);
-        }).then(Commands.argument("item", ItemArgument.item(context)).suggests(SWORD_SUGGESTIONS)
-                .then(Commands.argument("spell", SpellArgument.spellArgument())
-                        .then(Commands.argument("level", IntegerArgumentType.integer(1)).executes((ctx) -> {
-                            return createImbuedSword(ctx.getSource(), ctx.getArgument("item", ItemInput.class), ctx.getArgument("spell", String.class), IntegerArgumentType.getInteger(ctx, "level"));
-                        })))));
+        pDispatcher.register(
+                Commands.literal("createImbuedSword")
+                        .requires(
+                                (commandSourceStack) -> {
+                                    return commandSourceStack.hasPermission(2);
+                                })
+                        .then(
+                                Commands.argument("item", ItemArgument.item(context))
+                                        .suggests(SWORD_SUGGESTIONS)
+                                        .then(
+                                                Commands.argument(
+                                                                "spell",
+                                                                SpellArgument.spellArgument())
+                                                        .then(
+                                                                Commands.argument(
+                                                                                "level",
+                                                                                IntegerArgumentType
+                                                                                        .integer(1))
+                                                                        .executes(
+                                                                                (ctx) -> {
+                                                                                    return createImbuedSword(
+                                                                                            ctx
+                                                                                                    .getSource(),
+                                                                                            ctx
+                                                                                                    .getArgument(
+                                                                                                            "item",
+                                                                                                            ItemInput
+                                                                                                                    .class),
+                                                                                            ctx
+                                                                                                    .getArgument(
+                                                                                                            "spell",
+                                                                                                            String
+                                                                                                                    .class),
+                                                                                            IntegerArgumentType
+                                                                                                    .getInteger(
+                                                                                                            ctx,
+                                                                                                            "level"));
+                                                                                })))));
     }
 
-    private static int createImbuedSword(CommandSourceStack source, ItemInput itemInput, String spell, int spellLevel) throws CommandSyntaxException {
+    private static int createImbuedSword(
+            CommandSourceStack source, ItemInput itemInput, String spell, int spellLevel)
+            throws CommandSyntaxException {
         if (!spell.contains(":")) {
             spell = IronsSpellbooks.MODID + ":" + spell;
         }
@@ -62,7 +100,12 @@ public class CreateImbuedSwordCommand {
         var abstractSpell = SpellRegistry.REGISTRY.get().get(new ResourceLocation(spell));
 
         if (spellLevel > abstractSpell.getMaxLevel()) {
-            throw new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();
+            throw new SimpleCommandExceptionType(
+                            Component.translatable(
+                                    "commands.irons_spellbooks.create_spell.failed_max_level",
+                                    abstractSpell.getSpellName(),
+                                    abstractSpell.getMaxLevel()))
+                    .create();
         }
 
         var serverPlayer = source.getPlayer();

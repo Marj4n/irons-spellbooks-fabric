@@ -59,19 +59,35 @@ public class BlizzardAoe extends AoeEntity {
                 Vec3 radial = new Vec3(offset.x, 0, offset.z).normalize();
                 Vec3 tangent = new Vec3(-radial.z, 0, radial.x);
                 Vec3 push = tangent.scale(strength * Mth.PI).add(radial.scale(-strength));
-                entity.setDeltaMovement(entity.getDeltaMovement().add(push.scale(Utils.clampedKnockbackResistanceFactor(entity, .4f, 1f))));
+                entity.setDeltaMovement(
+                        entity.getDeltaMovement()
+                                .add(
+                                        push.scale(
+                                                Utils.clampedKnockbackResistanceFactor(
+                                                        entity, .4f, 1f))));
             }
         }
         this.move(MoverType.SELF, getDeltaMovement());
         if ((tickCount - 1) % 10 == 0) {
-            playSound(SoundRegistry.CONE_OF_COLD_LOOP.get(), 2, random.nextIntBetweenInclusive(15, 20) * .1f);
+            playSound(
+                    SoundRegistry.CONE_OF_COLD_LOOP.get(),
+                    2,
+                    random.nextIntBetweenInclusive(15, 20) * .1f);
         }
         if (tickCount % 20 == 0) {
-            if (level().collidesWithSuffocatingBlock(this, AABB.ofSize(this.position().add(0, 0.5, 0), 1.5, 0.5, 1.5))) {
-                Vec3 ground = Utils.moveToRelativeGroundLevel(level(), this.position().add(0, 1, 0), 1);
+            if (level().collidesWithSuffocatingBlock(
+                            this, AABB.ofSize(this.position().add(0, 0.5, 0), 1.5, 0.5, 1.5))) {
+                Vec3 ground =
+                        Utils.moveToRelativeGroundLevel(level(), this.position().add(0, 1, 0), 1);
                 this.move(MoverType.SELF, ground.subtract(this.position()));
             } else {
-                if (Utils.raycastForBlock(level(), position(), position().add(0, -0.5, 0), ClipContext.Fluid.NONE).getType() == HitResult.Type.MISS) {
+                if (Utils.raycastForBlock(
+                                        level(),
+                                        position(),
+                                        position().add(0, -0.5, 0),
+                                        ClipContext.Fluid.NONE)
+                                .getType()
+                        == HitResult.Type.MISS) {
                     this.move(MoverType.SELF, new Vec3(0, -0.5, 0));
                 }
             }
@@ -80,7 +96,8 @@ public class BlizzardAoe extends AoeEntity {
 
     @Override
     protected boolean canHitEntity(Entity pTarget) {
-        return super.canHitEntity(pTarget) && !DamageSources.isFriendlyFireBetween(this.getOwner(), pTarget);
+        return super.canHitEntity(pTarget)
+                && !DamageSources.isFriendlyFireBetween(this.getOwner(), pTarget);
     }
 
     @Override
@@ -92,7 +109,10 @@ public class BlizzardAoe extends AoeEntity {
         float radius = getRadius();
         int count = (int) (8 * (radius * radius / 64f)) * 3;
         for (int i = 0; i < count; i++) {
-            swirlingParticle(radius, pos, random.nextFloat() < 0.3 ? ParticleHelper.SNOWFLAKE : ParticleHelper.SNOW_DUST);
+            swirlingParticle(
+                    radius,
+                    pos,
+                    random.nextFloat() < 0.3 ? ParticleHelper.SNOWFLAKE : ParticleHelper.SNOW_DUST);
         }
     }
 
@@ -102,8 +122,19 @@ public class BlizzardAoe extends AoeEntity {
         Vec3 center = pos.add(Utils.getRandomVec3(1f).multiply(1, 1.5, 1)).add(0, 1, 0);
         Vec3 speed = Utils.getRandomVec3(0.04);
         Vec3 up = new Vec3(0, 1, 0).add(Utils.getRandomVec3(0.25)).normalize();
-        level().addParticle(new SwirlingParticleOptions(
-                particle, up, new Vec3(0, 0, 1), new Vec3(diameter, diameter, angularSpeed), new Vec3(0, 0, 0)
-        ), true, center.x, center.y, center.z, speed.x, speed.y, speed.z);
+        level().addParticle(
+                        new SwirlingParticleOptions(
+                                particle,
+                                up,
+                                new Vec3(0, 0, 1),
+                                new Vec3(diameter, diameter, angularSpeed),
+                                new Vec3(0, 0, 0)),
+                        true,
+                        center.x,
+                        center.y,
+                        center.z,
+                        speed.x,
+                        speed.y,
+                        speed.z);
     }
 }

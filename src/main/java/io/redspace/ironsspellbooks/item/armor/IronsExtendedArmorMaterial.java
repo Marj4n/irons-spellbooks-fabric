@@ -8,5 +8,4 @@ import java.util.Map;
 
 public interface IronsExtendedArmorMaterial extends ArmorMaterial {
     public Map<Attribute, AttributeModifier> getAdditionalAttributes();
-
 }

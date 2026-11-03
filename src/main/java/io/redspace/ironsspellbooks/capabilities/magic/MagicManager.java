@@ -30,69 +30,127 @@ public class MagicManager implements IMagicManager {
         int playerMaxMana = (int) serverPlayer.getAttributeValue(MAX_MANA.get());
         var mana = playerMagicData.getMana();
         if (mana != playerMaxMana) {
-            float playerManaRegenMultiplier = (float) serverPlayer.getAttributeValue(MANA_REGEN.get());
-            var increment = playerMaxMana * playerManaRegenMultiplier * .01f * ServerConfigs.MANA_REGEN_MULTIPLIER.get().floatValue();
-            playerMagicData.setMana(Mth.clamp(playerMagicData.getMana() + increment, 0, playerMaxMana));
+            float playerManaRegenMultiplier =
+                    (float) serverPlayer.getAttributeValue(MANA_REGEN.get());
+            var increment =
+                    playerMaxMana
+                            * playerManaRegenMultiplier
+                            * .01f
+                            * ServerConfigs.MANA_REGEN_MULTIPLIER.get().floatValue();
+            playerMagicData.setMana(
+                    Mth.clamp(playerMagicData.getMana() + increment, 0, playerMaxMana));
             return true;
         } else {
             return false;
         }
     }
 
-
     public void tick(Level level) {
         boolean doManaRegen = level.getServer().getTickCount() % MANA_REGEN_TICKS == 0;
 
-        level.players().stream().toList().forEach(player -> {
-            if (player instanceof ServerPlayer serverPlayer) {
-                MagicData playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
-                playerMagicData.getPlayerCooldowns().tick(1);
-                playerMagicData.getPlayerRecasts().tick(2);
+        level.players().stream()
+                .toList()
+                .forEach(
+                        player -> {
+                            if (player instanceof ServerPlayer serverPlayer) {
+                                MagicData playerMagicData =
+                                        MagicData.getPlayerMagicData(serverPlayer);
+                                playerMagicData.getPlayerCooldowns().tick(1);
+                                playerMagicData.getPlayerRecasts().tick(2);
 
-                if (playerMagicData.isCasting()) {
-                    var spell = SpellRegistry.getSpell(playerMagicData.getCastingSpellId());
-                    if ((spell.getCastType() == CastType.LONG && !serverPlayer.isUsingItem()) || spell.getCastType() == CastType.INSTANT) {
-                        if (playerMagicData.getCastDurationRemaining() <= 0) {
-                            spell.castSpell(serverPlayer.level(), playerMagicData.getCastingSpellLevel(), serverPlayer, playerMagicData.getCastSource(), true);
-                            if (playerMagicData.getCastSource() == CastSource.SCROLL) {
-                                Scroll.attemptRemoveScrollAfterCast(serverPlayer);
-                            }
-                            spell.onServerCastComplete(serverPlayer.level(), playerMagicData.getCastingSpellLevel(), serverPlayer, playerMagicData, false);
-                        }
-                    } else if (spell.getCastType() == CastType.CONTINUOUS) {
-                        if ((playerMagicData.getCastDurationRemaining()) % CONTINUOUS_CAST_TICK_INTERVAL == 0) {
-                            if (playerMagicData.getCastDurationRemaining() <= 0 || (playerMagicData.getCastSource().consumesMana() && playerMagicData.getMana() - spell.getManaCost(playerMagicData.getCastingSpellLevel()) * 2 < 0)) {
-                                spell.castSpell(serverPlayer.level(), playerMagicData.getCastingSpellLevel(), serverPlayer, playerMagicData.getCastSource(), true);
+                                if (playerMagicData.isCasting()) {
+                                    var spell =
+                                            SpellRegistry.getSpell(
+                                                    playerMagicData.getCastingSpellId());
+                                    if ((spell.getCastType() == CastType.LONG
+                                                    && !serverPlayer.isUsingItem())
+                                            || spell.getCastType() == CastType.INSTANT) {
+                                        if (playerMagicData.getCastDurationRemaining() <= 0) {
+                                            spell.castSpell(
+                                                    serverPlayer.level(),
+                                                    playerMagicData.getCastingSpellLevel(),
+                                                    serverPlayer,
+                                                    playerMagicData.getCastSource(),
+                                                    true);
+                                            if (playerMagicData.getCastSource()
+                                                    == CastSource.SCROLL) {
+                                                Scroll.attemptRemoveScrollAfterCast(serverPlayer);
+                                            }
+                                            spell.onServerCastComplete(
+                                                    serverPlayer.level(),
+                                                    playerMagicData.getCastingSpellLevel(),
+                                                    serverPlayer,
+                                                    playerMagicData,
+                                                    false);
+                                        }
+                                    } else if (spell.getCastType() == CastType.CONTINUOUS) {
+                                        if ((playerMagicData.getCastDurationRemaining())
+                                                        % CONTINUOUS_CAST_TICK_INTERVAL
+                                                == 0) {
+                                            if (playerMagicData.getCastDurationRemaining() <= 0
+                                                    || (playerMagicData
+                                                                    .getCastSource()
+                                                                    .consumesMana()
+                                                            && playerMagicData.getMana()
+                                                                            - spell.getManaCost(
+                                                                                            playerMagicData
+                                                                                                    .getCastingSpellLevel())
+                                                                                    * 2
+                                                                    < 0)) {
+                                                spell.castSpell(
+                                                        serverPlayer.level(),
+                                                        playerMagicData.getCastingSpellLevel(),
+                                                        serverPlayer,
+                                                        playerMagicData.getCastSource(),
+                                                        true);
 
-                                if (playerMagicData.getCastSource() == CastSource.SCROLL) {
-                                    Scroll.attemptRemoveScrollAfterCast(serverPlayer);
+                                                if (playerMagicData.getCastSource()
+                                                        == CastSource.SCROLL) {
+                                                    Scroll.attemptRemoveScrollAfterCast(
+                                                            serverPlayer);
+                                                }
+
+                                                spell.onServerCastComplete(
+                                                        serverPlayer.level(),
+                                                        playerMagicData.getCastingSpellLevel(),
+                                                        serverPlayer,
+                                                        playerMagicData,
+                                                        false);
+
+                                            } else {
+                                                spell.castSpell(
+                                                        serverPlayer.level(),
+                                                        playerMagicData.getCastingSpellLevel(),
+                                                        serverPlayer,
+                                                        playerMagicData.getCastSource(),
+                                                        false);
+                                            }
+                                        }
+                                    }
+                                    playerMagicData.handleCastDuration();
+                                    if (playerMagicData.isCasting()) {
+                                        spell.onServerCastTick(
+                                                serverPlayer.level(),
+                                                playerMagicData.getCastingSpellLevel(),
+                                                serverPlayer,
+                                                playerMagicData);
+                                    }
                                 }
 
-                                spell.onServerCastComplete(serverPlayer.level(), playerMagicData.getCastingSpellLevel(), serverPlayer, playerMagicData, false);
-
-                            } else {
-                                spell.castSpell(serverPlayer.level(), playerMagicData.getCastingSpellLevel(), serverPlayer, playerMagicData.getCastSource(), false);
+                                if (doManaRegen) {
+                                    if (regenPlayerMana(serverPlayer, playerMagicData)) {
+                                        PacketDistributor.sendToPlayer(
+                                                serverPlayer, new SyncManaPacket(playerMagicData));
+                                    }
+                                }
                             }
-                        }
-                    }
-                    playerMagicData.handleCastDuration();
-                    if (playerMagicData.isCasting()) {
-                        spell.onServerCastTick(serverPlayer.level(), playerMagicData.getCastingSpellLevel(), serverPlayer, playerMagicData);
-                    }
-                }
-
-                if (doManaRegen) {
-                    if (regenPlayerMana(serverPlayer, playerMagicData)) {
-                        PacketDistributor.sendToPlayer(serverPlayer, new SyncManaPacket(playerMagicData));
-                    }
-                }
-            }
-        });
+                        });
     }
 
     public void addCooldown(ServerPlayer serverPlayer, AbstractSpell spell, CastSource castSource) {
         int effectiveCooldown = getEffectiveSpellCooldown(spell, serverPlayer, castSource);
-        var event =new SpellCooldownAddedEvent.Pre(effectiveCooldown, spell, serverPlayer, castSource);
+        var event =
+                new SpellCooldownAddedEvent.Pre(effectiveCooldown, spell, serverPlayer, castSource);
         boolean pre = org.marj4n.irons_spellbooks.events.SpellEvents.post(event);
 
         if (castSource == CastSource.SCROLL || pre) {
@@ -101,10 +159,15 @@ public class MagicManager implements IMagicManager {
 
         effectiveCooldown = event.getEffectiveCooldown();
 
-        MagicData.getPlayerMagicData(serverPlayer).getPlayerCooldowns().addCooldown(spell, effectiveCooldown);
-        PacketDistributor.sendToPlayer(serverPlayer, new SyncCooldownPacket(spell.getSpellId(), effectiveCooldown));
+        MagicData.getPlayerMagicData(serverPlayer)
+                .getPlayerCooldowns()
+                .addCooldown(spell, effectiveCooldown);
+        PacketDistributor.sendToPlayer(
+                serverPlayer, new SyncCooldownPacket(spell.getSpellId(), effectiveCooldown));
 
-        org.marj4n.irons_spellbooks.events.SpellEvents.post(new SpellCooldownAddedEvent.Post(effectiveCooldown, spell, serverPlayer, castSource));
+        org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                new SpellCooldownAddedEvent.Post(
+                        effectiveCooldown, spell, serverPlayer, castSource));
     }
 
     public void clearCooldowns(ServerPlayer serverPlayer) {
@@ -112,17 +175,40 @@ public class MagicManager implements IMagicManager {
         MagicData.getPlayerMagicData(serverPlayer).getPlayerCooldowns().syncToPlayer(serverPlayer);
     }
 
-    public static int getEffectiveSpellCooldown(AbstractSpell spell, Player player, CastSource castSource) {
+    public static int getEffectiveSpellCooldown(
+            AbstractSpell spell, Player player, CastSource castSource) {
         double playerCooldownModifier = player.getAttributeValue(COOLDOWN_REDUCTION.get());
 
         float itemCoolDownModifer = 1;
         if (castSource == CastSource.SWORD) {
             itemCoolDownModifer = ServerConfigs.SWORDS_CD_MULTIPLIER.get().floatValue();
         }
-        return (int) (spell.getSpellCooldown() * (2 - Utils.softCapFormula(playerCooldownModifier)) * itemCoolDownModifer);
+        return (int)
+                (spell.getSpellCooldown()
+                        * (2 - Utils.softCapFormula(playerCooldownModifier))
+                        * itemCoolDownModifer);
     }
 
-    public static void spawnParticles(Level level, ParticleOptions particle, double x, double y, double z, int count, double deltaX, double deltaY, double deltaZ, double speed, boolean force) {
-        level.getServer().getPlayerList().getPlayers().forEach(player -> ((ServerLevel) level).sendParticles(player, particle, force, x, y, z, count, deltaX, deltaY, deltaZ, speed));
+    public static void spawnParticles(
+            Level level,
+            ParticleOptions particle,
+            double x,
+            double y,
+            double z,
+            int count,
+            double deltaX,
+            double deltaY,
+            double deltaZ,
+            double speed,
+            boolean force) {
+        level.getServer()
+                .getPlayerList()
+                .getPlayers()
+                .forEach(
+                        player ->
+                                ((ServerLevel) level)
+                                        .sendParticles(
+                                                player, particle, force, x, y, z, count, deltaX,
+                                                deltaY, deltaZ, speed));
     }
 }

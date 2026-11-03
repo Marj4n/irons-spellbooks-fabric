@@ -22,21 +22,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LecternBlockEntity.class)
 public abstract class LecternBlockEntityMixin extends BlockEntity {
-    public LecternBlockEntityMixin(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
+    public LecternBlockEntityMixin(
+            BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
         super(pType, pPos, pBlockState);
     }
 
-    @Shadow
-    ItemStack book;
+    @Shadow ItemStack book;
 
-    @Shadow
-    private int page;
+    @Shadow private int page;
 
-
-    @Inject(
-            method = "hasBook",
-            at = @At(value = "HEAD"),
-            cancellable = true)
+    @Inject(method = "hasBook", at = @At(value = "HEAD"), cancellable = true)
     private void fudgeLecternValidity(CallbackInfoReturnable<Boolean> cir) {
         if (book.getItem() instanceof ILecternPlaceable) {
             cir.setReturnValue(true);
@@ -44,20 +39,20 @@ public abstract class LecternBlockEntityMixin extends BlockEntity {
     }
 
     //    @Inject(
-//            method = "getPageCount",
-//            remap = false,
-//            at = @At(value = "HEAD"),
-//            cancellable = true)
-//    private static void getPageCount(ItemStack pStack, CallbackInfoReturnable<Integer> cir) {
-//        if (pStack.getItem() instanceof ILecternPlaceable lecternPlaceable) {
-//            cir.setReturnValue(lecternPlaceable.getPages(pStack).size());
-//        }
-//    }
-    @Shadow
-    private int pageCount;
+    //            method = "getPageCount",
+    //            remap = false,
+    //            at = @At(value = "HEAD"),
+    //            cancellable = true)
+    //    private static void getPageCount(ItemStack pStack, CallbackInfoReturnable<Integer> cir) {
+    //        if (pStack.getItem() instanceof ILecternPlaceable lecternPlaceable) {
+    //            cir.setReturnValue(lecternPlaceable.getPages(pStack).size());
+    //        }
+    //    }
+    @Shadow private int pageCount;
 
     @Inject(
-            method = "setBook(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)V",
+            method =
+                    "setBook(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)V",
             at = @At(value = "RETURN"))
     private void irons_spellbooks$getPageCount(ItemStack pStack, Player pPlayer, CallbackInfo ci) {
         if (pStack.getItem() instanceof ILecternPlaceable lecternPlaceable) {
@@ -65,11 +60,10 @@ public abstract class LecternBlockEntityMixin extends BlockEntity {
         }
     }
 
-    @Inject(
-            method = "load",
-            at = @At(value = "RETURN"))
+    @Inject(method = "load", at = @At(value = "RETURN"))
     private void irons_spellbooks$getPageCount2(CompoundTag pTag, CallbackInfo ci) {
-        if (!this.book.isEmpty() && this.book.getItem() instanceof ILecternPlaceable lecternPlaceable) {
+        if (!this.book.isEmpty()
+                && this.book.getItem() instanceof ILecternPlaceable lecternPlaceable) {
             pageCount = lecternPlaceable.getPages(book).size();
         }
     }
@@ -78,7 +72,8 @@ public abstract class LecternBlockEntityMixin extends BlockEntity {
     public void setChanged() {
         super.setChanged();
         if (level != null) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            level.sendBlockUpdated(
+                    worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 

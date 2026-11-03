@@ -31,20 +31,27 @@ public class SchoolType {
     final boolean requiresLearning;
     final boolean allowLooting;
 
-
     /**
      * Legacy 1.20.1 constructor. Switch to forwards-compatible constructor.
      */
     @Deprecated(forRemoval = true)
-    public SchoolType(ResourceLocation id, TagKey<Item> focus, Component displayName, LazyOptional<Attribute> powerAttribute, LazyOptional<Attribute> resistanceAttribute, LazyOptional<SoundEvent> defaultCastSound, ResourceKey<DamageType> damageType) {
+    public SchoolType(
+            ResourceLocation id,
+            TagKey<Item> focus,
+            Component displayName,
+            LazyOptional<Attribute> powerAttribute,
+            LazyOptional<Attribute> resistanceAttribute,
+            LazyOptional<SoundEvent> defaultCastSound,
+            ResourceKey<DamageType> damageType) {
         this.id = id;
         this.focus = focus;
         this.displayName = displayName;
         this.displayStyle = displayName.getStyle();
 
-        //fixme: this is awful. remove asap
+        // fixme: this is awful. remove asap
         this.powerAttribute = () -> powerAttribute.orElse(AttributeRegistry.SPELL_POWER.get());
-        this.resistanceAttribute = () -> resistanceAttribute.orElse(AttributeRegistry.SPELL_RESIST.get());
+        this.resistanceAttribute =
+                () -> resistanceAttribute.orElse(AttributeRegistry.SPELL_RESIST.get());
         this.defaultCastSound = () -> defaultCastSound.orElse(SoundEvents.EVOKER_CAST_SPELL);
 
         this.damageType = damageType;
@@ -52,7 +59,16 @@ public class SchoolType {
         this.allowLooting = true;
     }
 
-    public SchoolType(ResourceLocation id, TagKey<Item> focus, Component displayName, Supplier<Attribute> powerAttribute, Supplier<Attribute> resistanceAttribute, Supplier<SoundEvent> defaultCastSound, ResourceKey<DamageType> damageType, boolean requiresLearning, boolean allowLooting) {
+    public SchoolType(
+            ResourceLocation id,
+            TagKey<Item> focus,
+            Component displayName,
+            Supplier<Attribute> powerAttribute,
+            Supplier<Attribute> resistanceAttribute,
+            Supplier<SoundEvent> defaultCastSound,
+            ResourceKey<DamageType> damageType,
+            boolean requiresLearning,
+            boolean allowLooting) {
         this.id = id;
         this.focus = focus;
         this.displayName = displayName;
@@ -65,23 +81,42 @@ public class SchoolType {
         this.allowLooting = allowLooting;
     }
 
-    public SchoolType(ResourceLocation id, TagKey<Item> focus, Component displayName, Supplier<Attribute> powerAttribute, Supplier<Attribute> resistanceAttribute, Supplier<SoundEvent> defaultCastSound, ResourceKey<DamageType> damageType) {
-        this(id, focus, displayName, powerAttribute, resistanceAttribute, defaultCastSound, damageType, false, true);
+    public SchoolType(
+            ResourceLocation id,
+            TagKey<Item> focus,
+            Component displayName,
+            Supplier<Attribute> powerAttribute,
+            Supplier<Attribute> resistanceAttribute,
+            Supplier<SoundEvent> defaultCastSound,
+            ResourceKey<DamageType> damageType) {
+        this(
+                id,
+                focus,
+                displayName,
+                powerAttribute,
+                resistanceAttribute,
+                defaultCastSound,
+                damageType,
+                false,
+                true);
     }
 
     /**
      * @return Returns raw resistance attribute value of the entity.
      */
     public double getResistanceFor(LivingEntity livingEntity) {
-        return livingEntity.getAttributes().hasAttribute(resistanceAttribute.get()) ? livingEntity.getAttributeValue(resistanceAttribute.get()) : 1;
+        return livingEntity.getAttributes().hasAttribute(resistanceAttribute.get())
+                ? livingEntity.getAttributeValue(resistanceAttribute.get())
+                : 1;
     }
 
     /**
      * @return Returns raw power attribute value of the entity.
      */
     public double getPowerFor(LivingEntity livingEntity) {
-        return livingEntity.getAttributes().hasAttribute(powerAttribute.get()) ? livingEntity.getAttributeValue(powerAttribute.get()) : 1;
-
+        return livingEntity.getAttributes().hasAttribute(powerAttribute.get())
+                ? livingEntity.getAttributeValue(powerAttribute.get())
+                : 1;
     }
 
     public SoundEvent getCastSound() {

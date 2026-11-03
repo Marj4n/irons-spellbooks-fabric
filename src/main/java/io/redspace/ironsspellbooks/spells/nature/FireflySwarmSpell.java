@@ -29,22 +29,26 @@ import java.util.List;
 import java.util.Optional;
 
 public class FireflySwarmSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "firefly_swarm");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "firefly_swarm");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", FireflySwarmProjectile.radius)
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.aoe_damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.radius", FireflySwarmProjectile.radius));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.UNCOMMON)
-            .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(20)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.UNCOMMON)
+                    .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(20)
+                    .build();
 
     public FireflySwarmSpell() {
         this.manaCostPerLevel = 10;
@@ -75,33 +79,45 @@ public class FireflySwarmSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(
+            Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f);
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         Vec3 spawn = null;
         Entity target = null;
 
-        if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData()
+                instanceof TargetEntityCastData castTargetingData) {
             spawn = castTargetingData.getTargetPosition((ServerLevel) level);
             target = castTargetingData.getTarget((ServerLevel) level);
         }
         if (spawn == null) {
-            HitResult raycast = RaycastBuilder.begin(level, entity)
-                    .range(32)
-                    .checkForBlocks(true)
-                    .build();
+            HitResult raycast =
+                    RaycastBuilder.begin(level, entity).range(32).checkForBlocks(true).build();
             if (raycast.getType() == HitResult.Type.ENTITY) {
                 target = ((EntityHitResult) raycast).getEntity();
                 spawn = target.position();
             } else {
-                spawn = Utils.moveToRelativeGroundLevel(level, raycast.getLocation().subtract(entity.getForward().normalize()).add(0, 2, 0), 5);
+                spawn =
+                        Utils.moveToRelativeGroundLevel(
+                                level,
+                                raycast.getLocation()
+                                        .subtract(entity.getForward().normalize())
+                                        .add(0, 2, 0),
+                                5);
             }
         }
 
-        FireflySwarmProjectile fireflies = new FireflySwarmProjectile(level, entity, target, getDamage(spellLevel, entity));
+        FireflySwarmProjectile fireflies =
+                new FireflySwarmProjectile(level, entity, target, getDamage(spellLevel, entity));
         fireflies.moveTo(spawn.add(0, .5, 0));
         level.addFreshEntity(fireflies);
 

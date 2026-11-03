@@ -12,7 +12,8 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 
-public class MagmaThrowBossAbilityGoal<T extends Mob & IMagicEntity & IAnimatedAttacker> extends Goal {
+public class MagmaThrowBossAbilityGoal<T extends Mob & IMagicEntity & IAnimatedAttacker>
+        extends Goal {
     int abilityTimer;
     int delay;
     boolean isUsing;
@@ -25,7 +26,10 @@ public class MagmaThrowBossAbilityGoal<T extends Mob & IMagicEntity & IAnimatedA
 
     @Override
     public boolean canUse() {
-        return mob.onGround() && mob.getTarget() != null && mob.distanceToSqr(mob.getTarget()) > 3 * 3 && delay-- <= 0;
+        return mob.onGround()
+                && mob.getTarget() != null
+                && mob.distanceToSqr(mob.getTarget()) > 3 * 3
+                && delay-- <= 0;
     }
 
     @Override
@@ -52,15 +56,20 @@ public class MagmaThrowBossAbilityGoal<T extends Mob & IMagicEntity & IAnimatedA
             mob.getLookControl().setLookAt(target);
         }
         if (abilityTimer == ACTION_TIMESTAMP) {
-            //targeted orbs
+            // targeted orbs
             if (target != null) {
                 var range = mob.getAttributeValue(Attributes.FOLLOW_RANGE);
-                var targets = mob.level().getEntitiesOfClass(target.getClass(), mob.getBoundingBox().inflate(range, 8, range));
+                var targets =
+                        mob.level()
+                                .getEntitiesOfClass(
+                                        target.getClass(),
+                                        mob.getBoundingBox().inflate(range, 8, range));
                 for (LivingEntity entity : targets) {
                     if (Utils.hasLineOfSight(mob.level(), mob, entity, false)) {
                         FireBomb fireBomb = fireBomb();
                         double horizontalSpeed = 0.5;
-                        Vec3 horizontal = entity.position().subtract(mob.position()).multiply(1, 0, 1);
+                        Vec3 horizontal =
+                                entity.position().subtract(mob.position()).multiply(1, 0, 1);
                         double distance = horizontal.length();
                         double ticks = distance / horizontalSpeed;
                         // y(t) = -1/2(g)(t^2) + v0*t
@@ -69,13 +78,18 @@ public class MagmaThrowBossAbilityGoal<T extends Mob & IMagicEntity & IAnimatedA
                         double g = 0.05;
                         double verticalSpeed = (y1 + 0.5 * g * ticks * ticks) / ticks;
                         Vec3 estMovement = entity.getDeltaMovement().multiply(1, 0, 1).scale(ticks);
-                        Vec3 trajectory = horizontal.normalize().scale(horizontalSpeed).add(0, verticalSpeed, 0).add(estMovement);
+                        Vec3 trajectory =
+                                horizontal
+                                        .normalize()
+                                        .scale(horizontalSpeed)
+                                        .add(0, verticalSpeed, 0)
+                                        .add(estMovement);
                         fireBomb.setDeltaMovement(trajectory);
                         mob.level().addFreshEntity(fireBomb);
                     }
                 }
             }
-            //random orbs
+            // random orbs
             for (int i = 0; i < 4; i++) {
                 FireBomb fireBomb = fireBomb();
                 Vec3 motion = Utils.getRandomVec3(0.85).add(0, 3, 0).scale(0.3);
@@ -102,8 +116,8 @@ public class MagmaThrowBossAbilityGoal<T extends Mob & IMagicEntity & IAnimatedA
     public void start() {
         isUsing = true;
         abilityTimer = 0;
-        //todo: remove debug cooldown
-        delay = 20 * 4; //Utils.random.nextIntBetweenInclusive(12, 23) * 20;
+        // todo: remove debug cooldown
+        delay = 20 * 4; // Utils.random.nextIntBetweenInclusive(12, 23) * 20;
         mob.serverTriggerAnimation("magma_throw");
         mob.getNavigation().stop();
     }

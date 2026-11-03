@@ -97,7 +97,14 @@ public final class RaycastBuilder {
         Vec3 rayEnd = end;
 
         if (checkForBlocks) {
-            blockHitResult = level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, originEntity));
+            blockHitResult =
+                    level.clip(
+                            new ClipContext(
+                                    start,
+                                    end,
+                                    ClipContext.Block.COLLIDER,
+                                    ClipContext.Fluid.NONE,
+                                    originEntity));
             rayEnd = blockHitResult.getLocation();
         }
 

@@ -27,20 +27,26 @@ import java.util.List;
 import java.util.Optional;
 
 public class FangWardSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "fang_ward");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "fang_ward");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.ring_count", getRings(spellLevel, caster)),
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.ring_count", getRings(spellLevel, caster)),
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getDamage(spellLevel, caster), 2)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.COMMON)
-            .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
-            .setMaxLevel(8)
-            .setCooldownSeconds(15)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.COMMON)
+                    .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
+                    .setMaxLevel(8)
+                    .setCooldownSeconds(15)
+                    .build();
 
     public FangWardSpell() {
         this.manaCostPerLevel = 5;
@@ -71,7 +77,12 @@ public class FangWardSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level world,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         int rings = getRings(spellLevel, entity);
         int count = 5;
         Vec3 center = entity.getEyePosition();
@@ -79,10 +90,24 @@ public class FangWardSpell extends AbstractSpell {
         for (int r = 0; r < rings; r++) {
             float fangs = count + r * r;
             for (int i = 0; i < fangs; i++) {
-                Vec3 spawn = center.add(new Vec3(0, 0, 1.5 * (r + 1)).yRot(entity.getYRot() * Mth.DEG_TO_RAD + ((6.281f / fangs) * i)));
+                Vec3 spawn =
+                        center.add(
+                                new Vec3(0, 0, 1.5 * (r + 1))
+                                        .yRot(
+                                                entity.getYRot() * Mth.DEG_TO_RAD
+                                                        + ((6.281f / fangs) * i)));
                 spawn = Utils.moveToRelativeGroundLevel(world, spawn, 5);
                 if (!world.getBlockState(BlockPos.containing(spawn).below()).isAir()) {
-                    ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, get2DAngle(center, spawn), r, entity, getDamage(spellLevel, entity));
+                    ExtendedEvokerFang fang =
+                            new ExtendedEvokerFang(
+                                    world,
+                                    spawn.x,
+                                    spawn.y,
+                                    spawn.z,
+                                    get2DAngle(center, spawn),
+                                    r,
+                                    entity,
+                                    getDamage(spellLevel, entity));
                     world.addFreshEntity(fang);
                 }
             }
@@ -91,21 +116,24 @@ public class FangWardSpell extends AbstractSpell {
     }
 
     private float get2DAngle(Vec3 a, Vec3 b) {
-        return Utils.getAngle(new Vec2((float) a.x, (float) a.z), new Vec2((float) b.x, (float) b.z));
+        return Utils.getAngle(
+                new Vec2((float) a.x, (float) a.z), new Vec2((float) b.x, (float) b.z));
     }
 
-//    private int getGroundLevel(Level level, Vec3 start, int maxSteps) {
-//        if (!level.getBlockState(new BlockPos(start)).isAir()) {
-//            for (int i = 0; i < maxSteps; i++) {
-//                start = start.add(0, 1, 0);
-//                if (level.getBlockState(new BlockPos(start)).isAir())
-//                    break;
-//            }
-//        }
-//        //Vec3 upper = level.clip(new ClipContext(start, start.add(0, maxSteps, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
-//        Vec3 lower = level.clip(new ClipContext(start, start.add(0, maxSteps * -2, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
-//        return (int) lower.y;
-//    }
+    //    private int getGroundLevel(Level level, Vec3 start, int maxSteps) {
+    //        if (!level.getBlockState(new BlockPos(start)).isAir()) {
+    //            for (int i = 0; i < maxSteps; i++) {
+    //                start = start.add(0, 1, 0);
+    //                if (level.getBlockState(new BlockPos(start)).isAir())
+    //                    break;
+    //            }
+    //        }
+    //        //Vec3 upper = level.clip(new ClipContext(start, start.add(0, maxSteps, 0),
+    // ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
+    //        Vec3 lower = level.clip(new ClipContext(start, start.add(0, maxSteps * -2, 0),
+    // ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
+    //        return (int) lower.y;
+    //    }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
         return getSpellPower(spellLevel, entity);

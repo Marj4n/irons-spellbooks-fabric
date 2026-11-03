@@ -10,6 +10,5 @@ import net.minecraft.world.entity.LivingEntity;
  */
 public interface ISyncedMobEffect {
 
-    default void clientTick(LivingEntity livingEntity, MobEffectInstance instance) {
-    }
+    default void clientTick(LivingEntity livingEntity, MobEffectInstance instance) {}
 }

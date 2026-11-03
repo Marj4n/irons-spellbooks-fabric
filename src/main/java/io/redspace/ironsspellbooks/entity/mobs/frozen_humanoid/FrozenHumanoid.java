@@ -39,8 +39,10 @@ import java.util.UUID;
 public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpawnData {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
+
     @Override
     public void writeSpawnData(FriendlyByteBuf buffer) {
         var owner = getSummoner();
@@ -60,7 +62,8 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
             this.setSummoner(livingEntity);
         }
         if (additionalData.readBoolean()) {
-            setEntityTypeToCopy(BuiltInRegistries.ENTITY_TYPE.get(additionalData.readResourceLocation()));
+            setEntityTypeToCopy(
+                    BuiltInRegistries.ENTITY_TYPE.get(additionalData.readResourceLocation()));
         }
     }
 
@@ -86,17 +89,21 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
         }
     }
 
-    protected static final EntityDataAccessor<Float> DATA_ATTACK_TIME = SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.FLOAT);
-    protected static final EntityDataAccessor<Boolean> DATA_IS_BABY = SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Float> DATA_ATTACK_TIME =
+            SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Boolean> DATA_IS_BABY =
+            SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.BOOLEAN);
 
     /**
      * Client-only value
      */
     float walkAnimSpeed;
+
     /**
      * Client-only value
      */
     float walkAnimPos;
+
     private float shatterProjectileDamage;
     private int deathTimer = -1;
     private UUID summonerUUID;
@@ -117,8 +124,14 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
 
     private HumanoidArm mainArm = HumanoidArm.RIGHT;
 
-    protected static void copyEntityVisualProperties(LivingEntity baseEntity, LivingEntity entityToCopy) {
-        baseEntity.moveTo(entityToCopy.getX(), entityToCopy.getY(), entityToCopy.getZ(), entityToCopy.getYRot(), entityToCopy.getXRot());
+    protected static void copyEntityVisualProperties(
+            LivingEntity baseEntity, LivingEntity entityToCopy) {
+        baseEntity.moveTo(
+                entityToCopy.getX(),
+                entityToCopy.getY(),
+                entityToCopy.getZ(),
+                entityToCopy.getYRot(),
+                entityToCopy.getXRot());
 
         baseEntity.setYBodyRot(entityToCopy.yBodyRot);
         baseEntity.yBodyRotO = baseEntity.yBodyRot;
@@ -144,9 +157,11 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
                 }
             }
         }
-//        if (baseEntity.getAttributes().hasAttribute(Attributes.SCALE) && entityToCopy.getAttributes().hasAttribute(Attributes.SCALE)) {
-//            baseEntity.getAttributes().getInstance(Attributes.SCALE).setBaseValue(entityToCopy.getAttributeValue(Attributes.SCALE));
-//        }
+        //        if (baseEntity.getAttributes().hasAttribute(Attributes.SCALE) &&
+        // entityToCopy.getAttributes().hasAttribute(Attributes.SCALE)) {
+        //
+        // baseEntity.getAttributes().getInstance(Attributes.SCALE).setBaseValue(entityToCopy.getAttributeValue(Attributes.SCALE));
+        //        }
         if (entityToCopy instanceof Player player) {
             baseEntity.setCustomName(player.getDisplayName());
             baseEntity.setCustomNameVisible(true);
@@ -199,8 +214,8 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
         if (this.cachedSummoner != null && this.cachedSummoner.isAlive()) {
             return this.cachedSummoner;
         } else if (this.summonerUUID != null && this.level() instanceof ServerLevel) {
-            if (((ServerLevel) this.level()).getEntity(this.summonerUUID) instanceof LivingEntity livingEntity)
-                this.cachedSummoner = livingEntity;
+            if (((ServerLevel) this.level()).getEntity(this.summonerUUID)
+                    instanceof LivingEntity livingEntity) this.cachedSummoner = livingEntity;
             return this.cachedSummoner;
         } else {
             return null;
@@ -289,12 +304,41 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
         var entities = level().getEntities(this, collider);
         for (Entity entity : entities) {
             double distanceSqr = entity.distanceToSqr(center);
-            if (distanceSqr < radius * radius && entity.canBeHitByProjectile() && !DamageSources.isFriendlyFireBetween(entity, getSummoner()) && Utils.hasLineOfSight(level(), center, entity.getBoundingBox().getCenter(), true)) {
-                DamageSources.applyDamage(entity, damage, SpellRegistry.ICICLE_SPELL.get().getDamageSource(this, getSummoner()));
+            if (distanceSqr < radius * radius
+                    && entity.canBeHitByProjectile()
+                    && !DamageSources.isFriendlyFireBetween(entity, getSummoner())
+                    && Utils.hasLineOfSight(
+                            level(), center, entity.getBoundingBox().getCenter(), true)) {
+                DamageSources.applyDamage(
+                        entity,
+                        damage,
+                        SpellRegistry.ICICLE_SPELL.get().getDamageSource(this, getSummoner()));
             }
         }
-        MagicManager.spawnParticles(level(), ParticleHelper.SNOW_DUST, getX(), getY() + 1, getZ(), 50, 0.2, 0.2, 0.2, 0.2, false);
-        MagicManager.spawnParticles(level(), ParticleHelper.SNOWFLAKE, getX(), getY() + 1, getZ(), 50, 0.2, 0.2, 0.2, 0.2, false);
+        MagicManager.spawnParticles(
+                level(),
+                ParticleHelper.SNOW_DUST,
+                getX(),
+                getY() + 1,
+                getZ(),
+                50,
+                0.2,
+                0.2,
+                0.2,
+                0.2,
+                false);
+        MagicManager.spawnParticles(
+                level(),
+                ParticleHelper.SNOWFLAKE,
+                getX(),
+                getY() + 1,
+                getZ(),
+                50,
+                0.2,
+                0.2,
+                0.2,
+                0.2,
+                false);
     }
 
     private void spawnIcicleShards(Vec3 origin, float damage) {
@@ -306,7 +350,6 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
             motion = motion.xRot(12 * Mth.DEG_TO_RAD);
             motion = motion.yRot(offset * i * Mth.DEG_TO_RAD);
 
-
             IcicleProjectile shard = new IcicleProjectile(level(), getSummoner());
             shard.setDamage(damage);
             shard.setDeltaMovement(motion);
@@ -315,7 +358,12 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
             Vec3 spawn = origin.add(motion.multiply(1, 0, 1).normalize().scale(.5f));
             var angle = Utils.rotationFromDirection(motion);
 
-            shard.moveTo(spawn.x, spawn.y - shard.getBoundingBox().getYsize() / 2, spawn.z, angle.y, angle.x);
+            shard.moveTo(
+                    spawn.x,
+                    spawn.y - shard.getBoundingBox().getYsize() / 2,
+                    spawn.z,
+                    angle.y,
+                    angle.x);
             level().addFreshEntity(shard);
         }
     }
@@ -335,9 +383,7 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {
-
-    }
+    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {}
 
     @Override
     public void readAdditionalSaveData(CompoundTag compoundTag) {
@@ -347,7 +393,9 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
         }
         if (compoundTag.contains("entityToCopy")) {
             try {
-                setEntityTypeToCopy(BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(compoundTag.getString("entityToCopy"))));
+                setEntityTypeToCopy(
+                        BuiltInRegistries.ENTITY_TYPE.get(
+                                new ResourceLocation(compoundTag.getString("entityToCopy"))));
             } catch (Exception ignore) {
             }
         }
@@ -361,7 +409,8 @@ public class FrozenHumanoid extends LivingEntity implements IEntityAdditionalSpa
             compoundTag.putUUID("Summoner", this.summonerUUID);
         }
         if (this.entityToCopy != null) {
-            compoundTag.putString("entityToCopy", BuiltInRegistries.ENTITY_TYPE.getKey(entityToCopy).toString());
+            compoundTag.putString(
+                    "entityToCopy", BuiltInRegistries.ENTITY_TYPE.getKey(entityToCopy).toString());
         }
         compoundTag.putInt("deathTimer", deathTimer);
     }

@@ -16,28 +16,40 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 import java.util.Map;
 
-public class WizardArmorItem extends ImbuableChestplateArmorItem implements IDisableJacket, DyeableLeatherItem, IBackwardsCompatDefaultNbtItem {
+public class WizardArmorItem extends ImbuableChestplateArmorItem
+        implements IDisableJacket, DyeableLeatherItem, IBackwardsCompatDefaultNbtItem {
     private static final String descIdHat = "item.irons_spellbooks.wizard_helmet.hat";
     private static final String descIdHood = "item.irons_spellbooks.wizard_helmet.hood";
 
     public WizardArmorItem(Type type, Properties settings) {
-        super(ExtendedArmorMaterials.WIZARD, type, settings/*, withManaAndSpellPowerAttribute(125, 0.05)*/);
+        super(
+                ExtendedArmorMaterials.WIZARD,
+                type,
+                settings /*, withManaAndSpellPowerAttribute(125, 0.05)*/);
     }
 
     @Override
     public @NotNull String getDescriptionId(ItemStack stack) {
-        if (stack == null || !(stack.getItem() instanceof ArmorItem armorItem) || armorItem.getType() != Type.HELMET) {
+        if (stack == null
+                || !(stack.getItem() instanceof ArmorItem armorItem)
+                || armorItem.getType() != Type.HELMET) {
             return super.getDescriptionId(stack);
         } else {
-            return ClothingVariantHelper.getClothingVariantOrElse(stack, "").equals("hat") ? descIdHat : descIdHood;
+            return ClothingVariantHelper.getClothingVariantOrElse(stack, "").equals("hat")
+                    ? descIdHat
+                    : descIdHood;
         }
     }
 
     @Override
     @Environment(EnvType.CLIENT)
     public GeoArmorRenderer<?> supplyRenderer() {
-        return new DyeableArmorRenderer<>(new GenericArmorModel<WizardArmorItem>("wizard")
-                .variants(Map.of("hat", IronsSpellbooks.id("geo/wizard_armor_hat.geo.json"))));
+        return new DyeableArmorRenderer<>(
+                new GenericArmorModel<WizardArmorItem>("wizard")
+                        .variants(
+                                Map.of(
+                                        "hat",
+                                        IronsSpellbooks.id("geo/wizard_armor_hat.geo.json"))));
     }
 
     @Override

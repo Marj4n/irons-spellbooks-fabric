@@ -45,24 +45,28 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public abstract class AbstractMagicProjectile extends Projectile implements AntiMagicSusceptible, IEntityAdditionalSpawnData {
+public abstract class AbstractMagicProjectile extends Projectile
+        implements AntiMagicSusceptible, IEntityAdditionalSpawnData {
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity.getEntitySpawningPacket(this);
+        return io.github.fabricators_of_create.porting_lib.entity.PortingLibEntity
+                .getEntitySpawningPacket(this);
     }
 
-    private static final EntityDataAccessor<Boolean> DATA_CURSOR_HOMING = SynchedEntityData.defineId(AbstractMagicProjectile.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> DATA_RICOCHET = SynchedEntityData.defineId(AbstractMagicProjectile.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_PIERCE_LEVEL = SynchedEntityData.defineId(AbstractMagicProjectile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_CURSOR_HOMING =
+            SynchedEntityData.defineId(
+                    AbstractMagicProjectile.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_RICOCHET =
+            SynchedEntityData.defineId(AbstractMagicProjectile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_PIERCE_LEVEL =
+            SynchedEntityData.defineId(AbstractMagicProjectile.class, EntityDataSerializers.INT);
 
     protected static final int EXPIRE_TIME = 15 * 20;
     protected float damage;
     protected float explosionRadius;
 
-    @Nullable
-    protected Entity cachedHomingTarget;
-    @Nullable
-    protected UUID homingTargetUUID;
+    @Nullable protected Entity cachedHomingTarget;
+    @Nullable protected UUID homingTargetUUID;
 
     /**
      * Client Side, called every tick
@@ -89,12 +93,19 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     @Override
     protected boolean canHitEntity(@NotNull Entity pTarget) {
         var owner = getOwner();
-        return super.canHitEntity(pTarget) && pTarget != owner && (owner == null || !(owner.isAlliedTo(pTarget) || pTarget.isAlliedTo(owner)));
+        return super.canHitEntity(pTarget)
+                && pTarget != owner
+                && (owner == null || !(owner.isAlliedTo(pTarget) || pTarget.isAlliedTo(owner)));
     }
 
     @Override
     public void checkDespawn() {
-        if (this.level() instanceof ServerLevel serverLevel && !serverLevel.getChunkSource().chunkMap.getDistanceManager().inEntityTickingRange(this.chunkPosition().toLong())) {
+        if (this.level() instanceof ServerLevel serverLevel
+                && !serverLevel
+                        .getChunkSource()
+                        .chunkMap
+                        .getDistanceManager()
+                        .inEntityTickingRange(this.chunkPosition().toLong())) {
             this.discard();
         }
     }
@@ -103,7 +114,8 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     public void tick() {
         super.tick();
         if (tickCount == 1) {
-            // prevent first-tick flicker due to deltaMoveOld being "uninitialized" on our first tick
+            // prevent first-tick flicker due to deltaMoveOld being "uninitialized" on our first
+            // tick
             deltaMovementOld = getDeltaMovement();
         }
         if (tickCount > EXPIRE_TIME) {
@@ -136,7 +148,6 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
         }
     }
 
-
     /**
      * @return Modifies currentRotation to be continuous with targetRotation. <br>
      * Ie, -179 and 179 are two degrees apart, but using these raw values as rot and rotO will cause artifacts
@@ -164,7 +175,14 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     public void handleHitDetection() {
         Vec3 position = position();
         Vec3 destination = position.add(getDeltaMovement());
-        HitResult blockCollision = level().clip(new ClipContext(position, destination, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+        HitResult blockCollision =
+                level().clip(
+                                new ClipContext(
+                                        position,
+                                        destination,
+                                        ClipContext.Block.COLLIDER,
+                                        ClipContext.Fluid.NONE,
+                                        this));
         if (collidesWithBlocks() && blockCollision.getType() != HitResult.Type.MISS) {
             destination = blockCollision.getLocation();
         }
@@ -173,7 +191,9 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
             if (!(hitResult instanceof EntityHitResult entityHitResult)) {
                 continue;
             }
-            if (entityHitResult.getType() != HitResult.Type.MISS && !org.marj4n.irons_spellbooks.events.SpellEvents.post(new ProjectileImpactEvent(this, entityHitResult))) {
+            if (entityHitResult.getType() != HitResult.Type.MISS
+                    && !org.marj4n.irons_spellbooks.events.SpellEvents.post(
+                            new ProjectileImpactEvent(this, entityHitResult))) {
                 onHit(entityHitResult);
             }
             if (this.isRemoved()) {
@@ -186,15 +206,20 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     }
 
     protected List<HitResult> raycastForEntitiesAlongPath(Vec3 destination, Vec3 position) {
-        AABB range = this.getBoundingBox().expandTowards(destination.subtract(position)).inflate(0.1);
+        AABB range =
+                this.getBoundingBox().expandTowards(destination.subtract(position)).inflate(0.1);
         List<HitResult> hits = new ArrayList<>();
-        List<Entity> hitEntities = new ArrayList<>(); // prevents large hitbox entities from registering multiple hits in one tick
+        List<Entity> hitEntities =
+                new ArrayList<>(); // prevents large hitbox entities from registering multiple hits
+                                   // in one tick
         List<? extends Entity> entities = level().getEntities(this, range, this::canHitEntity);
         for (Entity target : entities) {
             if (hitEntities.contains(target)) {
                 continue;
             }
-            HitResult hit = Utils.checkEntityIntersecting(target, position, destination, getHitDetectionInflation());
+            HitResult hit =
+                    Utils.checkEntityIntersecting(
+                            target, position, destination, getHitDetectionInflation());
             if (hit.getType() != HitResult.Type.MISS) {
                 hits.add(hit);
                 hitEntities.add(target);
@@ -210,8 +235,14 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     public void travel() {
         setPos(position().add(getDeltaMovement()));
         Vec3 motion = this.getDeltaMovement();
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        float xRot =
+                -((float)
+                                (Mth.atan2(motion.horizontalDistance(), motion.y)
+                                        * (double) (180F / (float) Math.PI))
+                        - 90.0F);
+        float yRot =
+                -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI))
+                        + 90.0F);
         this.setXRot(Mth.wrapDegrees(xRot));
         this.setYRot(Mth.wrapDegrees(yRot));
         if (!this.isNoGravity()) {
@@ -241,7 +272,8 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
         Vec3 wantedPos = target.getBoundingBox().getCenter().add(target.getDeltaMovement());
         Vec3 newMotion = homeTowards(wantedPos, 0.22f);
         if (newMotion.dot(wantedPos.subtract(this.position())) < -.25 && this.tickCount > 10) {
-            // after a decent bit into our flight, if we are significantly past our target, lose tracking
+            // after a decent bit into our flight, if we are significantly past our target, lose
+            // tracking
             stopEntityHoming();
         }
     }
@@ -259,14 +291,22 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
         }
         Vec3 start = owner.getEyePosition();
         Vec3 end = start.add(owner.getForward().scale(maxRange));
-        HitResult hitresult = RaycastBuilder.begin(level(), owner)
-                .start(start)
-                .end(end)
-                .checkForBlocks(true)
-                .bbInflation(0.5f)
-                .filter(entity -> Utils.canHitWithRaycast(entity) && !DamageSources.isFriendlyFireBetween(entity, owner))
-                .build();
-        Vec3 target = hitresult instanceof EntityHitResult entityHit ? entityHit.getEntity().getBoundingBox().getCenter() : hitresult.getLocation();
+        HitResult hitresult =
+                RaycastBuilder.begin(level(), owner)
+                        .start(start)
+                        .end(end)
+                        .checkForBlocks(true)
+                        .bbInflation(0.5f)
+                        .filter(
+                                entity ->
+                                        Utils.canHitWithRaycast(entity)
+                                                && !DamageSources.isFriendlyFireBetween(
+                                                        entity, owner))
+                        .build();
+        Vec3 target =
+                hitresult instanceof EntityHitResult entityHit
+                        ? entityHit.getEntity().getBoundingBox().getCenter()
+                        : hitresult.getLocation();
         homeTowards(target, 0.18f);
     }
 
@@ -307,11 +347,20 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
 
     @Override
     public boolean shouldBeSaved() {
-        return super.shouldBeSaved() && !Objects.equals(getRemovalReason(), RemovalReason.UNLOADED_TO_CHUNK);
+        return super.shouldBeSaved()
+                && !Objects.equals(getRemovalReason(), RemovalReason.UNLOADED_TO_CHUNK);
     }
 
     protected void doImpactSound(Supplier<SoundEvent> sound) {
-        level().playSound(null, getX(), getY(), getZ(), sound.get(), SoundSource.NEUTRAL, 2, .9f + Utils.random.nextFloat() * .2f);
+        level().playSound(
+                        null,
+                        getX(),
+                        getY(),
+                        getZ(),
+                        sound.get(),
+                        SoundSource.NEUTRAL,
+                        2,
+                        .9f + Utils.random.nextFloat() * .2f);
     }
 
     @Override
@@ -368,9 +417,16 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     @Override
     protected void onHitEntity(@NotNull EntityHitResult pResult) {
         super.onHitEntity(pResult);
-        if (!shouldPierceShields() && (pResult.getEntity() instanceof ShieldPart || pResult.getEntity() instanceof AbstractShieldEntity)) {
+        if (!shouldPierceShields()
+                && (pResult.getEntity() instanceof ShieldPart
+                        || pResult.getEntity() instanceof AbstractShieldEntity)) {
             // simulate block impact (likely destroying projectile) due to magic shield impact
-            this.onHitBlock(new BlockHitResult(pResult.getEntity().position(), Direction.fromYRot(this.getYRot()), pResult.getEntity().blockPosition(), false));
+            this.onHitBlock(
+                    new BlockHitResult(
+                            pResult.getEntity().position(),
+                            Direction.fromYRot(this.getYRot()),
+                            pResult.getEntity().blockPosition(),
+                            false));
         }
     }
 
@@ -385,7 +441,8 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
             return;
         }
         if (discardWhenExhausted) {
-            // a pierce only pipeline might be useful, but not discarding on impact is effectively just piercing
+            // a pierce only pipeline might be useful, but not discarding on impact is effectively
+            // just piercing
             // mainly here for future expansion structuring
             pierceOrDiscard();
         }
@@ -424,17 +481,40 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
         Vec3 vec = deltaMovement.normalize();
         Entity owner = getOwner();
         Entity hit = entityHitResult.getEntity();
-        List<Entity> potentialTargets = level().getEntities(this, this.getBoundingBox().expandTowards(vec.scale(16)).inflate(5),
-                entity -> entity != hit && (
-                        (owner == null || !Utils.shouldHealEntity(owner, entity))
-                                || entity.getClass() == hit.getClass()
-                ) && entity.canBeHitByProjectile() && entity.getBoundingBox().getCenter().subtract(position()).normalize().dot(vec) > 0.8 && Utils.hasLineOfSight(level(), this, entity, false));
+        List<Entity> potentialTargets =
+                level().getEntities(
+                                this,
+                                this.getBoundingBox().expandTowards(vec.scale(16)).inflate(5),
+                                entity ->
+                                        entity != hit
+                                                && ((owner == null
+                                                                || !Utils.shouldHealEntity(
+                                                                        owner, entity))
+                                                        || entity.getClass() == hit.getClass())
+                                                && entity.canBeHitByProjectile()
+                                                && entity.getBoundingBox()
+                                                                .getCenter()
+                                                                .subtract(position())
+                                                                .normalize()
+                                                                .dot(vec)
+                                                        > 0.8
+                                                && Utils.hasLineOfSight(
+                                                        level(), this, entity, false));
         if (potentialTargets.isEmpty()) {
             return false;
         }
         potentialTargets.sort(Comparator.comparing(entity -> entity.distanceToSqr(this)));
-        Entity target = potentialTargets.get((this.getId() % potentialTargets.size()) % 3); // use deterministic random to keep client and server in sync. limit to closest 3.
-        setDeltaMovement(target.getBoundingBox().getCenter().subtract(this.position()).normalize().scale(deltaMovement.length()));
+        Entity target =
+                potentialTargets.get(
+                        (this.getId() % potentialTargets.size())
+                                % 3); // use deterministic random to keep client and server in sync.
+                                      // limit to closest 3.
+        setDeltaMovement(
+                target.getBoundingBox()
+                        .getCenter()
+                        .subtract(this.position())
+                        .normalize()
+                        .scale(deltaMovement.length()));
         consumeRicochetCharge();
         return true;
     }
@@ -443,9 +523,9 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
         int r = getRicochetLevel();
         if (r > 0) {
             setRicochetLevel(r - 1);
-            //todo: ye or ne? ne for now, cringe hidden mechanic
-//            damage *= 0.85f;
-//            explosionRadius *= 0.85f;
+            // todo: ye or ne? ne for now, cringe hidden mechanic
+            //            damage *= 0.85f;
+            //            explosionRadius *= 0.85f;
         }
     }
 

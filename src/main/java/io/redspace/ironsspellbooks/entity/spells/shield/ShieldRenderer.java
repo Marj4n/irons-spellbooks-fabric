@@ -22,11 +22,15 @@ import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShieldRenderer extends EntityRenderer<ShieldEntity> implements RenderLayerParent<ShieldEntity, ShieldModel> {
+public class ShieldRenderer extends EntityRenderer<ShieldEntity>
+        implements RenderLayerParent<ShieldEntity, ShieldModel> {
 
-    public static ResourceLocation SPECTRAL_OVERLAY_TEXTURE = IronsSpellbooks.id("textures/entity/shield/shield_overlay.png");
-    private static ResourceLocation SIGIL_TEXTURE = IronsSpellbooks.id("textures/block/scroll_forge_sigil.png");
-    //private static ResourceLocation TEXTURE = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
+    public static ResourceLocation SPECTRAL_OVERLAY_TEXTURE =
+            IronsSpellbooks.id("textures/entity/shield/shield_overlay.png");
+    private static ResourceLocation SIGIL_TEXTURE =
+            IronsSpellbooks.id("textures/block/scroll_forge_sigil.png");
+    // private static ResourceLocation TEXTURE = new
+    // ResourceLocation("textures/entity/creeper/creeper_armor.png");
     private final ShieldModel model;
     protected final List<RenderLayer<ShieldEntity, ShieldModel>> layers = new ArrayList<>();
 
@@ -37,7 +41,13 @@ public class ShieldRenderer extends EntityRenderer<ShieldEntity> implements Rend
     }
 
     @Override
-    public void render(ShieldEntity entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(
+            ShieldEntity entity,
+            float yaw,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light) {
         poseStack.pushPose();
 
         Pose pose = poseStack.last();
@@ -46,15 +56,26 @@ public class ShieldRenderer extends EntityRenderer<ShieldEntity> implements Rend
         poseStack.mulPose(Axis.YP.rotationDegrees(-entity.getYRot()));
         poseStack.mulPose(Axis.XP.rotationDegrees(entity.getXRot()));
 
-        //VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
+        // VertexConsumer consumer =
+        // bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
         var offset = getEnergySwirlOffset(entity, partialTicks);
-        VertexConsumer consumer = bufferSource.getBuffer(RenderHelper.CustomerRenderType.magicSwirl(getTextureLocation(entity), offset.x, offset.y));
+        VertexConsumer consumer =
+                bufferSource.getBuffer(
+                        RenderHelper.CustomerRenderType.magicSwirl(
+                                getTextureLocation(entity), offset.x, offset.y));
 
         float width = entity.width * .65f;
         poseStack.scale(width, width, width);
         RenderSystem.disableBlend();
-        model.renderToBuffer(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, .65f, .65f, .65f, 1f);
-
+        model.renderToBuffer(
+                poseStack,
+                consumer,
+                LightTexture.FULL_BRIGHT,
+                OverlayTexture.NO_OVERLAY,
+                .65f,
+                .65f,
+                .65f,
+                1f);
 
         for (RenderLayer<ShieldEntity, ShieldModel> layer : layers) {
             layer.render(poseStack, bufferSource, light, entity, 0f, 0f, 0f, 0f, 0f, 0f);
@@ -65,7 +86,12 @@ public class ShieldRenderer extends EntityRenderer<ShieldEntity> implements Rend
     }
 
     private static float shittyNoise(float f) {
-        return (float) (Math.sin(f / 4) + 2 * Math.sin(f / 3) + 3 * Math.sin(f / 2) + 4 * Math.sin(f)) * .25f;
+        return (float)
+                        (Math.sin(f / 4)
+                                + 2 * Math.sin(f / 3)
+                                + 3 * Math.sin(f / 2)
+                                + 4 * Math.sin(f))
+                * .25f;
     }
 
     public static Vec2 getEnergySwirlOffset(ShieldEntity entity, float partialTicks, int offset) {
@@ -86,5 +112,4 @@ public class ShieldRenderer extends EntityRenderer<ShieldEntity> implements Rend
     public ResourceLocation getTextureLocation(ShieldEntity entity) {
         return SPECTRAL_OVERLAY_TEXTURE;
     }
-
 }

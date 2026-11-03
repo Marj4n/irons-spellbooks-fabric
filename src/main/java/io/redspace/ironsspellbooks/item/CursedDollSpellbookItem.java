@@ -22,17 +22,30 @@ public class CursedDollSpellbookItem extends SpellBook {
     public CursedDollSpellbookItem(Item.Properties properties) {
         super(10, properties);
         withSpellbookAttributes(
-                new AttributeContainer(AttributeRegistry.BLOOD_SPELL_POWER, 0.10, AttributeModifier.Operation.MULTIPLY_BASE),
-                new AttributeContainer(AttributeRegistry.SPELL_RESIST, 0.10, AttributeModifier.Operation.MULTIPLY_BASE),
-                new AttributeContainer(AttributeRegistry.MAX_MANA, 200, AttributeModifier.Operation.ADDITION));
+                new AttributeContainer(
+                        AttributeRegistry.BLOOD_SPELL_POWER,
+                        0.10,
+                        AttributeModifier.Operation.MULTIPLY_BASE),
+                new AttributeContainer(
+                        AttributeRegistry.SPELL_RESIST,
+                        0.10,
+                        AttributeModifier.Operation.MULTIPLY_BASE),
+                new AttributeContainer(
+                        AttributeRegistry.MAX_MANA, 200, AttributeModifier.Operation.ADDITION));
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack, Level context, @NotNull List<Component> lines, @NotNull TooltipFlag flag) {
+    public void appendHoverText(
+            @NotNull ItemStack itemStack,
+            Level context,
+            @NotNull List<Component> lines,
+            @NotNull TooltipFlag flag) {
         super.appendHoverText(itemStack, context, lines, flag);
         var affinityData = AffinityData.getAffinityData(itemStack);
         if (!affinityData.affinityData().isEmpty()) {
-            int i = TooltipsUtils.indexOfComponent(lines, "tooltip.irons_spellbooks.spellbook_spell_count");
+            int i =
+                    TooltipsUtils.indexOfComponent(
+                            lines, "tooltip.irons_spellbooks.spellbook_spell_count");
             lines.addAll(i < 0 ? lines.size() : i + 1, affinityData.getDescriptionComponent());
         }
     }
@@ -44,9 +57,11 @@ public class CursedDollSpellbookItem extends SpellBook {
         }
 
         super.initializeSpellContainer(itemStack);
-        AffinityData.set(itemStack, new AffinityData(Map.of(
-                SpellRegistry.BLOOD_SLASH_SPELL.get().getSpellResource(), 1,
-                SpellRegistry.BLOOD_STEP_SPELL.get().getSpellResource(), 1
-        )));
+        AffinityData.set(
+                itemStack,
+                new AffinityData(
+                        Map.of(
+                                SpellRegistry.BLOOD_SLASH_SPELL.get().getSpellResource(), 1,
+                                SpellRegistry.BLOOD_STEP_SPELL.get().getSpellResource(), 1)));
     }
 }

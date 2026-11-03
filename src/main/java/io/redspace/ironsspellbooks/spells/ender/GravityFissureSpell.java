@@ -22,22 +22,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class GravityFissureSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "gravity_fissure");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "gravity_fissure");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.duration", Utils.timeFromTicks(getDurationTicks(spellLevel, caster), 1))
-        );
+                Component.translatable(
+                        "ui.irons_spellbooks.radius",
+                        Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
+                Component.translatable(
+                        "ui.irons_spellbooks.duration",
+                        Utils.timeFromTicks(getDurationTicks(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.EPIC)
-            .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
-            .setMaxLevel(5)
-            .setCooldownSeconds(45)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.EPIC)
+                    .setSchoolResource(SchoolRegistry.ENDER_RESOURCE)
+                    .setMaxLevel(5)
+                    .setCooldownSeconds(45)
+                    .build();
 
     public GravityFissureSpell() {
         this.manaCostPerLevel = 25;
@@ -73,11 +78,25 @@ public class GravityFissureSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
         float radius = getRadius(spellLevel, entity);
-        Vec3 spawn = entity.getEyePosition().add(entity.getForward().scale(2)).subtract(0, radius, 0);
+        Vec3 spawn =
+                entity.getEyePosition().add(entity.getForward().scale(2)).subtract(0, radius, 0);
 
-        level.playSound(null, spawn.x, spawn.y, spawn.z, SoundRegistry.BLACK_HOLE_CAST.get(), SoundSource.AMBIENT, 4, 1);
+        level.playSound(
+                null,
+                spawn.x,
+                spawn.y,
+                spawn.z,
+                SoundRegistry.BLACK_HOLE_CAST.get(),
+                SoundSource.AMBIENT,
+                4,
+                1);
 
         BlackHole blackHole = new BlackHole(level, entity);
         blackHole.setRadius(radius);

@@ -14,7 +14,8 @@ public class SpellSummonEvent<K extends LivingEntity> extends SpellLivingEvent {
     private final ResourceLocation spellId;
     private int spellLevel = 0;
 
-    public SpellSummonEvent(LivingEntity caster, K creature, ResourceLocation spellId, int spellLevel) {
+    public SpellSummonEvent(
+            LivingEntity caster, K creature, ResourceLocation spellId, int spellLevel) {
         super(caster);
         this.caster = caster;
         this.creature = creature;

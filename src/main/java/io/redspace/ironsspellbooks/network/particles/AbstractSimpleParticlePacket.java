@@ -10,13 +10,13 @@ public abstract class AbstractSimpleParticlePacket extends AbstractVec3Packet {
         super(pos);
     }
 
-//    public boolean handle(Supplier<NetworkEvent.Context> supplier) {
-//        NetworkEvent.Context ctx = supplier.get();
-//        ctx.enqueueWork(() -> {
-//            particleFunction().accept(pos);
-//        });
-//        return true;
-//    }
+    //    public boolean handle(Supplier<NetworkEvent.Context> supplier) {
+    //        NetworkEvent.Context ctx = supplier.get();
+    //        ctx.enqueueWork(() -> {
+    //            particleFunction().accept(pos);
+    //        });
+    //        return true;
+    //    }
 
     abstract Consumer<Vec3> particleFunction();
 }

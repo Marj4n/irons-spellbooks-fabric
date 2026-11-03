@@ -19,10 +19,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class HandleLitBlocksProcessor extends StructureProcessor {
-    public static final MapCodec<HandleLitBlocksProcessor> MAPCODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-            Codec.DOUBLE.fieldOf("chanceLit").forGetter(obj -> obj.chanceLit),
-            Codec.unboundedMap(ResourceLocation.CODEC, Codec.DOUBLE).optionalFieldOf("byBlock", Map.of()).forGetter(obj -> obj.byBlock)
-    ).apply(builder, HandleLitBlocksProcessor::new));
+    public static final MapCodec<HandleLitBlocksProcessor> MAPCODEC =
+            RecordCodecBuilder.mapCodec(
+                    builder ->
+                            builder.group(
+                                            Codec.DOUBLE
+                                                    .fieldOf("chanceLit")
+                                                    .forGetter(obj -> obj.chanceLit),
+                                            Codec.unboundedMap(ResourceLocation.CODEC, Codec.DOUBLE)
+                                                    .optionalFieldOf("byBlock", Map.of())
+                                                    .forGetter(obj -> obj.byBlock))
+                                    .apply(builder, HandleLitBlocksProcessor::new));
     public static final Codec<HandleLitBlocksProcessor> CODEC = MAPCODEC.codec();
 
     public final double chanceLit;
@@ -34,16 +41,28 @@ public class HandleLitBlocksProcessor extends StructureProcessor {
     }
 
     @Override
-    public StructureTemplate.StructureBlockInfo processBlock(@NotNull LevelReader levelReader,
-                                                             @NotNull BlockPos jigsawPiecePos,
-                                                             @NotNull BlockPos jigsawPieceBottomCenterPos,
-                                                             StructureTemplate.@NotNull StructureBlockInfo blockInfoLocal,
-                                                             StructureTemplate.StructureBlockInfo blockInfoGlobal,
-                                                             StructurePlaceSettings structurePlacementData) {
+    public StructureTemplate.StructureBlockInfo processBlock(
+            @NotNull LevelReader levelReader,
+            @NotNull BlockPos jigsawPiecePos,
+            @NotNull BlockPos jigsawPieceBottomCenterPos,
+            StructureTemplate.@NotNull StructureBlockInfo blockInfoLocal,
+            StructureTemplate.StructureBlockInfo blockInfoGlobal,
+            StructurePlaceSettings structurePlacementData) {
         if (blockInfoGlobal.state().hasProperty(BlockStateProperties.LIT)) {
-            double chanceToBeLit = byBlock.getOrDefault(BuiltInRegistries.BLOCK.getKey(blockInfoGlobal.state().getBlock()), chanceLit);
+            double chanceToBeLit =
+                    byBlock.getOrDefault(
+                            BuiltInRegistries.BLOCK.getKey(blockInfoGlobal.state().getBlock()),
+                            chanceLit);
             RandomSource random = structurePlacementData.getRandom(blockInfoGlobal.pos());
-            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), blockInfoGlobal.state().setValue(BlockStateProperties.LIT, random.nextFloat() < chanceToBeLit), blockInfoGlobal.nbt());
+            blockInfoGlobal =
+                    new StructureTemplate.StructureBlockInfo(
+                            blockInfoGlobal.pos(),
+                            blockInfoGlobal
+                                    .state()
+                                    .setValue(
+                                            BlockStateProperties.LIT,
+                                            random.nextFloat() < chanceToBeLit),
+                            blockInfoGlobal.nbt());
         }
         return blockInfoGlobal;
     }

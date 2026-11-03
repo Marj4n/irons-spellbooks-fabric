@@ -20,7 +20,10 @@ public class WizardRecoverGoal extends Goal {
         if (mob instanceof PathfinderMob m) {
             this.mob = m;
         } else
-            throw new IllegalStateException("Unable to add " + this.getClass().getSimpleName() + "to entity, must extend PathfinderMob.");
+            throw new IllegalStateException(
+                    "Unable to add "
+                            + this.getClass().getSimpleName()
+                            + "to entity, must extend PathfinderMob.");
 
         this.minDelay = minDelay;
         this.maxDelay = maxDelay;
@@ -29,14 +32,19 @@ public class WizardRecoverGoal extends Goal {
     @Override
     public boolean canUse() {
         // Delay only gets decremented if the first conditions are true, so it's smart.
-        //IronsSpellbooks.LOGGER.debug("WizardRecoverGoal {} {} {} {}", mob.getTarget(), mob.isDrinkingPotion(), mob.isCasting(), delay);
-        return mob.getTarget() == null && mob.getHealth() < mob.getMaxHealth() && !spellCastingMob.isDrinkingPotion() && !spellCastingMob.isCasting() && --delay <= 0;
+        // IronsSpellbooks.LOGGER.debug("WizardRecoverGoal {} {} {} {}", mob.getTarget(),
+        // mob.isDrinkingPotion(), mob.isCasting(), delay);
+        return mob.getTarget() == null
+                && mob.getHealth() < mob.getMaxHealth()
+                && !spellCastingMob.isDrinkingPotion()
+                && !spellCastingMob.isCasting()
+                && --delay <= 0;
     }
 
     @Override
     public void start() {
         spellCastingMob.startDrinkingPotion();
         delay = mob.getRandom().nextIntBetweenInclusive(minDelay, maxDelay);
-        //IronsSpellbooks.LOGGER.debug("WizardRecoverGoal begin {}", delay);
+        // IronsSpellbooks.LOGGER.debug("WizardRecoverGoal begin {}", delay);
     }
 }

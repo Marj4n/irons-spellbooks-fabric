@@ -42,8 +42,14 @@ public class BrazierBlock extends Block implements SimpleWaterloggedBlock {
     private final boolean soul;
 
     public BrazierBlock(boolean soul) {
-        super(Properties.copy(Blocks.CHAIN).lightLevel((blockState) -> blockState.getValue(LIT) ? 15 : 0));
-        this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false).setValue(LIT, true).setValue(HANGING, false));
+        super(
+                Properties.copy(Blocks.CHAIN)
+                        .lightLevel((blockState) -> blockState.getValue(LIT) ? 15 : 0));
+        this.registerDefaultState(
+                this.defaultBlockState()
+                        .setValue(WATERLOGGED, false)
+                        .setValue(LIT, true)
+                        .setValue(HANGING, false));
         this.soul = soul;
     }
 
@@ -56,12 +62,14 @@ public class BrazierBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return RENDER_SHAPE;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getCollisionShape(
+            BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return COLLISION_SHAPE;
     }
 
@@ -70,12 +78,12 @@ public class BrazierBlock extends Block implements SimpleWaterloggedBlock {
         if (pState.getValue(LIT) && entity instanceof LivingEntity) {
             float margin = 0.0625f; // one pixel
             var bb = entity.getBoundingBox();
-            // model is not full cube in horizontal dimensions. make sure they are inside fire before dishing damage
-            if (bb.maxX > blockpos.getX() + margin &&
-                    bb.maxZ > blockpos.getZ() + margin &&
-                    bb.minX < blockpos.getX() + 1 - margin &&
-                    bb.minZ < blockpos.getZ() + 1 - margin
-            ) {
+            // model is not full cube in horizontal dimensions. make sure they are inside fire
+            // before dishing damage
+            if (bb.maxX > blockpos.getX() + margin
+                    && bb.maxZ > blockpos.getZ() + margin
+                    && bb.minX < blockpos.getX() + 1 - margin
+                    && bb.minZ < blockpos.getZ() + 1 - margin) {
                 entity.hurt(pLevel.damageSources().inFire(), 1);
             }
         }
@@ -84,13 +92,22 @@ public class BrazierBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos) {
-        var newState = super.updateShape(pState, pDirection, pNeighborState, pLevel, pPos, pNeighborPos);
+    public BlockState updateShape(
+            BlockState pState,
+            Direction pDirection,
+            BlockState pNeighborState,
+            LevelAccessor pLevel,
+            BlockPos pPos,
+            BlockPos pNeighborPos) {
+        var newState =
+                super.updateShape(pState, pDirection, pNeighborState, pLevel, pPos, pNeighborPos);
         if (pState.getValue(WATERLOGGED)) {
             pLevel.scheduleTick(pPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
         }
         if (pDirection == Direction.UP) {
-            boolean chain = pNeighborState.is(Blocks.CHAIN) && pNeighborState.getValue(RotatedPillarBlock.AXIS).isVertical();
+            boolean chain =
+                    pNeighborState.is(Blocks.CHAIN)
+                            && pNeighborState.getValue(RotatedPillarBlock.AXIS).isVertical();
             if (chain != pState.getValue(HANGING)) {
                 newState = newState.setValue(HANGING, chain);
             }
@@ -99,14 +116,24 @@ public class BrazierBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction itemAbility, boolean simulate) {
+    public @Nullable BlockState getToolModifiedState(
+            BlockState state, UseOnContext context, ToolAction itemAbility, boolean simulate) {
         if (ToolActions.SHOVEL_FLATTEN == itemAbility) {
             if (state.getBlock() instanceof BrazierBlock && state.getValue(LIT)) {
                 var newState = state.setValue(LIT, false);
                 if (!simulate) {
-                    context.getLevel().playSound(null, context.getClickedPos(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    // in 1.20.1, shovels are hardcoded to ignore blockstate change if there is a block above (because of grass paths or whatever)
-                    // so we must manually set the blockstate for it to actually take effect for hanging braziers
+                    context.getLevel()
+                            .playSound(
+                                    null,
+                                    context.getClickedPos(),
+                                    SoundEvents.GENERIC_EXTINGUISH_FIRE,
+                                    SoundSource.BLOCKS,
+                                    1.0F,
+                                    1.0F);
+                    // in 1.20.1, shovels are hardcoded to ignore blockstate change if there is a
+                    // block above (because of grass paths or whatever)
+                    // so we must manually set the blockstate for it to actually take effect for
+                    // hanging braziers
                     // flags "11" is copied from shovelitem, i dont know what these flags mean
                     context.getLevel().setBlock(context.getClickedPos(), newState, 11);
                     if (context.getPlayer() != null) {
@@ -126,17 +153,26 @@ public class BrazierBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public boolean placeLiquid(LevelAccessor pLevel, BlockPos pPos, BlockState pState, FluidState pFluidState) {
-        if (!pState.getValue(BlockStateProperties.WATERLOGGED) && pFluidState.getType() == Fluids.WATER) {
+    public boolean placeLiquid(
+            LevelAccessor pLevel, BlockPos pPos, BlockState pState, FluidState pFluidState) {
+        if (!pState.getValue(BlockStateProperties.WATERLOGGED)
+                && pFluidState.getType() == Fluids.WATER) {
             boolean flag = pState.getValue(LIT);
             if (flag) {
                 if (!pLevel.isClientSide()) {
-                    pLevel.playSound(null, pPos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    pLevel.playSound(
+                            null,
+                            pPos,
+                            SoundEvents.GENERIC_EXTINGUISH_FIRE,
+                            SoundSource.BLOCKS,
+                            1.0F,
+                            1.0F);
                 }
             }
 
             pLevel.setBlock(pPos, pState.setValue(WATERLOGGED, true).setValue(LIT, false), 3);
-            pLevel.scheduleTick(pPos, pFluidState.getType(), pFluidState.getType().getTickDelay(pLevel));
+            pLevel.scheduleTick(
+                    pPos, pFluidState.getType(), pFluidState.getType().getTickDelay(pLevel));
             return true;
         } else {
             return false;
@@ -146,14 +182,24 @@ public class BrazierBlock extends Block implements SimpleWaterloggedBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        boolean water = pContext.getLevel().getFluidState(pContext.getClickedPos()).getType() == Fluids.WATER;
-        boolean hanging = pContext.getLevel().getBlockState(pContext.getClickedPos().above()).is(Blocks.CHAIN);
-        return this.defaultBlockState().setValue(WATERLOGGED, water).setValue(LIT, !water).setValue(HANGING, hanging);
+        boolean water =
+                pContext.getLevel().getFluidState(pContext.getClickedPos()).getType()
+                        == Fluids.WATER;
+        boolean hanging =
+                pContext.getLevel()
+                        .getBlockState(pContext.getClickedPos().above())
+                        .is(Blocks.CHAIN);
+        return this.defaultBlockState()
+                .setValue(WATERLOGGED, water)
+                .setValue(LIT, !water)
+                .setValue(HANGING, hanging);
     }
 
     @Override
     public FluidState getFluidState(BlockState pState) {
-        return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(pState);
+        return pState.getValue(WATERLOGGED)
+                ? Fluids.WATER.getSource(false)
+                : super.getFluidState(pState);
     }
 
     @Override
@@ -173,8 +219,14 @@ public class BrazierBlock extends Block implements SimpleWaterloggedBlock {
             double d6 = Utils.getRandomScaled(scale);
             double d7 = pRandom.nextDouble() * 0.17;
 
-            pLevel.addParticle(soul ? ParticleTypes.SOUL : ParticleHelper.EMBERS, d0 + d3, d1 + d4, d2 + d6, 0.0D, d7, 0.0D);
+            pLevel.addParticle(
+                    soul ? ParticleTypes.SOUL : ParticleHelper.EMBERS,
+                    d0 + d3,
+                    d1 + d4,
+                    d2 + d6,
+                    0.0D,
+                    d7,
+                    0.0D);
         }
     }
-
 }

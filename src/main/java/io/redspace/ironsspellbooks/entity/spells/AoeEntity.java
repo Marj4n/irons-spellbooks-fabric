@@ -18,9 +18,12 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class AoeEntity extends Projectile implements NoKnockbackProjectile {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> DATA_CIRCULAR = SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> DATA_DELAY = SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_RADIUS =
+            SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> DATA_CIRCULAR =
+            SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_DELAY =
+            SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.INT);
 
     protected float damage;
     protected int duration = 600;
@@ -102,8 +105,7 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
                 if (tickCount % reapplicationDelay == 0) {
                     checkHits();
                 }
-                if (tickCount % 5 == 0)
-                    this.setRadius(getRadius() + radiusPerTick);
+                if (tickCount % 5 == 0) this.setRadius(getRadius() + radiusPerTick);
             } else {
                 ambientParticles();
             }
@@ -111,9 +113,16 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
     }
 
     protected void checkHits() {
-        if (level().isClientSide)
-            return;
-        List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(this.getInflation().x, this.getInflation().y, this.getInflation().z));
+        if (level().isClientSide) return;
+        List<LivingEntity> targets =
+                this.level()
+                        .getEntitiesOfClass(
+                                LivingEntity.class,
+                                this.getBoundingBox()
+                                        .inflate(
+                                                this.getInflation().x,
+                                                this.getInflation().y,
+                                                this.getInflation().z));
         boolean hit = false;
         var radiusSqr = getRadius();
         radiusSqr *= radiusSqr;
@@ -145,15 +154,14 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
 
     @Override
     protected boolean canHitEntity(Entity pTarget) {
-        return (getOwner() == null || (pTarget != getOwner() && !getOwner().isAlliedTo(pTarget))) && super.canHitEntity(pTarget);
+        return (getOwner() == null || (pTarget != getOwner() && !getOwner().isAlliedTo(pTarget)))
+                && super.canHitEntity(pTarget);
     }
 
     /**
      * Server Side, called if any entities were hit
      */
-    public void onPostHit() {
-
-    }
+    public void onPostHit() {}
 
     public abstract void applyEffect(LivingEntity target);
 
@@ -161,40 +169,41 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
         float f = getParticleCount();
         f = Mth.clamp(f * getRadius(), f / 4, f * 10);
         for (int i = 0; i < f; i++) {
-            if (f - i < 1 && random.nextFloat() > f - i)
-                return;
+            if (f - i < 1 && random.nextFloat() > f - i) return;
             var r = getRadius();
             Vec3 pos;
             if (isCircular()) {
                 var distance = r * (1 - this.random.nextFloat() * this.random.nextFloat());
                 var theta = this.random.nextFloat() * 6.282f; // two pi :nerd:
-                pos = new Vec3(
-                        distance * Mth.cos(theta),
-                        .2f,
-                        distance * Mth.sin(theta)
-                );
+                pos = new Vec3(distance * Mth.cos(theta), .2f, distance * Mth.sin(theta));
             } else {
-                pos = new Vec3(
-                        Utils.getRandomScaled(r * .85f),
-                        .2f,
-                        Utils.getRandomScaled(r * .85f)
-                );
+                pos =
+                        new Vec3(
+                                Utils.getRandomScaled(r * .85f),
+                                .2f,
+                                Utils.getRandomScaled(r * .85f));
             }
-            Vec3 motion = new Vec3(
-                    Utils.getRandomScaled(.03f),
-                    this.random.nextDouble() * .01f,
-                    Utils.getRandomScaled(.03f)
-            ).scale(this.getParticleSpeedModifier());
+            Vec3 motion =
+                    new Vec3(
+                                    Utils.getRandomScaled(.03f),
+                                    this.random.nextDouble() * .01f,
+                                    Utils.getRandomScaled(.03f))
+                            .scale(this.getParticleSpeedModifier());
             Vec3 vec3 = new Vec3(getX() + pos.x, getY() + pos.y + 1, getZ() + pos.z);
             vec3 = Utils.moveToRelativeGroundLevel(level(), vec3, 1, 2);
-            level().addParticle(particle, vec3.x, vec3.y + particleYOffset(), vec3.z, motion.x, motion.y, motion.z);
+            level().addParticle(
+                            particle,
+                            vec3.x,
+                            vec3.y + particleYOffset(),
+                            vec3.z,
+                            motion.x,
+                            motion.y,
+                            motion.z);
         }
-
     }
 
     public void ambientParticles() {
-        if (!level().isClientSide)
-            return;
+        if (!level().isClientSide) return;
         getParticle().ifPresent(this::ambientParticles);
     }
 
@@ -298,17 +307,14 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
         pCompound.putInt("EffectDuration", this.effectDuration);
         pCompound.putInt("Delay", this.getDelay());
         super.addAdditionalSaveData(pCompound);
-
     }
 
     protected void readAdditionalSaveData(CompoundTag pCompound) {
         this.tickCount = pCompound.getInt("Age");
-        if (pCompound.getInt("Duration") > 0)
-            this.duration = pCompound.getInt("Duration");
+        if (pCompound.getInt("Duration") > 0) this.duration = pCompound.getInt("Duration");
         if (pCompound.getInt("ReapplicationDelay") > 0)
             this.reapplicationDelay = pCompound.getInt("ReapplicationDelay");
-        if (pCompound.getInt("Radius") > 0)
-            this.setRadius(pCompound.getFloat("Radius"));
+        if (pCompound.getInt("Radius") > 0) this.setRadius(pCompound.getFloat("Radius"));
         if (pCompound.getInt("DurationOnUse") > 0)
             this.durationOnUse = pCompound.getInt("DurationOnUse");
         if (pCompound.getInt("RadiusOnUse") > 0)
@@ -317,13 +323,10 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
             this.radiusPerTick = pCompound.getFloat("RadiusPerTick");
         if (pCompound.getInt("EffectDuration") > 0)
             this.effectDuration = pCompound.getInt("EffectDuration");
-        if (pCompound.getInt("Delay") > 0)
-            setDelay(pCompound.getInt("Delay"));
+        if (pCompound.getInt("Delay") > 0) setDelay(pCompound.getInt("Delay"));
         this.setDamage(pCompound.getFloat("Damage"));
-        if (pCompound.getBoolean("Circular"))
-            setCircular();
+        if (pCompound.getBoolean("Circular")) setCircular();
 
         super.readAdditionalSaveData(pCompound);
-
     }
 }

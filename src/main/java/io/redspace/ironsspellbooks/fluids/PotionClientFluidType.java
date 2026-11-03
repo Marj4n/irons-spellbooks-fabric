@@ -13,7 +13,9 @@ public class PotionClientFluidType extends SimpleClientFluidType {
 
     @Override
     public int getTintColor(FluidStack stack) {
-        return (FluidHelper.hasPotionContents(stack) ? PotionUtils.getColor(FluidHelper.getPotionContents(stack).getEffects()) : PotionUtils.getColor(Potions.WATER)) | 0xFF000000;
+        return (FluidHelper.hasPotionContents(stack)
+                        ? PotionUtils.getColor(FluidHelper.getPotionContents(stack).getEffects())
+                        : PotionUtils.getColor(Potions.WATER))
+                | 0xFF000000;
     }
-
 }

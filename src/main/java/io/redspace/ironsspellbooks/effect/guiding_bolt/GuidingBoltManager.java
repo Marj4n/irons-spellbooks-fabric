@@ -29,7 +29,8 @@ import java.util.*;
 public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
 
     public static final GuidingBoltManager INSTANCE = new GuidingBoltManager();
-    // Client and server managers must be separated so that singleplayer instances do not reuse the same static data
+    // Client and server managers must be separated so that singleplayer instances do not reuse the
+    // same static data
     public static final GuidingBoltManager CLIENT_INSTANCE = new GuidingBoltManager();
     private final HashMap<UUID, HashSet<Projectile>> trackedEntities = new HashMap<>();
     private final HashMap<ResourceKey<Level>, List<Projectile>> dirtyProjectiles = new HashMap<>();
@@ -48,7 +49,8 @@ public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
         if (!entity.level().isClientSide) {
             trackedEntities.remove(entity.getUUID());
             IronsDataStorage.INSTANCE.setDirty();
-            PacketDistributor.sendToPlayersTrackingEntity(entity, new GuidingBoltManagerStopTrackingPacket(entity));
+            PacketDistributor.sendToPlayersTrackingEntity(
+                    entity, new GuidingBoltManagerStopTrackingPacket(entity));
         }
     }
 
@@ -78,8 +80,12 @@ public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
 
     public static void onProjectileShot(Entity entity, Level level) {
         if (level instanceof ServerLevel serverLevel) {
-            if (!INSTANCE.trackedEntities.isEmpty() && entity instanceof Projectile projectile && !projectile.getType().is(ModTags.GUIDING_BOLT_IMMUNE)) {
-                INSTANCE.dirtyProjectiles.computeIfAbsent(serverLevel.dimension(), (key) -> new ArrayList<>()).add(projectile);
+            if (!INSTANCE.trackedEntities.isEmpty()
+                    && entity instanceof Projectile projectile
+                    && !projectile.getType().is(ModTags.GUIDING_BOLT_IMMUNE)) {
+                INSTANCE.dirtyProjectiles
+                        .computeIfAbsent(serverLevel.dimension(), (key) -> new ArrayList<>())
+                        .add(projectile);
             }
         }
     }
@@ -87,14 +93,14 @@ public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
     /**
      * Delayed handler for checking if dirty projectiles that have just been added to the level should be tracked. Does not perform homing itself.
      */
-
     public static void serverTick(ServerLevel serverLevel) {
         if (INSTANCE.dirtyProjectiles.isEmpty()) {
             return;
         }
         {
             HashMap<Entity, List<Projectile>> toSync = new HashMap<Entity, List<Projectile>>();
-            var dirtyProjectiles = INSTANCE.dirtyProjectiles.getOrDefault(serverLevel.dimension(), List.of());
+            var dirtyProjectiles =
+                    INSTANCE.dirtyProjectiles.getOrDefault(serverLevel.dimension(), List.of());
             for (int i = dirtyProjectiles.size() - 1; i >= 0; i--) {
                 var projectile = dirtyProjectiles.get(i);
                 if (projectile.isRemoved()) {
@@ -104,17 +110,37 @@ public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
                 if (serverLevel.getEntity(projectile.getUUID()) == projectile) {
                     Vec3 start = projectile.position();
                     int searchRange = 48;
-                    Vec3 end = Utils.raycastForBlock(serverLevel, start, projectile.getDeltaMovement().normalize().scale(searchRange).add(start), ClipContext.Fluid.NONE).getLocation();
-                    for (Map.Entry<UUID, HashSet<Projectile>> entityToTrackedProjectiles : GuidingBoltManager.INSTANCE.trackedEntities.entrySet()) {
+                    Vec3 end =
+                            Utils.raycastForBlock(
+                                            serverLevel,
+                                            start,
+                                            projectile
+                                                    .getDeltaMovement()
+                                                    .normalize()
+                                                    .scale(searchRange)
+                                                    .add(start),
+                                            ClipContext.Fluid.NONE)
+                                    .getLocation();
+                    for (Map.Entry<UUID, HashSet<Projectile>> entityToTrackedProjectiles :
+                            GuidingBoltManager.INSTANCE.trackedEntities.entrySet()) {
                         var entity = serverLevel.getEntity(entityToTrackedProjectiles.getKey());
                         if (entity != null) {
-                            if (Math.abs(entity.getX() - projectile.getX()) > searchRange || Math.abs(entity.getY() - projectile.getY()) > searchRange || Math.abs(entity.getZ() - projectile.getZ()) > searchRange) {
+                            if (Math.abs(entity.getX() - projectile.getX()) > searchRange
+                                    || Math.abs(entity.getY() - projectile.getY()) > searchRange
+                                    || Math.abs(entity.getZ() - projectile.getZ()) > searchRange) {
                                 continue;
                             }
                             float homeRadius = 3.5f + Math.min(entity.getBbWidth() * .5f, 2);
-                            if (!entity.equals(projectile.getOwner()) && (entity.getBoundingBox().inflate(homeRadius).contains(start) || Utils.checkEntityIntersecting(entity, start, end, homeRadius).getType() == HitResult.Type.ENTITY)) {
-                                updateTrackedProjectiles(entityToTrackedProjectiles.getValue(), projectile);
-                                toSync.computeIfAbsent(entity, (key) -> new ArrayList<>()).add(projectile);
+                            if (!entity.equals(projectile.getOwner())
+                                    && (entity.getBoundingBox().inflate(homeRadius).contains(start)
+                                            || Utils.checkEntityIntersecting(
+                                                                    entity, start, end, homeRadius)
+                                                            .getType()
+                                                    == HitResult.Type.ENTITY)) {
+                                updateTrackedProjectiles(
+                                        entityToTrackedProjectiles.getValue(), projectile);
+                                toSync.computeIfAbsent(entity, (key) -> new ArrayList<>())
+                                        .add(projectile);
                                 break;
                             }
                         }
@@ -124,7 +150,9 @@ public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
             }
             for (Map.Entry<Entity, List<Projectile>> entry : toSync.entrySet()) {
                 var entity = entry.getKey();
-                PacketDistributor.sendToPlayersTrackingEntity(entity, new GuidingBoltManagerStartTrackingPacket(entity, entry.getValue()));
+                PacketDistributor.sendToPlayersTrackingEntity(
+                        entity,
+                        new GuidingBoltManagerStartTrackingPacket(entity, entry.getValue()));
             }
         }
     }
@@ -141,20 +169,24 @@ public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
     /**
      * Handles homing for an entity on a per-entity basis
      */
-
     public static void livingTick(LivingEntityEvents.LivingTickEvent event) {
-        GuidingBoltManager manager = event.getEntity().level() instanceof ServerLevel ? GuidingBoltManager.INSTANCE : GuidingBoltManager.CLIENT_INSTANCE;
-//        if (MinecraftInstanceHelper.getPlayer() == event.getEntity() && event.getEntity().tickCount % 20 == 0) {
-//            IronsSpellbooks.LOGGER.debug("\nGuiding Bolt Dump");
-//            for (Map.Entry entry : GuidingBoltManager.INSTANCE.trackedEntities.entrySet()) {
-//                IronsSpellbooks.LOGGER.debug("{}: {}", entry.getKey(), entry.getValue());
-//            }
-//        }
+        GuidingBoltManager manager =
+                event.getEntity().level() instanceof ServerLevel
+                        ? GuidingBoltManager.INSTANCE
+                        : GuidingBoltManager.CLIENT_INSTANCE;
+        //        if (MinecraftInstanceHelper.getPlayer() == event.getEntity() &&
+        // event.getEntity().tickCount % 20 == 0) {
+        //            IronsSpellbooks.LOGGER.debug("\nGuiding Bolt Dump");
+        //            for (Map.Entry entry : GuidingBoltManager.INSTANCE.trackedEntities.entrySet())
+        // {
+        //                IronsSpellbooks.LOGGER.debug("{}: {}", entry.getKey(), entry.getValue());
+        //            }
+        //        }
         if (manager.trackedEntities.isEmpty()) {
             return;
         }
         var livingEntity = event.getEntity();
-        if (true/*event.getEntity() instanceof LivingEntity livingEntity*/) {
+        if (true /*event.getEntity() instanceof LivingEntity livingEntity*/) {
             if (livingEntity.tickCount % manager.tickDelay == 0) {
                 var projectiles = manager.trackedEntities.get(event.getEntity().getUUID());
                 if (projectiles != null) {
@@ -166,9 +198,15 @@ public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
                     for (Projectile projectile : projectiles) {
                         Vec3 motion = projectile.getDeltaMovement();
                         float speed = (float) motion.length();
-                        Vec3 home = livingEntity.getBoundingBox().getCenter().subtract(projectile.position()).normalize().scale(speed * .55f * manager.tickDelay / 3f);
+                        Vec3 home =
+                                livingEntity
+                                        .getBoundingBox()
+                                        .getCenter()
+                                        .subtract(projectile.position())
+                                        .normalize()
+                                        .scale(speed * .55f * manager.tickDelay / 3f);
                         if (projectile.isRemoved() || home.dot(motion) < -0.75) {
-                            //We have passed the entity
+                            // We have passed the entity
                             projectilesToRemove.add(projectile);
                             continue;
                         }
@@ -189,7 +227,10 @@ public class GuidingBoltManager implements INBTSerializable<CompoundTag> {
                 updateTrackedProjectiles(projectiles, projectile);
             }
         }
-        CLIENT_INSTANCE.trackedEntities.computeIfAbsent(uuid, (key) -> new HashSet<>()).addAll(projectiles);
+        CLIENT_INSTANCE
+                .trackedEntities
+                .computeIfAbsent(uuid, (key) -> new HashSet<>())
+                .addAll(projectiles);
     }
 
     public static void handleClientboundStopTracking(UUID uuid) {

@@ -32,7 +32,13 @@ public interface ParticleAccessor {
 
     @Accessor("z")
     void irons_spellbooks$z(double z);
-    @Accessor("x") double irons_spellbooks$getX();
-    @Accessor("y") double irons_spellbooks$getY();
-    @Accessor("z") double irons_spellbooks$getZ();
+
+    @Accessor("x")
+    double irons_spellbooks$getX();
+
+    @Accessor("y")
+    double irons_spellbooks$getY();
+
+    @Accessor("z")
+    double irons_spellbooks$getZ();
 }

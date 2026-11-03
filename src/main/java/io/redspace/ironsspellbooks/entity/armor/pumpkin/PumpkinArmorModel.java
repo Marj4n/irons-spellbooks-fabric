@@ -9,7 +9,6 @@ public class PumpkinArmorModel extends GeoModel<PumpkinArmorItem> {
 
     public PumpkinArmorModel() {
         super();
-
     }
 
     @Override
@@ -24,12 +23,13 @@ public class PumpkinArmorModel extends GeoModel<PumpkinArmorItem> {
 
     @Override
     public ResourceLocation getAnimationResource(PumpkinArmorItem animatable) {
-        return new ResourceLocation(IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
+        return new ResourceLocation(
+                IronsSpellbooks.MODID, "animations/wizard_armor_animation.json");
     }
-//    public static String listOfBonesToString(List<IBone> list){
-//        String s = "";
-//        for (IBone o:list)
-//            s += o.getName()+", ";
-//        return s;
-//    }
+    //    public static String listOfBonesToString(List<IBone> list){
+    //        String s = "";
+    //        for (IBone o:list)
+    //            s += o.getName()+", ";
+    //        return s;
+    //    }
 }

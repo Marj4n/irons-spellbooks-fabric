@@ -25,19 +25,24 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class AscensionSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "ascension");
+    private final ResourceLocation spellId =
+            new ResourceLocation(IronsSpellbooks.MODID, "ascension");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return List.of(
+                Component.translatable(
+                        "ui.irons_spellbooks.damage",
+                        Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
-    private final DefaultConfig defaultConfig = new DefaultConfig()
-            .setMinRarity(SpellRarity.RARE)
-            .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
-            .setMaxLevel(10)
-            .setCooldownSeconds(15)
-            .build();
+    private final DefaultConfig defaultConfig =
+            new DefaultConfig()
+                    .setMinRarity(SpellRarity.RARE)
+                    .setSchoolResource(SchoolRegistry.LIGHTNING_RESOURCE)
+                    .setMaxLevel(10)
+                    .setCooldownSeconds(15)
+                    .build();
 
     public AscensionSpell() {
         this.manaCostPerLevel = 1;
@@ -45,7 +50,6 @@ public class AscensionSpell extends AbstractSpell {
         this.spellPowerPerLevel = 1;
         this.castTime = 0;
         this.baseManaCost = 50;
-
     }
 
     @Override
@@ -79,14 +83,20 @@ public class AscensionSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
+    public void onCast(
+            Level level,
+            int spellLevel,
+            LivingEntity entity,
+            CastSource castSource,
+            MagicData playerMagicData) {
 
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.ASCENSION.get(), 80, 0, false, false, true));
+        entity.addEffect(
+                new MobEffectInstance(
+                        MobEffectRegistry.ASCENSION.get(), 80, 0, false, false, true));
 
         Vec3 vec = entity.position();
         for (int i = 0; i < 32; i++) {
-            if (!level.getBlockState(BlockPos.containing(vec).below()).isAir())
-                break;
+            if (!level.getBlockState(BlockPos.containing(vec).below()).isAir()) break;
             vec = vec.subtract(0, 1, 0);
         }
         Vec3 strikePos = vec;
@@ -97,27 +107,38 @@ public class AscensionSpell extends AbstractSpell {
         lightningBolt.setPos(strikePos);
         level.addFreshEntity(lightningBolt);
 
-        //livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 100));
+        // livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 100));
         float radius = 5;
-        level.getEntities(entity, entity.getBoundingBox().inflate(radius)).forEach(target -> {
-            double distance = target.distanceToSqr(strikePos);
-            if (distance < radius * radius) {
-                float finalDamage = (float) (getDamage(spellLevel, entity) * (1 - distance / (radius * radius)));
-                DamageSources.applyDamage(target, finalDamage, getDamageSource(lightningBolt, entity));
-                if (target instanceof Creeper creeper) {
-                    creeper.thunderHit((ServerLevel) level, lightningBolt);
-                }
-                if (target instanceof LivingEntity livingEntity) {
-                    livingEntity.knockback(0.25f + finalDamage / 10f, entity.getX() - livingEntity.getX(), entity.getZ() - livingEntity.getZ());
-                }
-            }
-        });
+        level.getEntities(entity, entity.getBoundingBox().inflate(radius))
+                .forEach(
+                        target -> {
+                            double distance = target.distanceToSqr(strikePos);
+                            if (distance < radius * radius) {
+                                float finalDamage =
+                                        (float)
+                                                (getDamage(spellLevel, entity)
+                                                        * (1 - distance / (radius * radius)));
+                                DamageSources.applyDamage(
+                                        target,
+                                        finalDamage,
+                                        getDamageSource(lightningBolt, entity));
+                                if (target instanceof Creeper creeper) {
+                                    creeper.thunderHit((ServerLevel) level, lightningBolt);
+                                }
+                                if (target instanceof LivingEntity livingEntity) {
+                                    livingEntity.knockback(
+                                            0.25f + finalDamage / 10f,
+                                            entity.getX() - livingEntity.getX(),
+                                            entity.getZ() - livingEntity.getZ());
+                                }
+                            }
+                        });
 
         Vec3 motion = entity.getLookAngle().multiply(1, 0, 1).normalize().add(0, 5, 0).scale(.125);
-        playerMagicData.setAdditionalCastData(new ImpulseCastData((float) motion.x, (float) motion.y, (float) motion.z, true));
+        playerMagicData.setAdditionalCastData(
+                new ImpulseCastData((float) motion.x, (float) motion.y, (float) motion.z, true));
         entity.setDeltaMovement(entity.getDeltaMovement().add(motion));
         entity.hasImpulse = true;
-
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }

@@ -23,7 +23,11 @@ public class SpellSlotUpgradeItem extends Item {
     public SpellSlotUpgradeItem(int maxSlotsToUpgradeTo, Item.Properties properties) {
         super(properties);
         this.maxSlots = maxSlotsToUpgradeTo;
-        this.description = Component.translatable("item.irons_spellbooks.spell_slot_upgrade_desc", maxSlotsToUpgradeTo).withStyle(ChatFormatting.GRAY);
+        this.description =
+                Component.translatable(
+                                "item.irons_spellbooks.spell_slot_upgrade_desc",
+                                maxSlotsToUpgradeTo)
+                        .withStyle(ChatFormatting.GRAY);
     }
 
     public int maxSlots() {
@@ -31,7 +35,8 @@ public class SpellSlotUpgradeItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Level context, List<Component> lines, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(
+            ItemStack pStack, Level context, List<Component> lines, TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, context, lines, pIsAdvanced);
         lines.add(description);
     }

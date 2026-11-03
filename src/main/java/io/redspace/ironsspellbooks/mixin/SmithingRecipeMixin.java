@@ -21,16 +21,21 @@ public class SmithingRecipeMixin {
      * Also fix dye status copying to non-dyeable items because that too
      */
     @Inject(method = "assemble", at = @At(value = "RETURN"), cancellable = true)
-    public void fixSpellbookSlotCount(Container pContainer, RegistryAccess pRegistryAccess, CallbackInfoReturnable<ItemStack> cir) {
+    public void fixSpellbookSlotCount(
+            Container pContainer,
+            RegistryAccess pRegistryAccess,
+            CallbackInfoReturnable<ItemStack> cir) {
         ItemStack result = cir.getReturnValue();
         ItemStack input = pContainer.getItem(1);
-        ISpellContainer defaultResultContainer = ISpellContainer.get(result.getItem().getDefaultInstance());
+        ISpellContainer defaultResultContainer =
+                ISpellContainer.get(result.getItem().getDefaultInstance());
         ISpellContainer baseContainer = ISpellContainer.get(input);
         if (defaultResultContainer != null && baseContainer != null) {
-            //copy previous spells using new container vessel
+            // copy previous spells using new container vessel
             var mutable = defaultResultContainer.mutableCopy();
             for (SpellSlot slot : baseContainer.getActiveSpells()) {
-                mutable.addSpellAtIndex(slot.getSpell(), slot.getLevel(), slot.index(), slot.isLocked());
+                mutable.addSpellAtIndex(
+                        slot.getSpell(), slot.getLevel(), slot.index(), slot.isLocked());
             }
             ISpellContainer.set(result, mutable.toImmutable());
             cir.setReturnValue(result);
@@ -39,9 +44,10 @@ public class SmithingRecipeMixin {
             ISpellContainer.set(result, defaultResultContainer);
         }
 
-//        if (input.is(ItemTags.DYEABLE) && !result.is(ItemTags.DYEABLE) && input.has(DataComponents.DYED_COLOR)) {
-//            result.remove(DataComponents.DYED_COLOR);
-//            cir.setReturnValue(result);
-//        }
+        //        if (input.is(ItemTags.DYEABLE) && !result.is(ItemTags.DYEABLE) &&
+        // input.has(DataComponents.DYED_COLOR)) {
+        //            result.remove(DataComponents.DYED_COLOR);
+        //            cir.setReturnValue(result);
+        //        }
     }
 }

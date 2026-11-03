@@ -32,13 +32,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PortalEntity extends Entity implements AntiMagicSusceptible, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
+public class PortalEntity extends Entity
+        implements AntiMagicSusceptible, org.marj4n.irons_spellbooks.events.WorldRemovalListener {
 
-    private static final EntityDataAccessor<Optional<UUID>> DATA_ID_OWNER_UUID = SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-    private static final EntityDataAccessor<Boolean> DATA_PORTAL_CONNECTED = SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Optional<UUID>> DATA_ID_OWNER_UUID =
+            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Boolean> DATA_PORTAL_CONNECTED =
+            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BOOLEAN);
 
-    //Loop tracking
-    private Object2ObjectMap<UUID, LoopTrackerData> loopTrackerLookup = new Object2ObjectOpenHashMap<>();
+    // Loop tracking
+    private Object2ObjectMap<UUID, LoopTrackerData> loopTrackerLookup =
+            new Object2ObjectOpenHashMap<>();
     private final int loopMax = 5;
     private final int loopTickWindow = 20;
 
@@ -68,12 +72,23 @@ public class PortalEntity extends Entity implements AntiMagicSusceptible, org.ma
 
     @Override
     public void onRemovedFromWorld() {
-        if (!level().isClientSide &&  clearPortalOnDeath()) {
+        if (!level().isClientSide && clearPortalOnDeath()) {
             var removalReason = getRemovalReason();
             if (removalReason != null && removalReason.shouldDestroy()) {
                 PortalManager.INSTANCE.killPortal(uuid, getOwnerUUID());
             }
-            MagicManager.spawnParticles(level(), new SparkParticleOptions(new Vector3f(.5f, .05f, .6f)), getX(), getY() + 0.5, getZ(), 25, .2, .4, .2, .3, false);
+            MagicManager.spawnParticles(
+                    level(),
+                    new SparkParticleOptions(new Vector3f(.5f, .05f, .6f)),
+                    getX(),
+                    getY() + 0.5,
+                    getZ(),
+                    25,
+                    .2,
+                    .4,
+                    .2,
+                    .3,
+                    false);
         }
     }
 
@@ -88,16 +103,22 @@ public class PortalEntity extends Entity implements AntiMagicSusceptible, org.ma
             loopTrackerLookup.put(entity.getUUID(), trackerData);
         } else {
             IronsSpellbooks.LOGGER.debug("looping");
-            if (++trackerData.loopCount > loopMax && level().getGameTime() - trackerData.gameTick <= loopTickWindow) {
+            if (++trackerData.loopCount > loopMax
+                    && level().getGameTime() - trackerData.gameTick <= loopTickWindow) {
                 if (Objects.equals(getOwnerUUID(), entity.getUUID())) {
-                    entity.hurt(new PortalDamageSource(entity.level().damageSources().genericKill().typeHolder(), entity), Float.MAX_VALUE);
-                    if (entity instanceof LivingEntity livingEntity && Float.isNaN(livingEntity.getHealth())) {
+                    entity.hurt(
+                            new PortalDamageSource(
+                                    entity.level().damageSources().genericKill().typeHolder(),
+                                    entity),
+                            Float.MAX_VALUE);
+                    if (entity instanceof LivingEntity livingEntity
+                            && Float.isNaN(livingEntity.getHealth())) {
                         livingEntity.setHealth(0.0f);
                     }
                 }
                 discard();
             } else if (level().getGameTime() - trackerData.gameTick > loopTickWindow) {
-                //Cleanup old tracking information
+                // Cleanup old tracking information
                 loopTrackerLookup.remove(entity.getUUID());
             }
         }
@@ -105,47 +126,113 @@ public class PortalEntity extends Entity implements AntiMagicSusceptible, org.ma
 
     public void checkForEntitiesToTeleport() {
         if (this.level().isClientSide) return;
-        level().getEntities((Entity) null, this.getBoundingBox(), (entity -> !entity.getType().is(ModTags.CANT_USE_PORTAL) && (entity.isPickable() || entity instanceof Projectile) && !entity.isVehicle() && !entity.isSpectator())).forEach(entity -> {
-            //IronsSpellbooks.LOGGER.debug("PortalEntity: entity near portal:{}, portal:{}", entity, uuid);
+        level().getEntities(
+                        (Entity) null,
+                        this.getBoundingBox(),
+                        (entity ->
+                                !entity.getType().is(ModTags.CANT_USE_PORTAL)
+                                        && (entity.isPickable() || entity instanceof Projectile)
+                                        && !entity.isVehicle()
+                                        && !entity.isSpectator()))
+                .forEach(
+                        entity -> {
+                            // IronsSpellbooks.LOGGER.debug("PortalEntity: entity near portal:{},
+                            // portal:{}", entity, uuid);
 
-            PortalManager.INSTANCE.processDelayCooldown(uuid, entity.getUUID(), 1);
+                            PortalManager.INSTANCE.processDelayCooldown(uuid, entity.getUUID(), 1);
 
-            if (PortalManager.INSTANCE.canUsePortal(this, entity)) {
-                //IronsSpellbooks.LOGGER.debug("PortalEntity: teleport entity:{} portal:{}", entity, uuid);
+                            if (PortalManager.INSTANCE.canUsePortal(this, entity)) {
+                                // IronsSpellbooks.LOGGER.debug("PortalEntity: teleport entity:{}
+                                // portal:{}", entity, uuid);
 
-                PortalManager.INSTANCE.addPortalCooldown(entity, uuid);
+                                PortalManager.INSTANCE.addPortalCooldown(entity, uuid);
 
-                var portalData = PortalManager.INSTANCE.getPortalData(this);
-                portalData.getConnectedPortalPos(uuid).ifPresent(portalPos -> {
-                    Vec3 destination = portalPos.pos().add(0, entity.getY() - this.getY(), 0);
-                    entity.setYRot(portalPos.rotation());
-                    this.level().playSound(null, this.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 1f, 1f);
-                    if (level().dimension().equals(portalPos.dimension())) {
-                        entity.teleportTo(destination.x, destination.y + .1, destination.z);
-                        var delta = entity.getDeltaMovement();
-                        float hspeed = (float) Math.sqrt(delta.x * delta.x + delta.z * delta.z);
-                        float f = portalPos.rotation() * Mth.DEG_TO_RAD;
-                        entity.setDeltaMovement(-Mth.sin(f) * hspeed, delta.y, Mth.cos(f) * hspeed);
-                        handleLoopTracking(entity);
-                    } else {
-                        //IronsSpellbooks.LOGGER.debug("PortalEntity: teleport entity:{} to dimension: {}", entity, portalPos.dimension());
-                        var server = level().getServer();
-                        if (server != null) {
-                            var dim = server.getLevel(portalPos.dimension());
-                            if (dim != null) {
-                                if (io.redspace.ironsspellbooks.player.ServerPlayerEvents.onChangeDimensions(entity)) entity.changeDimension(dim, new PortalTeleporter(destination));
+                                var portalData = PortalManager.INSTANCE.getPortalData(this);
+                                portalData
+                                        .getConnectedPortalPos(uuid)
+                                        .ifPresent(
+                                                portalPos -> {
+                                                    Vec3 destination =
+                                                            portalPos
+                                                                    .pos()
+                                                                    .add(
+                                                                            0,
+                                                                            entity.getY()
+                                                                                    - this.getY(),
+                                                                            0);
+                                                    entity.setYRot(portalPos.rotation());
+                                                    this.level()
+                                                            .playSound(
+                                                                    null,
+                                                                    this.blockPosition(),
+                                                                    SoundEvents.ENDERMAN_TELEPORT,
+                                                                    SoundSource.NEUTRAL,
+                                                                    1f,
+                                                                    1f);
+                                                    if (level().dimension()
+                                                            .equals(portalPos.dimension())) {
+                                                        entity.teleportTo(
+                                                                destination.x,
+                                                                destination.y + .1,
+                                                                destination.z);
+                                                        var delta = entity.getDeltaMovement();
+                                                        float hspeed =
+                                                                (float)
+                                                                        Math.sqrt(
+                                                                                delta.x * delta.x
+                                                                                        + delta.z
+                                                                                                * delta.z);
+                                                        float f =
+                                                                portalPos.rotation()
+                                                                        * Mth.DEG_TO_RAD;
+                                                        entity.setDeltaMovement(
+                                                                -Mth.sin(f) * hspeed,
+                                                                delta.y,
+                                                                Mth.cos(f) * hspeed);
+                                                        handleLoopTracking(entity);
+                                                    } else {
+                                                        // IronsSpellbooks.LOGGER.debug("PortalEntity: teleport entity:{} to dimension: {}", entity, portalPos.dimension());
+                                                        var server = level().getServer();
+                                                        if (server != null) {
+                                                            var dim =
+                                                                    server.getLevel(
+                                                                            portalPos.dimension());
+                                                            if (dim != null) {
+                                                                if (io.redspace.ironsspellbooks
+                                                                        .player.ServerPlayerEvents
+                                                                        .onChangeDimensions(entity))
+                                                                    entity.changeDimension(
+                                                                            dim,
+                                                                            new PortalTeleporter(
+                                                                                    destination));
+                                                            }
+                                                        }
+                                                    }
+                                                    this.level()
+                                                            .playSound(
+                                                                    null,
+                                                                    destination.x,
+                                                                    destination.y,
+                                                                    destination.z,
+                                                                    SoundEvents.ENDERMAN_TELEPORT,
+                                                                    SoundSource.NEUTRAL,
+                                                                    1f,
+                                                                    1f);
+                                                });
                             }
-                        }
-                    }
-                    this.level().playSound(null, destination.x, destination.y, destination.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 1f, 1f);
-                });
-            }
-        });
+                        });
     }
 
     private Vec3 getDestinationPosition(PortalPos globalPos, Entity entity) {
-        Vec3 offset = new Vec3(this.getX() - entity.getX(), this.getY() - entity.getY(), this.getZ() - entity.getZ());
-        return new Vec3(globalPos.pos().x - offset.x, globalPos.pos().y - offset.y, globalPos.pos().z - offset.z);
+        Vec3 offset =
+                new Vec3(
+                        this.getX() - entity.getX(),
+                        this.getY() - entity.getY(),
+                        this.getZ() - entity.getZ());
+        return new Vec3(
+                globalPos.pos().x - offset.x,
+                globalPos.pos().y - offset.y,
+                globalPos.pos().z - offset.z);
     }
 
     public void setTicksToLive(int ticksToLive) {
@@ -157,7 +244,14 @@ public class PortalEntity extends Entity implements AntiMagicSusceptible, org.ma
         if (level().isClientSide) {
             Vec3 center = this.getBoundingBox().getCenter();
             for (int i = 0; i < 2; i++) {
-                level().addParticle(ParticleHelper.PORTAL_FRAME, center.x, center.y, center.z, 1f, 2.1f, this.getYRot());
+                level().addParticle(
+                                ParticleHelper.PORTAL_FRAME,
+                                center.x,
+                                center.y,
+                                center.z,
+                                1f,
+                                2.1f,
+                                this.getYRot());
             }
             return;
         }
@@ -247,4 +341,3 @@ public class PortalEntity extends Entity implements AntiMagicSusceptible, org.ma
         public int loopCount;
     }
 }
-

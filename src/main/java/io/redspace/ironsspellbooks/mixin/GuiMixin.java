@@ -16,35 +16,60 @@ public class GuiMixin {
 
     @Inject(method = "renderExperienceBar", at = @At(value = "HEAD"), cancellable = true)
     public void irons_spellbooks$disableXpBar(GuiGraphics pGuiGraphics, int pX, CallbackInfo ci) {
-        if (ClientConfigs.MANA_BAR_ANCHOR.get() == ManaBarOverlay.Anchor.XP && Minecraft.getInstance().player != null && ManaBarOverlay.shouldShowManaBar(Minecraft.getInstance().player)) {
+        if (ClientConfigs.MANA_BAR_ANCHOR.get() == ManaBarOverlay.Anchor.XP
+                && Minecraft.getInstance().player != null
+                && ManaBarOverlay.shouldShowManaBar(Minecraft.getInstance().player)) {
             ci.cancel();
         }
     }
 
     @Inject(method = "renderJumpMeter", at = @At(value = "HEAD"), cancellable = true)
-    public void irons_spellbooks$disableJumpBar(PlayerRideableJumping pRideable, GuiGraphics pGuiGraphics, int pX, CallbackInfo ci) {
-        if (ClientConfigs.MANA_BAR_ANCHOR.get() == ManaBarOverlay.Anchor.XP && Minecraft.getInstance().player != null && ManaBarOverlay.shouldShowManaBar(Minecraft.getInstance().player)) {
+    public void irons_spellbooks$disableJumpBar(
+            PlayerRideableJumping pRideable, GuiGraphics pGuiGraphics, int pX, CallbackInfo ci) {
+        if (ClientConfigs.MANA_BAR_ANCHOR.get() == ManaBarOverlay.Anchor.XP
+                && Minecraft.getInstance().player != null
+                && ManaBarOverlay.shouldShowManaBar(Minecraft.getInstance().player)) {
             ci.cancel();
         }
     }
+
     @Inject(method = "render", at = @At("HEAD"))
     private void ironsSpellbooks$beginHud(GuiGraphics graphics, float tick, CallbackInfo ci) {
         org.marj4n.irons_spellbooks.client.hud.NativeHud.beginFrame(tick);
     }
+
     @Inject(method = "renderCrosshair", at = @At("HEAD"))
     private void ironsSpellbooks$castBar(GuiGraphics graphics, CallbackInfo ci) {
         org.marj4n.irons_spellbooks.client.hud.NativeHud.castBar(graphics);
     }
+
     @Inject(method = "renderPlayerHealth", at = @At("RETURN"))
     private void ironsSpellbooks$mana(GuiGraphics graphics, CallbackInfo ci) {
         org.marj4n.irons_spellbooks.client.hud.NativeHud.mana(graphics);
     }
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderExperienceBar(Lnet/minecraft/client/gui/GuiGraphics;I)V", shift = At.Shift.AFTER))
+
+    @Inject(
+            method = "render",
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lnet/minecraft/client/gui/Gui;renderExperienceBar(Lnet/minecraft/client/gui/GuiGraphics;I)V",
+                            shift = At.Shift.AFTER))
     private void ironsSpellbooks$spellBar(GuiGraphics graphics, float tick, CallbackInfo ci) {
         org.marj4n.irons_spellbooks.client.hud.NativeHud.experienceLayer(graphics);
     }
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderJumpMeter(Lnet/minecraft/world/entity/PlayerRideableJumping;Lnet/minecraft/client/gui/GuiGraphics;I)V", shift = At.Shift.AFTER))
-    private void ironsSpellbooks$mountedSpellBar(GuiGraphics graphics, float tick, CallbackInfo ci) {
+
+    @Inject(
+            method = "render",
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lnet/minecraft/client/gui/Gui;renderJumpMeter(Lnet/minecraft/world/entity/PlayerRideableJumping;Lnet/minecraft/client/gui/GuiGraphics;I)V",
+                            shift = At.Shift.AFTER))
+    private void ironsSpellbooks$mountedSpellBar(
+            GuiGraphics graphics, float tick, CallbackInfo ci) {
         org.marj4n.irons_spellbooks.client.hud.NativeHud.experienceLayer(graphics);
     }
 }

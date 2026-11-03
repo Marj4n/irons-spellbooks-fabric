@@ -27,8 +27,9 @@ public class CastingMobAimingData implements ICastDataSerializable {
     }
 
     public Vec3 getAimPosition(float partialTick) {
-        // create "lock" on partial tick so that packet delay doesn't leave the renderer snapping to the last old pos when partial tick loops back to 0
-        if(partialTick > lastPartialTick ){
+        // create "lock" on partial tick so that packet delay doesn't leave the renderer snapping to
+        // the last old pos when partial tick loops back to 0
+        if (partialTick > lastPartialTick) {
             lastPartialTick = partialTick;
         }
         return lastAimPosition.lerp(aimPosition, lastPartialTick);
@@ -39,9 +40,7 @@ public class CastingMobAimingData implements ICastDataSerializable {
     }
 
     @Override
-    public void reset() {
-
-    }
+    public void reset() {}
 
     @Override
     public void writeToBuffer(FriendlyByteBuf buffer) {
@@ -55,8 +54,10 @@ public class CastingMobAimingData implements ICastDataSerializable {
 
     @Override
     public void readFromBuffer(FriendlyByteBuf buffer) {
-        aimPosition = new Vec3(buffer.readInt() / 10.0, buffer.readInt() / 10.0, buffer.readInt() / 10.0);
-        lastAimPosition = new Vec3(buffer.readInt() / 10.0, buffer.readInt() / 10.0, buffer.readInt() / 10.0);
+        aimPosition =
+                new Vec3(buffer.readInt() / 10.0, buffer.readInt() / 10.0, buffer.readInt() / 10.0);
+        lastAimPosition =
+                new Vec3(buffer.readInt() / 10.0, buffer.readInt() / 10.0, buffer.readInt() / 10.0);
     }
 
     @Override
@@ -65,7 +66,5 @@ public class CastingMobAimingData implements ICastDataSerializable {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-
-    }
+    public void deserializeNBT(CompoundTag nbt) {}
 }
