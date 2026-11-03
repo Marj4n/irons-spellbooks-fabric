@@ -512,7 +512,7 @@ public class PriestEntity extends NeutralWizard
 
     @Override
     public Level level() {
-        return this.level();
+        return super.level();
     }
 
     static class BibleTrade extends AdditionalWanderingTrades.SimpleTrade {

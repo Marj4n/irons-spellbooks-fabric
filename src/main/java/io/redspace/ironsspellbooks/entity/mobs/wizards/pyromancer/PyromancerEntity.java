@@ -194,7 +194,7 @@ public class PyromancerEntity extends NeutralWizard implements IMerchantWizard {
 
     @Override
     public Level level() {
-        return this.level();
+        return super.level();
     }
 
     @Override
