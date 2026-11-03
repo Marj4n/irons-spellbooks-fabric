@@ -1324,5 +1324,6 @@
   "potion.potency.7": "VII",
   "potion.potency.8": "XIII",
   "potion.potency.9": "IX",
-  "potion.potency.10": "X"
+  "potion.potency.10": "X",
+  "item.irons_spellbooks.legendary_spell_book": "Legendary Spell Book"
 }

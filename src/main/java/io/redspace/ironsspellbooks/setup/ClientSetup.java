@@ -710,7 +710,6 @@ public class ClientSetup {
             event.addModels((AffinityRingRenderer.getAffinityRingModelLocation(schoolType)));
             event.addModels((ScrollModel.getScrollModelLocation(schoolType)));
         }
-        event.addModels((IronsSpellbooks.id("item/template_open_spell_book_model")));
         event.addModels((IronsSpellbooks.id("item/pyrium_staff_haft")));
         event.addModels((IronsSpellbooks.id("item/fiery_dagger")));
         event.addModels((IronsSpellbooks.id("item/stone_scythe")));
